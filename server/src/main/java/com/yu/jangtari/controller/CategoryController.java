@@ -1,44 +1,48 @@
 package com.yu.jangtari.controller;
 
-import com.yu.jangtari.domain.Category;
+import com.yu.jangtari.common.ErrorEnum;
+import com.yu.jangtari.common.ErrorType;
+import com.yu.jangtari.common.ResponseType;
 import com.yu.jangtari.domain.DTO.CategoryDTO;
-import com.yu.jangtari.repository.CategoryRepository;
+import com.yu.jangtari.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 public class CategoryController {
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private CategoryService categoryService;
+
+    @Transactional(readOnly = true)
+    @GetMapping("/getAllCategories")
+    public ResponseEntity<ResponseType> getAllCategory() {
+        List<CategoryDTO.Get> response = categoryService.getAllCategories();
+        return new ResponseEntity<>(new ResponseType<>
+                (null, response),
+                HttpStatus.OK);
+    }
 
     @Transactional
     @PostMapping("/addCategory")
-    public ResponseEntity<List<CategoryDTO.Get>> addCategory(@RequestBody CategoryDTO.Add newCategory){
+    public ResponseEntity<ResponseType> addCategory(@RequestBody CategoryDTO.Add newCategory){
 
-        Category category = new Category();
-
-        if(newCategory.getName() == null || newCategory.getPicture() == null){
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        int result = categoryService.addCategory(newCategory);
+        if (result == 0){
+            return new ResponseEntity<>(new ResponseType<>
+                    (new ErrorType(ErrorEnum.INVALID_REQUEST_BODY,
+                    "카테고리 양식 불충분"), null),
+                    HttpStatus.BAD_REQUEST);
         }
-        category.setName(newCategory.getName());
-        if(newCategory.getPicture() != ""){
-            category.setPicture(newCategory.getPicture());
-        }
-        categoryRepository.save(category);
 
-        List<CategoryDTO.Get> allCategories = new ArrayList<>();
-        categoryRepository.findAll().forEach(v -> {
-            allCategories.add(new CategoryDTO.Get(v.getId(), v.getName(), v.getPicture()));
-        });
-        return new ResponseEntity<>(allCategories, HttpStatus.CREATED);
+        List<CategoryDTO.Get> response = categoryService.getAllCategories();
+        return new ResponseEntity<>(new ResponseType<>
+                (null, response),
+                HttpStatus.OK);
     }
 }
