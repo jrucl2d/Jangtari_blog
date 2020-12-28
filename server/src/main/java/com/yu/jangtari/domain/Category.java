@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -34,5 +35,5 @@ public class Category {
     private Timestamp deleteddate;
 
     @OneToMany(mappedBy = "category")
-    private List<Post> posts;
+    private List<Post> posts = new ArrayList<>();
 }

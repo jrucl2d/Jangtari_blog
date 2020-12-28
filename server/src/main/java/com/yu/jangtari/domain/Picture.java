@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "post")
 @Entity
 @EqualsAndHashCode(of="id")
 public class Picture {

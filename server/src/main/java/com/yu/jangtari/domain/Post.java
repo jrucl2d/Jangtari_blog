@@ -9,11 +9,12 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "category")
 @Entity
 @EqualsAndHashCode(of="id")
 public class Post {
@@ -34,10 +35,10 @@ public class Post {
     private Timestamp deleteddate;
 
     @OneToMany(mappedBy = "post")
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
-    private List<Picture> pictures;
+    private List<Picture> pictures = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -45,5 +46,5 @@ public class Post {
 
     @ManyToMany
     @JoinTable(name = "PostHashtag")
-    private List<Hashtag> hashtags;
+    private List<Hashtag> hashtags = new ArrayList<>();
 }

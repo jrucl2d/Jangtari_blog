@@ -9,11 +9,12 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "posts")
 @Entity
 @EqualsAndHashCode(of="id")
 public class Hashtag {
@@ -30,5 +31,5 @@ public class Hashtag {
     private Timestamp deleteddate;
 
     @ManyToMany(mappedBy = "hashtags")
-    private List<Post> posts;
+    private List<Post> posts = new ArrayList<>();
 }
