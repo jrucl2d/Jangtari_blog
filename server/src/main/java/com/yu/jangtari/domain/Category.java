@@ -27,13 +27,11 @@ public class Category {
 
     private String picture;
 
-    private Long category_order;
-
     @CreationTimestamp
     private Timestamp createddate;
 
     private Timestamp deleteddate;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
     private List<Post> posts = new ArrayList<>();
 }

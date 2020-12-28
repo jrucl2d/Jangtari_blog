@@ -5,11 +5,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ExceptionType extends Exception {
+public class CustomException extends Exception {
     private String message;
     private String detail;
 
-    public ExceptionType(String message, String detail){
+    public CustomException(String message, String detail){
         super();
         this.message = message;
         this.detail = detail;

@@ -24,4 +24,15 @@ public class CategoryDTO {
         private String name;
         private String picture;
     }
+
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Update{
+        private Long id;
+        private String name;
+        private String picture;
+    }
 }

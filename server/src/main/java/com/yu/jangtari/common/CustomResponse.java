@@ -7,11 +7,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ResponseType<T> {
-    private ErrorType error;
+public class CustomResponse<T> {
+    private CustomError error;
     private T result;
 
-    public static ResponseType<String> OK() {
-        return new ResponseType<>(null, "OK");
+    public static CustomResponse<String> OK() {
+        return new CustomResponse<>(null, "OK");
     }
 }

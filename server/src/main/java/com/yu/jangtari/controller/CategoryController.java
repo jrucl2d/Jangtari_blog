@@ -1,8 +1,9 @@
 package com.yu.jangtari.controller;
 
+import com.yu.jangtari.common.CustomException;
 import com.yu.jangtari.common.ErrorEnum;
-import com.yu.jangtari.common.ErrorType;
-import com.yu.jangtari.common.ResponseType;
+import com.yu.jangtari.common.CustomError;
+import com.yu.jangtari.common.CustomResponse;
 import com.yu.jangtari.domain.DTO.CategoryDTO;
 import com.yu.jangtari.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,28 +22,52 @@ public class CategoryController {
 
     @Transactional(readOnly = true)
     @GetMapping("/getAllCategories")
-    public ResponseEntity<ResponseType> getAllCategory() {
+    public ResponseEntity<CustomResponse> getAllCategory() {
         List<CategoryDTO.Get> response = categoryService.getAllCategories();
-        return new ResponseEntity<>(new ResponseType<>
+        return new ResponseEntity<>(new CustomResponse<>
                 (null, response),
                 HttpStatus.OK);
     }
 
     @Transactional
     @PostMapping("/addCategory")
-    public ResponseEntity<ResponseType> addCategory(@RequestBody CategoryDTO.Add newCategory){
+    public ResponseEntity<CustomResponse> addCategory(@RequestBody CategoryDTO.Add newCategory){
+        try{
+            categoryService.addCategory(newCategory);
+            return new ResponseEntity<>(CustomResponse.OK(),
+                    HttpStatus.CREATED);
+        } catch (CustomException e){
+            return new ResponseEntity<>(new CustomResponse<>
+                    (new CustomError(e), null),
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
 
-        int result = categoryService.addCategory(newCategory);
-        if (result == 0){
-            return new ResponseEntity<>(new ResponseType<>
-                    (new ErrorType(ErrorEnum.INVALID_REQUEST_BODY,
-                    "카테고리 양식 불충분"), null),
+    @Transactional
+    @PutMapping("/updateCategory")
+    public ResponseEntity<CustomResponse> updateCategory(@RequestBody CategoryDTO.Update theCategory){
+        try {
+            categoryService.updateCategory(theCategory);
+            return new ResponseEntity<>(CustomResponse.OK(),
+                    HttpStatus.ACCEPTED);
+        } catch (CustomException e){
+            return new ResponseEntity<>(new CustomResponse<>
+                    (new CustomError(e), null),
                     HttpStatus.BAD_REQUEST);
         }
 
-        List<CategoryDTO.Get> response = categoryService.getAllCategories();
-        return new ResponseEntity<>(new ResponseType<>
-                (null, response),
-                HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deleteCategory/{id}")
+    public ResponseEntity<CustomResponse> deleteCategory(@PathVariable(value = "id") Long theId){
+        try {
+            categoryService.deleteCategory(theId);
+            return new ResponseEntity<>(CustomResponse.OK(),
+                    HttpStatus.ACCEPTED);
+        } catch (CustomException e){
+            return new ResponseEntity<>(new CustomResponse<>
+                    (new CustomError(e), null),
+                    HttpStatus.BAD_REQUEST);
+        }
     }
 }
