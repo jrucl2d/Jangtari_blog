@@ -26,6 +26,7 @@ public class PostDTO {
         // comments
         // pictures
     }
+
     @Getter
     @Setter
     @ToString
@@ -38,5 +39,18 @@ public class PostDTO {
         private int template;
         private List<PictureDTO> pictures = new ArrayList<>();
         private List<HashtagDTO> hashtags = new ArrayList<>();
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Update{
+        private Long id;
+        private String title;
+        private String post;
+        private int template;
+        private List<PictureDTO> pictures = new ArrayList<>();
     }
 }

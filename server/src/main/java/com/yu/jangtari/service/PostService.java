@@ -6,6 +6,7 @@ import com.yu.jangtari.domain.DTO.PostDTO;
 import com.yu.jangtari.domain.Hashtag;
 import com.yu.jangtari.domain.Picture;
 import com.yu.jangtari.domain.Post;
+import com.yu.jangtari.repository.PictureRepository;
 import com.yu.jangtari.repository.post.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,12 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostService {
 
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private PictureRepository pictureRepository;
 
     @Transactional(readOnly = true)
     public List<PostDTO.GetAll> getPostList(Long categoryId) throws CustomException {
@@ -74,5 +79,37 @@ public class PostService {
             post.setPictures(pictures);
         }
         postRepository.save(post);
+    }
+
+    @Transactional
+    public void updatePost(PostDTO.Update thePost) throws CustomException{
+        Optional<Post> post = postRepository.findById(thePost.getId());
+        if(post.isPresent()){
+            post.get().setTitle(thePost.getTitle());
+            post.get().setTemplate(thePost.getTemplate());
+            post.get().setPost(thePost.getPost());
+
+            if(thePost.getPictures().size() > 0){
+                pictureRepository.deleteByPostId(thePost.getId());
+                List<Picture> pictures = new ArrayList<>();
+                thePost.getPictures().forEach(p -> {
+                    Picture picture = new Picture();
+                    picture.setPicture(p.getPicture());
+                    picture.setPost(post.get());
+                    pictures.add(picture);
+                });
+                post.get().setPictures(pictures);
+            }
+        } else {
+            throw new CustomException("존재하지 않는 게시글입니다.", "게시글 수정 실패 : id = " + thePost.getId());
+        }
+    }
+
+    public void deletePost(Long postId) throws CustomException{
+        try{
+            postRepository.deleteById(postId);
+        } catch (Exception e){
+            throw new CustomException("존재하지 않는 게시글입니다.", "게시글 삭제 실패 : id = " + postId);
+        }
     }
 }

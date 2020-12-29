@@ -25,7 +25,7 @@ public class Hashtag {
     @NotNull
     private String hashtag;
 
-    @ManyToMany(mappedBy = "hashtags")
+    @ManyToMany(mappedBy = "hashtags",cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Post> posts = new ArrayList<>();
 
     @CreationTimestamp

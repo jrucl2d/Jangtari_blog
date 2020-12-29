@@ -31,18 +31,20 @@ public class Post {
 
     private int template;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Picture> pictures = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "PostHashtag")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "PostHashtag",
+            joinColumns = @JoinColumn(name="post_id"),
+            inverseJoinColumns = @JoinColumn(name="hashtag_id"))
     private List<Hashtag> hashtags = new ArrayList<>();
 
     @CreationTimestamp
