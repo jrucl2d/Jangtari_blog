@@ -35,10 +35,15 @@ public class CommentService {
         comment1.setPost(post);
         comment1.setComment(comment.getComment());
         comment1.setMember(member);
-        if(comment.getRecomment() != null){
-            Comment comment2 = new Comment();
-            comment2.setId(comment.getRecomment());
-            comment1.setRecomment(comment2);
+        if(comment.getRecommentId() != null){
+            Object parentRecomment = commentRepository.getRecommentByRecommentId(comment.getRecommentId());
+            String theString = "";
+            if(parentRecomment == null){
+                theString += comment.getRecommentId();
+            } else{
+                theString += parentRecomment.toString() + "-" + comment.getRecommentId();
+            }
+            comment1.setRecomment(theString);
         }
         commentRepository.save(comment1);
     }
@@ -57,11 +62,13 @@ public class CommentService {
         }
     }
 
+    @Transactional
     public void deleteComment(Long commentId) throws CustomException{
-        try{
-            commentRepository.deleteById(commentId);
-        } catch (Exception e){
-            throw new CustomException("존재하지 않는 게시글입니다.", "게시글 삭제 실패 : id = " + commentId);
-        }
+//        try{
+            String commentString = "" + commentId;
+            commentRepository.deleteUnderCommentId(commentId, commentString);
+//        } catch (Exception e){
+//            throw new CustomException("존재하지 않는 댓글입니다.", "댓글 삭제 실패 : id = " + commentId);
+//        }
     }
 }

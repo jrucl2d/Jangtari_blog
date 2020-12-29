@@ -11,7 +11,7 @@ public class CommentDTO {
     public static class Add{
         private Long postId;
         private String comment;
-        private Long recomment;
+        private Long recommentId;
     }
     @Getter
     @Setter
