@@ -34,14 +34,14 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Picture> pictures = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "PostHashtag")
     private List<Hashtag> hashtags = new ArrayList<>();
 

@@ -2,11 +2,8 @@ package com.yu.jangtari.repository.post;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPQLQuery;
-import com.yu.jangtari.domain.Category;
+import com.yu.jangtari.domain.*;
 import com.yu.jangtari.domain.DTO.PostDTO;
-import com.yu.jangtari.domain.Post;
-import com.yu.jangtari.domain.QCategory;
-import com.yu.jangtari.domain.QPost;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
@@ -37,5 +34,13 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
             resultList.add(new PostDTO.GetAll((Long)t.toArray()[0], (String)t.toArray()[1]));
         });
         return resultList;
+    }
+
+    @Override
+    public List<Hashtag> getHashtags(List<String> hashtags) {
+        QHashtag hashtag = QHashtag.hashtag1;
+        JPQLQuery<Hashtag> query = from(hashtag);
+        query.where(hashtag.hashtag.in(hashtags));
+        return query.fetch();
     }
 }

@@ -26,4 +26,17 @@ public class PostDTO {
         // comments
         // pictures
     }
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Add{
+        private Long categoryId;
+        private String title;
+        private String post;
+        private int template;
+        private List<PictureDTO> pictures = new ArrayList<>();
+        private List<HashtagDTO> hashtags = new ArrayList<>();
+    }
 }
