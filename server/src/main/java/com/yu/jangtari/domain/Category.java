@@ -27,11 +27,9 @@ public class Category {
 
     private String picture;
 
-    @CreationTimestamp
-    private Timestamp createddate;
-
-    private Timestamp deleteddate;
-
     @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
     private List<Post> posts = new ArrayList<>();
+
+    @CreationTimestamp
+    private Timestamp createddate;
 }

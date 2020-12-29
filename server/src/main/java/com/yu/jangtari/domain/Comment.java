@@ -23,11 +23,6 @@ public class Comment {
     @NotNull
     private String comment;
 
-    @CreationTimestamp
-    private Timestamp createddate;
-
-    private Timestamp deleteddate;
-
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
@@ -39,4 +34,8 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
+
+    @CreationTimestamp
+    private Timestamp createddate;
+
 }

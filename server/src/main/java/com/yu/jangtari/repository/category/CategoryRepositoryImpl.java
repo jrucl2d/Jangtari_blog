@@ -25,7 +25,6 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
         JPQLQuery<Category> query = from(category);
 
         JPQLQuery<Tuple> tuple = query.select(category.id, category.name, category.picture);
-        tuple.where(category.deleteddate.isNull());
         tuple.orderBy(category.createddate.asc());
         List<Tuple> list = tuple.fetch();
 

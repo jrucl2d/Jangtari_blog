@@ -29,11 +29,6 @@ public class Post {
     @Lob
     private String post;
 
-    @CreationTimestamp
-    private Timestamp createddate;
-
-    private Timestamp deleteddate;
-
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
@@ -47,4 +42,7 @@ public class Post {
     @ManyToMany
     @JoinTable(name = "PostHashtag")
     private List<Hashtag> hashtags = new ArrayList<>();
+
+    @CreationTimestamp
+    private Timestamp createddate;
 }

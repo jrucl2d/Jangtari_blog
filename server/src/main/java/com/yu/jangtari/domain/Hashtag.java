@@ -25,11 +25,9 @@ public class Hashtag {
     @NotNull
     private String hashtag;
 
-    @CreationTimestamp
-    private Timestamp createddate;
-
-    private Timestamp deleteddate;
-
     @ManyToMany(mappedBy = "hashtags")
     private List<Post> posts = new ArrayList<>();
+
+    @CreationTimestamp
+    private Timestamp createddate;
 }

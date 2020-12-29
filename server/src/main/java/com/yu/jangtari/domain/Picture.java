@@ -23,12 +23,10 @@ public class Picture {
     @NotNull
     private String picture;
 
-    @CreationTimestamp
-    private Timestamp createddate;
-
-    private Timestamp deleteddate;
-
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
+
+    @CreationTimestamp
+    private Timestamp createddate;
 }
