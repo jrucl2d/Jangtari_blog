@@ -8,10 +8,7 @@ import com.yu.jangtari.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class CommentController {
@@ -40,6 +37,19 @@ public class CommentController {
                     HttpStatus.OK);
         } catch(CustomException e){
             return new ResponseEntity<>(new CustomResponse
+                    (new CustomError(e), null),
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/deleteComment/{id}")
+    public ResponseEntity<CustomResponse> deleteComment(@PathVariable(value = "id")Long commentId){
+        try{
+            commentService.deleteComment(commentId);
+            return new ResponseEntity<>(CustomResponse.OK(),
+                    HttpStatus.CREATED);
+        } catch (CustomException e){
+            return new ResponseEntity<>(new CustomResponse<>
                     (new CustomError(e), null),
                     HttpStatus.BAD_REQUEST);
         }
