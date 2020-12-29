@@ -26,8 +26,6 @@ public class QComment extends EntityPathBase<Comment> {
 
     public final DateTimePath<java.sql.Timestamp> createddate = createDateTime("createddate", java.sql.Timestamp.class);
 
-    public final DateTimePath<java.sql.Timestamp> deleteddate = createDateTime("deleteddate", java.sql.Timestamp.class);
-
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final QMember member;

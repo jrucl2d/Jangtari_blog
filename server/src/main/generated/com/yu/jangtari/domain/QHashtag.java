@@ -22,8 +22,6 @@ public class QHashtag extends EntityPathBase<Hashtag> {
 
     public final DateTimePath<java.sql.Timestamp> createddate = createDateTime("createddate", java.sql.Timestamp.class);
 
-    public final DateTimePath<java.sql.Timestamp> deleteddate = createDateTime("deleteddate", java.sql.Timestamp.class);
-
     public final StringPath hashtag = createString("hashtag");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);

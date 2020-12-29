@@ -6,7 +6,6 @@ import com.yu.jangtari.domain.DTO.CategoryDTO;
 import com.yu.jangtari.repository.category.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -18,10 +17,12 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Transactional(readOnly = true)
     public List<CategoryDTO.Get> getAllCategories(){
         return categoryRepository.getAllCategories();
     }
 
+    @Transactional
     public void addCategory(CategoryDTO.Add newCategory) throws CustomException {
         Category category = new Category();
 
@@ -35,6 +36,7 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
+    @Transactional
     public void updateCategory(CategoryDTO.Update theCategory) throws CustomException{
         if(theCategory.getId() == null || theCategory.getName() == null || theCategory.getPicture() == null){
             throw new CustomException("입력 정보가 충분하지 않습니다.", "카테고리 수정 실패 : id = " + theCategory.getId());

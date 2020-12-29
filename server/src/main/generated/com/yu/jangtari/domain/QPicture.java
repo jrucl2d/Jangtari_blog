@@ -24,8 +24,6 @@ public class QPicture extends EntityPathBase<Picture> {
 
     public final DateTimePath<java.sql.Timestamp> createddate = createDateTime("createddate", java.sql.Timestamp.class);
 
-    public final DateTimePath<java.sql.Timestamp> deleteddate = createDateTime("deleteddate", java.sql.Timestamp.class);
-
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath picture = createString("picture");

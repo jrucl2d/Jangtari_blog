@@ -29,6 +29,8 @@ public class Post {
     @Lob
     private String post;
 
+    private int template;
+
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 

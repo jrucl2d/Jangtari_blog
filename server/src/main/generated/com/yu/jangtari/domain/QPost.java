@@ -28,8 +28,6 @@ public class QPost extends EntityPathBase<Post> {
 
     public final DateTimePath<java.sql.Timestamp> createddate = createDateTime("createddate", java.sql.Timestamp.class);
 
-    public final DateTimePath<java.sql.Timestamp> deleteddate = createDateTime("deleteddate", java.sql.Timestamp.class);
-
     public final ListPath<Hashtag, QHashtag> hashtags = this.<Hashtag, QHashtag>createList("hashtags", Hashtag.class, QHashtag.class, PathInits.DIRECT2);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
@@ -37,6 +35,8 @@ public class QPost extends EntityPathBase<Post> {
     public final ListPath<Picture, QPicture> pictures = this.<Picture, QPicture>createList("pictures", Picture.class, QPicture.class, PathInits.DIRECT2);
 
     public final StringPath post = createString("post");
+
+    public final NumberPath<Integer> template = createNumber("template", Integer.class);
 
     public final StringPath title = createString("title");
 
