@@ -9,5 +9,7 @@ import java.util.List;
 public interface CustomPostRepository {
     public List<PostDTO.GetAll> getPostList(Long categoryId);
 
+    public PostDTO.GetOne getPost(Long postId);
+
     public List<Hashtag> getHashtags(List<String> hashtags);
 }

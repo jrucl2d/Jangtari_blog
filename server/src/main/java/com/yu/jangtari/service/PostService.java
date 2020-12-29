@@ -32,6 +32,12 @@ public class PostService {
         return result;
     }
 
+    @Transactional(readOnly = true)
+    public PostDTO.GetOne getPost(Long postId) throws CustomException{
+        PostDTO.GetOne result = postRepository.getPost(postId);
+        return result;
+    }
+
     @Transactional
     public void addPost(PostDTO.Add thePost) throws CustomException {
         if(thePost.getTitle().equals("") || thePost.getTitle() == null || thePost.getPost().equals("") || thePost.getPost() == null){

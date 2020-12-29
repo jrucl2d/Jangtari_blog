@@ -33,6 +33,20 @@ public class PostController {
         }
     }
 
+    @GetMapping("/post/{id}")
+    public ResponseEntity<CustomResponse> getPost(@PathVariable(value = "id") Long postId){
+        try{
+            PostDTO.GetOne result = postService.getPost(postId);
+            return new ResponseEntity<>(new CustomResponse<>
+                    (null, result),
+                    HttpStatus.OK);
+        } catch (CustomException e){
+            return new ResponseEntity<>(new CustomResponse<>
+                    (new CustomError(e), null),
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping("/addPost")
     public ResponseEntity<CustomResponse> addPost(@RequestBody PostDTO.Add thePost){
         try{

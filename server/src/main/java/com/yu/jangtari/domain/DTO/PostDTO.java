@@ -14,6 +14,7 @@ public class PostDTO {
     public static class GetAll{
         private Long id;
         private String title;
+        private int template;
     }
     @Getter
     @Setter
@@ -23,8 +24,8 @@ public class PostDTO {
     public static class GetOne{
         private Long id;
         private String title;
-        // comments
-        // pictures
+        private List<CommentDTO.Get> comments = new ArrayList<>();
+        private List<PictureDTO> pictures = new ArrayList<>();
     }
 
     @Getter

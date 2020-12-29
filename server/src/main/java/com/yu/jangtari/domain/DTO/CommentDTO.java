@@ -8,6 +8,18 @@ public class CommentDTO {
     @ToString
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class Get{
+        private Long commentId;
+        private String comment;
+        private Long memberId;
+        private String recomment;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class Add{
         private Long postId;
         private String comment;

@@ -64,11 +64,11 @@ public class CommentService {
 
     @Transactional
     public void deleteComment(Long commentId) throws CustomException{
-//        try{
+        try{
             String commentString = "" + commentId;
             commentRepository.deleteUnderCommentId(commentId, commentString);
-//        } catch (Exception e){
-//            throw new CustomException("존재하지 않는 댓글입니다.", "댓글 삭제 실패 : id = " + commentId);
-//        }
+        } catch (Exception e){
+            throw new CustomException("존재하지 않는 댓글입니다.", "댓글 삭제 실패 : id = " + commentId);
+        }
     }
 }
