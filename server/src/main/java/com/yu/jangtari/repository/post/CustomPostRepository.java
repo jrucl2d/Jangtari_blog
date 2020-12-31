@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CustomPostRepository {
 
-    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO);
+    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO, String type, String keyword);
 
     public PostDTO.GetOne getPost(Long postId);
 

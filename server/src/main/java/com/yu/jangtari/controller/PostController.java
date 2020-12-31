@@ -49,7 +49,7 @@ public class PostController {
     @GetMapping("/category/{id}/posts")
     public ResponseEntity<CustomResponse> getPostList(@PathVariable(value = "id") Long categoryId, PageVO pageVO){
         try{
-            PageMakerVO<PostDTO.GetAll> results =  postService.getPostList(categoryId ,pageVO);
+            PageMakerVO<PostDTO.GetAll> results =  postService.getPostList(categoryId ,pageVO, pageVO.getType(), pageVO.getKeyword());
             return new ResponseEntity<>(new CustomResponse<>
                     (null, results),
                     HttpStatus.OK);

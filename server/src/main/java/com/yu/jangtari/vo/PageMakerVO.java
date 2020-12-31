@@ -5,11 +5,8 @@ import lombok.ToString;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter
-@ToString(exclude = "pageList")
+@ToString
 public class PageMakerVO<T> {
 
     private Page<T> result;
@@ -21,14 +18,12 @@ public class PageMakerVO<T> {
     private int totalPageNum;
 
     private Pageable currentPage;
-    private List<Pageable> pageList;
 
     public PageMakerVO(Page<T> result, int totalPageNumParam){
         this.result = result;
         this.currentPage = result.getPageable();
         this.currentPageNum = currentPage.getPageNumber() + 1;
         this.totalPageNum = totalPageNumParam;
-        this.pageList = new ArrayList<>();
         calcPages();
     }
     private void calcPages(){
@@ -51,7 +46,6 @@ public class PageMakerVO<T> {
             this.nextPage = null;
         }
         for(int i = startNum; i <= tmpEndNum; i++){
-            pageList.add(startPage);
             startPage = startPage.next();
         }
         this.nextPage = startPage.getPageNumber() + 1 < totalPageNum ? startPage : null;

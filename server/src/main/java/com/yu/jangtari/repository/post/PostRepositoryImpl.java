@@ -3,6 +3,7 @@ package com.yu.jangtari.repository.post;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yu.jangtari.vo.PageMakerVO;
 import com.yu.jangtari.vo.PageVO;
@@ -31,20 +32,26 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
     }
 
     @Override
-    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO) {
+    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO, String type, String keyword) {
         Pageable pageable = pageVO.makePageable("DESC", "createddate");
 
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
         QPost post = QPost.post1;
 
-        QueryResults<Tuple> results = queryFactory.select(post.id, post.title, post.template)
-                .from(post)
-                .where(post.category.id.eq(categoryId))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetchResults();
+        JPAQuery<Tuple> tmp = queryFactory.select(post.id, post.title, post.template)
+                .from(post);
+        if(type != null){
+            if(type.equals("t")){
+                tmp.where(post.title.contains(keyword).and(post.category.id.eq(categoryId)));
+            }else if(type.equals("c")){
+                tmp.where(post.post.contains(keyword).and(post.category.id.eq(categoryId)));
+            }
+        } else{
+            tmp.where(post.category.id.eq(categoryId));
+        }
+        tmp.offset(pageable.getOffset()).limit(pageable.getPageSize());
+        QueryResults<Tuple> results = tmp.fetchResults();
         List<Tuple> list = results.getResults();
-
 
         List<PostDTO.GetAll> resultList = new ArrayList<>();
 

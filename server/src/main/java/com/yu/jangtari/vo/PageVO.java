@@ -12,6 +12,9 @@ public class PageVO {
     private int page;
     private int size;
 
+    private String type;
+    private String keyword;
+
     public PageVO(){
         this.page = 1;
         this.size = DEFAULT_SIZE;
@@ -29,6 +32,19 @@ public class PageVO {
     public void setSize(int size){
         this.size = size < DEFAULT_SIZE || size > DEFAULT_MAX_SIZE ? DEFAULT_SIZE : size;
     }
+    public String getType() {
+        return type;
+    }
+    public void setType(String type){
+        this.type = type;
+    }
+    public String getKeyword() {
+        return keyword;
+    }
+    public void setKeyword(String keyword){
+        this.keyword = keyword;
+    }
+
 
     public Pageable makePageable(String direction, String ...props) {
         Sort.Direction dir = direction.equals("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;

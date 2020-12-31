@@ -29,8 +29,8 @@ public class PostService {
     private PictureRepository pictureRepository;
 
     @Transactional(readOnly = true)
-    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO) throws CustomException {
-        return postRepository.getPostList(categoryId, pageVO);
+    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO, String type, String keyword) throws CustomException {
+        return postRepository.getPostList(categoryId, pageVO, type, keyword);
     }
 
     @Transactional(readOnly = true)
