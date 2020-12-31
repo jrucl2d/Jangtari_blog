@@ -1,7 +1,10 @@
 package com.yu.jangtari.repository.post;
 
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.yu.jangtari.vo.PageMakerVO;
 import com.yu.jangtari.vo.PageVO;
 import com.yu.jangtari.domain.*;
 import com.yu.jangtari.domain.DTO.CommentDTO;
@@ -13,11 +16,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class PostRepositoryImpl extends QuerydslRepositorySupport implements CustomPostRepository {
+
+    @PersistenceContext
+    EntityManager em;
 
     public PostRepositoryImpl(){
         super(Post.class);
@@ -27,16 +35,24 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
     public Page<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO) {
         Pageable pageable = pageVO.makePageable("DESC", "createddate");
 
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
         QPost post = QPost.post1;
-        JPQLQuery<Post> query = from(post);
-        JPQLQuery<Tuple> tuple = query.select(post.id, post.title, post.template);
-        tuple.where(post.category.id.eq(categoryId)).offset(pageable.getOffset()).limit(pageable.getPageSize());
-        List<Tuple> list = tuple.fetch();
+
+        QueryResults<Tuple> results = queryFactory.select(post.id, post.title, post.template)
+                .from(post)
+                .where(post.category.id.eq(categoryId))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+        List<Tuple> list = results.getResults();
+
         List<PostDTO.GetAll> resultList = new ArrayList<>();
+
         list.forEach(t -> {
             resultList.add(new PostDTO.GetAll((Long)t.toArray()[0], (String)t.toArray()[1], (Integer)t.toArray()[2]));
         });
         long totalCount = list.size();
+
         return new PageImpl<>(resultList, pageable, totalCount);
     }
 

@@ -3,6 +3,7 @@ package com.yu.jangtari.controller;
 import com.yu.jangtari.common.CustomError;
 import com.yu.jangtari.common.CustomException;
 import com.yu.jangtari.common.CustomResponse;
+import com.yu.jangtari.vo.PageMakerVO;
 import com.yu.jangtari.vo.PageVO;
 import com.yu.jangtari.domain.DTO.PostDTO;
 import com.yu.jangtari.service.PostService;
@@ -13,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @Controller
 public class PostController {
