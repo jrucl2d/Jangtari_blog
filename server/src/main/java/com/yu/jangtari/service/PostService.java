@@ -1,6 +1,7 @@
 package com.yu.jangtari.service;
 
 import com.yu.jangtari.common.CustomException;
+import com.yu.jangtari.vo.PageVO;
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.DTO.PostDTO;
 import com.yu.jangtari.domain.Hashtag;
@@ -9,6 +10,9 @@ import com.yu.jangtari.domain.Post;
 import com.yu.jangtari.repository.PictureRepository;
 import com.yu.jangtari.repository.post.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +31,8 @@ public class PostService {
     private PictureRepository pictureRepository;
 
     @Transactional(readOnly = true)
-    public List<PostDTO.GetAll> getPostList(Long categoryId) throws CustomException {
-        List<PostDTO.GetAll> result = postRepository.getPostList(categoryId);
+    public Page<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO) throws CustomException {
+        Page<PostDTO.GetAll> result = postRepository.getPostList(categoryId, pageVO);
         return result;
     }
 
