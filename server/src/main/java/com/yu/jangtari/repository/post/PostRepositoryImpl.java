@@ -10,7 +10,6 @@ import com.yu.jangtari.domain.*;
 import com.yu.jangtari.domain.DTO.CommentDTO;
 import com.yu.jangtari.domain.DTO.PictureDTO;
 import com.yu.jangtari.domain.DTO.PostDTO;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -32,7 +31,7 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
     }
 
     @Override
-    public Page<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO) {
+    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO) {
         Pageable pageable = pageVO.makePageable("DESC", "createddate");
 
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
@@ -46,6 +45,7 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
                 .fetchResults();
         List<Tuple> list = results.getResults();
 
+
         List<PostDTO.GetAll> resultList = new ArrayList<>();
 
         list.forEach(t -> {
@@ -53,7 +53,9 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         });
         long totalCount = list.size();
 
-        return new PageImpl<>(resultList, pageable, totalCount);
+        int totalPageSize = (int)(Math.ceil(results.getTotal() / (double)pageVO.getSize()));
+
+        return new PageMakerVO<>(new PageImpl<>(resultList, pageable, totalCount), totalPageSize);
     }
 
     @Override

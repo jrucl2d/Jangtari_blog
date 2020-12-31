@@ -23,11 +23,11 @@ public class PageMakerVO<T> {
     private Pageable currentPage;
     private List<Pageable> pageList;
 
-    public PageMakerVO(Page<T> result, long totalPageNumParam){
+    public PageMakerVO(Page<T> result, int totalPageNumParam){
         this.result = result;
         this.currentPage = result.getPageable();
         this.currentPageNum = currentPage.getPageNumber() + 1;
-        this.totalPageNum = (int)totalPageNumParam;
+        this.totalPageNum = totalPageNumParam;
         this.pageList = new ArrayList<>();
         calcPages();
     }
@@ -37,14 +37,14 @@ public class PageMakerVO<T> {
 
         Pageable startPage = this.currentPage;
 
+        System.out.println(tmpEndNum);
+        System.out.println(startNum);
+
         for(int i = startNum; i < this.currentPageNum; i++){
             startPage = startPage.previousOrFirst();
         }
-        System.out.println("이전은 " + startPage.getPageNumber());
 
         this.prevPage = startPage.getPageNumber() <= 0 ? null : startPage.previousOrFirst();
-
-        System.out.println("중간은 " + this.totalPageNum + " " + tmpEndNum);
 
         if(this.totalPageNum < tmpEndNum){
             tmpEndNum = this.totalPageNum;
@@ -53,8 +53,6 @@ public class PageMakerVO<T> {
         for(int i = startNum; i <= tmpEndNum; i++){
             pageList.add(startPage);
             startPage = startPage.next();
-            System.out.println("다음은 " + startPage.getPageNumber());
-
         }
         this.nextPage = startPage.getPageNumber() + 1 < totalPageNum ? startPage : null;
     }

@@ -11,7 +11,6 @@ import com.yu.jangtari.domain.Post;
 import com.yu.jangtari.repository.PictureRepository;
 import com.yu.jangtari.repository.post.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +29,7 @@ public class PostService {
     private PictureRepository pictureRepository;
 
     @Transactional(readOnly = true)
-    public Page<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO) throws CustomException {
+    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO) throws CustomException {
         return postRepository.getPostList(categoryId, pageVO);
     }
 
