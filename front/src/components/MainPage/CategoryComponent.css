@@ -1,7 +1,25 @@
 .category-box {
   display: inline-block;
-  height: 600px;
-  width: 600px;
-  background-color: white;
-  border: 1px solid red;
+  height: 650px;
+  width: 650px;
+  background-image: url(https://source.unsplash.com/random//1280x720);
+  background-size: "cover";
+}
+
+.category-box .category-name {
+  margin: 0;
+  height: 650px;
+  text-align: center;
+  line-height: 600px;
+  opacity: 0;
+  background-color: black;
+}
+.category-box:hover,
+.category-box:active {
+  cursor: pointer;
+}
+.category-box:hover .category-name,
+.category-box:active .category-name {
+  opacity: 0.8;
+  color: white;
 }

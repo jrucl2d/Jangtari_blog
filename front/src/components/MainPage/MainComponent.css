@@ -39,10 +39,15 @@
   width: 30px;
   margin-right: 0.6rem;
 }
-.main-body footer img:nth-child(2),
-.main-body footer img:nth-child(4) {
+.main-body footer a:nth-child(2) img {
+  height: 40px;
+  width: 40px;
+  margin-right: 0.7rem;
+}
+.main-body footer a:nth-child(3) img {
   height: 35px;
   width: 35px;
+  margin-right: 0.8rem;
 }
 
 .footer-introduce {
@@ -76,7 +81,7 @@
   border: 0;
   outline: 0;
   margin-right: 3rem;
-  background-color: black;
+  background-color: rgba(58, 54, 54, 0);
 }
 .menu-trigger:hover {
   cursor: pointer;
