@@ -12,7 +12,9 @@ function MainComponent() {
   const dispatch = useDispatch();
   // 카테고리 목록 불러오기
   useEffect(() => {
-    dispatch(getAllCategories());
+    if (categories === null) {
+      dispatch(getAllCategories());
+    }
     // eslint-disable-next-line
   }, []);
 

@@ -3,6 +3,7 @@ import "./MainPage/MainComponent.css";
 import MainComponent from './MainPage/MainComponent';
 import SideMenuComponent from './MainPage/SideMenuComponent';
 import { Route } from 'react-router-dom';
+import LoginFormComponent from './JoinAndLogin/LoginFormComponent';
 
 function LayoutComponent() {
 
@@ -13,8 +14,6 @@ function LayoutComponent() {
         menuButtonRef.current.classList.toggle("active-1");
         setIsToggle(!isToggle);
     };
-
-
 
     return (
         <div
@@ -31,9 +30,11 @@ function LayoutComponent() {
                     <span></span>
                     <span></span>
                 </button>
-                <SideMenuComponent isToggle={isToggle} />
+                <SideMenuComponent isToggle={isToggle} onClickMenuButton={onClickMenuButton} />
             </header>
             <Route exact path="/" component={MainComponent} />
+            <Route exact path="/loginForm" component={LoginFormComponent} />
+
             <footer>
                 <div className="footer-icons">
                     <a

@@ -5,7 +5,7 @@ import LayoutComponent from './components/LayoutComponent';
 function App() {
   return (
     <div className="App" style={{ height: "100%" }}>
-      <Route exact path="/" component={LayoutComponent} />
+      <Route path="/" component={LayoutComponent} />
     </div>
   );
 }
