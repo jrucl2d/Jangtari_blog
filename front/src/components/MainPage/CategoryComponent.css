@@ -1,16 +1,16 @@
 .category-box {
   display: inline-block;
-  height: 650px;
-  width: 650px;
+  height: 70vh;
+  width: 70vh;
   background-image: url(https://source.unsplash.com/random//1280x720);
   background-size: "cover";
 }
 
 .category-box .category-name {
   margin: 0;
-  height: 650px;
+  height: 70vh;
   text-align: center;
-  line-height: 600px;
+  line-height: 70vh;
   opacity: 0;
   background-color: black;
 }

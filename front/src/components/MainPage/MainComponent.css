@@ -24,6 +24,10 @@
   justify-content: center;
   align-items: center;
 }
+.main-loading > div{
+  background: rgb(0,0,0,0);
+
+}
 .category-container {
   width: 95%;
   margin: 0 auto;
@@ -75,6 +79,7 @@
   display: inline-block;
   transition: all 0.4s;
   box-sizing: border-box;
+  z-index: 2;
 }
 .menu-trigger {
   position: relative;
@@ -113,6 +118,7 @@
 .menu-trigger.active-1 span:nth-of-type(1) {
   -webkit-transform: translateY (10px) rotate (-45deg);
   transform: translateY(10px) rotate(-45deg);
+  /* background-color: black; */
 }
 
 .menu-trigger.active-1 span:nth-of-type(2) {
@@ -122,4 +128,63 @@
 .menu-trigger.active-1 span:nth-of-type(3) {
   -webkit-transform: translateY(-10px) rotate(45deg);
   transform: translateY(-10px) rotate(45deg);
+  /* background-color: black; */
+}
+
+/* 사이드 바 -> 미디어 쿼리 해야 함 */
+.side-bar {
+  position: absolute;
+  transition: 0.5s;
+  z-index: 1;
+  top : 0;
+  right : -25vw;
+  height:  100%;
+  width: 25vw;
+  background-color: rgb(0,0, 0, 0.8);
+}
+.side-bar.show {
+  transition: 0.5s;
+  position: absolute;
+  z-index: 1;
+  top : 0;
+  right : 0;
+  height:  100%;
+  width: 25vw;
+  color: white;
+  background-color: rgb(0,0, 0, 0.8);
+}
+
+.side-bar h2 {
+  margin-top: 2rem;
+  margin-left: 1rem;
+  color : rgb(167, 173, 197)
+}
+.side-bar ul {
+  border-top: 1px solid gray;
+  border-bottom: 1px solid gray;
+  list-style: none;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+.side-bar li {
+  margin-top: 1rem;
+}
+.side-bar li:first-child{
+  margin-top: 0;
+}
+.side-bar a {
+  text-decoration: none;
+  color: white;
+  font-size: 1.3rem;
+}
+.side-bar a:visited {
+  color: white;
+}
+.side-bar a:hover {
+  color : rgb(1, 1, 1, 0.5);
+}
+
+.side-bar-list {
+  height: 50vh;
+  overflow-y: auto;
 }

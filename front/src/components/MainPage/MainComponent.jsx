@@ -4,6 +4,7 @@ import { getAllCategories } from "../../modules/categoryReducer";
 import CategoryComponent from "./CategoryComponent";
 import LoadingComponent from "./LoadingComponent";
 import ScrollContainer from "react-indiana-drag-scroll";
+import { Link } from 'react-router-dom'
 import "./MainComponent.css";
 
 function MainComponent() {
@@ -11,7 +12,9 @@ function MainComponent() {
     (state) => state.categoryReducer
   );
   const dispatch = useDispatch();
+  const menuButtonRef = useRef(null);
   const menuRef = useRef(null);
+
 
   // 카테고리 목록 불러오기
   useEffect(() => {
@@ -25,7 +28,8 @@ function MainComponent() {
   }, [error]);
 
   const onClickMenuButton = (e) => {
-    menuRef.current.classList.toggle("active-1");
+    menuButtonRef.current.classList.toggle("active-1");
+    menuRef.current.classList.toggle("show");
   };
 
   return (
@@ -36,26 +40,40 @@ function MainComponent() {
         <h1 className="main-title">장따리 똥글</h1>
         <button
           className="menu-trigger"
-          ref={menuRef}
+          ref={menuButtonRef}
           onClick={onClickMenuButton}
         >
           <span></span>
           <span></span>
           <span></span>
         </button>
+        <div className="side-bar" ref={menuRef}>
+          <h2>장따리의 똥글</h2>
+          <ul className="side-bar-user">
+            <li><Link to="/about">Who is '장딱'</Link></li>
+            <li><Link to="/loginForm">로그인</Link></li>
+            <li><Link to="/joinForm">회원가입</Link></li>
+          </ul>
+          <h2>카테고리</h2>
+          <ul className="side-bar-list">
+            {categories && categories.map((v) => (
+              <li key={v.id}><Link>{v.name}</Link></li>
+            ))}
+          </ul>
+        </div>
       </header>
       {loading ? (
         <div className="main-loading">
           <LoadingComponent />
         </div>
       ) : (
-        <ScrollContainer className="scroll-container category-container">
-          {categories &&
-            categories.map((v) => (
-              <CategoryComponent key={v.id} category={v} />
-            ))}
-        </ScrollContainer>
-      )}
+          <ScrollContainer className="scroll-container category-container">
+            {categories &&
+              categories.map((v) => (
+                <CategoryComponent key={v.id} category={v} />
+              ))}
+          </ScrollContainer>
+        )}
       <footer>
         <div className="footer-icons">
           <a
