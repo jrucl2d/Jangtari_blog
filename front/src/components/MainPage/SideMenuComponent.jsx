@@ -37,7 +37,9 @@ function SideMenuComponent({ isToggle, onClickMenuButton }) {
                 <h2>카테고리</h2>
                 <ul className="side-bar-list">
                     {categories && categories.map((v) => (
-                        <li key={v.id}><Link to="/#">{v.name}</Link></li>
+                        <li key={v.id}><Link to="/#">
+                            {v.name}
+                        </Link></li>
                     ))}
                 </ul>
             </div>

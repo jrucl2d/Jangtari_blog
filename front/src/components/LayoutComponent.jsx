@@ -2,9 +2,10 @@ import React, { useRef, useState } from "react";
 import "./MainPage/MainComponent.css";
 import MainComponent from './MainPage/MainComponent';
 import SideMenuComponent from './MainPage/SideMenuComponent';
-import { Route } from 'react-router-dom';
+import { Route, Link } from 'react-router-dom';
 import LoginFormComponent from './JoinAndLogin/LoginFormComponent';
 import JoinFormComponent from './JoinAndLogin/JoinFormComponent';
+import AboutComponent from './JoinAndLogin/AboutComponent';
 
 function LayoutComponent() {
 
@@ -21,7 +22,7 @@ function LayoutComponent() {
             className="main-body"
         >
             <header>
-                <h1 className="main-title">장따리 똥글</h1>
+                <h1 className="main-title"><Link to="/">장따리 똥글</Link></h1>
                 <button
                     className="menu-trigger"
                     ref={menuButtonRef}
@@ -34,6 +35,7 @@ function LayoutComponent() {
                 <SideMenuComponent isToggle={isToggle} onClickMenuButton={onClickMenuButton} />
             </header>
             <Route exact path="/" component={MainComponent} />
+            <Route exact path="/about" component={AboutComponent} />
             <Route exact path="/loginForm" component={LoginFormComponent} />
             <Route exact path="/joinForm" component={JoinFormComponent} />
             <footer>
@@ -70,7 +72,7 @@ function LayoutComponent() {
                             Yusegonggeun
               </a>
                     </div>
-                    <div>010-2578-4068</div>
+                    <div>Contact to Yu : 010-2578-4068</div>
                 </div>
             </footer>
         </div>

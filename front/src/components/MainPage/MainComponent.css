@@ -181,15 +181,20 @@ footer {
   transition: all 0.4s;
 }
 .side-bar h2 {
+  display: inline-block;
   margin-top: 1.6rem;
   margin-left: 1rem;
-  color : rgb(167, 173, 197)
+  color : rgb(167, 173, 197);
 }
 .side-bar ul {
   border-top: 3px solid gray;
   list-style: none;
   padding-top: 1rem;
   padding-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 .side-bar li {
   margin-top: 1rem;
@@ -208,8 +213,16 @@ footer {
 .side-bar a:hover {
   color : rgb(1, 1, 1, 0.5);
 }
-
 .side-bar-list {
   height: 50vh;
   overflow-y: auto;
+}
+
+.category-add-btn{
+  font-size: small;
+  display: inline-block;
+  background: none;
+  border: none;
+  color:white;
+  margin:auto;
 }
