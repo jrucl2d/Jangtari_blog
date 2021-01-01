@@ -7,12 +7,12 @@ function LoginFormComponent() {
         <div>
             <h1>로그인</h1>
             <Form className="join-login-form">
-                <Form.Group controlId="formBasicEmail">
+                <Form.Group controlId="username">
                     <Form.Label>아이디</Form.Label>
                     <Form.Control type="text" placeholder="아이디 입력" />
                 </Form.Group>
 
-                <Form.Group controlId="formBasicPassword">
+                <Form.Group controlId="password">
                     <Form.Label>비밀번호</Form.Label>
                     <Form.Control type="password" placeholder="비밀번호 입력" />
                 </Form.Group>

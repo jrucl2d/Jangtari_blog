@@ -1,9 +1,20 @@
 import React, { useRef, useEffect } from 'react'
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { getAllCategories } from '../../modules/categoryReducer';
 
 function SideMenuComponent({ isToggle, onClickMenuButton }) {
+    const dispatch = useDispatch();
+    const { categories } = useSelector(
+        (state) => state.categoryReducer
+    );
     const menuRef = useRef(null);
+    useEffect(() => {
+        if (categories === null) {
+            dispatch(getAllCategories());
+        }
+        // eslint-disable-next-line
+    }, [])
     useEffect(() => {
         if (isToggle) {
             menuRef.current.classList.add("show")
@@ -12,9 +23,7 @@ function SideMenuComponent({ isToggle, onClickMenuButton }) {
         }
     }, [isToggle])
 
-    const { categories } = useSelector(
-        (state) => state.categoryReducer
-    );
+
     return (
         <>
             <div className="side-bar" ref={menuRef}>

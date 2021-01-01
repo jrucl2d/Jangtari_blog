@@ -4,6 +4,7 @@ import MainComponent from './MainPage/MainComponent';
 import SideMenuComponent from './MainPage/SideMenuComponent';
 import { Route } from 'react-router-dom';
 import LoginFormComponent from './JoinAndLogin/LoginFormComponent';
+import JoinFormComponent from './JoinAndLogin/JoinFormComponent';
 
 function LayoutComponent() {
 
@@ -34,7 +35,7 @@ function LayoutComponent() {
             </header>
             <Route exact path="/" component={MainComponent} />
             <Route exact path="/loginForm" component={LoginFormComponent} />
-
+            <Route exact path="/joinForm" component={JoinFormComponent} />
             <footer>
                 <div className="footer-icons">
                     <a
