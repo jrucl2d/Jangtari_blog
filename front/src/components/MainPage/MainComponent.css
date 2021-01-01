@@ -5,6 +5,8 @@
   justify-content: space-between;
   background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
     url(https://source.unsplash.com/random/1920x1080);
+    width: 100vw;
+  overflow-x: hidden;
 }
 .main-body header {
   height: 12vh;
@@ -133,24 +135,27 @@
 
 /* 사이드 바 -> 미디어 쿼리 해야 함 */
 .side-bar {
-  position: absolute;
-  transition: 0.5s;
+  position: fixed;
+  transition: all 0.5s;
   z-index: 1;
   top : 0;
   right : -25vw;
   height:  100%;
   width: 25vw;
-  background-color: rgb(0,0, 0, 0.8);
+  overflow-x: hidden;
+  background-color: rgb(0, 0, 0, 0);
+  opacity: 0;
 }
 .side-bar.show {
-  transition: 0.5s;
-  position: absolute;
+  transition: all 0.5s;
+  position: fixed;
   z-index: 1;
   top : 0;
   right : 0;
   height:  100%;
   width: 25vw;
-  color: white;
+  opacity: 1;
+  color: white; 
   background-color: rgb(0,0, 0, 0.8);
 }
 
@@ -160,8 +165,7 @@
   color : rgb(167, 173, 197)
 }
 .side-bar ul {
-  border-top: 1px solid gray;
-  border-bottom: 1px solid gray;
+  border-top: 3px solid gray;
   list-style: none;
   padding-top: 1rem;
   padding-bottom: 1rem;

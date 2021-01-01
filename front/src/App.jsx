@@ -1,11 +1,11 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import MainComponent from "./components/MainPage/MainComponent";
+import LayoutComponent from './components/LayoutComponent';
 
 function App() {
   return (
     <div className="App" style={{ height: "100%" }}>
-      <Route exact path="/" component={MainComponent} />
+      <Route exact path="/" component={LayoutComponent} />
     </div>
   );
 }
