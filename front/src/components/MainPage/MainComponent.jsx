@@ -31,9 +31,6 @@ function MainComponent() {
   return (
     <div
       className="main-body"
-      style={{
-        background: `linear-gradient( rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8) ), url(https://source.unsplash.com/random/1920x1080)`,
-      }}
     >
       <header>
         <h1 className="main-title">장따리 똥글</h1>
