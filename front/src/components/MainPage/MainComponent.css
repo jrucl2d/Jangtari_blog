@@ -1,0 +1,118 @@
+.main-body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.main-body header {
+  height: 12vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.main-title {
+  color: white;
+  display: inline-block;
+  margin-left: 3rem;
+}
+.main-loading {
+  height: 80vh;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.category-container {
+  width: 95%;
+  margin: 0 auto;
+  white-space: nowrap;
+  overflow-x: scroll;
+}
+.footer-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.main-body footer img {
+  height: 30px;
+  width: 30px;
+  margin-right: 0.6rem;
+}
+.main-body footer img:nth-child(2),
+.main-body footer img:nth-child(4) {
+  height: 35px;
+  width: 35px;
+}
+
+.footer-introduce {
+  color: white;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.footer-introduce a,
+.footer-introduce a:link,
+.footer-introduce a:visited,
+.footer-introduce a:hover {
+  text-decoration: none;
+  color: white;
+}
+
+.footer-introduce div:last-child {
+  font-size: small;
+}
+
+/* 햄버거 메뉴 */
+.menu-trigger,
+.menu-trigger span {
+  display: inline-block;
+  transition: all 0.4s;
+  box-sizing: border-box;
+}
+.menu-trigger {
+  position: relative;
+  width: 30px;
+  height: 24px;
+  border: 0;
+  outline: 0;
+  margin-right: 3rem;
+  background-color: black;
+}
+.menu-trigger:hover {
+  cursor: pointer;
+}
+
+.menu-trigger span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: #fff;
+  border-radius: 4px;
+}
+
+.menu-trigger span:nth-of-type(1) {
+  top: 0;
+}
+
+.menu-trigger span:nth-of-type(2) {
+  top: 10px;
+}
+
+.menu-trigger span:nth-of-type(3) {
+  bottom: 0;
+}
+
+.menu-trigger.active-1 span:nth-of-type(1) {
+  -webkit-transform: translateY (10px) rotate (-45deg);
+  transform: translateY(10px) rotate(-45deg);
+}
+
+.menu-trigger.active-1 span:nth-of-type(2) {
+  opacity: 0;
+}
+
+.menu-trigger.active-1 span:nth-of-type(3) {
+  -webkit-transform: translateY(-10px) rotate(45deg);
+  transform: translateY(-10px) rotate(45deg);
+}
