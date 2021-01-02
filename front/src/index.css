@@ -17,13 +17,17 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-a{
+a {
   text-decoration: none;
-  color : white;
+  color: white;
 }
-a:visited{
-  color : white;
+a:visited {
+  color: white;
 }
 a:hover {
-  color : rgb(1, 1, 1, 0.2);
+  color: rgb(1, 1, 1, 0.2);
+}
+.main-title a:hover {
+  color: white;
+  text-decoration: none;
 }

@@ -1,22 +1,21 @@
-h1{
-    color: white;
-    text-align: center;
-    margin-bottom: 2.5rem;
+h1 {
+  color: white;
+  text-align: center;
+  margin-bottom: 2.5rem;
 }
 
 .join-login-form {
-    min-width: 30vw;
-    color : white
+  min-width: 30vw;
+  color: white;
 }
 .join-login-form button {
-    margin-top : 2rem;
-    margin-right : 1rem;
+  margin-top: 2rem;
+  margin-right: 1rem;
 }
 #join-button {
-    margin-top : 1rem;
+  margin-top: 1rem;
 }
 .join-password-check {
-    color : rgb(226, 58, 58); 
-    font-size: small;
-    display: none;
+  color: rgb(226, 58, 58);
+  font-size: small;
 }
