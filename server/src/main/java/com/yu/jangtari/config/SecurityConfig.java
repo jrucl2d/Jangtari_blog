@@ -14,9 +14,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JWTTokenProvider jwtTokenProvider;
+    private final RedisUtil redisUtil;
 
-    public SecurityConfig(JWTTokenProvider jwtTokenProvider) {
+    public SecurityConfig(JWTTokenProvider jwtTokenProvider, RedisUtil redisUtil) {
         this.jwtTokenProvider = jwtTokenProvider;
+        this.redisUtil = redisUtil;
     }
 
     @Bean
@@ -41,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").hasAnyRole("ADMIN")
                 .antMatchers("/**").permitAll()
                 .and()
-                .addFilterBefore(new JWTAuthenticationFilter(jwtTokenProvider), // 사용자 인증 처리 필터 전에 커스텀 필터를 통해 JWT 토큰을 가지고 사용자 정보를 넣어준다.
+                .addFilterBefore(new JWTAuthenticationFilter(jwtTokenProvider, redisUtil), // 사용자 인증 처리 필터 전에 커스텀 필터를 통해 JWT 토큰을 가지고 사용자 정보를 넣어준다.
                         UsernamePasswordAuthenticationFilter.class);
     }
 }

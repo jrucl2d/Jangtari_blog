@@ -4,7 +4,7 @@ import com.yu.jangtari.common.CustomError;
 import com.yu.jangtari.common.CustomException;
 import com.yu.jangtari.common.CustomResponse;
 import com.yu.jangtari.config.JWTTokenProvider;
-import com.yu.jangtari.config.RedisConfig;
+import com.yu.jangtari.config.RedisUtil;
 import com.yu.jangtari.domain.DTO.MemberDTO;
 import com.yu.jangtari.domain.Member;
 import com.yu.jangtari.domain.RoleType;
@@ -14,11 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 
@@ -36,7 +34,7 @@ public class MemberController {
     private MemberRepository memberRepository;
 
     @Autowired
-    private RedisConfig redisConfig;
+    private RedisUtil redisUtil;
 
     @GetMapping("/admin/haha")
     public Long wlejkf(){
@@ -83,10 +81,19 @@ public class MemberController {
         String refreshToken = jwtTokenProvider.createRefreshToken(member.getUsername());
         MemberDTO.Token token = new MemberDTO.Token(accessToken, refreshToken);
 
-        redisConfig.setDataExpire(refreshToken, member.getUsername(), jwtTokenProvider.REFRESH_TOKEN_VALID_TIME);
+        redisUtil.setDataExpire(refreshToken, member.getUsername(), jwtTokenProvider.REFRESH_TOKEN_VALID_TIME);
 
         return new ResponseEntity<>(new CustomResponse<>
                 (null, token),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/signout")
+    public ResponseEntity<CustomResponse> logout(HttpServletRequest request){
+        String refreshToken = jwtTokenProvider.resolveRefreshToken(request); // Refresh Token을 삭제
+        redisUtil.deleteData(refreshToken);
+
+        return new ResponseEntity<>(CustomResponse.OK(),
                 HttpStatus.OK);
     }
 }

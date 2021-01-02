@@ -20,7 +20,7 @@ import java.util.Date;
 @Component
 public class JWTTokenProvider {
 
-    private final long ACCESS_TOKEN_VALID_TIME = 10 * 60 * 1000L; // Access token 10분
+    private final long ACCESS_TOKEN_VALID_TIME = 1 * 60 * 1000L; // Access token 10분
     public final long REFRESH_TOKEN_VALID_TIME = 7 * 24 * 60 * 60 * 1000L; // Refresh token 1주일
     private String secretKey = "test";
 
