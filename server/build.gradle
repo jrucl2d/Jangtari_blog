@@ -43,6 +43,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    compile('org.springframework.boot:spring-boot-starter-data-redis') // spring-data-redis
+    compile group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2' //embedded-redis
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.security:spring-security-test'

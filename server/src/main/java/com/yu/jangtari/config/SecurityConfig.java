@@ -41,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").hasAnyRole("ADMIN")
                 .antMatchers("/**").permitAll()
                 .and()
-                .addFilterBefore(new JWTAuthenticationFilter(jwtTokenProvider), // JWTAuthenticationFilter를 UsernamePasswordAuthenticationFilter 앞에 둔다.
+                .addFilterBefore(new JWTAuthenticationFilter(jwtTokenProvider), // 사용자 인증 처리 필터 전에 커스텀 필터를 통해 JWT 토큰을 가지고 사용자 정보를 넣어준다.
                         UsernamePasswordAuthenticationFilter.class);
     }
 }

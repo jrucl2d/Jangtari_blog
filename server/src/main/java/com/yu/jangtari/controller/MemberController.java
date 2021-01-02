@@ -4,6 +4,7 @@ import com.yu.jangtari.common.CustomError;
 import com.yu.jangtari.common.CustomException;
 import com.yu.jangtari.common.CustomResponse;
 import com.yu.jangtari.config.JWTTokenProvider;
+import com.yu.jangtari.config.RedisConfig;
 import com.yu.jangtari.domain.DTO.MemberDTO;
 import com.yu.jangtari.domain.Member;
 import com.yu.jangtari.domain.RoleType;
@@ -13,11 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 
@@ -33,6 +34,14 @@ public class MemberController {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private RedisConfig redisConfig;
+
+    @GetMapping("/admin/haha")
+    public Long wlejkf(){
+        return 1L;
+    }
 
     // 회원가입
     @PostMapping("/join")
@@ -70,9 +79,14 @@ public class MemberController {
                     new CustomError(new CustomException("비밀번호 오류", "로그인 실패")),null),
                     HttpStatus.UNAUTHORIZED);
         }
-        String response = jwtTokenProvider.createToken(member.getUsername(), Arrays.asList(member1.get().getRole().name()));
+        String accessToken = jwtTokenProvider.createAccessToken(member.getUsername());
+        String refreshToken = jwtTokenProvider.createRefreshToken(member.getUsername());
+        MemberDTO.Token token = new MemberDTO.Token(accessToken, refreshToken);
+
+        redisConfig.setDataExpire(refreshToken, member.getUsername(), jwtTokenProvider.REFRESH_TOKEN_VALID_TIME);
+
         return new ResponseEntity<>(new CustomResponse<>
-                (null, response),
+                (null, token),
                 HttpStatus.OK);
     }
 }

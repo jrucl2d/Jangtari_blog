@@ -15,15 +15,15 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Component
 public class JWTTokenProvider {
+
+    private final long ACCESS_TOKEN_VALID_TIME = 10 * 60 * 1000L; // Access token 10분
+    public final long REFRESH_TOKEN_VALID_TIME = 7 * 24 * 60 * 60 * 1000L; // Refresh token 1주일
     private String secretKey = "test";
 
-    // 토큰 유효시간 30분
-    private long tokenValidTime = 30 * 60 * 1000L;
 
     private final UserDetailsService userDetailsService;
 
@@ -33,16 +33,23 @@ public class JWTTokenProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public String createToken(String userPk, List<String> roles) {
+    private String createToken(String userPk, Long theTime) {
         Claims claims = Jwts.claims().setSubject(userPk); // JWT payload에 저장되는 정보
-        claims.put("roles", roles); // key-value 쌍으로 저장됨
+        claims.put("username", userPk); // key-value 쌍으로 저장됨
         Date now = new Date();
         return Jwts.builder()
                 .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 발행 시간
-                .setExpiration(new Date(now.getTime() + tokenValidTime)) // 유효 기간
+                .setExpiration(new Date(now.getTime() + theTime)) // 유효 기간
                 .signWith(SignatureAlgorithm.HS256, secretKey) // 암호화 알고리즘
                 .compact();
+    }
+
+    public String createAccessToken(String userPK){
+        return createToken(userPK, ACCESS_TOKEN_VALID_TIME);
+    }
+    public String createRefreshToken(String userPK){
+        return createToken(userPK, REFRESH_TOKEN_VALID_TIME);
     }
 
     // JWT 토큰에서 인증 정보 조회
@@ -55,9 +62,13 @@ public class JWTTokenProvider {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
     // Request Header에서 token 가져오기
-    public String resolveToken(HttpServletRequest request){
+    public String resolveAccessToken(HttpServletRequest request){
         return request.getHeader("X-AUTH-TOKEN"); // "X-AUTH-TOKEN" : "토큰 값"
     }
+    public String resolveRefreshToken(HttpServletRequest request){
+        return request.getHeader("REFRESH-TOKEN");
+    }
+
     // 토큰의 유효성, 만료일자 확인
     public boolean validateToken(String jwtToken) {
         try{

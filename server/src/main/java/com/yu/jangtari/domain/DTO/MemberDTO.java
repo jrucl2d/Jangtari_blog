@@ -24,4 +24,13 @@ public class MemberDTO {
         private String username;
         private String password;
     }
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Token{
+        private String accessToken;
+        private String refreshToken;
+    }
 }
