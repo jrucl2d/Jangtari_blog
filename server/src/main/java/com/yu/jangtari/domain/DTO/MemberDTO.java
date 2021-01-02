@@ -15,4 +15,13 @@ public class MemberDTO {
         private String nickname;
         private String password;
     }
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Login {
+        private String username;
+        private String password;
+    }
 }

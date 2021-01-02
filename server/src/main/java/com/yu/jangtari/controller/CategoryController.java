@@ -26,7 +26,7 @@ public class CategoryController {
                 HttpStatus.OK);
     }
 
-    @PostMapping("/addCategory")
+    @PostMapping("/admin/addCategory")
     public ResponseEntity<CustomResponse> addCategory(@RequestBody CategoryDTO.Add newCategory){
         try{
             categoryService.addCategory(newCategory);
@@ -39,7 +39,7 @@ public class CategoryController {
         }
     }
 
-    @PutMapping("/updateCategory")
+    @PutMapping("/admin/updateCategory")
     public ResponseEntity<CustomResponse> updateCategory(@RequestBody CategoryDTO.Update theCategory){
         try {
             categoryService.updateCategory(theCategory);
@@ -53,7 +53,7 @@ public class CategoryController {
 
     }
 
-    @DeleteMapping("/deleteCategory/{id}")
+    @DeleteMapping("/admin/deleteCategory/{id}")
     public ResponseEntity<CustomResponse> deleteCategory(@PathVariable(value = "id") Long theId){
         try {
             categoryService.deleteCategory(theId);

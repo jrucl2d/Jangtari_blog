@@ -74,7 +74,7 @@ public class PostController {
         }
     }
 
-    @PostMapping("/addPost")
+    @PostMapping("/admin/addPost")
     public ResponseEntity<CustomResponse> addPost(@RequestBody PostDTO.Add thePost){
         try{
             postService.addPost(thePost);
@@ -87,7 +87,7 @@ public class PostController {
         }
     }
 
-    @PutMapping("/updatePost")
+    @PutMapping("/admin/updatePost")
     public ResponseEntity<CustomResponse> updatePost(@RequestBody PostDTO.Update thePost){
         try{
             postService.updatePost(thePost);
@@ -100,7 +100,7 @@ public class PostController {
         }
     }
 
-    @DeleteMapping("/deletePost/{id}")
+    @DeleteMapping("/admin/deletePost/{id}")
     public ResponseEntity<CustomResponse> deletePost(@PathVariable(value = "id")Long postId){
         try{
             postService.deletePost(postId);

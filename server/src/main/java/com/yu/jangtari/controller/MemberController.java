@@ -1,5 +1,7 @@
 package com.yu.jangtari.controller;
 
+import com.yu.jangtari.common.CustomError;
+import com.yu.jangtari.common.CustomException;
 import com.yu.jangtari.common.CustomResponse;
 import com.yu.jangtari.config.JWTTokenProvider;
 import com.yu.jangtari.domain.DTO.MemberDTO;
@@ -14,6 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 
 @RequiredArgsConstructor
@@ -38,10 +43,36 @@ public class MemberController {
         newMember.setPassword(passwordEncoder.encode(member.getPassword()));
         newMember.setRole(RoleType.USER);
 
-        long response = memberRepository.save(newMember).getId();
+        try {
+            memberRepository.save(newMember).getId();
+            return new ResponseEntity<>(CustomResponse.OK(),
+                    HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(new CustomResponse(
+                    new CustomError(new CustomException(e.getMessage(), "회원가입 실패")),null),
+                    HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    // 로그인
+    @PostMapping("/login")
+    public ResponseEntity<CustomResponse> login(@RequestBody MemberDTO.Login member) {
+
+        Optional<Member> member1 = memberRepository.findByUsername(member.getUsername());
+        if(!member1.isPresent()){
+            return new ResponseEntity<>(new CustomResponse(
+                    new CustomError(new CustomException("회원 정보 없음", "로그인 실패")),null),
+                    HttpStatus.UNAUTHORIZED);
+        }
+        if(!passwordEncoder.matches(member.getPassword(), member1.get().getPassword())){
+            return new ResponseEntity<>(new CustomResponse(
+                    new CustomError(new CustomException("비밀번호 오류", "로그인 실패")),null),
+                    HttpStatus.UNAUTHORIZED);
+        }
+        String response = jwtTokenProvider.createToken(member.getUsername(), Arrays.asList(member1.get().getRole().name()));
         return new ResponseEntity<>(new CustomResponse<>
                 (null, response),
                 HttpStatus.OK);
     }
-
 }
