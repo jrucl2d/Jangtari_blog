@@ -6,7 +6,7 @@
   align-items: center;
   background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
     url(https://source.unsplash.com/random/1920x1080);
-    width: 100vw;
+  width: 100vw;
   overflow-x: hidden;
 }
 .main-body header {
@@ -29,9 +29,8 @@
   justify-content: center;
   align-items: center;
 }
-.main-loading > div{
-  background: rgb(0,0,0,0);
-
+.main-loading > div {
+  background: rgb(0, 0, 0, 0);
 }
 .category-container {
   width: 95%;
@@ -145,7 +144,7 @@ footer {
   z-index: 1;
   width: 75vw;
   height: 200%;
-  top:0;
+  top: 0;
   left: -75vw;
   background-color: rgb(0, 0, 0, 0);
   transition: all 0.4s;
@@ -153,9 +152,9 @@ footer {
 .side-bar {
   position: fixed;
   z-index: 1;
-  top : 0;
-  right : -25vw;
-  height:  100%;
+  top: 0;
+  right: -25vw;
+  height: 100%;
   width: 25vw;
   overflow-x: hidden;
   background-color: rgb(0, 0, 0, 0);
@@ -166,17 +165,17 @@ footer {
   transition: all 0.4s;
   position: fixed;
   z-index: 1;
-  top : 0;
-  right : 0;
-  height:  100%;
+  top: 0;
+  right: 0;
+  height: 100%;
   width: 25vw;
   opacity: 1;
-  color: white; 
-  background-color: rgb(0,0, 0, 0.8);
+  color: white;
+  background-color: rgb(0, 0, 0, 0.8);
 }
-.side-bar.show + .side-bar-curtain{
+.side-bar.show + .side-bar-curtain {
   background-color: rgb(0, 0, 0, 0.4);
-  top:0;
+  top: 0;
   left: 0vw;
   transition: all 0.4s;
 }
@@ -184,7 +183,8 @@ footer {
   display: inline-block;
   margin-top: 1.6rem;
   margin-left: 1rem;
-  color : rgb(167, 173, 197);
+  font-size: 1.6rem;
+  color: rgb(167, 173, 197);
 }
 .side-bar ul {
   border-top: 3px solid gray;
@@ -199,7 +199,7 @@ footer {
 .side-bar li {
   margin-top: 1rem;
 }
-.side-bar li:first-child{
+.side-bar li:first-child {
   margin-top: 0;
 }
 .side-bar a {
@@ -211,18 +211,18 @@ footer {
   color: white;
 }
 .side-bar a:hover {
-  color : rgb(1, 1, 1, 0.5);
+  color: rgb(1, 1, 1, 0.5);
 }
 .side-bar-list {
   height: 50vh;
   overflow-y: auto;
 }
 
-.category-add-btn{
+.category-add-btn {
   font-size: small;
   display: inline-block;
   background: none;
   border: none;
-  color:white;
-  margin:auto;
+  color: white;
+  margin: auto;
 }

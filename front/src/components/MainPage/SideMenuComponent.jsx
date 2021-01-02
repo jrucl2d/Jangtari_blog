@@ -62,12 +62,13 @@ function SideMenuComponent({ isToggle, onClickMenuButton }) {
               </Link>
             </li>
           )}
-
-          <li>
-            <Link onClick={() => onClickMenuButton()} to="/joinForm">
-              회원가입
-            </Link>
-          </li>
+          {localStorage.getItem("role") == null && (
+            <li>
+              <Link onClick={() => onClickMenuButton()} to="/joinForm">
+                회원가입
+              </Link>
+            </li>
+          )}
         </ul>
         <h2>카테고리</h2>
         <ul className="side-bar-list">
