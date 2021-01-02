@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
@@ -30,11 +31,14 @@ public class CommentService {
         Comment comment1 = new Comment();
         Post post = new Post();
         // Principal에서 가져오기 principal.getName(); 이런식
-        Member member = memberRepository.findByUsername("jangtari");
+        Optional<Member> member = memberRepository.findByUsername("jangtari");
+        if (!member.isPresent()){
+            throw new CustomException("사용자가 존재하지 않습니다.", "댓글 추가 실패");
+        }
         post.setId(comment.getPostId());
         comment1.setPost(post);
         comment1.setComment(comment.getComment());
-        comment1.setMember(member);
+        comment1.setMember(member.get());
         if(comment.getRecommentId() != null){
             Object parentRecomment = commentRepository.getRecommentByRecommentId(comment.getRecommentId());
             String theString = "";
