@@ -9,6 +9,15 @@ export const getAllCategories = () => async (dispatch) => {
     dispatch({ type: "GET_ALL_ERROR,", error: err });
   }
 };
+export const addCategory = (newInfo) => async (dispatch) => {
+  try {
+    const newId = await categoryAPI.add(newInfo);
+    newInfo["id"] = newId;
+    dispatch({ type: "ADD_INFO_SUCCESS", newInfo });
+  } catch (err) {
+    dispatch({ type: "ADD_INFO_ERROR,", error: err });
+  }
+};
 export const updateCategory = (newInfo) => async (dispatch) => {
   try {
     await categoryAPI.update(newInfo);
@@ -48,6 +57,13 @@ export default function categoryReducer(state = initialState, action) {
         categories: action.result,
         error: null,
       };
+    case "ADD_INFO_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        categories: [...state.categories, action.newInfo],
+        error: null,
+      };
     case "UPDATE_INFO_SUCCESS":
       return {
         ...state,
@@ -64,6 +80,7 @@ export default function categoryReducer(state = initialState, action) {
         categories: state.categories.filter((v) => v.id !== action.id),
         error: null,
       };
+    case "ADD_INFO_ERROR":
     case "GET_ALL_ERROR":
     case "UPDATE_INFO_ERROR":
     case "DELETE_INFO_ERROR":

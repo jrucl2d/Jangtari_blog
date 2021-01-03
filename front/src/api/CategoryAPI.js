@@ -5,7 +5,11 @@ export const getAll = async () => {
   const result = data.result;
   return result;
 };
-
+export const add = async (newInfo) => {
+  const { data } = await axios.post("/admin/addCategory", newInfo);
+  const result = data.result;
+  return result;
+};
 export const update = async (newInfo) => {
   await axios.put("/admin/updateCategory", newInfo);
 };

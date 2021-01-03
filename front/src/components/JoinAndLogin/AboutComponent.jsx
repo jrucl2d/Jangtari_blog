@@ -82,7 +82,9 @@ function AboutComponent() {
       return;
     }
     dispatch(setJangTtak(infoChange));
-    alert("성공적으로 변경되었습니다.");
+    setTimeout(() => {
+      alert("성공적으로 변경되었습니다.");
+    }, 500);
   };
 
   return (

@@ -3,7 +3,7 @@ import { Button, Modal } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { updateCategory } from "../../modules/categoryReducer";
 
-function CategorySettginModal({ setModalShow, modalShow, category }) {
+function CategoryUpdateModal({ setModalShow, modalShow, category }) {
   const dispatch = useDispatch();
   const [imageBase64, setImageBase64] = useState(""); // base64 정보
   const [infoChange, setInfoChange] = useState({
@@ -61,8 +61,10 @@ function CategorySettginModal({ setModalShow, modalShow, category }) {
       return;
     }
     dispatch(updateCategory(infoChange));
-    alert("성공적으로 변경되었습니다.");
-    onClose();
+    setTimeout(() => {
+      alert("성공적으로 변경되었습니다.");
+      onClose();
+    }, 500);
   };
 
   return (
@@ -119,4 +121,4 @@ function CategorySettginModal({ setModalShow, modalShow, category }) {
   );
 }
 
-export default CategorySettginModal;
+export default CategoryUpdateModal;

@@ -3,8 +3,9 @@ import { Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteCategory } from "../../modules/categoryReducer";
 import LoadingComponent from "../MainPage/LoadingComponent";
-import CategorySettginModal from "./CategorySettginModal";
+import CategoryUpdateModal from "./CategoryUpdateModal";
 import "./CategorySettingStyle.css";
+import CategoryAddModal from "./CategoryAddModal";
 
 function CategorySettingComponent({ history }) {
   const dispatch = useDispatch();
@@ -17,7 +18,8 @@ function CategorySettingComponent({ history }) {
     "light",
     "dark",
   ]);
-  const [modalShow, setModalShow] = useState(false);
+  const [updateModalShow, setUpdateModalShow] = useState(false);
+  const [addModalShow, setAddModalShow] = useState(false);
   const [theCategory, setTheCategory] = useState({
     name: "",
     picture: "",
@@ -44,7 +46,9 @@ function CategorySettingComponent({ history }) {
   const onClickDelete = (e) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
     dispatch(deleteCategory(+e.target.name));
-    alert("삭제되었습니다.");
+    setTimeout(() => {
+      alert("삭제되었습니다.");
+    }, 500);
   };
 
   return (
@@ -54,41 +58,50 @@ function CategorySettingComponent({ history }) {
           <LoadingComponent />
         </div>
       ) : (
-        <ul className="category-list">
-          {categories &&
-            categories.map((v, i) => (
-              <li key={v.id}>
-                <div>{v.name}</div>
-                <div>
-                  <Button
-                    onClick={() => {
-                      setTheCategory({
-                        id: v.id,
-                        name: v.name,
-                        picture: v.picture,
-                      });
-                      setModalShow(true);
-                    }}
-                    variant={`outline-${colorRef.current[i]}`}
-                  >
-                    수정
-                  </Button>
-                  <Button
-                    variant="outline-danger"
-                    name={v.id}
-                    onClick={onClickDelete}
-                  >
-                    삭제
-                  </Button>
-                </div>
-              </li>
-            ))}
-        </ul>
+        <>
+          <ul className="category-list">
+            {categories &&
+              categories.map((v, i) => (
+                <li key={v.id}>
+                  <div>{v.name}</div>
+                  <div>
+                    <Button
+                      onClick={() => {
+                        setTheCategory({
+                          id: v.id,
+                          name: v.name,
+                          picture: v.picture,
+                        });
+                        setUpdateModalShow(true);
+                      }}
+                      variant={`outline-${colorRef.current[i]}`}
+                    >
+                      수정
+                    </Button>
+                    <Button
+                      variant="outline-danger"
+                      name={v.id}
+                      onClick={onClickDelete}
+                    >
+                      삭제
+                    </Button>
+                  </div>
+                </li>
+              ))}
+          </ul>
+          <Button variant="outline-info" onClick={() => setAddModalShow(true)}>
+            카테고리 추가
+          </Button>
+        </>
       )}
-      <CategorySettginModal
-        setModalShow={setModalShow}
-        modalShow={modalShow}
+      <CategoryUpdateModal
+        setModalShow={setUpdateModalShow}
+        modalShow={updateModalShow}
         category={theCategory}
+      />
+      <CategoryAddModal
+        setModalShow={setAddModalShow}
+        modalShow={addModalShow}
       />
     </>
   );

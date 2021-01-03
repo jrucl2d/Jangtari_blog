@@ -7,7 +7,7 @@
   font-size: var(--middle-font);
   width: 50vw;
   height: 60vh;
-  overflow: auto;
+  overflow-y: auto;
 }
 .category-list li {
   display: flex;

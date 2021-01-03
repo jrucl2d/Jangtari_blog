@@ -23,7 +23,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public void addCategory(CategoryDTO.Add newCategory) throws CustomException {
+    public Long addCategory(CategoryDTO.Add newCategory) throws CustomException {
         Category category = new Category();
 
         if(newCategory.getName() == null || newCategory.getPicture() == null){
@@ -33,7 +33,8 @@ public class CategoryService {
         if(!newCategory.getPicture().equals("")){
             category.setPicture(newCategory.getPicture());
         }
-        categoryRepository.save(category);
+        Category saved = categoryRepository.save(category);
+        return saved.getId();
     }
 
     @Transactional

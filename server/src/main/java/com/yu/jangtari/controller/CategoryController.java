@@ -29,8 +29,8 @@ public class CategoryController {
     @PostMapping("/admin/addCategory")
     public ResponseEntity<CustomResponse> addCategory(@RequestBody CategoryDTO.Add newCategory){
         try{
-            categoryService.addCategory(newCategory);
-            return new ResponseEntity<>(CustomResponse.OK(),
+            Long newId = categoryService.addCategory(newCategory);
+            return new ResponseEntity<>(new CustomResponse<>(null, newId),
                     HttpStatus.CREATED);
         } catch (CustomException e){
             return new ResponseEntity<>(new CustomResponse<>
