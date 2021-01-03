@@ -127,7 +127,6 @@ footer {
 .menu-trigger.active-1 span:nth-of-type(1) {
   -webkit-transform: translateY (10px) rotate (-45deg);
   transform: translateY(10px) rotate(-45deg);
-  /* background-color: black; */
 }
 
 .menu-trigger.active-1 span:nth-of-type(2) {
@@ -137,10 +136,9 @@ footer {
 .menu-trigger.active-1 span:nth-of-type(3) {
   -webkit-transform: translateY(-10px) rotate(45deg);
   transform: translateY(-10px) rotate(45deg);
-  /* background-color: black; */
 }
 
-/* 사이드 바 -> 미디어 쿼리 해야 함 */
+/* 사이드 바 */
 .side-bar-curtain {
   position: fixed;
   z-index: 1;
@@ -225,4 +223,87 @@ footer {
 .side-bar .category-setting:focus {
   color: yellowgreen;
   font-size: var(--small-font);
+}
+
+/* 태블릿 */
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .menu-trigger {
+    right: -2rem;
+    top: 1rem;
+  }
+  .category-container {
+    width: 100%;
+  }
+  .side-bar-curtain {
+    width: 60vw;
+    left: -60vw;
+  }
+  .side-bar {
+    right: -40vw;
+    width: 40vw;
+  }
+  .side-bar.show {
+    width: 40vw;
+  }
+  .side-bar h2 {
+    font-size: var(--big-font);
+  }
+
+  .side-bar a {
+    font-size: var(--middle-font);
+  }
+
+  .side-bar-list {
+    height: 50vh;
+  }
+  .side-bar .category-setting,
+  .side-bar .category-setting:visited,
+  .side-bar .category-setting:focus {
+    font-size: var(--small-font);
+  }
+}
+/* 태블릿 가로 */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  .category-container {
+    width: 95%;
+  }
+}
+/* 폰 */
+@media screen and (max-width: 767px) {
+  .main-title {
+    font-size: var(--big-font);
+  }
+  .category-container {
+    width: 100%;
+  }
+
+  /* 햄버거 메뉴 */
+  .menu-trigger {
+    right: -2rem;
+    top: 1rem;
+  }
+  .side-bar-curtain {
+    width: 60vw;
+    left: -60vw;
+  }
+  .side-bar {
+    right: -40vw;
+    width: 40vw;
+  }
+  .side-bar.show {
+    width: 40vw;
+  }
+  .side-bar h2 {
+    font-size: var(--mbig);
+  }
+  .side-bar a {
+    font-size: var(--mmiddle);
+  }
+
+  .side-bar .category-setting,
+  .side-bar .category-setting:visited,
+  .side-bar .category-setting:focus {
+    font-size: var(--msmall);
+  }
 }

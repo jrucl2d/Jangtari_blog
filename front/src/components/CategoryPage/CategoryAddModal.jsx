@@ -71,7 +71,7 @@ function CategoryAddModal({ setModalShow, modalShow }) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="category-name">
+        <div className="category-update-name">
           <label htmlFor="">카테고리 제목 :</label>
           <input
             type="text"

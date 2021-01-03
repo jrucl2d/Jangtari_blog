@@ -26,17 +26,17 @@
 .modal-header {
   color: white;
 }
-.category-name {
+.category-update-name {
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
   font-size: var(--middle-font);
 }
-.category-name label {
+.category-update-name label {
   margin: 0;
   margin-right: 2rem;
 }
-.category-name input {
+.category-update-name input {
   background-color: rgb(0, 0, 0, 1);
   color: white;
   border: none;

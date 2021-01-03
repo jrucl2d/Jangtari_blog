@@ -9,6 +9,7 @@
 .category-box .category-name {
   margin: 0;
   height: 70vh;
+  font-size: var(--big-font);
   text-align: center;
   line-height: 70vh;
   opacity: 0;
@@ -26,4 +27,64 @@
   line-height: 70vh;
   opacity: 0.8;
   color: white;
+}
+
+/* 태블릿 */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .category-box {
+    display: inline-block;
+    background-image: url(https://source.unsplash.com/random//1280x720);
+    background-size: "cover";
+  }
+
+  .category-box .category-name {
+    margin: 0;
+    font-size: var(--large-font);
+    text-align: center;
+    opacity: 1;
+    background-color: rgb(1, 1, 1, 0.5);
+    color: white;
+  }
+  .category-box:hover .category-name,
+  .category-box:active .category-name {
+    margin: 0;
+    font-size: var(--large-font);
+    text-align: center;
+    opacity: 1;
+    background-color: rgb(1, 1, 1, 0.5);
+    color: white;
+  }
+}
+
+/* 폰 */
+@media screen and (max-width: 767px) {
+  .category-box {
+    display: inline-block;
+    height: 50vh;
+    width: 50vh;
+    background-image: url(https://source.unsplash.com/random//1280x720);
+    background-size: "cover";
+  }
+
+  .category-box .category-name {
+    margin: 0;
+    height: 50vh;
+    font-size: var(--big-font);
+    text-align: center;
+    line-height: 50vh;
+    opacity: 1;
+    background-color: rgb(1, 1, 1, 0.5);
+    color: white;
+  }
+  .category-box:hover .category-name,
+  .category-box:active .category-name {
+    margin: 0;
+    height: 50vh;
+    font-size: var(--big-font);
+    text-align: center;
+    line-height: 50vh;
+    opacity: 1;
+    background-color: rgb(1, 1, 1, 0.5);
+    color: white;
+  }
 }
