@@ -29,8 +29,9 @@ public class MemberDTO {
     @ToString
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Token{
-        private String accessToken;
-        private String refreshToken;
+    public static class Info{
+        private String nickname;
+        private String introduce;
+        private String picture;
     }
 }
