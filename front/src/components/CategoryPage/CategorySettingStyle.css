@@ -59,10 +59,52 @@
 
 /* 태블릿 */
 @media (min-width: 768px) and (max-width: 1024px) {
+  .category-list {
+    width: 90vw;
+    font-size: var(--big-font);
+  }
+  .category-list li Button {
+    margin-left: 1rem;
+  }
+  .modal-content {
+    width: 100vw;
+  }
+
+  .category-update-name {
+    font-size: var(--mlarge);
+  }
+  .category-update-name label {
+    margin-right: 1rem;
+  }
+  .category-picture img {
+    width: 60vw;
+  }
 }
 /* 태블릿 가로 */
 @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  .category-picture img {
+    width: 35vw;
+  }
 }
 /* 폰 */
 @media screen and (max-width: 767px) {
+  .category-list {
+    width: 90vw;
+  }
+  .category-list li Button {
+    margin-left: 1rem;
+  }
+  .modal-content {
+    width: 90vw;
+  }
+
+  .category-update-name {
+    font-size: var(--mmiddle);
+  }
+  .category-update-name label {
+    margin-right: 1rem;
+  }
+  .category-picture img {
+    width: 60vw;
+  }
 }
