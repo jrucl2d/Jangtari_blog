@@ -9,3 +9,7 @@ export const getAll = async () => {
 export const update = async (newInfo) => {
   await axios.put("/admin/updateCategory", newInfo);
 };
+
+export const deleteCate = async (id) => {
+  await axios.delete(`/admin/deleteCategory/${id}`);
+};

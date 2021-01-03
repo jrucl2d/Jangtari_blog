@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteCategory } from "../../modules/categoryReducer";
 import LoadingComponent from "../MainPage/LoadingComponent";
 import CategorySettginModal from "./CategorySettginModal";
 import "./CategorySettingStyle.css";
 
 function CategorySettingComponent({ history }) {
+  const dispatch = useDispatch();
   const colorRef = useRef([
     "primary",
     "secondary",
     "success",
     "warning",
-    "danger",
     "info",
     "light",
     "dark",
@@ -40,6 +41,12 @@ function CategorySettingComponent({ history }) {
     }
   }, [error]);
 
+  const onClickDelete = (e) => {
+    if (!window.confirm("정말 삭제하시겠습니까?")) return;
+    dispatch(deleteCategory(+e.target.name));
+    alert("삭제되었습니다.");
+  };
+
   return (
     <>
       {loading ? (
@@ -52,19 +59,28 @@ function CategorySettingComponent({ history }) {
             categories.map((v, i) => (
               <li key={v.id}>
                 <div>{v.name}</div>
-                <Button
-                  onClick={() => {
-                    setTheCategory({
-                      id: v.id,
-                      name: v.name,
-                      picture: v.picture,
-                    });
-                    setModalShow(true);
-                  }}
-                  variant={`outline-${colorRef.current[i]}`}
-                >
-                  수정
-                </Button>
+                <div>
+                  <Button
+                    onClick={() => {
+                      setTheCategory({
+                        id: v.id,
+                        name: v.name,
+                        picture: v.picture,
+                      });
+                      setModalShow(true);
+                    }}
+                    variant={`outline-${colorRef.current[i]}`}
+                  >
+                    수정
+                  </Button>
+                  <Button
+                    variant="outline-danger"
+                    name={v.id}
+                    onClick={onClickDelete}
+                  >
+                    삭제
+                  </Button>
+                </div>
               </li>
             ))}
         </ul>

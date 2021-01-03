@@ -14,6 +14,9 @@
   justify-content: space-between;
   margin-top: 1rem;
 }
+.category-list li Button {
+  margin-left: 1rem;
+}
 .modal-content {
   color: white;
   width: 50vw;
