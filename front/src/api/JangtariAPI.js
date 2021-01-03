@@ -5,3 +5,7 @@ export const getInfo = async () => {
   const result = data.result;
   return result;
 };
+
+export const setInfo = async (newInfo) => {
+  await axios.post("/admin/informationOfJangTtariUpdate", newInfo);
+};

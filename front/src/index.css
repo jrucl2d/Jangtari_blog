@@ -1,3 +1,10 @@
+:root {
+  --large-font: 2rem;
+  --big-font: 1.6rem;
+  --middle-font: 1.3rem;
+  --small-font: 1rem;
+}
+
 html,
 body {
   background-color: black;

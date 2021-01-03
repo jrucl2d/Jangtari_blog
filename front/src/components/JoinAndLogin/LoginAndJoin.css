@@ -26,6 +26,18 @@ h1 {
 }
 .about-content h2 {
   color: white;
+  font-style: italic;
+}
+.infos-show-introduce {
+  color: white;
+  background-color: rgb(0, 0, 0, 0);
+  resize: none;
+  border: none;
+  font-size: var(--big-font);
+  overflow: hidden;
+}
+.infos-show-introduce:focus {
+  outline: none;
 }
 .about-content img {
   height: 40vh;
@@ -46,19 +58,59 @@ h1 > button {
 
 .change-nick {
   color: white;
-  font-size: 2rem;
+  font-size: var(--large-font);
 }
 .change-nick input {
   height: 2.3rem;
   width: 10rem;
   margin-left: 0.6rem;
-  font-size: 1rem;
+  font-size: var(--small-font);
+  background-color: rgb(0, 0, 0, 0.2);
+  color: white;
 }
 
 .change-intro textarea {
   color: black;
-  font-size: 1rem;
+  font-size: var(--small-font);
   width: 16rem;
   height: 10rem;
   background-color: none;
+  background-color: rgb(0, 0, 0, 0.2);
+  color: white;
+  resize: none;
+  white-space: pre-wrap;
+}
+
+.about-picture {
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+.about-picture input {
+  margin-top: 0.5rem;
+  background-color: rgb(0, 0, 0, 0.3);
+}
+.about-file {
+  border: 1px solid white;
+  width: 8rem;
+  margin-top: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.about-upload {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+.about-label {
+  margin: 0;
+  padding: 0.3rem;
+}
+
+.about-label:hover {
+  cursor: pointer;
 }

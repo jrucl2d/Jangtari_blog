@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -55,6 +56,24 @@ public class MemberController {
         response.setIntroduce(member.get().getIntroduce());
         response.setPicture(member.get().getPicture());
         return new ResponseEntity<>(new CustomResponse(null, response),
+                HttpStatus.OK);
+    }
+
+    @Transactional
+    @PostMapping("/admin/informationOfJangTtariUpdate")
+    public ResponseEntity<CustomResponse> updateInfo(@RequestBody MemberDTO.Info newInfo){
+        Optional<Member> member = memberRepository.findById(1L);
+        if(!member.isPresent()){
+            return new ResponseEntity<>(new CustomResponse(
+                    new CustomError(new CustomException("그런사람 없음...", "장따리 찾기 실패")),null),
+                    HttpStatus.BAD_REQUEST);
+        }
+        member.get().setNickname(newInfo.getNickname());
+        member.get().setIntroduce(newInfo.getIntroduce());
+        member.get().setPicture(newInfo.getPicture());
+        memberRepository.save(member.get());
+
+        return new ResponseEntity<>(CustomResponse.OK(),
                 HttpStatus.OK);
     }
 

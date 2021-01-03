@@ -8,7 +8,6 @@ function LoginFormComponent({ history }) {
     username: "",
     password: "",
   });
-
   const onChangeInfo = (e) => {
     setInfo({
       ...info,
@@ -30,7 +29,7 @@ function LoginFormComponent({ history }) {
       } else {
         alert("로그인했습니다.");
       }
-      history.push("/");
+      history.goBack();
     } catch (err) {
       alert("아이디 혹은 비밀번호가 잘못되었습니다.");
       return;
