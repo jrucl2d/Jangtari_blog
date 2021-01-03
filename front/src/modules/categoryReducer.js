@@ -9,6 +9,14 @@ export const getAllCategories = () => async (dispatch) => {
     dispatch({ type: "GET_ALL_ERROR,", error: err });
   }
 };
+export const updateCategory = (newInfo) => async (dispatch) => {
+  try {
+    await categoryAPI.update(newInfo);
+    dispatch({ type: "UPDATE_INFO_SUCCESS", newInfo });
+  } catch (err) {
+    dispatch({ type: "UPDATE_INFO_ERROR,", error: err });
+  }
+};
 
 const initialState = {
   loading: false,
@@ -33,6 +41,24 @@ export default function categoryReducer(state = initialState, action) {
         error: null,
       };
     case "GET_ALL_ERROR":
+      return {
+        ...state,
+        loading: false,
+        categories: null,
+        error: action.error,
+      };
+    case "UPDATE_INFO_SUCCESS":
+      console.log(state);
+      console.log(action.newInfo);
+      return {
+        ...state,
+        loading: false,
+        categories: state.categories.map((v) =>
+          v.id === action.newInfo.id ? action.newInfo : v
+        ),
+        error: null,
+      };
+    case "UPDATE_INFO_ERROR":
       return {
         ...state,
         loading: false,

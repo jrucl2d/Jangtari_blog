@@ -9,9 +9,8 @@ function SideMenuComponent({ isToggle, onClickMenuButton }) {
   const { categories } = useSelector((state) => state.categoryReducer);
   const menuRef = useRef(null);
   useEffect(() => {
-    if (categories === null) {
-      dispatch(getAllCategories());
-    }
+    if (categories) return;
+    dispatch(getAllCategories());
     // eslint-disable-next-line
   }, []);
   useEffect(() => {
@@ -70,7 +69,22 @@ function SideMenuComponent({ isToggle, onClickMenuButton }) {
             </li>
           )}
         </ul>
-        <h2>카테고리</h2>
+        <h2>
+          카테고리
+          {localStorage.getItem("role") &&
+            localStorage.getItem("role") === "ADMIN" && (
+              <>
+                &nbsp;
+                <Link
+                  className="category-setting"
+                  onClick={() => onClickMenuButton()}
+                  to="/update/category"
+                >
+                  카테고리 설정
+                </Link>
+              </>
+            )}
+        </h2>
         <ul className="side-bar-list">
           {categories &&
             categories.map((v) => (

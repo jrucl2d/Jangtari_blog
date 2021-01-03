@@ -20,6 +20,10 @@
 }
 .category-box:hover .category-name,
 .category-box:active .category-name {
+  margin: 0;
+  height: 70vh;
+  text-align: center;
+  line-height: 70vh;
   opacity: 0.8;
   color: white;
 }

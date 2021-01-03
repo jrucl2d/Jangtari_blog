@@ -77,6 +77,10 @@ function AboutComponent() {
   };
 
   const onClickSubmit = async (e) => {
+    if (infoChange.nickname === "") {
+      alert("닉네임을 적어주세요.");
+      return;
+    }
     dispatch(setJangTtak(infoChange));
     alert("성공적으로 변경되었습니다.");
   };

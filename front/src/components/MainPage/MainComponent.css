@@ -220,11 +220,9 @@ footer {
   overflow-y: auto;
 }
 
-.category-add-btn {
-  font-size: small;
-  display: inline-block;
-  background: none;
-  border: none;
-  color: white;
-  margin: auto;
+.side-bar .category-setting,
+.side-bar .category-setting:visited,
+.side-bar .category-setting:focus {
+  color: yellowgreen;
+  font-size: var(--small-font);
 }

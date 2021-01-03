@@ -5,3 +5,7 @@ export const getAll = async () => {
   const result = data.result;
   return result;
 };
+
+export const update = async (newInfo) => {
+  await axios.put("/admin/updateCategory", newInfo);
+};
