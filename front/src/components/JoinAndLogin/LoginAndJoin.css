@@ -114,3 +114,134 @@ h1 > button {
 .about-label:hover {
   cursor: pointer;
 }
+
+/* 태블릿 */
+@media (min-width: 768px) and (max-width: 1024px) {
+  h1 {
+    margin-bottom: 1rem;
+    font-size: var(--large-font);
+  }
+
+  .join-login-form {
+    min-width: 70vw;
+    color: white;
+  }
+  .join-login-form button {
+    margin-top: 2rem;
+    margin-right: 1rem;
+  }
+
+  .about-content {
+    flex-direction: column;
+  }
+  .about-content h2 {
+    font-size: var(--large-font);
+  }
+  .about-content .infos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .infos-show-introduce {
+    font-size: var(--big-font);
+  }
+  .about-content img {
+    height: 30vh;
+    margin: 0 auto;
+    margin-bottom: 0.2rem;
+  }
+  .about-file {
+    border: 0.5px solid white;
+    height: 2rem;
+    width: 80%;
+    margin: 0.4rem auto;
+  }
+  .change-nick {
+    font-size: var(--mlarge);
+  }
+  .change-nick input {
+    font-size: var(--mlarge);
+  }
+  .infos .no-use {
+    display: none;
+  }
+  .change-intro textarea {
+    width: 50vw;
+    height: 22vh;
+    margin-top: 0.5rem;
+    font-size: var(--mlarge);
+  }
+}
+/* 태블릿 가로 */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  .about-content {
+    flex-direction: row;
+  }
+  .about-content .infos {
+    margin-left: 1rem;
+    align-items: flex-start;
+  }
+
+  .change-intro textarea {
+    width: 30vw;
+    height: 22vh;
+    margin-top: 0.5rem;
+    font-size: var(--mlarge);
+  }
+}
+/* 폰 */
+@media screen and (max-width: 767px) {
+  h1 {
+    margin-bottom: 1rem;
+    font-size: var(--large-font);
+  }
+  .join-login-form {
+    min-width: 70vw;
+    color: white;
+  }
+  .join-login-form button {
+    margin-top: 2rem;
+    margin-right: 1rem;
+  }
+
+  .about-content {
+    flex-direction: column;
+    margin-top: 3rem;
+  }
+  .about-page h1 {
+    font-size: var(--mlarge);
+    position: absolute;
+    top: 5rem;
+    left: 1rem;
+  }
+  .about-content h2 {
+    font-size: var(--mlarge);
+  }
+  .infos-show-introduce {
+    font-size: var(--mbig);
+  }
+  .about-content img {
+    height: 20vh;
+    margin: 0 auto;
+    margin-bottom: 0.2rem;
+  }
+  .about-file {
+    border: 0.5px solid white;
+    height: 2rem;
+    width: 80%;
+    margin: 0.4rem auto;
+  }
+  .infos h2 {
+    margin: 0.5rem auto;
+  }
+  .infos .no-use {
+    display: none;
+  }
+  .change-nick {
+    font-size: var(--mbig);
+  }
+
+  .change-intro textarea {
+    margin-top: 0.5rem;
+  }
+}

@@ -273,6 +273,11 @@ footer {
 @media screen and (max-width: 767px) {
   .main-title {
     font-size: var(--big-font);
+    position: absolute;
+    left: -2rem;
+    top: 1rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid white;
   }
   .category-container {
     width: 100%;

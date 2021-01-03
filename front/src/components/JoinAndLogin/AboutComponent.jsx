@@ -164,7 +164,7 @@ function AboutComponent() {
                       value={infoChange.nickname}
                     />
                   </div>
-                  <h2>소개</h2>
+                  <h2 className="no-use">소개</h2>
                   <div className="change-intro">
                     <textarea
                       onChange={onChangeInfo}

@@ -13,6 +13,13 @@ function JoinFormComponent({ history }) {
   const [showPWWarn, setShowPWWarn] = useState(false);
 
   useEffect(() => {
+    if (localStorage.getItem("role")) {
+      history.push("/");
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
     if (info.password !== info.password2) {
       setShowPWWarn(true);
     } else {
