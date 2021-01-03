@@ -192,27 +192,30 @@ h1 > button {
 /* 폰 */
 @media screen and (max-width: 767px) {
   h1 {
-    margin-bottom: 1rem;
-    font-size: var(--large-font);
+    margin-bottom: 0rem;
+    font-size: var(--mlarge);
   }
   .join-login-form {
     min-width: 70vw;
     color: white;
+    font-size: var(--mmiddle);
   }
   .join-login-form button {
     margin-top: 2rem;
     margin-right: 1rem;
   }
-
+  .join-form input {
+    height: 1.6rem;
+  }
+  #join-button {
+    margin-top: 0rem;
+  }
   .about-content {
     flex-direction: column;
-    margin-top: 3rem;
   }
   .about-page h1 {
     font-size: var(--mlarge);
-    position: absolute;
-    top: 5rem;
-    left: 1rem;
+    margin-bottom: 0.5rem;
   }
   .about-content h2 {
     font-size: var(--mlarge);
@@ -243,5 +246,6 @@ h1 > button {
 
   .change-intro textarea {
     margin-top: 0.5rem;
+    height: 22vh;
   }
 }

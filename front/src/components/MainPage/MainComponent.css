@@ -15,6 +15,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 1rem;
 }
 .main-title {
   color: white;
@@ -271,12 +272,14 @@ footer {
 }
 /* 폰 */
 @media screen and (max-width: 767px) {
+  .main-body header {
+    justify-content: flex-start;
+  }
   .main-title {
     font-size: var(--big-font);
-    position: absolute;
-    left: -2rem;
-    top: 1rem;
     padding-bottom: 0.3rem;
+    margin-top: 0.5rem;
+    margin-left: 0.5rem;
     border-bottom: 1px solid white;
   }
   .category-container {

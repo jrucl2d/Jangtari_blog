@@ -15,6 +15,10 @@ function LoginFormComponent({ history }) {
     });
   };
   const onClickSubmit = async (e) => {
+    if (info.username === "" || info.nickname === "" || info.password === "") {
+      alert("모든 정보를 입력해주세요.");
+      return;
+    }
     e.preventDefault();
     try {
       const result = await axios.post("/login", {

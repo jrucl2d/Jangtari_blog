@@ -34,6 +34,15 @@ function JoinFormComponent({ history }) {
     });
   };
   const onClickSubmit = async (e) => {
+    if (
+      info.username === "" ||
+      info.nickname === "" ||
+      info.password === "" ||
+      info.password2 === ""
+    ) {
+      alert("모든 정보를 입력해주세요.");
+      return;
+    }
     e.preventDefault();
     try {
       await axios.post("/join", {
@@ -52,7 +61,7 @@ function JoinFormComponent({ history }) {
   return (
     <div>
       <h1>회원가입</h1>
-      <Form className="join-login-form">
+      <Form className="join-login-form join-form">
         <Form.Group controlId="username">
           <Form.Label>아이디</Form.Label>
           <Form.Control

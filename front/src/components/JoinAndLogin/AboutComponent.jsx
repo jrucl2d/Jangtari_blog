@@ -98,7 +98,6 @@ function AboutComponent() {
           {localStorage.getItem("role") &&
           localStorage.getItem("role") === "ADMIN" ? (
             <h1>
-              장딱, 그는 누구인가...
               {changeMode ? (
                 <span className="change-buttons">
                   <Button variant="outline-primary" onClick={onClickSubmit}>

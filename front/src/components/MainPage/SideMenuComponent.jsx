@@ -80,7 +80,7 @@ function SideMenuComponent({ isToggle, onClickMenuButton }) {
                   onClick={() => onClickMenuButton()}
                   to="/update/category"
                 >
-                  카테고리 설정
+                  설정
                 </Link>
               </>
             )}
