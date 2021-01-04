@@ -8,6 +8,7 @@ import JoinFormComponent from "./JoinAndLogin/JoinFormComponent";
 import AboutComponent from "./JoinAndLogin/AboutComponent";
 import CategorySettingComponent from "./CategoryPage/CategorySettingComponent";
 import PostListComponent from "./PostPage/PostListComponent";
+import TemplateLayout from "./PostPage/PostTemplates/TemplateLayout";
 
 function LayoutComponent() {
   const menuButtonRef = useRef(null);
@@ -48,6 +49,7 @@ function LayoutComponent() {
         component={CategorySettingComponent}
       />
       <Route path="/category/" component={PostListComponent} />
+      <Route path="/post/:id" component={TemplateLayout} />
       <footer>
         <div className="footer-icons">
           <a

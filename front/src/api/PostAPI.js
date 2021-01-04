@@ -5,6 +5,11 @@ export const getAll = async (theUrl) => {
   const result = data.result;
   return result;
 };
+export const getOne = async (id) => {
+  const { data } = await axios.get(`/post/${id}`);
+  const result = data.result;
+  return result;
+};
 // export const add = async (newInfo) => {
 //   const { data } = await axios.post("/admin/addCategory", newInfo);
 //   const result = data.result;

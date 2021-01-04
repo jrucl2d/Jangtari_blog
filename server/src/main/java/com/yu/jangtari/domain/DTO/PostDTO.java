@@ -24,6 +24,7 @@ public class PostDTO {
     public static class GetOne{
         private Long id;
         private String title;
+        private String content;
         private List<CommentDTO.Get> comments = new ArrayList<>();
         private List<PictureDTO> pictures = new ArrayList<>();
     }

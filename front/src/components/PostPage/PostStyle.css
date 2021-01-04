@@ -70,8 +70,10 @@
   height: 6vh;
   border-bottom: 1px solid rgb(155, 154, 154);
   display: flex;
+  justify-content: space-between;
   align-items: center;
 }
+
 .post-list-title {
   width: 20vw;
 }
@@ -164,7 +166,17 @@
     font-size: var(--mbig);
     height: 5.5vh;
   }
-
+  .post-list-search input {
+    font-size: var(--msmall);
+    height: 2.3rem;
+    width: 48vw;
+  }
+  .post-list-search button {
+    font-size: var(--msmall);
+    height: 2.3rem;
+    width: 13vw;
+    margin-right: 0.3vw;
+  }
   .post-list-pagination button {
     height: 2rem;
     width: 2rem;

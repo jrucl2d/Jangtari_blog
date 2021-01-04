@@ -113,13 +113,13 @@ function PostListComponent({ location, history }) {
   };
 
   return (
-    <div className="post-list">
+    <>
       {loading ? (
         <div className="main-loading">
           <LoadingComponent />
         </div>
       ) : (
-        <>
+        <div className="post-list">
           <div className="post-list-pagination">
             {result && result.prevPage && (
               <Button
@@ -172,9 +172,13 @@ function PostListComponent({ location, history }) {
           </div>
           <ul className="post-list-box">
             <div>
-              <Button className="post-list-add" variant="outline-danger">
-                <i className="fas fa-plus"></i>
-              </Button>
+              {localStorage.getItem("role") &&
+                localStorage.getItem("role") === "ADMIN" && (
+                  <Button className="post-list-add" variant="outline-light">
+                    <i className="fas fa-plus"></i>
+                  </Button>
+                )}
+
               <li className="post-list-content post-list-title">
                 {location.pathname.split("/")[3]}
               </li>
@@ -182,7 +186,15 @@ function PostListComponent({ location, history }) {
                 .fill()
                 .map((v, i) => (
                   <li className="post-list-content" key={i}>
-                    <Link to="#">
+                    <Link
+                      to={
+                        result &&
+                        result.result.content.length > 0 &&
+                        i < result.result.content.length
+                          ? `/post/${result.result.content[i].id}/${result.result.content[i].template}`
+                          : "#"
+                      }
+                    >
                       {result &&
                       result.result.content.length > 0 &&
                       i < result.result.content.length
@@ -217,9 +229,9 @@ function PostListComponent({ location, history }) {
               </form>
             </div>
           </ul>
-        </>
+        </div>
       )}
-    </div>
+    </>
   );
 }
 

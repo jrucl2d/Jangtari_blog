@@ -9,6 +9,15 @@ export const getAllPosts = (theUrl) => async (dispatch) => {
     dispatch({ type: "GET_ALL_POSTS_ERROR,", error: err });
   }
 };
+export const getOnePost = (id) => async (dispatch) => {
+  dispatch({ type: "GET_ONE_POST" });
+  try {
+    const result = await postAPI.getOne(id);
+    dispatch({ type: "GET_ONE_POST_SUCCESS", result });
+  } catch (err) {
+    dispatch({ type: "GET_ONE_POST_ERROR,", error: err });
+  }
+};
 // export const addCategory = (newInfo) => async (dispatch) => {
 //   try {
 //     const newId = await categoryAPI.add(newInfo);
@@ -38,6 +47,7 @@ export const getAllPosts = (theUrl) => async (dispatch) => {
 const initialState = {
   loading: false,
   result: null,
+  post: null,
   error: null,
 };
 
@@ -48,7 +58,7 @@ export default function postReducer(state = initialState, action) {
         ...state,
         loading: true,
         result: null,
-        categoryId: null,
+        post: null,
         error: null,
       };
     case "GET_ALL_POSTS_SUCCESS":
@@ -56,6 +66,23 @@ export default function postReducer(state = initialState, action) {
         ...state,
         loading: false,
         result: action.result,
+        post: null,
+        error: null,
+      };
+    case "GET_ONE_POST":
+      return {
+        ...state,
+        loading: true,
+        result: null,
+        post: null,
+        error: null,
+      };
+    case "GET_ONE_POST_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        result: null,
+        post: action.result,
         error: null,
       };
     // case "ADD_INFO_SUCCESS":

@@ -74,15 +74,17 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         QPost post = QPost.post1;
         QPicture picture = QPicture.picture1;
         JPQLQuery<Post> query = from(post);
-        JPQLQuery<Tuple> tuple = query.select(post.id, post.title, picture.picture);
+        JPQLQuery<Tuple> tuple = query.select(post.id, post.title, post.post, picture.picture);
+        tuple.where(post.id.eq(postId));
         tuple.leftJoin(post.pictures, picture);
         List<Tuple> list = tuple.fetch();
 
         result.setId((Long)list.get(0).toArray()[0]);
         result.setTitle((String)list.get(0).toArray()[1]);
+        result.setContent((String)list.get(0).toArray()[2]);
 
         List<PictureDTO> pictures = new ArrayList<>();
-        list.forEach(v -> pictures.add(new PictureDTO((String)v.toArray()[2])));
+        list.forEach(v -> pictures.add(new PictureDTO((String)v.toArray()[3])));
         result.setPictures(pictures);
 
         // 댓글
