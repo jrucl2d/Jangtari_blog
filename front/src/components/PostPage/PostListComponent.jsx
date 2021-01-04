@@ -24,7 +24,7 @@ function PostListComponent({ location, history }) {
       dispatch(getAllPosts(id));
     }
     // eslint-disable-next-line
-  }, [location.search]);
+  }, [location]);
 
   useEffect(() => {
     if (error) {
@@ -45,6 +45,22 @@ function PostListComponent({ location, history }) {
     }
     history.push(theUrl);
   };
+  const onClickAnotherPage = (e) => {
+    const id = location.pathname.split("/")[2];
+    const wantNumber =
+      e.currentTarget.name === "next"
+        ? result && result.nextPage && +result.nextPage.pageNumber + 1
+        : result && result.prevPage && +result.prevPage.pageNumber + 1;
+    const query = qs.parse(location.search);
+    query.page = wantNumber;
+    let theUrl = `/category/${id}/${location.pathname.split("/")[3]}?page=${
+      query.page
+    }`;
+    if (query.type) {
+      theUrl += "&type=" + query.type + "&keyword=" + query.keyword;
+    }
+    history.push(theUrl);
+  };
   return (
     <div className="post-list">
       {loading ? (
@@ -55,24 +71,50 @@ function PostListComponent({ location, history }) {
         <>
           <div className="post-list-pagination">
             {result && result.prevPage && (
-              <Button variant="outline-warning">
+              <Button
+                variant="outline-warning"
+                name="prev"
+                onClick={onClickAnotherPage}
+              >
                 <i className="fas fa-arrow-up"></i>
               </Button>
             )}
             {result && result.result.content.length > 0
-              ? result.result.content.map((v, i) => (
-                  <Button
-                    className="post-list-numbers"
-                    variant="outline-info"
-                    key={v.id}
-                    onClick={onClickPageNumber}
-                  >
-                    {Math.floor((result.currentPageNum - 1) / 10) * 10 + i + 1}
-                  </Button>
-                ))
+              ? Array(
+                  result.totalPageNum -
+                    Math.floor((result.currentPageNum - 1) / 10) * 10 <
+                    10
+                    ? result.totalPageNum -
+                        Math.floor((result.currentPageNum - 1) / 10) * 10
+                    : 10
+                )
+                  .fill()
+                  .map((v, i) => (
+                    <Button
+                      className="post-list-numbers"
+                      variant={`${
+                        Math.floor((result.currentPageNum - 1) / 10) * 10 +
+                          i +
+                          1 !==
+                        result.currentPageNum
+                          ? "outline-"
+                          : ""
+                      }info`}
+                      key={i}
+                      onClick={onClickPageNumber}
+                    >
+                      {Math.floor((result.currentPageNum - 1) / 10) * 10 +
+                        i +
+                        1}
+                    </Button>
+                  ))
               : null}
             {result && result.nextPage && (
-              <Button variant="outline-success">
+              <Button
+                variant="outline-success"
+                name="next"
+                onClick={onClickAnotherPage}
+              >
                 <i className="fas fa-arrow-down"></i>
               </Button>
             )}
@@ -87,7 +129,9 @@ function PostListComponent({ location, history }) {
                 .map((v, i) => (
                   <li className="post-list-content" key={i}>
                     <Link to="#">
-                      {result && result.result.content.length > 0
+                      {result &&
+                      result.result.content.length > 0 &&
+                      i < result.result.content.length
                         ? result.result.content[i].title
                         : null}
                     </Link>

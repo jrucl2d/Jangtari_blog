@@ -89,7 +89,12 @@ function SideMenuComponent({ isToggle, onClickMenuButton }) {
           {categories &&
             categories.map((v) => (
               <li key={v.id}>
-                <Link to="/#">{v.name}</Link>
+                <Link
+                  onClick={() => onClickMenuButton()}
+                  to={`/category/${v.id}/${v.name}`}
+                >
+                  {v.name}
+                </Link>
               </li>
             ))}
         </ul>
