@@ -227,6 +227,10 @@ footer {
 /* 태블릿 */
 
 @media (min-width: 768px) and (max-width: 1024px) {
+  .main-loading {
+    width: 100%;
+    height: 100%;
+  }
   .menu-trigger {
     right: -2rem;
     top: 1rem;
@@ -267,9 +271,17 @@ footer {
   .category-container {
     width: 95%;
   }
+  .main-loading {
+    width: 100%;
+    height: 100%;
+  }
 }
 /* 폰 */
 @media screen and (max-width: 767px) {
+  .main-loading {
+    width: 100%;
+    height: 100%;
+  }
   .main-body header {
     justify-content: flex-start;
   }

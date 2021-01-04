@@ -1,9 +1,9 @@
 import * as postAPI from "../api/PostAPI";
 
-export const getAllPosts = (id, page, type, keyword) => async (dispatch) => {
+export const getAllPosts = (theUrl) => async (dispatch) => {
   dispatch({ type: "GET_ALL_POSTS" });
   try {
-    const result = await postAPI.getAll(id, page, type, keyword);
+    const result = await postAPI.getAll(theUrl);
     dispatch({ type: "GET_ALL_POSTS_SUCCESS", result });
   } catch (err) {
     dispatch({ type: "GET_ALL_POSTS_ERROR,", error: err });

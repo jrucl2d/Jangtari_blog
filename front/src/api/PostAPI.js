@@ -1,20 +1,8 @@
 import axios from "axios";
 
-export const getAll = async (id, page, type, keyword) => {
-  let theUrl = `/category/${id}/posts`;
-  if (page) {
-    theUrl += "?page=" + page;
-    if (type) {
-      theUrl += "&type=" + type + "&keyword=" + keyword;
-    }
-  }
-  if (type) {
-    theUrl += "?type=" + type + "&keyword=" + keyword;
-  }
-  console.log(theUrl);
+export const getAll = async (theUrl) => {
   const { data } = await axios.get(theUrl);
   const result = data.result;
-  //   console.log(result);
   return result;
 };
 // export const add = async (newInfo) => {

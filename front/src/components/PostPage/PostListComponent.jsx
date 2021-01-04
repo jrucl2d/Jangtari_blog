@@ -18,17 +18,32 @@ function PostListComponent({ location, history }) {
   useEffect(() => {
     const id = location.pathname.split("/")[2];
     const query = qs.parse(location.search);
+    let theUrl = `/category/${id}/posts`;
     if (query.page) {
       if (query.type) {
-        dispatch(getAllPosts(id, query.page, query.type, query.keyword));
+        dispatch(
+          getAllPosts(
+            theUrl +
+              "?page=" +
+              query.page +
+              "&type=" +
+              query.type +
+              "&keyword=" +
+              query.keyword
+          )
+        );
       } else {
-        dispatch(getAllPosts(id, query.page));
+        dispatch(getAllPosts(theUrl + "?page=" + query.page));
       }
     } else {
       if (query.type) {
-        dispatch(getAllPosts(id, query.page, query.type, query.keyword));
+        dispatch(
+          getAllPosts(
+            theUrl + "?type=" + query.type + "&keyword=" + query.keyword
+          )
+        );
       } else {
-        dispatch(getAllPosts(id));
+        dispatch(getAllPosts(theUrl));
       }
     }
     // eslint-disable-next-line
@@ -84,7 +99,8 @@ function PostListComponent({ location, history }) {
       keyword: e.target.value,
     });
   };
-  const onClickSubmit = () => {
+  const onClickSubmit = (e) => {
+    e.preventDefault();
     if (searchInfo.keyword.split(" ").length > 1) {
       alert("공백 없는 단어를 입력하세요.");
       return;
@@ -156,7 +172,10 @@ function PostListComponent({ location, history }) {
           </div>
           <ul className="post-list-box">
             <div>
-              <li className="post-list-content">
+              <Button className="post-list-add" variant="outline-danger">
+                <i className="fas fa-plus"></i>
+              </Button>
+              <li className="post-list-content post-list-title">
                 {location.pathname.split("/")[3]}
               </li>
               {Array(10)
@@ -186,14 +205,16 @@ function PostListComponent({ location, history }) {
                   내용
                 </Dropdown.Item>
               </DropdownButton>
-              <input
-                type="text"
-                value={searchInfo.keyword}
-                onChange={onChangeSearch}
-              />
-              <Button variant="outline-primary" onClick={onClickSubmit}>
-                검색
-              </Button>
+              <form onSubmit={onClickSubmit}>
+                <input
+                  type="text"
+                  value={searchInfo.keyword}
+                  onChange={onChangeSearch}
+                />
+                <Button type="submit" variant="outline-primary">
+                  검색
+                </Button>
+              </form>
             </div>
           </ul>
         </>
