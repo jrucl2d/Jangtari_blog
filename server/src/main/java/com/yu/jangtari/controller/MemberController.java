@@ -101,7 +101,6 @@ public class MemberController {
     // 로그인
     @PostMapping("/login")
     public ResponseEntity<CustomResponse> login(@RequestBody MemberDTO.Login member,
-                                                HttpServletRequest req,
                                                 HttpServletResponse res) {
 
         Optional<Member> member1 = memberRepository.findByUsername(member.getUsername());
@@ -110,6 +109,7 @@ public class MemberController {
                     new CustomError(new CustomException("회원 정보 없음", "로그인 실패")),null),
                     HttpStatus.UNAUTHORIZED);
         }
+
         if(!passwordEncoder.matches(member.getPassword(), member1.get().getPassword())){
             return new ResponseEntity<>(new CustomResponse(
                     new CustomError(new CustomException("비밀번호 오류", "로그인 실패")),null),
@@ -132,7 +132,13 @@ public class MemberController {
     }
 
     @GetMapping("/signout")
-    public ResponseEntity<CustomResponse> logout(HttpServletRequest request){
+    public ResponseEntity<CustomResponse> logout(HttpServletRequest request, HttpServletResponse response){
+        // access 쿠키 삭제
+        Cookie accessCookie = new Cookie("accesstest", null);
+        accessCookie.setMaxAge(0); // expirationTime을 0으로
+        accessCookie.setPath("/"); // 모든 경로에서 삭제
+        response.addCookie(accessCookie);
+
         Cookie refreshCookie = cookieUtil.getCookie(request,jwtTokenProvider.REFRESH_TOKEN_STRING);
         String refreshToken = refreshCookie.getValue();
         redisUtil.deleteData(refreshToken);

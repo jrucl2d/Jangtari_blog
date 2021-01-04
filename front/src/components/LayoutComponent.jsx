@@ -7,6 +7,7 @@ import LoginFormComponent from "./JoinAndLogin/LoginFormComponent";
 import JoinFormComponent from "./JoinAndLogin/JoinFormComponent";
 import AboutComponent from "./JoinAndLogin/AboutComponent";
 import CategorySettingComponent from "./CategoryPage/CategorySettingComponent";
+import PostListComponent from "./PostPage/PostListComponent";
 
 function LayoutComponent() {
   const menuButtonRef = useRef(null);
@@ -46,6 +47,7 @@ function LayoutComponent() {
         path="/update/category"
         component={CategorySettingComponent}
       />
+      <Route path="/category/" component={PostListComponent} />
       <footer>
         <div className="footer-icons">
           <a
@@ -81,7 +83,6 @@ function LayoutComponent() {
             </a>
           </div>
           <div>Contact to Yu : 010-2578-4068</div>
-          <div>font : 마포꽃섬</div>
         </div>
       </footer>
     </div>
