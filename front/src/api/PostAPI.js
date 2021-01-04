@@ -11,6 +11,7 @@ export const getAll = async (id, page, type, keyword) => {
   if (type) {
     theUrl += "?type=" + type + "&keyword=" + keyword;
   }
+  console.log(theUrl);
   const { data } = await axios.get(theUrl);
   const result = data.result;
   //   console.log(result);

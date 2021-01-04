@@ -30,12 +30,28 @@
   width: 100%;
   border: 1px solid rgb(155, 154, 154);
 }
-.post-list-box > div {
+/* 실제 포스트 박스 */
+.post-list-box > div:first-child {
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
 }
+/* 질문 */
+.post-list-search {
+  color: white;
+  display: flex;
+  margin-top: 0.1rem;
+  height: 2.2rem;
+}
+.post-list-search button {
+  height: 2.2rem;
+}
+.post-list-search input {
+  background: none;
+  color: white;
+}
+
 .post-list-content {
   color: rgb(190, 190, 190);
   font-size: var(--big-font);

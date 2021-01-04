@@ -36,6 +36,7 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         Pageable pageable = pageVO.makePageable("DESC", "createddate");
 
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
         QPost post = QPost.post1;
 
         JPAQuery<Tuple> tmp = queryFactory.select(post.id, post.title, post.template)

@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Button } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Button, Dropdown, DropdownButton } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { getAllPosts } from "../../modules/postReducer";
@@ -9,6 +9,10 @@ import "./PostStyle.css";
 
 function PostListComponent({ location, history }) {
   const dispatch = useDispatch();
+  const [searchInfo, setSearchInfo] = useState({
+    title: true,
+    keyword: "",
+  });
   const { result, loading, error } = useSelector((state) => state.postReducer);
 
   useEffect(() => {
@@ -18,10 +22,14 @@ function PostListComponent({ location, history }) {
       if (query.type) {
         dispatch(getAllPosts(id, query.page, query.type, query.keyword));
       } else {
-        dispatch(getAllPosts(id, +query.page));
+        dispatch(getAllPosts(id, query.page));
       }
     } else {
-      dispatch(getAllPosts(id));
+      if (query.type) {
+        dispatch(getAllPosts(id, query.page, query.type, query.keyword));
+      } else {
+        dispatch(getAllPosts(id));
+      }
     }
     // eslint-disable-next-line
   }, [location]);
@@ -61,6 +69,33 @@ function PostListComponent({ location, history }) {
     }
     history.push(theUrl);
   };
+
+  const onClickSelect = (e) => {
+    setSearchInfo({
+      ...searchInfo,
+      title: false,
+      content: false,
+      [e.currentTarget.name]: true,
+    });
+  };
+  const onChangeSearch = (e) => {
+    setSearchInfo({
+      ...searchInfo,
+      keyword: e.target.value,
+    });
+  };
+  const onClickSubmit = () => {
+    if (searchInfo.keyword.split(" ").length > 1) {
+      alert("공백 없는 단어를 입력하세요.");
+      return;
+    }
+    const id = location.pathname.split("/")[2];
+    const theUrl = `/category/${id}/${location.pathname.split("/")[3]}?type=${
+      searchInfo.title ? "t" : "c"
+    }&keyword=${searchInfo.keyword}`;
+    history.push(theUrl);
+  };
+
   return (
     <div className="post-list">
       {loading ? (
@@ -137,6 +172,28 @@ function PostListComponent({ location, history }) {
                     </Link>
                   </li>
                 ))}
+            </div>
+            <div className="post-list-search">
+              <DropdownButton
+                id="dropdown-basic-button"
+                title={searchInfo.title ? "제목" : "내용"}
+                variant="outline-warning"
+              >
+                <Dropdown.Item name="title" onClick={onClickSelect}>
+                  제목
+                </Dropdown.Item>
+                <Dropdown.Item name="content" onClick={onClickSelect}>
+                  내용
+                </Dropdown.Item>
+              </DropdownButton>
+              <input
+                type="text"
+                value={searchInfo.keyword}
+                onChange={onChangeSearch}
+              />
+              <Button variant="outline-primary" onClick={onClickSubmit}>
+                검색
+              </Button>
             </div>
           </ul>
         </>
