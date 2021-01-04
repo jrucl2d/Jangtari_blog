@@ -1,10 +1,10 @@
 import * as postAPI from "../api/PostAPI";
 
-export const getAllPosts = (id) => async (dispatch) => {
+export const getAllPosts = (id, page, type, keyword) => async (dispatch) => {
   dispatch({ type: "GET_ALL_POSTS" });
   try {
-    const result = await postAPI.getAll(id);
-    dispatch({ type: "GET_ALL_POSTS_SUCCESS", result, categoryId: id });
+    const result = await postAPI.getAll(id, page, type, keyword);
+    dispatch({ type: "GET_ALL_POSTS_SUCCESS", result });
   } catch (err) {
     dispatch({ type: "GET_ALL_POSTS_ERROR,", error: err });
   }
@@ -38,7 +38,6 @@ export const getAllPosts = (id) => async (dispatch) => {
 const initialState = {
   loading: false,
   result: null,
-  categoryId: null,
   error: null,
 };
 
@@ -57,7 +56,6 @@ export default function postReducer(state = initialState, action) {
         ...state,
         loading: false,
         result: action.result,
-        categoryId: +action.categoryId,
         error: null,
       };
     // case "ADD_INFO_SUCCESS":
