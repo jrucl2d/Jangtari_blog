@@ -3,6 +3,7 @@ import axios from "axios";
 export const getAll = async (id) => {
   const { data } = await axios.get(`/category/${id}/posts`);
   const result = data.result;
+  console.log(result);
   return result;
 };
 // export const add = async (newInfo) => {

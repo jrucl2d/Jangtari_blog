@@ -16,7 +16,6 @@ function CategorySettingComponent({ history }) {
     "warning",
     "info",
     "light",
-    "dark",
   ]);
   const [updateModalShow, setUpdateModalShow] = useState(false);
   const [addModalShow, setAddModalShow] = useState(false);
@@ -74,7 +73,7 @@ function CategorySettingComponent({ history }) {
                         });
                         setUpdateModalShow(true);
                       }}
-                      variant={`outline-${colorRef.current[i]}`}
+                      variant={`outline-${colorRef.current[i % 6]}`}
                     >
                       수정
                     </Button>

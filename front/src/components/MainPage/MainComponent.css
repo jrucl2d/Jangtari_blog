@@ -10,18 +10,16 @@
   overflow-x: hidden;
 }
 .main-body header {
-  height: 12vh;
+  height: 7vh;
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   margin-bottom: 1rem;
 }
 .main-title {
   color: white;
   display: inline-block;
   margin: auto;
-  margin-left: 3rem;
+  margin-top: 1rem;
+  margin-left: 1rem;
 }
 .main-loading {
   height: 80vh;
@@ -92,7 +90,7 @@ footer {
 .menu-trigger {
   position: fixed;
   right: -1rem;
-  top: 2.5rem;
+  top: 1.5rem;
   width: 30px;
   height: 24px;
   border: 0;

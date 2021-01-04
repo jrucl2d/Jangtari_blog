@@ -1,0 +1,72 @@
+.post-list {
+  height: 90vh;
+  width: 50vw;
+  display: flex;
+  overflow-y: auto;
+}
+.post-list::-webkit-scrollbar {
+  width: 0.5rem;
+} /* 스크롤 바 */
+.post-list::-webkit-scrollbar-track {
+  background-color: #b4b4b4;
+} /* 스크롤 바 밑의 배경 */
+.post-list::-webkit-scrollbar-thumb {
+  background: #303030;
+} /* 실질적 스크롤 바 */
+.post-list::-webkit-scrollbar-thumb:hover {
+  background: #404040;
+} /* 실질적 스크롤 바 위에 마우스를 올려다 둘 때 */
+.post-list::-webkit-scrollbar-thumb:active {
+  background: #eceaea;
+} /* 실질적 스크롤 바를 클릭할 때 */
+.post-list::-webkit-scrollbar-button {
+  display: none;
+} /* 스크롤 바 상 하단 버튼 */
+
+.post-list-box {
+  height: 70vh;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  border: 1px solid rgb(155, 154, 154);
+}
+.post-list-box > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.post-list-content {
+  color: rgb(190, 190, 190);
+  font-size: var(--big-font);
+  margin: 0 1rem;
+  border-bottom: 1px solid rgb(155, 154, 154);
+}
+.post-list-content:first-child {
+  width: 20vw;
+}
+.post-list-content:last-child {
+  border-bottom: none;
+}
+.post-list-pagination {
+  display: flex;
+  flex-direction: column;
+}
+.post-list-pagination button {
+  height: 2.3rem;
+  width: 2.3rem;
+  margin-bottom: 0.2rem;
+}
+.post-list-numbers {
+  color: rgb(190, 190, 190);
+}
+
+/* 태블릿 */
+@media (min-width: 768px) and (max-width: 1024px) {
+}
+/* 태블릿 가로 */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+}
+/* 폰 */
+@media screen and (max-width: 767px) {
+}
