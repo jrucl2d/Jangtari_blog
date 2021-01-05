@@ -110,6 +110,7 @@
 }
 .post-main-box {
   font-size: var(--big-font);
+  margin-top: 2rem;
 }
 .post-main-box.template0 {
   display: flex;
@@ -136,11 +137,22 @@
 /* 게시글 메인바디 */
 .post-body {
   width: 49vw;
+  /* border: 1px solid white; */
+  position: relative;
 }
 .post-content-lines {
-  border-bottom: 1px solid white;
-  margin-top: 1rem;
+  /* border-bottom: 1px solid white; */
+  line-height: 50px;
   font-size: var(--mlarge);
+}
+.post-content-lines:last-child {
+  margin-bottom: 0;
+}
+.post-content-underline {
+  position: absolute;
+  height: 50px;
+  width: 100%;
+  border-bottom: 1px solid white;
 }
 
 /* 이미지 */
