@@ -1,18 +1,24 @@
+.post-outer-box::-webkit-scrollbar,
 .post-list::-webkit-scrollbar {
   width: 0.5rem;
 } /* 스크롤 바 */
+.post-outer-box::-webkit-scrollbar-track,
 .post-list::-webkit-scrollbar-track {
   background-color: #b4b4b4;
 } /* 스크롤 바 밑의 배경 */
+.post-outer-box::-webkit-scrollbar-thumb,
 .post-list::-webkit-scrollbar-thumb {
   background: #303030;
 } /* 실질적 스크롤 바 */
+.post-outer-box::-webkit-scrollbar-thumb:hover,
 .post-list::-webkit-scrollbar-thumb:hover {
   background: #404040;
 } /* 실질적 스크롤 바 위에 마우스를 올려다 둘 때 */
+.post-outer-box::-webkit-scrollbar-thumb:active,
 .post-list::-webkit-scrollbar-thumb:active {
   background: #eceaea;
 } /* 실질적 스크롤 바를 클릭할 때 */
+.post-outer-box::-webkit-scrollbar-button,
 .post-list::-webkit-scrollbar-button {
   display: none;
 } /* 스크롤 바 상 하단 버튼 */
@@ -88,6 +94,74 @@
 }
 .post-list-numbers {
   color: rgb(190, 190, 190);
+}
+
+/* 포스트 상세 페이지 */
+.post-outer-box {
+  height: 100vh;
+  width: 100vw;
+  overflow-y: auto;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+.post-outer-box + footer {
+  display: none;
+}
+.post-main-box {
+  font-size: var(--big-font);
+}
+.post-main-box.template0 {
+  display: flex;
+  flex-direction: column;
+}
+.post-title {
+  position: fixed;
+  top: 2vh;
+  left: 50vw;
+  -webkit-transform: translate-x(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+  -moz-transform: translate(-50%, 0%);
+  -o-transform: translate(-50%, 0%);
+  transform: translate(-50%, 0%);
+}
+
+/* 제목 아래 */
+.post-main-content {
+  margin: 0 10vw;
+  display: flex;
+  justify-content: center;
+}
+
+/* 게시글 메인바디 */
+.post-body {
+  width: 49vw;
+}
+.post-content-lines {
+  border-bottom: 1px solid white;
+  margin-top: 1rem;
+  font-size: var(--mlarge);
+}
+
+/* 이미지 */
+.post-image {
+  background-size: cover;
+  height: 30vw;
+  width: 30vw;
+  margin: 0;
+  margin-right: 1vw;
+}
+
+/* 댓글 */
+.post-comment-box {
+  margin: 0 1rem;
+  margin-top: 1rem;
+  padding: 0;
+  font-size: var(--mlarge);
+}
+.post-comment-blank {
+  display: inline-block;
+  width: 1rem;
 }
 
 /* 태블릿 */

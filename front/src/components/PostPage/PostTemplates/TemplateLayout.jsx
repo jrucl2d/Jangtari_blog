@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Route } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getOnePost } from "../../../modules/postReducer";
+import "../PostStyle.css";
 
 import Template0 from "./Template0";
 import Template1 from "./Template1";
@@ -24,7 +25,7 @@ function TemplateLayout({ location }) {
   }, []);
 
   return (
-    <div>
+    <div className="post-outer-box">
       {loading ? (
         <div className="main-loading">
           <LoadingComponent />

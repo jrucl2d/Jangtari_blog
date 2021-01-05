@@ -12,6 +12,7 @@ public class CommentDTO {
         private Long commentId;
         private String comment;
         private Long memberId;
+        private String nickName;
         private String recomment;
     }
 

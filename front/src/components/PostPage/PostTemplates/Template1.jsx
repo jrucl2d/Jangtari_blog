@@ -5,10 +5,10 @@ function Template1() {
   const { post } = useSelector((state) => state.postReducer);
 
   return (
-    <div>
+    <>
       <h1>{post && post.title}</h1>
       <h2>{post && post.content}</h2>
-    </div>
+    </>
   );
 }
 
