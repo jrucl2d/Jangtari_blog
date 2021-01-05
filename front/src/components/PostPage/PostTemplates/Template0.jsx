@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 function Template0() {
   const { post } = useSelector((state) => state.postReducer);
   const [showingPost, setShowingPost] = useState([]);
+  const [nowPicture, setNowPicture] = useState(0);
   useEffect(() => {
     if (post && post.content) {
       setShowingPost(
@@ -12,6 +13,24 @@ function Template0() {
     }
     // eslint-disable-next-line
   }, []);
+
+  const onClickPictureButton = (number) => {
+    setNowPicture(+number);
+  };
+  const onClickLeftIamge = (e) => {
+    setNowPicture(
+      nowPicture - 1 < 0
+        ? post && post.pictures && post.pictures.length - 1
+        : nowPicture - 1
+    );
+  };
+  const onClickRightIamge = (e) => {
+    setNowPicture(
+      nowPicture + 1 > (post && post.pictures && post.pictures.length - 1)
+        ? 0
+        : nowPicture + 1
+    );
+  };
 
   return (
     <>
@@ -26,7 +45,28 @@ function Template0() {
                   "url(https://source.unsplash.com/random//1280x720)",
               }}
             >
-              {post && post.pictures && post.pictures[0].picture}
+              {/* {post && post.pictures && post.pictures[nowPicture].picture} */}
+              <div className="image-backgound">
+                <div className="image-to-left" onClick={onClickLeftIamge}>
+                  <i className="fas fa-arrow-left"></i>
+                </div>
+                <div className="image-to-right" onClick={onClickRightIamge}>
+                  <i className="fas fa-arrow-right"></i>
+                </div>
+                <div className="image-numbering">
+                  {post &&
+                    post.pictures &&
+                    post.pictures.map((v, i) => (
+                      <div
+                        onClick={() => onClickPictureButton(i)}
+                        className={
+                          nowPicture === i ? "now-picture" : "no-now-picture"
+                        }
+                        key={v.picture}
+                      ></div>
+                    ))}
+                </div>
+              </div>
             </div>
             <ul className="post-comment-box">
               <h3>댓글</h3>
