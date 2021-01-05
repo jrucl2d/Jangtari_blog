@@ -7,6 +7,7 @@ import "../PostStyle.css";
 import Template0 from "./Template0";
 import Template1 from "./Template1";
 import LoadingComponent from "../../MainPage/LoadingComponent";
+import TemplateMobile from "./TemplateMobile";
 function TemplateLayout({ location }) {
   const dispatch = useDispatch();
   const { post, loading, error } = useSelector((state) => state.postReducer);
@@ -21,6 +22,7 @@ function TemplateLayout({ location }) {
     if (post) return;
     const id = location.pathname.split("/")[2];
     dispatch(getOnePost(id));
+    console.log(window.innerHeight);
     // eslint-disable-next-line
   }, []);
 
@@ -32,8 +34,14 @@ function TemplateLayout({ location }) {
         </div>
       ) : (
         <>
-          <Route path="/post/:id/0" component={Template0} />
-          <Route path="/post/:id/1" component={Template1} />
+          {window.innerWidth > 767 ? (
+            <>
+              <Route path="/post/:id/0" component={Template0} />
+              <Route path="/post/:id/1" component={Template1} />
+            </>
+          ) : (
+            <Route path="/post/:id" component={TemplateMobile} />
+          )}
         </>
       )}
     </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 
-function PostBodyComponent() {
+function PostBodyComponent({ foldMode }) {
   const { post } = useSelector((state) => state.postReducer);
   const theRef = useRef();
   const [showingPost, setShowingPost] = useState([]);
@@ -23,7 +23,7 @@ function PostBodyComponent() {
 
   return (
     <>
-      <div className="post-body" ref={theRef}>
+      <div className={`post-body ${foldMode ? "foldMode" : ""}`} ref={theRef}>
         {showingPost.map((v, i) => (
           <div className="post-content-lines" key={i}>
             {v}
