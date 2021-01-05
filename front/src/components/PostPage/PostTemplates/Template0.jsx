@@ -42,30 +42,42 @@ function Template0() {
               className="post-image template0"
               style={{
                 backgroundImage:
-                  "url(https://source.unsplash.com/random//1280x720)",
+                  post &&
+                  post.pictures &&
+                  post.pictures[0].picture !== null &&
+                  `url(${post.pictures[nowPicture].picture})`,
               }}
             >
               {/* {post && post.pictures && post.pictures[nowPicture].picture} */}
               <div className="image-backgound">
-                <div className="image-to-left" onClick={onClickLeftIamge}>
-                  <i className="fas fa-arrow-left"></i>
-                </div>
-                <div className="image-to-right" onClick={onClickRightIamge}>
-                  <i className="fas fa-arrow-right"></i>
-                </div>
-                <div className="image-numbering">
-                  {post &&
-                    post.pictures &&
-                    post.pictures.map((v, i) => (
-                      <div
-                        onClick={() => onClickPictureButton(i)}
-                        className={
-                          nowPicture === i ? "now-picture" : "no-now-picture"
-                        }
-                        key={v.picture}
-                      ></div>
-                    ))}
-                </div>
+                {post && post.pictures && post.pictures[0].picture === null ? (
+                  "이미지가 없습니다."
+                ) : (
+                  <>
+                    {" "}
+                    <div className="image-to-left" onClick={onClickLeftIamge}>
+                      <i className="fas fa-arrow-left"></i>
+                    </div>
+                    <div className="image-to-right" onClick={onClickRightIamge}>
+                      <i className="fas fa-arrow-right"></i>
+                    </div>
+                    <div className="image-numbering">
+                      {post &&
+                        post.pictures &&
+                        post.pictures.map((v, i) => (
+                          <div
+                            onClick={() => onClickPictureButton(i)}
+                            className={
+                              nowPicture === i
+                                ? "now-picture"
+                                : "no-now-picture"
+                            }
+                            key={v.picture}
+                          ></div>
+                        ))}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
             <ul className="post-comment-box">

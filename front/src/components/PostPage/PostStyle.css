@@ -152,12 +152,17 @@
   margin: 0;
   margin-right: 1vw;
 }
-.post-image:hover .image-backgound,
-.image-backgound:hover {
+.image-backgound {
   position: relative;
   height: 30vw;
   width: 30vw;
-  background: rgb(0, 0, 0, 0.5);
+  background: none;
+  text-align: center;
+  line-height: 28vw;
+}
+.post-image:hover .image-backgound,
+.image-backgound:hover {
+  background: rgb(0, 0, 0, 0.3);
 }
 .image-to-left {
   position: absolute;
@@ -172,7 +177,7 @@
 }
 .image-to-left:hover,
 .image-to-right:hover {
-  background-color: rgb(0, 0, 0, 0.5);
+  background-color: rgb(0, 0, 0, 0.7);
   cursor: pointer;
 }
 .image-to-left i,
