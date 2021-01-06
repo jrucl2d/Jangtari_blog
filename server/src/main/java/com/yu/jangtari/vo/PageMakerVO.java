@@ -32,9 +32,6 @@ public class PageMakerVO<T> {
 
         Pageable startPage = this.currentPage;
 
-        System.out.println(tmpEndNum);
-        System.out.println(startNum);
-
         for(int i = startNum; i < this.currentPageNum; i++){
             startPage = startPage.previousOrFirst();
         }

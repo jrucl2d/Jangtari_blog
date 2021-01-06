@@ -27,6 +27,7 @@ public class PostDTO {
         private String content;
         private List<CommentDTO.Get> comments = new ArrayList<>();
         private List<PictureDTO> pictures = new ArrayList<>();
+        private List<HashtagDTO> hashtags = new ArrayList<>();
     }
 
     @Getter

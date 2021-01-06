@@ -5,6 +5,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.yu.jangtari.domain.DTO.HashtagDTO;
 import com.yu.jangtari.vo.PageMakerVO;
 import com.yu.jangtari.vo.PageVO;
 import com.yu.jangtari.domain.*;
@@ -46,6 +47,9 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
                 tmp.where(post.title.contains(keyword).and(post.category.id.eq(categoryId)));
             }else if(type.equals("c")){
                 tmp.where(post.post.contains(keyword).and(post.category.id.eq(categoryId)));
+            } else if(type.equals("h")){
+                QHashtag hashtag = QHashtag.hashtag1;
+                tmp.where(post.category.id.eq(categoryId)).innerJoin(post.hashtags, hashtag).where(hashtag.hashtag.eq(keyword));
             }
         } else{
             tmp.where(post.category.id.eq(categoryId));
@@ -86,15 +90,21 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         PostDTO.GetOne result = new PostDTO.GetOne();
 
         // 게시글 + 사진
-        QHashtag hashtag = QHashtag.hashtag1;
-
         QPost post = QPost.post1;
         QPicture picture = QPicture.picture1;
         JPQLQuery<Post> query = from(post);
-        JPQLQuery<Tuple> tuple = query.select(post.id, post.title, post.post, picture.picture, hashtag.hashtag);
+        JPQLQuery<Tuple> tuple = query.select(post.id, post.title, post.post, picture.picture);
         tuple.where(post.id.eq(postId));
         tuple.leftJoin(post.pictures, picture);
         List<Tuple> list = tuple.fetch();
+
+        query = from(post);
+        QHashtag hashtag = QHashtag.hashtag1;
+        JPQLQuery<String> hashtagTuple = query.select(hashtag.hashtag).distinct().innerJoin(post.hashtags, hashtag);
+        List<String> hashtagLists = hashtagTuple.fetch();
+        List<HashtagDTO> hashtags = new ArrayList<>();
+        hashtagLists.forEach(v -> hashtags.add(new HashtagDTO(v)));
+        result.setHashtags(hashtags);
 
         result.setId((Long)list.get(0).toArray()[0]);
         result.setTitle((String)list.get(0).toArray()[1]);
