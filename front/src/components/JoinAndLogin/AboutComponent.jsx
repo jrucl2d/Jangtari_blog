@@ -7,7 +7,7 @@ import "./LoginAndJoin.css";
 
 function AboutComponent() {
   const dispatch = useDispatch();
-  const { info, error, loading } = useSelector(
+  const { info, error, success, loading } = useSelector(
     (state) => state.jangtariReducer
   );
 
@@ -20,11 +20,17 @@ function AboutComponent() {
   });
 
   useEffect(() => {
+    if (!success) return;
+    alert(success);
+  }, [success]);
+
+  useEffect(() => {
     if (info === null) {
       dispatch(getJangTtak());
     }
     // eslint-disable-next-line
   }, []);
+
   useEffect(() => {
     setChangeMode(false);
     if (info !== null) {
@@ -34,12 +40,11 @@ function AboutComponent() {
         picture: info.picture,
       });
     }
-  }, [info]);
-  useEffect(() => {
     if (error) {
-      alert("에러가 발생했습니다. 잠시 후에 다시 시도해주세요.");
+      alert("변경할 권한이 없습니다.");
+      return;
     }
-  }, [error]);
+  }, [info, error]);
 
   const onClickChangeMode = (e) => {
     if (changeMode) {
@@ -84,9 +89,6 @@ function AboutComponent() {
       return;
     }
     dispatch(setJangTtak(infoChange));
-    setTimeout(() => {
-      alert("성공적으로 변경되었습니다.");
-    }, 500);
   };
 
   return (

@@ -18,7 +18,7 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @GetMapping("/getAllCategories")
+    @GetMapping("/categories")
     public ResponseEntity<CustomResponse> getAllCategory() {
         List<CategoryDTO.Get> response = categoryService.getAllCategories();
         return new ResponseEntity<>(new CustomResponse<>
@@ -26,7 +26,7 @@ public class CategoryController {
                 HttpStatus.OK);
     }
 
-    @PostMapping("/admin/addCategory")
+    @PostMapping("/admin/category")
     public ResponseEntity<CustomResponse> addCategory(@RequestBody CategoryDTO.Add newCategory){
         try{
             Long newId = categoryService.addCategory(newCategory);
@@ -39,7 +39,7 @@ public class CategoryController {
         }
     }
 
-    @PutMapping("/admin/updateCategory")
+    @PutMapping("/admin/category")
     public ResponseEntity<CustomResponse> updateCategory(@RequestBody CategoryDTO.Update theCategory){
         try {
             categoryService.updateCategory(theCategory);
@@ -53,7 +53,7 @@ public class CategoryController {
 
     }
 
-    @DeleteMapping("/admin/deleteCategory/{id}")
+    @DeleteMapping("/admin/category/{id}")
     public ResponseEntity<CustomResponse> deleteCategory(@PathVariable(value = "id") Long theId){
         try {
             categoryService.deleteCategory(theId);

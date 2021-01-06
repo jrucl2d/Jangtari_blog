@@ -74,7 +74,7 @@ public class PostController {
         }
     }
 
-    @PostMapping("/admin/addPost")
+    @PostMapping("/admin/post")
     public ResponseEntity<CustomResponse> addPost(@RequestBody PostDTO.Add thePost){
         try{
             postService.addPost(thePost);

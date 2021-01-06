@@ -6,7 +6,7 @@ export const getAllCategories = () => async (dispatch) => {
     const result = await categoryAPI.getAll();
     dispatch({ type: "GET_ALL_SUCCESS", result });
   } catch (err) {
-    dispatch({ type: "GET_ALL_ERROR,", error: err });
+    dispatch({ type: "GET_ALL_ERROR", error: err });
   }
 };
 export const addCategory = (newInfo) => async (dispatch) => {
@@ -15,7 +15,7 @@ export const addCategory = (newInfo) => async (dispatch) => {
     newInfo["id"] = newId;
     dispatch({ type: "ADD_INFO_SUCCESS", newInfo });
   } catch (err) {
-    dispatch({ type: "ADD_INFO_ERROR,", error: err });
+    dispatch({ type: "ADD_INFO_ERROR", error: err });
   }
 };
 export const updateCategory = (newInfo) => async (dispatch) => {
@@ -23,7 +23,7 @@ export const updateCategory = (newInfo) => async (dispatch) => {
     await categoryAPI.update(newInfo);
     dispatch({ type: "UPDATE_INFO_SUCCESS", newInfo });
   } catch (err) {
-    dispatch({ type: "UPDATE_INFO_ERROR,", error: err });
+    dispatch({ type: "UPDATE_INFO_ERROR", error: err });
   }
 };
 export const deleteCategory = (id) => async (dispatch) => {
@@ -31,13 +31,14 @@ export const deleteCategory = (id) => async (dispatch) => {
     await categoryAPI.deleteCate(id);
     dispatch({ type: "DELETE_INFO_SUCCESS", id });
   } catch (err) {
-    dispatch({ type: "DELETE_INFO_ERROR,", error: err });
+    dispatch({ type: "DELETE_INFO_ERROR", error: err });
   }
 };
 
 const initialState = {
   loading: false,
   categories: null,
+  success: null,
   error: null,
 };
 
@@ -48,6 +49,7 @@ export default function categoryReducer(state = initialState, action) {
         ...state,
         loading: true,
         categories: null,
+        success: null,
         error: null,
       };
     case "GET_ALL_SUCCESS":
@@ -55,6 +57,7 @@ export default function categoryReducer(state = initialState, action) {
         ...state,
         loading: false,
         categories: action.result,
+        success: null,
         error: null,
       };
     case "ADD_INFO_SUCCESS":
@@ -62,6 +65,7 @@ export default function categoryReducer(state = initialState, action) {
         ...state,
         loading: false,
         categories: [...state.categories, action.newInfo],
+        success: "성공적으로 추가되었습니다.",
         error: null,
       };
     case "UPDATE_INFO_SUCCESS":
@@ -71,6 +75,7 @@ export default function categoryReducer(state = initialState, action) {
         categories: state.categories.map((v) =>
           v.id === action.newInfo.id ? action.newInfo : v
         ),
+        success: "성공적으로 변경되었습니다.",
         error: null,
       };
     case "DELETE_INFO_SUCCESS":
@@ -78,16 +83,23 @@ export default function categoryReducer(state = initialState, action) {
         ...state,
         loading: false,
         categories: state.categories.filter((v) => v.id !== action.id),
+        success: "성공적으로 삭제되었습니다.",
         error: null,
       };
     case "ADD_INFO_ERROR":
-    case "GET_ALL_ERROR":
     case "UPDATE_INFO_ERROR":
     case "DELETE_INFO_ERROR":
       return {
         ...state,
+        error: action.error,
+        success: null,
+      };
+    case "GET_ALL_ERROR":
+      return {
+        ...state,
         loading: false,
         categories: null,
+        success: null,
         error: action.error,
       };
     default:

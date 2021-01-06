@@ -50,10 +50,6 @@ function CategoryAddModal({ setModalShow, modalShow }) {
       return;
     }
     dispatch(addCategory(infoChange));
-    setTimeout(() => {
-      alert("성공적으로 변경되었습니다.");
-      onClose();
-    }, 500);
   };
 
   return (

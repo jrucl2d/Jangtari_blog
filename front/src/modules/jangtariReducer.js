@@ -6,7 +6,7 @@ export const getJangTtak = () => async (dispatch) => {
     const result = await jangttakAPI.getInfo();
     dispatch({ type: "GET_SUCCESS", result });
   } catch (err) {
-    dispatch({ type: "GET_ERROR,", error: err });
+    dispatch({ type: "GET_ERROR", error: err });
   }
 };
 export const setJangTtak = (newInfo) => async (dispatch) => {
@@ -14,13 +14,14 @@ export const setJangTtak = (newInfo) => async (dispatch) => {
     await jangttakAPI.setInfo(newInfo);
     dispatch({ type: "SET_INFO_SUCCESS", newInfo });
   } catch (err) {
-    dispatch({ type: "SET_INFO_ERROR,", error: err });
+    dispatch({ type: "SET_INFO_ERROR", error: err });
   }
 };
 
 const initialState = {
   loading: false,
   info: null,
+  success: null,
   error: null,
 };
 
@@ -31,6 +32,7 @@ export default function jangtariReducer(state = initialState, action) {
         ...state,
         loading: true,
         info: null,
+        success: null,
         error: null,
       };
     case "GET_SUCCESS":
@@ -38,6 +40,7 @@ export default function jangtariReducer(state = initialState, action) {
         ...state,
         loading: false,
         info: action.result,
+        success: null,
         error: null,
       };
     case "GET_ERROR":
@@ -45,6 +48,7 @@ export default function jangtariReducer(state = initialState, action) {
         ...state,
         loading: false,
         info: null,
+        success: null,
         error: action.error,
       };
     case "SET_INFO_SUCCESS":
@@ -52,6 +56,7 @@ export default function jangtariReducer(state = initialState, action) {
         ...state,
         loading: false,
         info: action.newInfo,
+        success: "성공적으로 변경되었습니다.",
         error: null,
       };
     case "SET_INFO_ERROR":
@@ -59,6 +64,7 @@ export default function jangtariReducer(state = initialState, action) {
         ...state,
         loading: false,
         info: null,
+        success: null,
         error: action.error,
       };
     default:

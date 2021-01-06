@@ -24,22 +24,37 @@ function CategorySettingComponent() {
     picture: "",
   });
 
-  const { categories, error, loading } = useSelector(
+  const { categories, success, error, loading } = useSelector(
     (state) => state.categoryReducer
   );
 
   useEffect(() => {
-    if (error) {
-      alert("에러가 발생했습니다. 잠시 후에 다시 시도해주세요.");
+    if (!success) return;
+    alert(success);
+    if (updateModalShow) {
+      setUpdateModalShow(false);
     }
+    if (addModalShow) {
+      setAddModalShow(false);
+    }
+    // eslint-disable-next-line
+  }, [success]);
+  useEffect(() => {
+    if (error) {
+      if (updateModalShow) {
+        setUpdateModalShow(false);
+      }
+      if (addModalShow) {
+        setAddModalShow(false);
+      }
+      alert("권한이 없습니다.");
+    }
+    // eslint-disable-next-line
   }, [error]);
 
   const onClickDelete = (e) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
     dispatch(deleteCategory(+e.target.name));
-    setTimeout(() => {
-      alert("삭제되었습니다.");
-    }, 500);
   };
 
   return (

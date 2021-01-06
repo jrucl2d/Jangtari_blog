@@ -44,7 +44,7 @@ public class MemberController {
     @Autowired
     private CookieUtil cookieUtil;
 
-    @GetMapping("/informationOfJangTtari")
+    @GetMapping("/jangtari")
     public ResponseEntity<CustomResponse> getInfo(){
         Optional<Member> member = memberRepository.findById(1L);
         if(!member.isPresent()){
@@ -61,7 +61,7 @@ public class MemberController {
     }
 
     @Transactional
-    @PostMapping("/admin/informationOfJangTtariUpdate")
+    @PostMapping("/admin/jangtari")
     public ResponseEntity<CustomResponse> updateInfo(@RequestBody MemberDTO.Info newInfo){
         Optional<Member> member = memberRepository.findById(1L);
         if(!member.isPresent()){

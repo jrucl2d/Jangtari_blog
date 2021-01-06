@@ -6,7 +6,7 @@ export const getAllPosts = (theUrl) => async (dispatch) => {
     const result = await postAPI.getAll(theUrl);
     dispatch({ type: "GET_ALL_POSTS_SUCCESS", result });
   } catch (err) {
-    dispatch({ type: "GET_ALL_POSTS_ERROR,", error: err });
+    dispatch({ type: "GET_ALL_POSTS_ERROR", error: err });
   }
 };
 export const getOnePost = (id) => async (dispatch) => {
@@ -15,7 +15,7 @@ export const getOnePost = (id) => async (dispatch) => {
     const result = await postAPI.getOne(id);
     dispatch({ type: "GET_ONE_POST_SUCCESS", result });
   } catch (err) {
-    dispatch({ type: "GET_ONE_POST_ERROR,", error: err });
+    dispatch({ type: "GET_ONE_POST_ERROR", error: err });
   }
 };
 export const setNewComments = (comments) => {
