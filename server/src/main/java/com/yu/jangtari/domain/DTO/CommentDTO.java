@@ -11,8 +11,8 @@ public class CommentDTO {
     public static class Get{
         private Long commentId;
         private String comment;
-        private Long memberId;
-        private String nickName;
+        private String username;
+        private String nickname;
         private String recomment;
     }
 

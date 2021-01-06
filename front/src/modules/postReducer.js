@@ -18,6 +18,13 @@ export const getOnePost = (id) => async (dispatch) => {
     dispatch({ type: "GET_ONE_POST_ERROR,", error: err });
   }
 };
+export const setNewComments = (comments) => {
+  console.log(comments);
+  return {
+    type: "SET_NEW_COMMENTS",
+    comments,
+  };
+};
 // export const addCategory = (newInfo) => async (dispatch) => {
 //   try {
 //     const newId = await categoryAPI.add(newInfo);
@@ -83,6 +90,17 @@ export default function postReducer(state = initialState, action) {
         loading: false,
         result: null,
         post: action.result,
+        error: null,
+      };
+    case "SET_NEW_COMMENTS":
+      return {
+        ...state,
+        loading: false,
+        result: null,
+        post: {
+          ...state.post,
+          comments: action.comments,
+        },
         error: null,
       };
     // case "ADD_INFO_SUCCESS":

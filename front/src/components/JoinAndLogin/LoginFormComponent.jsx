@@ -28,10 +28,8 @@ function LoginFormComponent({ history }) {
         username: info.username,
         password: info.password,
       });
-      console.log(result);
       const nickname = Object.keys(result.data.result)[0];
       const role = Object.values(result.data.result)[0];
-      console.log(nickname);
       dispatch(
         LogIn({
           username: info.username,

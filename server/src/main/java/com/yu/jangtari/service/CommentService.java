@@ -7,11 +7,12 @@ import com.yu.jangtari.domain.Member;
 import com.yu.jangtari.domain.Post;
 import com.yu.jangtari.repository.CommentRepository;
 import com.yu.jangtari.repository.MemberRepository;
+import com.yu.jangtari.repository.post.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,6 +23,15 @@ public class CommentService {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private PostRepository postRepository;
+
+    @Transactional(readOnly = true)
+    public List<CommentDTO.Get> getComments(Long postId) throws CustomException {
+
+        return postRepository.getCommentsOfPost(postId);
+    }
 
     @Transactional
     public void addComment(CommentDTO.Add comment) throws CustomException {

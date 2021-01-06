@@ -67,6 +67,20 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
     }
 
     @Override
+    public List<CommentDTO.Get> getCommentsOfPost(Long postId) {
+        QComment comment = QComment.comment1;
+        JPQLQuery<Comment> query1 = from(comment);
+        JPQLQuery<Tuple> tuple1 = query1.select(comment.id, comment.comment, comment.member.username, comment.member.nickname, comment.recomment);
+        tuple1.where(comment.post.id.eq(postId));
+        List<Tuple> list1 = tuple1.fetch();
+
+        List<CommentDTO.Get> comments = new ArrayList<>();
+        list1.forEach(v -> comments.add(new CommentDTO.Get((Long)v.toArray()[0], (String)v.toArray()[1], (String)v.toArray()[2], (String)v.toArray()[3], (String)v.toArray()[4])));
+
+        return comments;
+    }
+
+    @Override
     public PostDTO.GetOne getPost(Long postId) {
         PostDTO.GetOne result = new PostDTO.GetOne();
 
@@ -90,12 +104,12 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         // 댓글
         QComment comment = QComment.comment1;
         JPQLQuery<Comment> query1 = from(comment);
-        JPQLQuery<Tuple> tuple1 = query1.select(comment.id, comment.comment, comment.member.id, comment.member.nickname, comment.recomment);
+        JPQLQuery<Tuple> tuple1 = query1.select(comment.id, comment.comment, comment.member.username, comment.member.nickname, comment.recomment);
         tuple1.where(comment.post.id.eq(postId));
         List<Tuple> list1 = tuple1.fetch();
 
         List<CommentDTO.Get> comments = new ArrayList<>();
-        list1.forEach(v -> comments.add(new CommentDTO.Get((Long)v.toArray()[0], (String)v.toArray()[1], (Long)v.toArray()[2], (String)v.toArray()[3], (String)v.toArray()[4])));
+        list1.forEach(v -> comments.add(new CommentDTO.Get((Long)v.toArray()[0], (String)v.toArray()[1], (String)v.toArray()[2], (String)v.toArray()[3], (String)v.toArray()[4])));
         result.setComments(comments);
 
         return result;

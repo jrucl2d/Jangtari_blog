@@ -22,7 +22,6 @@ function TemplateLayout({ location }) {
     if (post) return;
     const id = location.pathname.split("/")[2];
     dispatch(getOnePost(id));
-    console.log(window.innerHeight);
     // eslint-disable-next-line
   }, []);
 

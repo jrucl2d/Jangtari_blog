@@ -10,13 +10,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class CommentController {
 
     @Autowired
     private CommentService commentService;
 
-    @PostMapping("/addComment")
+    @GetMapping("/post/{id}/comments")
+    public ResponseEntity<CustomResponse> getComments(@PathVariable(value = "id") Long postId){
+        try{
+            List<CommentDTO.Get> result =  commentService.getComments(postId);
+            return new ResponseEntity<>(new CustomResponse(null, result),
+                    HttpStatus.CREATED);
+        } catch (CustomException e){
+            return new ResponseEntity<>(new CustomResponse<>
+                    (new CustomError(e), null),
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/comment")
     public ResponseEntity<CustomResponse> addComment(@RequestBody CommentDTO.Add theComment){
         try{
             commentService.addComment(theComment);
@@ -29,7 +44,7 @@ public class CommentController {
         }
     }
 
-    @PutMapping("/updateComment")
+    @PutMapping("/comment")
     public ResponseEntity<CustomResponse> updateComment(@RequestBody CommentDTO.Update theComment){
         try{
             commentService.updateComment(theComment);
@@ -42,7 +57,7 @@ public class CommentController {
         }
     }
 
-    @DeleteMapping("/deleteComment/{id}")
+    @DeleteMapping("/comment/{id}")
     public ResponseEntity<CustomResponse> deleteComment(@PathVariable(value = "id")Long commentId){
         try{
             commentService.deleteComment(commentId);
