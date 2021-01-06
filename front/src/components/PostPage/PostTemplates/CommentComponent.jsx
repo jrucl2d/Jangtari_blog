@@ -97,6 +97,7 @@ function CommentComponent() {
   };
   const onClickDelete = async (commentId) => {
     if (!post) return;
+    if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
 
     if (localStorage.getItem("username") === null) return;
     try {

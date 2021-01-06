@@ -34,6 +34,8 @@ public class QComment extends EntityPathBase<Comment> {
 
     public final QComment recomment;
 
+    public final ListPath<Comment, QComment> subcomment = this.<Comment, QComment>createList("subcomment", Comment.class, QComment.class, PathInits.DIRECT2);
+
     public QComment(String variable) {
         this(Comment.class, forVariable(variable), INITS);
     }

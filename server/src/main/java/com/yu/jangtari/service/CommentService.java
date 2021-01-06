@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,8 +56,11 @@ public class CommentService {
                 throw new CustomException("해당 댓글이 존재하지 않습니다.", "댓글 추가 실패");
             }
             comment1.setRecomment(parentComment.get());
+            List<Comment> beforeSubcomment = parentComment.get().getSubcomment();
+            beforeSubcomment.add(comment1);
         } else {
             comment1.setRecomment(comment1);
+            comment1.setSubcomment(Arrays.asList(comment1));
         }
         commentRepository.save(comment1);
     }
@@ -75,10 +79,9 @@ public class CommentService {
         }
     }
 
-    @Transactional
     public void deleteComment(Long commentId) throws CustomException{
         try{
-            commentRepository.deleteUnderCommentId(commentId);
+            commentRepository.deleteById(commentId);
         } catch (Exception e){
             throw new CustomException("존재하지 않는 댓글입니다.", "댓글 삭제 실패 : id = " + commentId);
         }

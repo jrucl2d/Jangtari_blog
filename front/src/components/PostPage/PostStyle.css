@@ -503,6 +503,7 @@
   }
   .post-comment-box li {
     font-size: var(--mmiddle);
+    margin-bottom: 0;
   }
 
   /* 이미지 */
