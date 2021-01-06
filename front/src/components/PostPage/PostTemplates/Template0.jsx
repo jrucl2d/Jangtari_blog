@@ -10,6 +10,7 @@ function Template0() {
   return (
     <>
       <h1 className="post-title">{post && post.title}</h1>
+
       <div className="post-main-box template0">
         <div className="post-main-content">
           <div className="post-left">

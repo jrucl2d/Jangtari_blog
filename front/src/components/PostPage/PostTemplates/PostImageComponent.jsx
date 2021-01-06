@@ -33,7 +33,7 @@ function PostImageComponent() {
           `url(${post.pictures[nowPicture].picture})`,
       }}
     >
-      {window.innerWidth > 767 ? (
+      {window.innerWidth > 1024 ? (
         <div className="image-backgound">
           {post && post.pictures && post.pictures[0].picture === null ? (
             "이미지가 없습니다."

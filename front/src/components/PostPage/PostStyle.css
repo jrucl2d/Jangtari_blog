@@ -131,26 +131,25 @@
   display: flex;
   justify-content: center;
 }
+.post-left,
+.post-right {
+  margin: 0 1vw;
+}
 
 /* 게시글 메인바디 */
 .post-body {
   width: 49vw;
+  border: 1px solid white;
   position: relative;
 }
 .post-content-lines {
   line-height: 50px;
   font-size: var(--mlarge);
+  margin: 0 1vw;
 }
 .post-content-lines:last-child {
   margin-bottom: 0;
 }
-.post-content-underline {
-  position: absolute;
-  height: 50px;
-  width: 100%;
-  border-bottom: 1px solid white;
-}
-
 /* 이미지 */
 .post-image {
   background-size: cover;
@@ -277,6 +276,56 @@
     width: 3rem;
     font-size: var(--big-font);
   }
+
+  .post-main-content {
+    margin: 0 1vw;
+  }
+  /* 댓글 */
+  .post-comment-box {
+    width: 45vw;
+    margin: 0 auto;
+    padding: 0;
+    margin-top: 1vh;
+    font-size: var(--mbig);
+  }
+  .post-comment-box h3 {
+    font-size: var(--mbig);
+    font-style: italic;
+    text-align: center;
+    padding-bottom: 1vh;
+    border-bottom: 1px solid white;
+  }
+  .post-comment-blank {
+    display: inline-block;
+    width: 1rem;
+  }
+
+  /* 이미지 */
+  .post-image {
+    width: 45vw;
+    height: 45vw;
+    margin: 0 auto;
+    position: relative;
+    text-align: center;
+    line-height: 43vw;
+  }
+  .image-to-left-mobile,
+  .image-to-right-mobile {
+    width: 22.5vw;
+    height: 45vw;
+    position: absolute;
+  }
+  .image-to-left-mobile {
+    left: 0;
+  }
+  .image-to-right-mobile {
+    right: 0;
+  }
+  .image-numbering div {
+    display: block;
+    width: 3vw;
+    height: 3vw;
+  }
 }
 /* 태블릿 가로 */
 @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
@@ -375,6 +424,7 @@
     width: 90vw;
     margin: 0 auto;
     margin-top: 1vh;
+    border: none;
     border-top: 1px solid white;
     font-size: var(--mmiddle);
   }

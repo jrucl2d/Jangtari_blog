@@ -5,7 +5,6 @@ function PostBodyComponent({ foldMode }) {
   const { post } = useSelector((state) => state.postReducer);
   const theRef = useRef();
   const [showingPost, setShowingPost] = useState([]);
-  const [boxHeight, setBoxHeight] = useState(0);
 
   useEffect(() => {
     if (post && post.content) {
@@ -15,11 +14,6 @@ function PostBodyComponent({ foldMode }) {
     }
     // eslint-disable-next-line
   }, []);
-  useEffect(() => {
-    if (theRef && theRef.current !== 0) {
-      setBoxHeight(Math.ceil(theRef.current.clientHeight / 50));
-    }
-  }, [showingPost]);
 
   return (
     <>
@@ -29,18 +23,6 @@ function PostBodyComponent({ foldMode }) {
             {v}
           </div>
         ))}
-        {boxHeight !== 0 &&
-          Array(boxHeight)
-            .fill()
-            .map((v, i) => (
-              <div
-                key={i}
-                className="post-content-underline"
-                style={{
-                  top: `${i * 50}px`,
-                }}
-              ></div>
-            ))}
       </div>
     </>
   );
