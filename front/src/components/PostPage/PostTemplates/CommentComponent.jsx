@@ -40,7 +40,6 @@ function CommentComponent() {
         comment: theComment,
         recommentId: null,
       });
-      alert("새로운 댓글을 추가했습니다.");
       setNewCommentRefresh(true);
     } catch (err) {
       console.error(err);
@@ -64,7 +63,6 @@ function CommentComponent() {
         comment: theComment,
         recommentId: recommentId,
       });
-      alert("새로운 대댓글을 추가했습니다.");
       setNewCommentRefresh(true);
     } catch (err) {
       console.error(err);
@@ -102,7 +100,6 @@ function CommentComponent() {
     if (localStorage.getItem("username") === null) return;
     try {
       await axios.delete(`/user/comment/${commentId}`);
-      alert("댓글을 삭제했습니다.");
       setNewCommentRefresh(true);
     } catch (err) {
       console.error(err);

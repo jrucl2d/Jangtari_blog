@@ -18,6 +18,14 @@ function PostBodyComponent({ foldMode }) {
   return (
     <>
       <div className={`post-body ${foldMode ? "foldMode" : ""}`} ref={theRef}>
+        <div className="post-content-lines post-hashtags">
+          {post &&
+            post.hashtags &&
+            post.hashtags.length > 0 &&
+            post.hashtags
+              .map((v) => `#${v.hashtag}`)
+              .reduce((prev, curr) => prev + ` ${curr}`)}
+        </div>
         {showingPost.map((v, i) => (
           <div className="post-content-lines" key={i}>
             {v}

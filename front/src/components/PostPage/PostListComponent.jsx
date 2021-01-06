@@ -10,7 +10,7 @@ import "./PostStyle.css";
 function PostListComponent({ location, history }) {
   const dispatch = useDispatch();
   const [searchInfo, setSearchInfo] = useState({
-    title: true,
+    type: "title",
     keyword: "",
   });
   const { result, loading, error } = useSelector((state) => state.postReducer);
@@ -88,9 +88,7 @@ function PostListComponent({ location, history }) {
   const onClickSelect = (e) => {
     setSearchInfo({
       ...searchInfo,
-      title: false,
-      content: false,
-      [e.currentTarget.name]: true,
+      type: e.currentTarget.name,
     });
   };
   const onChangeSearch = (e) => {
@@ -107,7 +105,7 @@ function PostListComponent({ location, history }) {
     }
     const id = location.pathname.split("/")[2];
     const theUrl = `/category/${id}/${location.pathname.split("/")[3]}?type=${
-      searchInfo.title ? "t" : "c"
+      searchInfo.type[0]
     }&keyword=${searchInfo.keyword}`;
     history.push(theUrl);
   };
@@ -207,7 +205,13 @@ function PostListComponent({ location, history }) {
             <div className="post-list-search">
               <DropdownButton
                 id="dropdown-basic-button"
-                title={searchInfo.title ? "제목" : "내용"}
+                title={
+                  searchInfo.type === "title"
+                    ? "제목"
+                    : searchInfo.type === "content"
+                    ? "내용"
+                    : "해시태그"
+                }
                 variant="outline-warning"
               >
                 <Dropdown.Item name="title" onClick={onClickSelect}>
@@ -215,6 +219,9 @@ function PostListComponent({ location, history }) {
                 </Dropdown.Item>
                 <Dropdown.Item name="content" onClick={onClickSelect}>
                   내용
+                </Dropdown.Item>
+                <Dropdown.Item name="hashtag" onClick={onClickSelect}>
+                  해시태그
                 </Dropdown.Item>
               </DropdownButton>
               <form onSubmit={onClickSubmit}>

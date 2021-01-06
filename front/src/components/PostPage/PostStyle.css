@@ -50,17 +50,19 @@
   color: white;
   display: flex;
   margin-top: 0.1rem;
-  height: 2.2rem;
+  width: 40vw;
+  align-items: center;
 }
 .post-list-search button {
-  height: 2.2rem;
-  margin-right: 0.2rem;
+  height: 3rem;
+  width: 10vw;
+  padding: 0;
 }
 .post-list-search input {
-  height: 2.2rem;
+  height: 3rem;
   background: none;
   color: white;
-  margin-right: 0.2rem;
+  width: 20vw;
 }
 
 .post-list-add {
@@ -146,6 +148,9 @@
   line-height: 50px;
   font-size: var(--mlarge);
   margin: 0 1vw;
+}
+.post-hashtags {
+  font-style: italic;
 }
 .post-content-lines:last-child {
   margin-bottom: 0;
@@ -286,21 +291,18 @@
     margin-top: 0.1rem;
     height: 3rem;
   }
-  .post-list-search button {
-    font-size: var(--big-font);
-    height: 3rem;
-    width: 12vw;
-    margin-right: 0.3vw;
+  .post-list-search {
+    width: 50vw;
   }
-  .post-list-search a {
-    font-size: var(--big-font);
-  }
-
   .post-list-search input {
-    height: 3rem;
-    width: 48vw;
-    background: none;
-    margin-right: 0.3vw;
+    font-size: var(--mlarge);
+    height: 2.3rem;
+    width: 30vw;
+  }
+  .post-list-search button {
+    font-size: var(--mlarge);
+    height: 2.3rem;
+    width: 10vw;
   }
 
   .post-list-add,
@@ -369,17 +371,19 @@
   .post-list-box {
     height: 67vh;
   }
+  .post-list-search {
+    width: 60vw;
+    height: 2rem;
+  }
   .post-list-search input {
-    height: 2.6rem;
-    width: 48vw;
-    background: none;
-    margin-right: 0.3vw;
+    font-size: var(--mlarge);
+    width: 40vw;
+    height: 2rem;
   }
   .post-list-search button {
     font-size: var(--mlarge);
-    height: 2.6rem;
-    width: 12vw;
-    margin-right: 0.3vw;
+    width: 10vw;
+    height: 2rem;
   }
   .post-list-pagination button {
     height: 2.6rem;
@@ -402,16 +406,18 @@
     font-size: var(--mbig);
     height: 5.5vh;
   }
+  .post-list-search {
+    width: 80vw;
+  }
   .post-list-search input {
     font-size: var(--msmall);
     height: 2.3rem;
-    width: 48vw;
+    width: 50vw;
   }
   .post-list-search button {
     font-size: var(--msmall);
     height: 2.3rem;
-    width: 13vw;
-    margin-right: 0.3vw;
+    width: 15vw;
   }
   .post-list-pagination button {
     height: 2rem;
