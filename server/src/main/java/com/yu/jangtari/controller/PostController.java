@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.IntStream;
@@ -27,6 +28,13 @@ public class PostController {
 
     @Autowired
     private PostRepository postRepository;
+
+    @Transactional
+    @GetMapping("almighty/hashtag/clean")
+    public Long cleanTrashHashtags(){
+        postRepository.deleteTrashHashtags();
+        return 1L;
+    }
 
     @GetMapping("/bulk")
     public ResponseEntity<CustomResponse> theBulk(){
