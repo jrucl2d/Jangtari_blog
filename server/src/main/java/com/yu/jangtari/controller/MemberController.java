@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.Optional;
 
 
@@ -125,9 +126,11 @@ public class MemberController {
 
         res.addCookie(accessCookie);
         res.addCookie(refreshCookie);
+        HashMap<String, String> response = new HashMap<>();
+        response.put(member1.get().getNickname(), member1.get().getRole().name());
 
         return new ResponseEntity<>(new CustomResponse<>
-                (null, member1.get().getRole()),
+                (null, response),
                 HttpStatus.OK);
     }
 

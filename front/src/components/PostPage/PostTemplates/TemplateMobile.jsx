@@ -15,15 +15,6 @@ function TemplateMobile({ history }) {
   return (
     <>
       <h1 className="post-title">{post && post.title}</h1>
-      <Button
-        onClick={() => {
-          history.goBack();
-        }}
-        variant="outline-primary"
-        className="go-back-posts"
-      >
-        뒤로가기
-      </Button>
       <div className="post-main-box template0">
         <div className="post-main-content">
           <PostImageComponent />

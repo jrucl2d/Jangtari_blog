@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import "./LoginAndJoin.css";
 import { Form, Button } from "react-bootstrap";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { LogIn } from "../../modules/memberReducer";
 
 function LoginFormComponent({ history }) {
+  const dispatch = useDispatch();
   const [info, setInfo] = useState({
     username: "",
     password: "",
@@ -25,16 +28,21 @@ function LoginFormComponent({ history }) {
         username: info.username,
         password: info.password,
       });
-      // Access token이 만료되어 refreshToken으로 새로운 accessToken을 받았을 경우
-      const role = result.data.result;
-      localStorage.setItem("role", role);
-      if (role === "ADMIN") {
-        alert("장따리 왔누 ㅋㅋㅋㅋ");
-      } else {
-        alert("로그인했습니다.");
-      }
+      console.log(result);
+      const nickname = Object.keys(result.data.result)[0];
+      const role = Object.values(result.data.result)[0];
+      console.log(nickname);
+      dispatch(
+        LogIn({
+          username: info.username,
+          nickname,
+          role,
+        })
+      );
+      alert(`${nickname}님 환영합니다.`);
       history.goBack();
     } catch (err) {
+      console.log(err);
       alert("아이디 혹은 비밀번호가 잘못되었습니다.");
       return;
     }

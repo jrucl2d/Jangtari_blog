@@ -238,11 +238,44 @@
   padding: 0;
   font-size: var(--mlarge);
 }
+.post-comment-box > h3 {
+  position: relative;
+}
+.post-comment-box > h3 > i {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.4rem;
+  padding-top: 0;
+}
+.post-comment-box > h3 > i:hover {
+  cursor: pointer;
+  color: rgb(190, 190, 190);
+}
 .post-comment-blank {
   display: inline-block;
   width: 1rem;
 }
-
+.post-comment-box li {
+  font-size: var(--mlarge);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+.post-comment-box .dropdown-toggle::after,
+.post-comment-box .dropup .dropdown-toggle::after {
+  display: none;
+}
+.post-comment-box button {
+  border: none;
+  color: white;
+}
+.dropdown-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 /* 태블릿 */
 @media (min-width: 768px) and (max-width: 1024px) {
   .post-list {
@@ -396,11 +429,6 @@
     display: flex;
     flex-direction: column;
   }
-  .go-back-posts {
-    width: 20vw;
-    align-self: flex-start;
-    margin-left: 1vw;
-  }
 
   /* 제목 아래 */
   .post-main-content {
@@ -472,6 +500,9 @@
   .post-comment-blank {
     display: inline-block;
     width: 1rem;
+  }
+  .post-comment-box li {
+    font-size: var(--mmiddle);
   }
 
   /* 이미지 */

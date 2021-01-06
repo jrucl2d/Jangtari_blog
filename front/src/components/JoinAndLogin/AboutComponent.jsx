@@ -10,6 +10,8 @@ function AboutComponent() {
   const { info, error, loading } = useSelector(
     (state) => state.jangtariReducer
   );
+  const { role } = useSelector((state) => state.memberReducer);
+
   const [imageBase64, setImageBase64] = useState(""); // base64 정보
   const [changeMode, setChangeMode] = useState(false);
   const [infoChange, setInfoChange] = useState({
@@ -17,6 +19,7 @@ function AboutComponent() {
     introduce: "",
     picture: "",
   });
+
   useEffect(() => {
     if (info === null) {
       dispatch(getJangTtak());
@@ -95,8 +98,7 @@ function AboutComponent() {
         </div>
       ) : (
         <>
-          {localStorage.getItem("role") &&
-          localStorage.getItem("role") === "ADMIN" ? (
+          {role && role === "ADMIN" ? (
             <h1>
               {changeMode ? (
                 <span className="change-buttons">

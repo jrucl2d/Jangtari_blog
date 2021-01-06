@@ -27,9 +27,11 @@ function CategorySettingComponent({ history }) {
   const { categories, error, loading } = useSelector(
     (state) => state.categoryReducer
   );
+  const { role } = useSelector((state) => state.memberReducer);
+
   // 카테고리 목록 불러오기
   useEffect(() => {
-    if (localStorage.getItem("role") !== "ADMIN") {
+    if (role !== "ADMIN") {
       alert("오호! 그러면 안 돼요!");
       history.push("/");
     }
