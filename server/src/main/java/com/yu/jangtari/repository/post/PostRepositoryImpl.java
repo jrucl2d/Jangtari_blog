@@ -68,6 +68,7 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
 
     @Override
     public List<CommentDTO.Get> getCommentsOfPost(Long postId) {
+
         QComment comment = QComment.comment1;
         JPQLQuery<Comment> query1 = from(comment);
         JPQLQuery<Tuple> tuple1 = query1.select(comment.id, comment.comment, comment.member.username, comment.member.nickname, comment.recomment.id);
@@ -85,10 +86,12 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         PostDTO.GetOne result = new PostDTO.GetOne();
 
         // 게시글 + 사진
+        QHashtag hashtag = QHashtag.hashtag1;
+
         QPost post = QPost.post1;
         QPicture picture = QPicture.picture1;
         JPQLQuery<Post> query = from(post);
-        JPQLQuery<Tuple> tuple = query.select(post.id, post.title, post.post, picture.picture);
+        JPQLQuery<Tuple> tuple = query.select(post.id, post.title, post.post, picture.picture, hashtag.hashtag);
         tuple.where(post.id.eq(postId));
         tuple.leftJoin(post.pictures, picture);
         List<Tuple> list = tuple.fetch();
