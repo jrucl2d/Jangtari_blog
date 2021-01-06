@@ -2,11 +2,8 @@ import React, { useState } from "react";
 import "./LoginAndJoin.css";
 import { Form, Button } from "react-bootstrap";
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { LogIn } from "../../modules/memberReducer";
 
 function LoginFormComponent({ history }) {
-  const dispatch = useDispatch();
   const [info, setInfo] = useState({
     username: "",
     password: "",
@@ -30,13 +27,8 @@ function LoginFormComponent({ history }) {
       });
       const nickname = Object.keys(result.data.result)[0];
       const role = Object.values(result.data.result)[0];
-      dispatch(
-        LogIn({
-          username: info.username,
-          nickname,
-          role,
-        })
-      );
+      localStorage.setItem("nickname", nickname);
+      localStorage.setItem("role", role);
       alert(`${nickname}님 환영합니다.`);
       history.goBack();
     } catch (err) {

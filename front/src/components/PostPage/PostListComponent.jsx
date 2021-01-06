@@ -14,7 +14,6 @@ function PostListComponent({ location, history }) {
     keyword: "",
   });
   const { result, loading, error } = useSelector((state) => state.postReducer);
-  const { role } = useSelector((state) => state.memberReducer);
 
   useEffect(() => {
     const id = location.pathname.split("/")[2];
@@ -173,11 +172,12 @@ function PostListComponent({ location, history }) {
           </div>
           <ul className="post-list-box">
             <div>
-              {role && role === "ADMIN" && (
-                <Button className="post-list-add" variant="outline-light">
-                  <i className="fas fa-plus"></i>
-                </Button>
-              )}
+              {localStorage.getItem("role") &&
+                localStorage.getItem("role") === "ADMIN" && (
+                  <Button className="post-list-add" variant="outline-light">
+                    <i className="fas fa-plus"></i>
+                  </Button>
+                )}
 
               <li className="post-list-content post-list-title">
                 {location.pathname.split("/")[3]}

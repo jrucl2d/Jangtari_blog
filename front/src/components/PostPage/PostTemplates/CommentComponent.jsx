@@ -7,7 +7,6 @@ import { setNewComments } from "../../../modules/postReducer";
 function CommentComponent() {
   const dispatch = useDispatch();
   const { post } = useSelector((state) => state.postReducer);
-  const { username } = useSelector((state) => state.memberReducer);
   const [newCommentRefresh, setNewCommentRefresh] = useState(false);
 
   useEffect(() => {
@@ -32,10 +31,12 @@ function CommentComponent() {
       alert("빈 댓글을 작성할 수 없습니다.");
       return;
     }
-    if (theComment === null) return;
+    if (theComment === null || localStorage.getItem("username") === null)
+      return;
     try {
       await axios.post("/comment", {
         postId: post.id,
+        commenter: localStorage.getItem("username"),
         comment: theComment,
         recommentId: null,
       });
@@ -46,11 +47,17 @@ function CommentComponent() {
       return;
     }
   };
+  const onClickModify = (commentId, comment) => {
+    console.log(commentId, comment);
+  };
 
   return (
     <ul className="post-comment-box">
       <h3>
-        댓글<i className="fas fa-plus" onClick={onClickAddComment}></i>
+        댓글
+        {localStorage.getItem("username") && (
+          <i className="fas fa-plus" onClick={onClickAddComment}></i>
+        )}
       </h3>
       {post && post.comments && post.comments.length > 0 ? (
         post.comments.map((v) => (
@@ -67,35 +74,41 @@ function CommentComponent() {
                 {v.nickname} : {v.comment}
               </span>
             </div>
-            <DropdownButton
-              key="up"
-              drop="up"
-              variant="outline-secondary"
-              title={<i className="fas fa-ellipsis-h" name="new"></i>}
-            >
-              <Dropdown.Item eventKey="1">
-                <div className="dropdown-inner">
-                  댓글
-                  <i className="far fa-comment-dots"></i>
-                </div>
-              </Dropdown.Item>
-              {username && username === v.username && (
-                <>
-                  <Dropdown.Item eventKey="2">
-                    <div className="dropdown-inner">
-                      수정
-                      <i className="fas fa-hammer"></i>
-                    </div>
-                  </Dropdown.Item>
-                  <Dropdown.Item eventKey="3">
-                    <div className="dropdown-inner">
-                      삭제
-                      <i className="far fa-trash-alt"></i>
-                    </div>
-                  </Dropdown.Item>
-                </>
-              )}
-            </DropdownButton>
+            {localStorage.getItem("username") && (
+              <DropdownButton
+                key="up"
+                drop="up"
+                variant="outline-secondary"
+                title={<i className="fas fa-ellipsis-h" name="new"></i>}
+              >
+                <Dropdown.Item
+                  eventKey="1"
+                  onClick={() => onClickModify(v.commentId, v.comment)}
+                >
+                  <div className="dropdown-inner">
+                    댓글
+                    <i className="far fa-comment-dots"></i>
+                  </div>
+                </Dropdown.Item>
+                {localStorage.getItem("username") &&
+                  localStorage.getItem("username") === v.username && (
+                    <>
+                      <Dropdown.Item eventKey="2">
+                        <div className="dropdown-inner">
+                          수정
+                          <i className="fas fa-hammer"></i>
+                        </div>
+                      </Dropdown.Item>
+                      <Dropdown.Item eventKey="3">
+                        <div className="dropdown-inner">
+                          삭제
+                          <i className="far fa-trash-alt"></i>
+                        </div>
+                      </Dropdown.Item>
+                    </>
+                  )}
+              </DropdownButton>
+            )}
           </li>
         ))
       ) : (

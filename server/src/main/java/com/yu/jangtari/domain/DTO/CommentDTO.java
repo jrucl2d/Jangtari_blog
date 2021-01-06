@@ -23,6 +23,7 @@ public class CommentDTO {
     @NoArgsConstructor
     public static class Add{
         private Long postId;
+        private String commenter;
         private String comment;
         private Long recommentId;
     }

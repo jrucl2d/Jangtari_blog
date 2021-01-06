@@ -7,7 +7,7 @@ import CategoryUpdateModal from "./CategoryUpdateModal";
 import "./CategorySettingStyle.css";
 import CategoryAddModal from "./CategoryAddModal";
 
-function CategorySettingComponent({ history }) {
+function CategorySettingComponent() {
   const dispatch = useDispatch();
   const colorRef = useRef([
     "primary",
@@ -27,16 +27,6 @@ function CategorySettingComponent({ history }) {
   const { categories, error, loading } = useSelector(
     (state) => state.categoryReducer
   );
-  const { role } = useSelector((state) => state.memberReducer);
-
-  // 카테고리 목록 불러오기
-  useEffect(() => {
-    if (role !== "ADMIN") {
-      alert("오호! 그러면 안 돼요!");
-      history.push("/");
-    }
-    // eslint-disable-next-line
-  }, []);
 
   useEffect(() => {
     if (error) {

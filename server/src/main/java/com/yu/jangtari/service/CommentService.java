@@ -40,8 +40,7 @@ public class CommentService {
         }
         Comment comment1 = new Comment();
         Post post = new Post();
-        // Principal에서 가져오기 principal.getName(); 이런식
-        Optional<Member> member = memberRepository.findByUsername("jangtari");
+        Optional<Member> member = memberRepository.findByUsername(comment.getCommenter());
         if (!member.isPresent()){
             throw new CustomException("사용자가 존재하지 않습니다.", "댓글 추가 실패");
         }

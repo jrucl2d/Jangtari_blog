@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import "./LoginAndJoin.css";
 import { Form, Button } from "react-bootstrap";
 import axios from "axios";
@@ -12,10 +11,9 @@ function JoinFormComponent({ history }) {
     password2: "",
   });
   const [showPWWarn, setShowPWWarn] = useState(false);
-  const { role } = useSelector((state) => state.memberReducer);
 
   useEffect(() => {
-    if (role) {
+    if (localStorage.getItem("role")) {
       alert("로그인 했는데 왜 왔니");
       history.push("/");
     }

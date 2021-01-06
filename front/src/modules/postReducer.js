@@ -19,7 +19,6 @@ export const getOnePost = (id) => async (dispatch) => {
   }
 };
 export const setNewComments = (comments) => {
-  console.log(comments);
   return {
     type: "SET_NEW_COMMENTS",
     comments,
