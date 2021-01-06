@@ -87,7 +87,7 @@ public class PostController {
         }
     }
 
-    @PutMapping("/admin/updatePost")
+    @PutMapping("/admin/post")
     public ResponseEntity<CustomResponse> updatePost(@RequestBody PostDTO.Update thePost){
         try{
             postService.updatePost(thePost);
@@ -100,7 +100,7 @@ public class PostController {
         }
     }
 
-    @DeleteMapping("/admin/deletePost/{id}")
+    @DeleteMapping("/admin/post/{id}")
     public ResponseEntity<CustomResponse> deletePost(@PathVariable(value = "id")Long postId){
         try{
             postService.deletePost(postId);

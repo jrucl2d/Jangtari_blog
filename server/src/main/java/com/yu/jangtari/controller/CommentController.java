@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -31,9 +32,12 @@ public class CommentController {
         }
     }
 
-    @PostMapping("/comment")
-    public ResponseEntity<CustomResponse> addComment(@RequestBody CommentDTO.Add theComment){
+    @PostMapping("/user/comment")
+    public ResponseEntity<CustomResponse> addComment(@RequestBody CommentDTO.Add theComment, Principal principal){
         try{
+            if(!theComment.getCommenter().equals(principal.getName())){
+                throw new CustomException("사용자 정보가 올바르지 않습니다.", "댓글 추가 실패");
+            }
             commentService.addComment(theComment);
             return new ResponseEntity<>(CustomResponse.OK(),
                     HttpStatus.CREATED);
@@ -44,9 +48,12 @@ public class CommentController {
         }
     }
 
-    @PutMapping("/comment")
-    public ResponseEntity<CustomResponse> updateComment(@RequestBody CommentDTO.Update theComment){
+    @PutMapping("/user/comment")
+    public ResponseEntity<CustomResponse> updateComment(@RequestBody CommentDTO.Update theComment, Principal principal){
         try{
+            if(!theComment.getCommenter().equals(principal.getName())){
+                throw new CustomException("사용자 정보가 올바르지 않습니다.", "댓글 추가 실패");
+            }
             commentService.updateComment(theComment);
             return new ResponseEntity<>(CustomResponse.OK(),
                     HttpStatus.OK);
@@ -57,7 +64,7 @@ public class CommentController {
         }
     }
 
-    @DeleteMapping("/comment/{id}")
+    @DeleteMapping("/user/comment/{id}")
     public ResponseEntity<CustomResponse> deleteComment(@PathVariable(value = "id")Long commentId){
         try{
             commentService.deleteComment(commentId);

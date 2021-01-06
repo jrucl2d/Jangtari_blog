@@ -35,6 +35,7 @@ public class CommentService {
 
     @Transactional
     public void addComment(CommentDTO.Add comment) throws CustomException {
+
         if(comment.getComment().equals("") || comment.getComment() == null){
             throw new CustomException("입력 정보가 충분하지 않습니다.", "댓글 추가 실패");
         }
@@ -49,14 +50,13 @@ public class CommentService {
         comment1.setComment(comment.getComment());
         comment1.setMember(member.get());
         if(comment.getRecommentId() != null){
-            Object parentRecomment = commentRepository.getRecommentByRecommentId(comment.getRecommentId());
-            String theString = "";
-            if(parentRecomment == null){
-                theString += comment.getRecommentId();
-            } else{
-                theString += parentRecomment.toString() + "-" + comment.getRecommentId();
+            Optional<Comment> parentComment = commentRepository.findById(comment.getRecommentId());
+            if(!parentComment.isPresent()){
+                throw new CustomException("해당 댓글이 존재하지 않습니다.", "댓글 추가 실패");
             }
-            comment1.setRecomment(theString);
+            comment1.setRecomment(parentComment.get());
+        } else {
+            comment1.setRecomment(comment1);
         }
         commentRepository.save(comment1);
     }
@@ -78,8 +78,7 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long commentId) throws CustomException{
         try{
-            String commentString = "" + commentId;
-            commentRepository.deleteUnderCommentId(commentId, commentString);
+            commentRepository.deleteUnderCommentId(commentId);
         } catch (Exception e){
             throw new CustomException("존재하지 않는 댓글입니다.", "댓글 삭제 실패 : id = " + commentId);
         }

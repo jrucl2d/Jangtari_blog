@@ -28,6 +28,7 @@ function LoginFormComponent({ history }) {
       const nickname = Object.keys(result.data.result)[0];
       const role = Object.values(result.data.result)[0];
       localStorage.setItem("nickname", nickname);
+      localStorage.setItem("username", info.username);
       localStorage.setItem("role", role);
       alert(`${nickname}님 환영합니다.`);
       history.goBack();

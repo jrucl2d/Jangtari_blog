@@ -27,7 +27,9 @@ public class Comment {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    private String recomment;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="recomment_id")
+    private Comment recomment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")

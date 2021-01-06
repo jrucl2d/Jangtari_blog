@@ -13,7 +13,7 @@ public class CommentDTO {
         private String comment;
         private String username;
         private String nickname;
-        private String recomment;
+        private Long recomment;
     }
 
     @Getter
@@ -34,6 +34,7 @@ public class CommentDTO {
     @NoArgsConstructor
     public static class Update{
         private Long id;
+        private String commenter;
         private String comment;
     }
 }

@@ -32,7 +32,7 @@ public class QComment extends EntityPathBase<Comment> {
 
     public final QPost post;
 
-    public final StringPath recomment = createString("recomment");
+    public final QComment recomment;
 
     public QComment(String variable) {
         this(Comment.class, forVariable(variable), INITS);
@@ -54,6 +54,7 @@ public class QComment extends EntityPathBase<Comment> {
         super(type, metadata, inits);
         this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
         this.post = inits.isInitialized("post") ? new QPost(forProperty("post"), inits.get("post")) : null;
+        this.recomment = inits.isInitialized("recomment") ? new QComment(forProperty("recomment"), inits.get("recomment")) : null;
     }
 
 }

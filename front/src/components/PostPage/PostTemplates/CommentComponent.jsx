@@ -34,23 +34,81 @@ function CommentComponent() {
     if (theComment === null || localStorage.getItem("username") === null)
       return;
     try {
-      await axios.post("/comment", {
+      await axios.post("/user/comment", {
         postId: post.id,
         commenter: localStorage.getItem("username"),
         comment: theComment,
         recommentId: null,
       });
+      alert("새로운 댓글을 추가했습니다.");
       setNewCommentRefresh(true);
     } catch (err) {
       console.error(err);
-      alert("오류가 발생했습니다. 잠시 뒤에 다시 시도해주세요.");
+      alert("사용자 정보가 일치하지 않습니다.");
       return;
     }
   };
-  const onClickModify = (commentId, comment) => {
-    console.log(commentId, comment);
+  const onClickAddRecomment = async (recommentId) => {
+    if (!post) return;
+    const theComment = prompt("대댓글을 작성해주세요");
+    if (theComment === "") {
+      alert("빈 댓글을 작성할 수 없습니다.");
+      return;
+    }
+    if (theComment === null || localStorage.getItem("username") === null)
+      return;
+    try {
+      await axios.post("/user/comment", {
+        postId: post.id,
+        commenter: localStorage.getItem("username"),
+        comment: theComment,
+        recommentId: recommentId,
+      });
+      alert("새로운 대댓글을 추가했습니다.");
+      setNewCommentRefresh(true);
+    } catch (err) {
+      console.error(err);
+      alert("사용자 정보가 일치하지 않습니다.");
+      return;
+    }
   };
+  const onClickModify = async (commentId, comment) => {
+    if (!post) return;
+    const theComment = prompt("댓글을 수정해주세요", comment);
+    if (theComment === "") {
+      alert("빈 댓글로 수정할 수 없습니다.");
+      return;
+    }
+    if (theComment === null || localStorage.getItem("username") === null)
+      return;
+    try {
+      await axios.put("/user/comment", {
+        commenter: localStorage.getItem("username"),
+        comment: theComment,
+        id: commentId,
+      });
+      alert("댓글을 수정했습니다.");
+      setNewCommentRefresh(true);
+    } catch (err) {
+      console.error(err);
+      alert("사용자 정보가 일치하지 않습니다.");
+      return;
+    }
+  };
+  const onClickDelete = async (commentId) => {
+    if (!post) return;
 
+    if (localStorage.getItem("username") === null) return;
+    try {
+      await axios.delete(`/user/comment/${commentId}`);
+      alert("댓글을 삭제했습니다.");
+      setNewCommentRefresh(true);
+    } catch (err) {
+      console.error(err);
+      alert("사용자 정보가 일치하지 않습니다.");
+      return;
+    }
+  };
   return (
     <ul className="post-comment-box">
       <h3>
@@ -63,14 +121,11 @@ function CommentComponent() {
         post.comments.map((v) => (
           <li key={v.commentId}>
             <div className="comment-content">
-              {v.recomment !== null &&
-                Array(v.recomment.split("-").length)
-                  .fill()
-                  .map((v, i) => (
-                    <span key={i} className="post-comment-blank"></span>
-                  ))}
+              {v.recomment !== v.commentId && (
+                <span className="post-comment-blank"></span>
+              )}
               <span>
-                {v.recomment !== null ? "┖ " : "-"}
+                {v.recomment !== v.commentId ? "┖ " : "-"}
                 {v.nickname} : {v.comment}
               </span>
             </div>
@@ -83,7 +138,7 @@ function CommentComponent() {
               >
                 <Dropdown.Item
                   eventKey="1"
-                  onClick={() => onClickModify(v.commentId, v.comment)}
+                  onClick={() => onClickAddRecomment(v.recomment)}
                 >
                   <div className="dropdown-inner">
                     댓글
@@ -94,12 +149,18 @@ function CommentComponent() {
                   localStorage.getItem("username") === v.username && (
                     <>
                       <Dropdown.Item eventKey="2">
-                        <div className="dropdown-inner">
+                        <div
+                          className="dropdown-inner"
+                          onClick={() => onClickModify(v.commentId, v.comment)}
+                        >
                           수정
                           <i className="fas fa-hammer"></i>
                         </div>
                       </Dropdown.Item>
-                      <Dropdown.Item eventKey="3">
+                      <Dropdown.Item
+                        eventKey="3"
+                        onClick={() => onClickDelete(v.commentId)}
+                      >
                         <div className="dropdown-inner">
                           삭제
                           <i className="far fa-trash-alt"></i>
