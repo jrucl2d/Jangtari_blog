@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Dropdown, DropdownButton } from "react-bootstrap";
+import { Button, Dropdown, DropdownButton, Modal } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { getAllPosts } from "../../modules/postReducer";
@@ -13,6 +13,7 @@ function PostListComponent({ location, history }) {
     type: "title",
     keyword: "",
   });
+  const [show, setShow] = useState(false);
   const { result, loading, error } = useSelector((state) => state.postReducer);
 
   useEffect(() => {
@@ -172,9 +173,22 @@ function PostListComponent({ location, history }) {
             <div>
               {localStorage.getItem("role") &&
                 localStorage.getItem("role") === "ADMIN" && (
-                  <Button className="post-list-add" variant="outline-light">
-                    <i className="fas fa-plus"></i>
-                  </Button>
+                  <>
+                    <Button
+                      className="post-list-add"
+                      variant="outline-light"
+                      onClick={() => {
+                        setShow(true);
+                      }}
+                    >
+                      <i className="fas fa-plus"></i>
+                    </Button>
+                    <TemplateModal
+                      show={show}
+                      setShow={setShow}
+                      loc={location.pathname.split("/")[2]}
+                    />
+                  </>
                 )}
 
               <li className="post-list-content post-list-title">
@@ -243,3 +257,40 @@ function PostListComponent({ location, history }) {
 }
 
 export default PostListComponent;
+
+function TemplateModal({ show, setShow, loc }) {
+  return (
+    <Modal
+      className="category-modal"
+      show={show}
+      size="lg"
+      onHide={() => setShow(false)}
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          템플릿을 선택하세요.
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body className="template-select-modal">
+        <Link to={`/category/${loc}/add/post?template=${0}`}>
+          <img className="template-select" src="/template0.PNG" alt="템플릿0" />
+        </Link>
+        <Link to={`/category/${loc}/add/post?template=${1}`}>
+          <img className="template-select" src="/template1.PNG" alt="템플릿1" />
+        </Link>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button
+          variant="outline-danger"
+          onClick={() => {
+            setShow(false);
+          }}
+        >
+          닫기
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}
