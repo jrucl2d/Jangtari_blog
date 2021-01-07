@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### YUSEONGGEUN'S CONFIG ###
+jangtari.json
+generated
+credentials

@@ -1,6 +1,10 @@
 package com.yu.jangtari.service;
 
+import com.google.api.client.http.FileContent;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
 import com.yu.jangtari.common.CustomException;
+import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.DTO.CategoryDTO;
 import com.yu.jangtari.repository.category.CategoryRepository;
@@ -9,6 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,13 +25,16 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private GoogleDriveUtil googleDriveUtil;
+
     @Transactional(readOnly = true)
     public List<CategoryDTO.Get> getAllCategories(){
         return categoryRepository.getAllCategories();
     }
 
     @Transactional
-    public Long addCategory(String newCategory, MultipartFile categoryImageFile) throws CustomException {
+    public Long addCategory(String newCategory, MultipartFile categoryImageFile) throws CustomException, GeneralSecurityException, IOException {
         Category category = new Category();
 
         if(newCategory == null){
@@ -32,8 +42,14 @@ public class CategoryService {
         }
         category.setName(newCategory);
         if(categoryImageFile != null){
-            System.out.println("새로운 이미지 -----------------------");
-            System.out.println(categoryImageFile);
+            Drive drive = googleDriveUtil.getDrive();
+            File file = new File();
+            file.setName(googleDriveUtil.getPictureName(newCategory));
+            file.setParents(Collections.singletonList(googleDriveUtil.CATEGORY_FOLDER));
+            FileContent content = new FileContent("image/jpeg", googleDriveUtil.convert(categoryImageFile));
+            File uploadedFile = drive.files().create(file, content).setFields("id").execute();
+            String fileRef = String.format("{아이디 : '%s'}", uploadedFile.getId());
+            System.out.println(fileRef);
         }
 //        Category saved = categoryRepository.save(category);
 //        return saved.getId();

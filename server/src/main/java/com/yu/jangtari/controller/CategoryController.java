@@ -1,5 +1,6 @@
 package com.yu.jangtari.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yu.jangtari.common.CustomException;
 import com.yu.jangtari.common.CustomError;
 import com.yu.jangtari.common.CustomResponse;
@@ -11,8 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 @RestController
@@ -31,10 +34,10 @@ public class CategoryController {
 
     @PostMapping("/admin/category")
     public ResponseEntity<CustomResponse> addCategory(@RequestPart("category") String newCategory,
-                                                      @RequestPart("image") MultipartFile categoryImage) throws UnsupportedEncodingException{
+                                                      @RequestPart("image") MultipartFile categoryImage) throws GeneralSecurityException, IOException {
         try{
-            newCategory = new String(newCategory.getBytes("8859_1"), StandardCharsets.UTF_8);
-
+            System.out.println("이게 한글로 나와야 하는데");
+            System.out.println(newCategory);
             Long newId = categoryService.addCategory(newCategory, categoryImage);
             return new ResponseEntity<>(new CustomResponse<>(null, newId),
                     HttpStatus.CREATED);

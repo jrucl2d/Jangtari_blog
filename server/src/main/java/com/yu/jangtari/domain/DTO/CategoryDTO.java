@@ -9,6 +9,15 @@ public class CategoryDTO {
     @ToString
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class Add{
+        private String name;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class Get{
         private Long id;
         private String name;

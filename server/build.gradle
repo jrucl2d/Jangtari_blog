@@ -55,6 +55,10 @@ dependencies {
     testCompile('org.springframework.security:spring-security-test')
     compile("com.querydsl:querydsl-jpa") // querydsl
     compile("com.querydsl:querydsl-apt") // querydsl
+
+    compile group: 'com.google.oauth-client', name: 'google-oauth-client-jetty', version: '1.31.2'
+    compile 'com.google.api-client:google-api-client:1.23.0'
+    compile 'com.google.apis:google-api-services-drive:v3-rev110-1.23.0'
 }
 
 def querydslSrcDir = 'src/main/generated'
