@@ -12,5 +12,5 @@ public interface PostRepository extends CrudRepository<Post, Long>, CustomPostRe
 
     @Modifying
     @Query(value = "delete from hashtag where hashtag.id not in (select hashtag_id from post_hashtag)", nativeQuery = true)
-    public void deleteTrashHashtags();
+    public int deleteTrashHashtags();
 }

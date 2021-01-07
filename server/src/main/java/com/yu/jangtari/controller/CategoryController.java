@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -27,9 +30,12 @@ public class CategoryController {
     }
 
     @PostMapping("/admin/category")
-    public ResponseEntity<CustomResponse> addCategory(@RequestBody CategoryDTO.Add newCategory){
+    public ResponseEntity<CustomResponse> addCategory(@RequestPart("category") String newCategory,
+                                                      @RequestPart("image") MultipartFile categoryImage) throws UnsupportedEncodingException{
         try{
-            Long newId = categoryService.addCategory(newCategory);
+            newCategory = new String(newCategory.getBytes("8859_1"), StandardCharsets.UTF_8);
+
+            Long newId = categoryService.addCategory(newCategory, categoryImage);
             return new ResponseEntity<>(new CustomResponse<>(null, newId),
                     HttpStatus.CREATED);
         } catch (CustomException e){

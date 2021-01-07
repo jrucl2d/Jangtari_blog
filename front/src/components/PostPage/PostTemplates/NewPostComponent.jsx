@@ -4,7 +4,7 @@ import queryString from "query-string";
 import "../PostStyle.css";
 
 function NewPostComponent({ location }) {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
   const [info, setInfo] = useState({
     categoryId: location.pathname.split("/")[2],
     hashtags: "",
@@ -12,6 +12,12 @@ function NewPostComponent({ location }) {
     post: "",
     template: queryString.parse(location.search).template,
   });
+  const [pictures, setPictures] = useState([
+    {
+      name: "사진1",
+      base64: "",
+    },
+  ]);
   const mainRef = useRef();
   useEffect(() => {
     mainRef.current.focus();
@@ -56,7 +62,12 @@ function NewPostComponent({ location }) {
 
   return (
     <div className="new-post-body">
-      <PictureModal setShow={setShow} show={show} />
+      <PictureModal
+        setShow={setShow}
+        show={show}
+        pictures={pictures}
+        setPictures={setPictures}
+      />
       <div className="new-post-images">
         <Button
           variant="outline-info"
@@ -105,7 +116,7 @@ function NewPostComponent({ location }) {
 
 export default NewPostComponent;
 
-function PictureModal({ show, setShow }) {
+function PictureModal({ show, setShow, pictures, setPictures }) {
   return (
     <Modal
       className="category-modal"
@@ -118,7 +129,18 @@ function PictureModal({ show, setShow }) {
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">사진 설정</Modal.Title>
       </Modal.Header>
-      <Modal.Body>{}</Modal.Body>
+      <Modal.Body>
+        <label htmlFor="category_img_upload" className="about-label">
+          <i className="far fa-file-image" />
+          &nbsp;파일 선택
+        </label>
+        <input
+          type="file"
+          accept="image/jpg,image/png,image/jpeg,image/gif"
+          className="category-upload"
+          id="category_img_upload"
+        />
+      </Modal.Body>
       <Modal.Footer>
         <Button variant="outline-primary">추가</Button>
         <Button

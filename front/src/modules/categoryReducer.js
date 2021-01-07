@@ -9,11 +9,15 @@ export const getAllCategories = () => async (dispatch) => {
     dispatch({ type: "GET_ALL_ERROR", error: err });
   }
 };
-export const addCategory = (newInfo) => async (dispatch) => {
+export const addCategory = (newInfo, tmpImage) => async (dispatch) => {
   try {
     const newId = await categoryAPI.add(newInfo);
-    newInfo["id"] = newId;
-    dispatch({ type: "ADD_INFO_SUCCESS", newInfo });
+    const reduxNewInfo = {
+      ...newInfo,
+    };
+    reduxNewInfo["id"] = newId;
+    reduxNewInfo["picture"] = tmpImage; // 임시로 base64 이미지 정보로 사진을 표시
+    dispatch({ type: "ADD_INFO_SUCCESS", newInfo: reduxNewInfo });
   } catch (err) {
     dispatch({ type: "ADD_INFO_ERROR", error: err });
   }

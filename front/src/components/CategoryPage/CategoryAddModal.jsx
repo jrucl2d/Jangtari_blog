@@ -8,7 +8,7 @@ function CategoryAddModal({ setModalShow, modalShow }) {
   const [imageBase64, setImageBase64] = useState(""); // base64 정보
   const [infoChange, setInfoChange] = useState({
     name: "",
-    picture: "",
+    picture: null,
   });
 
   const onChangeFile = (e) => {
@@ -19,7 +19,7 @@ function CategoryAddModal({ setModalShow, modalShow }) {
       reader.onloadend = () => {
         setInfoChange({
           ...infoChange,
-          picture: file.name,
+          picture: file,
         });
         setImageBase64(reader.result);
       };
@@ -49,7 +49,7 @@ function CategoryAddModal({ setModalShow, modalShow }) {
       alert("카테고리 제목을 적어주세요.");
       return;
     }
-    dispatch(addCategory(infoChange));
+    dispatch(addCategory(infoChange, imageBase64));
   };
 
   return (
@@ -68,7 +68,7 @@ function CategoryAddModal({ setModalShow, modalShow }) {
       </Modal.Header>
       <Modal.Body>
         <div className="category-update-name">
-          <label htmlFor="">카테고리 제목 :</label>
+          <label htmlFor="">카테고리 이름 :</label>
           <input
             type="text"
             name="name"

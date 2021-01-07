@@ -6,7 +6,14 @@ export const getAll = async () => {
   return result;
 };
 export const add = async (newInfo) => {
-  const { data } = await axios.post("/admin/category", newInfo);
+  const formData = new FormData();
+  formData.append("category", newInfo.name);
+  formData.append("image", newInfo.picture);
+  const { data } = await axios.post("/admin/category", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data; charset=UTF-8",
+    },
+  });
   const result = data.result;
   return result;
 };
