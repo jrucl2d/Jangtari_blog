@@ -324,12 +324,19 @@
 .new-post-main div:first-child button {
   width: 10vw;
 }
+.new-post-title {
+  margin-top: 1vh;
+  background: none;
+  border-color: #eceaea;
+  color: rgb(190, 190, 190);
+}
 .new-post-main textarea {
   background: none;
   color: rgb(190, 190, 190);
-  height: 75vh;
+  height: 72vh;
   margin-top: 1vh;
   resize: none;
+  border-color: #eceaea;
 }
 .new-post-images {
   display: flex;
