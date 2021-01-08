@@ -45,10 +45,10 @@ public class CategoryService {
             Drive drive = googleDriveUtil.getDrive();
             File file = new File();
             file.setName(googleDriveUtil.getPictureName(newCategory));
-            file.setParents(Collections.singletonList(googleDriveUtil.CATEGORY_FOLDER));
-            FileContent content = new FileContent("image/jpeg", googleDriveUtil.convert(categoryImageFile));
+            java.io.File tmpFile = googleDriveUtil.convert(categoryImageFile);
+            FileContent content = new FileContent("image/jpeg", tmpFile);
             File uploadedFile = drive.files().create(file, content).setFields("id").execute();
-
+            tmpFile.delete();
             String fileRef = googleDriveUtil.FILE_REF + uploadedFile.getId();
             category.setPicture(fileRef);
         }
@@ -69,8 +69,10 @@ public class CategoryService {
                 File file = new File();
                 file.setName(googleDriveUtil.getPictureName(theCategory.getName()));
                 file.setParents(Collections.singletonList(googleDriveUtil.CATEGORY_FOLDER));
-                FileContent content = new FileContent("image/jpeg", googleDriveUtil.convert(categoryImageFile));
+                java.io.File tmpFile = googleDriveUtil.convert(categoryImageFile);
+                FileContent content = new FileContent("image/jpeg", tmpFile);
                 File uploadedFile = drive.files().create(file, content).setFields("id").execute();
+                tmpFile.delete();
                 String fileRef = googleDriveUtil.FILE_REF + uploadedFile.getId();
                 category.get().setPicture(fileRef);
             }
