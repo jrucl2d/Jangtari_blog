@@ -34,4 +34,13 @@ public class MemberDTO {
         private String introduce;
         private String picture;
     }
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PutInfo{
+        private String nickname;
+        private String introduce;
+    }
 }

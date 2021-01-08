@@ -18,10 +18,12 @@ function AboutComponent() {
     introduce: "",
     picture: "",
   });
+  const [newPicture, setNewPicture] = useState(null);
 
   useEffect(() => {
     if (!success) return;
     alert(success);
+    // eslint-disable-next-line
   }, [success]);
 
   useEffect(() => {
@@ -71,10 +73,7 @@ function AboutComponent() {
     const file = e.target.files[0];
     try {
       reader.onloadend = () => {
-        setInfoChange({
-          ...infoChange,
-          picture: file.name,
-        });
+        setNewPicture(file);
         setImageBase64(reader.result);
       };
       reader.readAsDataURL(file);
@@ -88,7 +87,13 @@ function AboutComponent() {
       alert("닉네임을 적어주세요.");
       return;
     }
-    dispatch(setJangTtak(infoChange));
+    const dispatchInfo = {
+      ...infoChange,
+      picture: newPicture,
+    };
+    dispatch(
+      setJangTtak(dispatchInfo, imageBase64 === "" ? info.picture : imageBase64)
+    );
   };
 
   return (

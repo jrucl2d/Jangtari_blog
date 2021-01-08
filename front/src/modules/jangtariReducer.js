@@ -9,10 +9,14 @@ export const getJangTtak = () => async (dispatch) => {
     dispatch({ type: "GET_ERROR", error: err });
   }
 };
-export const setJangTtak = (newInfo) => async (dispatch) => {
+export const setJangTtak = (newInfo, tmpImage) => async (dispatch) => {
   try {
     await jangttakAPI.setInfo(newInfo);
-    dispatch({ type: "SET_INFO_SUCCESS", newInfo });
+    const reduxUpdatedInfo = {
+      ...newInfo,
+      picture: tmpImage,
+    };
+    dispatch({ type: "SET_INFO_SUCCESS", newInfo: reduxUpdatedInfo });
   } catch (err) {
     dispatch({ type: "SET_INFO_ERROR", error: err });
   }
@@ -56,7 +60,7 @@ export default function jangtariReducer(state = initialState, action) {
         ...state,
         loading: false,
         info: action.newInfo,
-        success: "성공적으로 변경되었습니다.",
+        success: action.newInfo.nickname + "으로 변경되었습니다.",
         error: null,
       };
     case "SET_INFO_ERROR":

@@ -45,6 +45,7 @@ public class CategoryService {
             Drive drive = googleDriveUtil.getDrive();
             File file = new File();
             file.setName(googleDriveUtil.getPictureName(newCategory));
+            file.setParents(Collections.singletonList(googleDriveUtil.CATEGORY_FOLDER));
             java.io.File tmpFile = googleDriveUtil.convert(categoryImageFile);
             FileContent content = new FileContent("image/jpeg", tmpFile);
             File uploadedFile = drive.files().create(file, content).setFields("id").execute();

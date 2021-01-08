@@ -32,7 +32,8 @@ function CategorySettingComponent() {
     if (!success) return;
     alert(success);
     // eslint-disable-next-line
-  }, [success]);
+  }, [success, categories]);
+
   useEffect(() => {
     if (error) {
       if (updateModalShow) {
