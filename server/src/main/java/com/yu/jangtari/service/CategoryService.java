@@ -48,23 +48,33 @@ public class CategoryService {
             file.setParents(Collections.singletonList(googleDriveUtil.CATEGORY_FOLDER));
             FileContent content = new FileContent("image/jpeg", googleDriveUtil.convert(categoryImageFile));
             File uploadedFile = drive.files().create(file, content).setFields("id").execute();
-            String fileRef = String.format("{아이디 : '%s'}", uploadedFile.getId());
-            System.out.println(fileRef);
+
+            String fileRef = googleDriveUtil.FILE_REF + uploadedFile.getId();
+            category.setPicture(fileRef);
         }
-//        Category saved = categoryRepository.save(category);
-//        return saved.getId();
-    return 1L;
+        Category saved = categoryRepository.save(category);
+        return saved.getId();
     }
 
     @Transactional
-    public void updateCategory(CategoryDTO.Update theCategory) throws CustomException{
+    public void updateCategory(CategoryDTO.Update theCategory, MultipartFile categoryImageFile) throws CustomException, GeneralSecurityException, IOException {
         if(theCategory.getId() == null || theCategory.getName() == null) {
             throw new CustomException("입력 정보가 충분하지 않습니다.", "카테고리 수정 실패 : id = " + theCategory.getId());
         }
         Optional<Category> category = categoryRepository.findById(theCategory.getId());
         if(category.isPresent()){
             category.get().setName(theCategory.getName());
-
+            if(categoryImageFile != null){
+                Drive drive = googleDriveUtil.getDrive();
+                File file = new File();
+                file.setName(googleDriveUtil.getPictureName(theCategory.getName()));
+                file.setParents(Collections.singletonList(googleDriveUtil.CATEGORY_FOLDER));
+                FileContent content = new FileContent("image/jpeg", googleDriveUtil.convert(categoryImageFile));
+                File uploadedFile = drive.files().create(file, content).setFields("id").execute();
+                String fileRef = googleDriveUtil.FILE_REF + uploadedFile.getId();
+                category.get().setPicture(fileRef);
+            }
+            categoryRepository.save(category.get());
         } else {
             throw new CustomException("존재하지 않는 카테고리입니다.", "카테고리 수정 실패 : id = " + theCategory.getId());
         }

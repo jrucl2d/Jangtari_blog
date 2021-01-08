@@ -37,6 +37,8 @@ public class GoogleDriveUtil {
     public final String JANGTARI_FOLDER = "14CKUxuVzBqPz8RDwvLvUxaOJLI1Z62XK";
     public final String POST_FOLDER = "1G7FMqlteOguD-St7TOIO_P6czMDD46lS";
 
+    public final String FILE_REF = "https://drive.google.com/uc?export=download&id=";
+
     @Value("${google.secret.key.path}")
     private Resource gdSecretKeys;
     @Value("${google.credentials.folder.path}")

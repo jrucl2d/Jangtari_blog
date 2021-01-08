@@ -8,17 +8,46 @@ export const getAll = async () => {
 export const add = async (newInfo) => {
   const formData = new FormData();
   formData.append("category", newInfo.name);
-  formData.append("image", newInfo.picture);
-  const { data } = await axios.post("/admin/category", formData, {
+
+  if (newInfo.picture) {
+    formData.append("image", newInfo.picture);
+    const { data } = await axios.post("/admin/category", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data; charset=UTF-8",
+      },
+    });
+    return data.result;
+  }
+  const { data } = await axios.post("/admin/category/nimg", formData, {
     headers: {
       "Content-Type": "multipart/form-data; charset=UTF-8",
     },
   });
-  const result = data.result;
-  return result;
+  return data.result;
 };
 export const update = async (newInfo) => {
-  await axios.put("/admin/category", newInfo);
+  const formData = new FormData();
+  formData.append(
+    "category",
+    JSON.stringify({
+      id: newInfo.id,
+      name: newInfo.name,
+    })
+  );
+  if (newInfo.picture) {
+    formData.append("image", newInfo.picture);
+    await axios.put("/admin/category", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data; charset=UTF-8",
+      },
+    });
+  } else {
+    await axios.put("/admin/category/nimg", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data; charset=UTF-8",
+      },
+    });
+  }
 };
 
 export const deleteCate = async (id) => {

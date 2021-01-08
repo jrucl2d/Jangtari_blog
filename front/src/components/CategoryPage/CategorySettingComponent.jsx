@@ -31,12 +31,6 @@ function CategorySettingComponent() {
   useEffect(() => {
     if (!success) return;
     alert(success);
-    if (updateModalShow) {
-      setUpdateModalShow(false);
-    }
-    if (addModalShow) {
-      setAddModalShow(false);
-    }
     // eslint-disable-next-line
   }, [success]);
   useEffect(() => {

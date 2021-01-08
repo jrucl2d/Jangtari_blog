@@ -9,8 +9,9 @@ function CategoryUpdateModal({ setModalShow, modalShow, category }) {
   const [infoChange, setInfoChange] = useState({
     id: 0,
     name: "",
-    picture: "",
+    picture: null,
   });
+  const [realImage, setRealImage] = useState(null);
   useEffect(() => {
     if (category !== null) {
       setInfoChange({
@@ -25,12 +26,13 @@ function CategoryUpdateModal({ setModalShow, modalShow, category }) {
     e.preventDefault();
     let reader = new FileReader();
     const file = e.target.files[0];
+    if (file.size > 1024 * 1024) {
+      alert("파일 사이즈가 1mb보다 큽니다.");
+      return;
+    }
     try {
       reader.onloadend = () => {
-        setInfoChange({
-          ...infoChange,
-          picture: file.name,
-        });
+        setRealImage(file);
         setImageBase64(reader.result);
       };
       reader.readAsDataURL(file);
@@ -60,7 +62,17 @@ function CategoryUpdateModal({ setModalShow, modalShow, category }) {
       alert("카테고리 제목을 적어주세요.");
       return;
     }
-    dispatch(updateCategory(infoChange));
+    const dispatchInfo = {
+      ...infoChange,
+      picture: realImage,
+    };
+    dispatch(
+      updateCategory(
+        dispatchInfo,
+        imageBase64 === "" ? category.picture : imageBase64
+      )
+    );
+    onClose();
   };
 
   return (

@@ -2,8 +2,7 @@
   display: inline-block;
   height: 70vh;
   width: 70vh;
-  background-image: url(https://source.unsplash.com/random//1280x720);
-  background-size: "cover";
+  background-size: cover;
 }
 
 .category-box .category-name {

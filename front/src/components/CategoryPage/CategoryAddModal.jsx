@@ -15,6 +15,10 @@ function CategoryAddModal({ setModalShow, modalShow }) {
     e.preventDefault();
     let reader = new FileReader();
     const file = e.target.files[0];
+    if (file.size > 1024 * 1024) {
+      alert("파일 사이즈가 1mb보다 큽니다.");
+      return;
+    }
     try {
       reader.onloadend = () => {
         setInfoChange({
@@ -50,6 +54,7 @@ function CategoryAddModal({ setModalShow, modalShow }) {
       return;
     }
     dispatch(addCategory(infoChange, imageBase64));
+    setModalShow(false);
   };
 
   return (
@@ -88,7 +93,7 @@ function CategoryAddModal({ setModalShow, modalShow }) {
           </label>
           <input
             type="file"
-            accept="image/jpg,image/png,image/jpeg,image/gif"
+            accept="image/jpg,image/jpeg"
             className="category-upload"
             onChange={onChangeFile}
             id="category_img_upload"
