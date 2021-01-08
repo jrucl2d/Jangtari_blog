@@ -27,7 +27,7 @@ function CategoryUpdateModal({ setModalShow, modalShow, category }) {
     let reader = new FileReader();
     const file = e.target.files[0];
     if (file.size > 1024 * 1024) {
-      alert("파일 사이즈가 1mb보다 큽니다.");
+      alert("파일 크기가 1mb보다 큽니다.");
       return;
     }
     try {

@@ -356,4 +356,9 @@
   z-index: 3;
   transition: all 0.5s;
 } */
+
+.new-post-modal-thumbnails img {
+  width: 100px;
+  background-size: cover;
+}
 @import url("./PostStyle-Responsive.css");

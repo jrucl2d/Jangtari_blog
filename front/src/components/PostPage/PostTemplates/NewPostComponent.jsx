@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import queryString from "query-string";
 import "../PostStyle.css";
+import { v4 as UUID } from "uuid";
 
 function NewPostComponent({ location }) {
   const [show, setShow] = useState(true);
@@ -14,7 +15,7 @@ function NewPostComponent({ location }) {
   });
   const [pictures, setPictures] = useState([
     {
-      name: "사진1",
+      file: "사진1",
       base64: "",
     },
   ]);
@@ -117,6 +118,36 @@ function NewPostComponent({ location }) {
 export default NewPostComponent;
 
 function PictureModal({ show, setShow, pictures, setPictures }) {
+  const onChangePictures = (e) => {
+    const files = e.target.files;
+    let nope = false;
+    Object.values(files).forEach((file) => {
+      if (file.size > 1024 * 1024) {
+        nope = true;
+      }
+    });
+    if (nope) {
+      alert("파일 크기가 1mb보다 큽니다.");
+      return;
+    }
+    try {
+      const forPictures = [];
+      Object.values(files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          forPictures.push({
+            file,
+            base64: reader.result,
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+      setPictures(forPictures);
+      console.log(files);
+    } catch (err) {
+      console.error(err);
+    }
+  };
   return (
     <Modal
       className="category-modal"
@@ -136,10 +167,22 @@ function PictureModal({ show, setShow, pictures, setPictures }) {
         </label>
         <input
           type="file"
-          accept="image/jpg,image/png,image/jpeg,image/gif"
+          accept="image/jpg"
           className="category-upload"
           id="category_img_upload"
+          multiple="multiple"
+          onChange={onChangePictures}
         />
+        <div className="new-post-modal-thumbnails">
+          <img
+            src={pictures && pictures[0] && pictures[0].base64}
+            alt="카테고리 사진"
+          />
+          <img
+            src={pictures && pictures[1] && pictures[1].base64}
+            alt="카테고리 사진"
+          />
+        </div>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="outline-primary">추가</Button>

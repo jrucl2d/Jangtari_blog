@@ -71,6 +71,10 @@ function AboutComponent() {
     e.preventDefault();
     let reader = new FileReader();
     const file = e.target.files[0];
+    if (file.size > 1024 * 1024) {
+      alert("파일 크기가 1mb보다 큽니다.");
+      return;
+    }
     try {
       reader.onloadend = () => {
         setNewPicture(file);
