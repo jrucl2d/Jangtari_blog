@@ -30,3 +30,17 @@ export const setInfo = async (newInfo) => {
     });
   }
 };
+
+export const login = async (info) => {
+  return await axios.post("/login", {
+    username: info.username,
+    password: info.password,
+  });
+};
+export const join = async (info) => {
+  await axios.post("/join", info);
+};
+
+export const logout = async () => {
+  await axios.get("/signout");
+};

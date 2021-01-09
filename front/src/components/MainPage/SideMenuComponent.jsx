@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { getAllCategories } from "../../modules/categoryReducer";
+import { logout } from "../../modules/jangtariReducer";
 
 function SideMenuComponent({ isToggle, onClickMenuButton }) {
   const dispatch = useDispatch();
@@ -21,14 +22,8 @@ function SideMenuComponent({ isToggle, onClickMenuButton }) {
     }
   }, [isToggle]);
 
-  const onClickLogout = async (e) => {
-    try {
-      localStorage.clear();
-      alert("로그아웃 하였습니다.");
-    } catch (err) {
-      alert("문제가 발생했습니다. 잠시 뒤에 다시 시도해주세요.");
-      return;
-    }
+  const onClickLogout = async () => {
+    dispatch(logout());
     onClickMenuButton();
   };
 
