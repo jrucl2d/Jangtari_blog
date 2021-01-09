@@ -11,7 +11,6 @@ export const getOne = async (id) => {
   return result;
 };
 export const addPost = async (newInfo, pictures) => {
-  console.log(pictures);
   const formData = new FormData();
   formData.append(
     "post",

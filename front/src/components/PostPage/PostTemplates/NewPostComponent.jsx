@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addPost } from "../../../modules/postReducer";
 import LoadingComponent from "../../MainPage/LoadingComponent";
 
-function NewPostComponent({ location }) {
+function NewPostComponent({ location, history }) {
   const dispatch = useDispatch();
   const { success, error, loading } = useSelector((state) => state.postReducer);
   const [info, setInfo] = useState({
@@ -26,8 +26,9 @@ function NewPostComponent({ location }) {
 
   useEffect(() => {
     if (!success) return;
+    history.goBack();
     alert(success);
-  }, [success]);
+  }, [success, history]);
 
   useEffect(() => {
     if (!error) return;
