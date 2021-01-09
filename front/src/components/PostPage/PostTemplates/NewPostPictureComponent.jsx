@@ -6,38 +6,38 @@
 //     show,
 //     pictures,    setPictures
 // }) {
-//     const onChangePictures = (e) => {
-//         const files = e.target.files;
-//         let nope = false;
-//         Object.values(files).forEach((file) => {
-//           if (file.size > 1024 * 1024) {
-//             nope = true;
-//           }
-//         });
-//         if (nope) {
-//           alert("파일 크기가 1mb보다 큽니다.");
-//           return;
-//         }
-//         try {
-//           const forPictures = [];
-//           Object.values(files).forEach((file) => {
-//             const reader = new FileReader();
-//             reader.onload = () => {
-//               forPictures.push({
-//                 file,
-//                 base64: reader.result,
-//               });
-//             };
-//             reader.readAsDataURL(file);
+// const onChangePictures = (e) => {
+//     const files = e.target.files;
+//     let nope = false;
+//     Object.values(files).forEach((file) => {
+//       if (file.size > 1024 * 1024) {
+//         nope = true;
+//       }
+//     });
+//     if (nope) {
+//       alert("파일 크기가 1mb보다 큽니다.");
+//       return;
+//     }
+//     try {
+//       const forPictures = [];
+//       Object.values(files).forEach((file) => {
+//         const reader = new FileReader();
+//         reader.onload = () => {
+//           forPictures.push({
+//             file,
+//             base64: reader.result,
 //           });
-//           setPictures(forPictures);
-//           // console.log(files);
-//           setShow(false);
-//           setShow(true);
-//         } catch (err) {
-//           console.error(err);
-//         }
-//       };
+//         };
+//         reader.readAsDataURL(file);
+//       });
+//       setPictures(forPictures);
+//       // console.log(files);
+//       setShow(false);
+//       setShow(true);
+//     } catch (err) {
+//       console.error(err);
+//     }
+//   };
 //       return (
 //         <Modal
 //           className="category-modal"

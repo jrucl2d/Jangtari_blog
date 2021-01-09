@@ -344,12 +344,16 @@
   justify-content: flex-start;
   margin-bottom: 1vh;
 }
-.new-post-images button {
+.new-post-images label {
   margin-right: 1vw;
+  height: 4vh;
 }
 .new-post-images img {
-  height: 5vh;
-  width: 5vh;
+  width: 5vw;
+}
+.post-image-label {
+  border: 1px solid white;
+  color: white;
 }
 /* .new-post-images img:hover {
   transform: scale(10) translateY(2vh);
@@ -357,8 +361,4 @@
   transition: all 0.5s;
 } */
 
-.new-post-modal-thumbnails img {
-  width: 100px;
-  background-size: cover;
-}
 @import url("./PostStyle-Responsive.css");

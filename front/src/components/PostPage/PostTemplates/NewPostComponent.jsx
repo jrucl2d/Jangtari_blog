@@ -1,11 +1,10 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import queryString from "query-string";
 import "../PostStyle.css";
-import { v4 as UUID } from "uuid";
+import { v4 as uuid } from "uuid";
 
 function NewPostComponent({ location }) {
-  const [show, setShow] = useState(true);
   const [info, setInfo] = useState({
     categoryId: location.pathname.split("/")[2],
     hashtags: "",
@@ -13,12 +12,8 @@ function NewPostComponent({ location }) {
     post: "",
     template: queryString.parse(location.search).template,
   });
-  const [pictures, setPictures] = useState([
-    {
-      file: "사진1",
-      base64: "",
-    },
-  ]);
+  const [pictures, setPictures] = useState([]);
+  const [thumbnails, setThumbnails] = useState([]);
   const mainRef = useRef();
   useEffect(() => {
     mainRef.current.focus();
@@ -30,6 +25,10 @@ function NewPostComponent({ location }) {
       [e.target.name]: e.target.value,
     });
   };
+
+  useEffect(() => {
+    console.log(pictures);
+  }, [pictures]);
 
   const onClickSave = () => {
     if (info.title === "" || info.post === "") {
@@ -61,24 +60,59 @@ function NewPostComponent({ location }) {
     console.log(sendingInfo);
   };
 
+  const onChangePictures = (e) => {
+    const fileArr = e.target.files;
+
+    let fileURLs = [];
+    let nope = false;
+    Object.values(fileArr).forEach((file) => {
+      if (file.size > 1024 * 1024) {
+        nope = true;
+      }
+    });
+    setPictures(Object.values(fileArr));
+
+    if (nope) {
+      alert("파일 크기가 1mb보다 큽니다.");
+      return;
+    }
+
+    let file;
+    let filesLength = fileArr.length > 10 ? 10 : fileArr.length;
+
+    for (let i = 0; i < filesLength; i++) {
+      file = fileArr[i];
+      let reader = new FileReader();
+      reader.onload = () => {
+        fileURLs[i] = reader.result;
+        setThumbnails([...fileURLs]);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="new-post-body">
-      <PictureModal
-        setShow={setShow}
-        show={show}
-        pictures={pictures}
-        setPictures={setPictures}
-      />
       <div className="new-post-images">
-        <Button
-          variant="outline-info"
-          onClick={() => {
-            setShow(true);
-          }}
+        <label
+          htmlFor="category_img_upload"
+          className="about-label post-image-label"
         >
-          사진
-        </Button>
-        {/* <img src="https://source.unsplash.com/random//1280x720" alt="이미지" /> */}
+          <i className="far fa-file-image" />
+          &nbsp;파일 선택
+        </label>
+        <input
+          type="file"
+          accept="image/jpg"
+          className="category-upload"
+          id="category_img_upload"
+          multiple="multiple"
+          onChange={onChangePictures}
+        />
+        <div className="new-post-thumbnails">
+          {thumbnails &&
+            thumbnails.map((t) => <img key={uuid()} src={t} alt="썸네일" />)}
+        </div>
       </div>
       <div className="new-post-main">
         <div>
@@ -116,85 +150,3 @@ function NewPostComponent({ location }) {
 }
 
 export default NewPostComponent;
-
-function PictureModal({ show, setShow, pictures, setPictures }) {
-  const onChangePictures = (e) => {
-    const files = e.target.files;
-    let nope = false;
-    Object.values(files).forEach((file) => {
-      if (file.size > 1024 * 1024) {
-        nope = true;
-      }
-    });
-    if (nope) {
-      alert("파일 크기가 1mb보다 큽니다.");
-      return;
-    }
-    try {
-      const forPictures = [];
-      Object.values(files).forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          forPictures.push({
-            file,
-            base64: reader.result,
-          });
-        };
-        reader.readAsDataURL(file);
-      });
-      setPictures(forPictures);
-      console.log(files);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  return (
-    <Modal
-      className="category-modal"
-      show={show}
-      size="lg"
-      onHide={() => setShow(false)}
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-    >
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">사진 설정</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <label htmlFor="category_img_upload" className="about-label">
-          <i className="far fa-file-image" />
-          &nbsp;파일 선택
-        </label>
-        <input
-          type="file"
-          accept="image/jpg"
-          className="category-upload"
-          id="category_img_upload"
-          multiple="multiple"
-          onChange={onChangePictures}
-        />
-        <div className="new-post-modal-thumbnails">
-          <img
-            src={pictures && pictures[0] && pictures[0].base64}
-            alt="카테고리 사진"
-          />
-          <img
-            src={pictures && pictures[1] && pictures[1].base64}
-            alt="카테고리 사진"
-          />
-        </div>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="outline-primary">추가</Button>
-        <Button
-          variant="outline-danger"
-          onClick={() => {
-            setShow(false);
-          }}
-        >
-          닫기
-        </Button>
-      </Modal.Footer>
-    </Modal>
-  );
-}
