@@ -10,6 +10,7 @@ export const getAllCategories = () => async (dispatch) => {
   }
 };
 export const addCategory = (newInfo, tmpImage) => async (dispatch) => {
+  dispatch({ type: "ADD_INFO" });
   try {
     const newId = await categoryAPI.add(newInfo);
     const reduxNewInfo = {
@@ -23,6 +24,7 @@ export const addCategory = (newInfo, tmpImage) => async (dispatch) => {
   }
 };
 export const updateCategory = (newInfo, tmpImage) => async (dispatch) => {
+  dispatch({ type: "UPDATE_INFO" });
   try {
     await categoryAPI.update(newInfo);
     const reduxUpdatedInfo = {
@@ -35,6 +37,7 @@ export const updateCategory = (newInfo, tmpImage) => async (dispatch) => {
   }
 };
 export const deleteCategory = (id) => async (dispatch) => {
+  dispatch({ type: "DELETE_INFO" });
   try {
     await categoryAPI.deleteCate(id);
     dispatch({ type: "DELETE_INFO_SUCCESS", id });
@@ -59,6 +62,13 @@ export default function categoryReducer(state = initialState, action) {
         categories: null,
         success: null,
         error: null,
+      };
+    case "ADD_INFO":
+    case "UPDATE_INFO":
+    case "DELETE_INFO":
+      return {
+        ...state,
+        loading: true,
       };
     case "GET_ALL_SUCCESS":
       return {
