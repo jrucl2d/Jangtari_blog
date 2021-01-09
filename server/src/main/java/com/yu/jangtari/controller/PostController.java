@@ -1,5 +1,6 @@
 package com.yu.jangtari.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yu.jangtari.common.CustomError;
 import com.yu.jangtari.common.CustomException;
 import com.yu.jangtari.common.CustomResponse;
@@ -15,7 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.List;
 import java.util.stream.IntStream;
 
 
@@ -69,22 +74,18 @@ public class PostController {
 
     @GetMapping("/post/{id}")
     public ResponseEntity<CustomResponse> getPost(@PathVariable(value = "id") Long postId){
-        try{
-            PostDTO.GetOne result = postService.getPost(postId);
-            return new ResponseEntity<>(new CustomResponse<>
-                    (null, result),
-                    HttpStatus.OK);
-        } catch (CustomException e){
-            return new ResponseEntity<>(new CustomResponse<>
-                    (new CustomError(e), null),
-                    HttpStatus.BAD_REQUEST);
-        }
+        PostDTO.GetOne result = postService.getPost(postId);
+        return new ResponseEntity<>(new CustomResponse<>
+                (null, result),
+                HttpStatus.OK);
     }
 
     @PostMapping("/admin/post")
-    public ResponseEntity<CustomResponse> addPost(@RequestBody PostDTO.Add thePost){
+    public ResponseEntity<CustomResponse> addPost(@RequestPart("post") String postString,
+                                                  @RequestPart("images") List<MultipartFile> postImages) throws GeneralSecurityException, IOException {
         try{
-            postService.addPost(thePost);
+            PostDTO.Add thePost = new ObjectMapper().readValue(postString, PostDTO.Add.class);
+            postService.addPost(thePost, postImages);
             return new ResponseEntity<>(CustomResponse.OK(),
                     HttpStatus.CREATED);
         } catch (CustomException e){
@@ -93,7 +94,19 @@ public class PostController {
                     HttpStatus.BAD_REQUEST);
         }
     }
-
+    @PostMapping("/admin/post/nimg")
+    public ResponseEntity<CustomResponse> addPost2(@RequestPart("post") String postString) throws GeneralSecurityException, IOException {
+        try{
+            PostDTO.Add thePost = new ObjectMapper().readValue(postString, PostDTO.Add.class);
+            postService.addPost(thePost, null);
+            return new ResponseEntity<>(CustomResponse.OK(),
+                    HttpStatus.CREATED);
+        } catch (CustomException e){
+            return new ResponseEntity<>(new CustomResponse<>
+                    (new CustomError(e), null),
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
     @PutMapping("/admin/post")
     public ResponseEntity<CustomResponse> updatePost(@RequestBody PostDTO.Update thePost){
         try{

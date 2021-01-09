@@ -24,15 +24,18 @@ export const setNewComments = (comments) => {
     comments,
   };
 };
-// export const addCategory = (newInfo) => async (dispatch) => {
-//   try {
-//     const newId = await categoryAPI.add(newInfo);
-//     newInfo["id"] = newId;
-//     dispatch({ type: "ADD_INFO_SUCCESS", newInfo });
-//   } catch (err) {
-//     dispatch({ type: "ADD_INFO_ERROR,", error: err });
-//   }
-// };
+export const addPost = (newInfo, pictures) => async (dispatch) => {
+  dispatch({ type: "ADD_POST" });
+  try {
+    await postAPI.addPost(newInfo, pictures);
+    dispatch({
+      type: "ADD_POST_SUCCESS",
+      success: "새로운 게시글이 추가되었습니다.",
+    });
+  } catch (err) {
+    dispatch({ type: "ADD_POST_ERROR", error: err });
+  }
+};
 // export const updateCategory = (newInfo) => async (dispatch) => {
 //   try {
 //     await categoryAPI.update(newInfo);
@@ -54,6 +57,7 @@ const initialState = {
   loading: false,
   result: null,
   post: null,
+  success: null,
   error: null,
 };
 
@@ -65,6 +69,7 @@ export default function postReducer(state = initialState, action) {
         loading: true,
         result: null,
         post: null,
+        success: null,
         error: null,
       };
     case "GET_ALL_POSTS_SUCCESS":
@@ -72,15 +77,18 @@ export default function postReducer(state = initialState, action) {
         ...state,
         loading: false,
         result: action.result,
+        success: null,
         post: null,
         error: null,
       };
+    case "ADD_POST":
     case "GET_ONE_POST":
       return {
         ...state,
         loading: true,
         result: null,
         post: null,
+        success: null,
         error: null,
       };
     case "GET_ONE_POST_SUCCESS":
@@ -89,6 +97,7 @@ export default function postReducer(state = initialState, action) {
         loading: false,
         result: null,
         post: action.result,
+        success: null,
         error: null,
       };
     case "SET_NEW_COMMENTS":
@@ -96,19 +105,20 @@ export default function postReducer(state = initialState, action) {
         ...state,
         loading: false,
         result: null,
+        success: null,
         post: {
           ...state.post,
           comments: action.comments,
         },
         error: null,
       };
-    // case "ADD_INFO_SUCCESS":
-    //   return {
-    //     ...state,
-    //     loading: false,
-    //     result: [...state.result, action.newInfo],
-    //     error: null,
-    //   };
+    case "ADD_POST_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        success: action.success,
+        error: null,
+      };
     // case "UPDATE_INFO_SUCCESS":
     //   return {
     //     ...state,
@@ -125,14 +135,19 @@ export default function postReducer(state = initialState, action) {
     //     result: state.result.filter((v) => v.id !== action.id),
     //     error: null,
     //   };
-    // case "ADD_INFO_ERROR":
+    case "ADD_POST_ERROR":
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+        success: null,
+      };
     case "GET_ALL_POSTS_ERROR":
-      // case "UPDATE_INFO_ERROR":
-      // case "DELETE_INFO_ERROR":
       return {
         ...state,
         loading: false,
         result: null,
+        success: null,
         error: action.error,
       };
     default:

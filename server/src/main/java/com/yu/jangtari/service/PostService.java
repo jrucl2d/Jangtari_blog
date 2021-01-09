@@ -1,6 +1,10 @@
 package com.yu.jangtari.service;
 
+import com.google.api.client.http.FileContent;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
 import com.yu.jangtari.common.CustomException;
+import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.vo.PageMakerVO;
 import com.yu.jangtari.vo.PageVO;
 import com.yu.jangtari.domain.Category;
@@ -13,11 +17,11 @@ import com.yu.jangtari.repository.post.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.*;
 
 @Service
 public class PostService {
@@ -27,6 +31,9 @@ public class PostService {
 
     @Autowired
     private PictureRepository pictureRepository;
+
+    @Autowired
+    private GoogleDriveUtil googleDriveUtil;
 
     @Transactional
     public void deleteTrashHashtags(){
@@ -39,13 +46,12 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public PostDTO.GetOne getPost(Long postId) throws CustomException{
-        PostDTO.GetOne result = postRepository.getPost(postId);
-        return result;
+    public PostDTO.GetOne getPost(Long postId) {
+        return postRepository.getPost(postId);
     }
 
     @Transactional
-    public void addPost(PostDTO.Add thePost) throws CustomException {
+    public void addPost(PostDTO.Add thePost, List<MultipartFile> postImages) throws CustomException, GeneralSecurityException, IOException {
         if(thePost.getTitle().equals("") || thePost.getTitle() == null || thePost.getPost().equals("") || thePost.getPost() == null){
             throw new CustomException("입력 정보가 충분하지 않습니다.", "게시글 추가 실패");
         }
@@ -58,7 +64,7 @@ public class PostService {
         post.setTemplate(thePost.getTemplate());
 
         // 해시태그 추가
-        if(thePost.getHashtags().size() > 0){
+        if(thePost.getHashtags() != null){
             List<String> hashtagStrings = new ArrayList<>();
             thePost.getHashtags().forEach(ht -> {
                 hashtagStrings.add(ht.getHashtag());
@@ -80,14 +86,23 @@ public class PostService {
         }
 
         // 사진 추가
-        if(thePost.getPictures().size() > 0){
+        if(postImages != null){
             List<Picture> pictures = new ArrayList<>();
-            thePost.getPictures().forEach(p -> {
+            Drive drive = googleDriveUtil.getDrive();
+            for(MultipartFile postImage : postImages) {
+                File file = new File();
+                file.setName(googleDriveUtil.getPictureName(postImage.getOriginalFilename()));
+                file.setParents(Collections.singletonList(googleDriveUtil.POST_FOLDER));
+                java.io.File tmpFile = googleDriveUtil.convert(postImage);
+                FileContent content = new FileContent("image/jpeg", tmpFile);
+                File uploadedFile = drive.files().create(file, content).setFields("id").execute();
+                tmpFile.delete();
+                String fileRef = googleDriveUtil.FILE_REF + uploadedFile.getId();
                 Picture picture = new Picture();
-                picture.setPicture(p.getPicture());
                 picture.setPost(post);
-                pictures.add(picture);
-            });
+                picture.setPicture(fileRef);
+                pictureRepository.save(picture);
+            }
             post.setPictures(pictures);
         }
         postRepository.save(post);
@@ -101,17 +116,17 @@ public class PostService {
             post.get().setTemplate(thePost.getTemplate());
             post.get().setPost(thePost.getPost());
 
-            if(thePost.getPictures().size() > 0){
-                pictureRepository.deleteByPostId(thePost.getId());
-                List<Picture> pictures = new ArrayList<>();
-                thePost.getPictures().forEach(p -> {
-                    Picture picture = new Picture();
-                    picture.setPicture(p.getPicture());
-                    picture.setPost(post.get());
-                    pictures.add(picture);
-                });
-                post.get().setPictures(pictures);
-            }
+//            if(thePost.getPictures().size() > 0){
+//                pictureRepository.deleteByPostId(thePost.getId());
+//                List<Picture> pictures = new ArrayList<>();
+//                thePost.getPictures().forEach(p -> {
+//                    Picture picture = new Picture();
+//                    picture.setPicture(p.getPicture());
+//                    picture.setPost(post.get());
+//                    pictures.add(picture);
+//                });
+//                post.get().setPictures(pictures);
+//            }
         } else {
             throw new CustomException("존재하지 않는 게시글입니다.", "게시글 수정 실패 : id = " + thePost.getId());
         }

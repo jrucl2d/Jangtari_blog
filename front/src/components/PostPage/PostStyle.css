@@ -355,10 +355,11 @@
   border: 1px solid white;
   color: white;
 }
-/* .new-post-images img:hover {
-  transform: scale(10) translateY(2vh);
+.new-post-images img:hover {
+  cursor: pointer;
+  transform: scale(1.5);
   z-index: 3;
   transition: all 0.5s;
-} */
+}
 
 @import url("./PostStyle-Responsive.css");

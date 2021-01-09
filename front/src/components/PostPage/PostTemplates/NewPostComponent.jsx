@@ -3,8 +3,13 @@ import { Button } from "react-bootstrap";
 import queryString from "query-string";
 import "../PostStyle.css";
 import { v4 as uuid } from "uuid";
+import { useDispatch, useSelector } from "react-redux";
+import { addPost } from "../../../modules/postReducer";
+import LoadingComponent from "../../MainPage/LoadingComponent";
 
 function NewPostComponent({ location }) {
+  const dispatch = useDispatch();
+  const { success, error, loading } = useSelector((state) => state.postReducer);
   const [info, setInfo] = useState({
     categoryId: location.pathname.split("/")[2],
     hashtags: "",
@@ -19,16 +24,22 @@ function NewPostComponent({ location }) {
     mainRef.current.focus();
   }, []);
 
+  useEffect(() => {
+    if (!success) return;
+    alert(success);
+  }, [success]);
+
+  useEffect(() => {
+    if (!error) return;
+    alert("문제가 발생했습니다. 잠시 뒤에 다시 시도해주세요.");
+  }, [error]);
+
   const onChangeInfo = (e) => {
     setInfo({
       ...info,
       [e.target.name]: e.target.value,
     });
   };
-
-  useEffect(() => {
-    console.log(pictures);
-  }, [pictures]);
 
   const onClickSave = () => {
     if (info.title === "" || info.post === "") {
@@ -55,9 +66,11 @@ function NewPostComponent({ location }) {
         alert("해시태그는 5개까지만 허용됩니다.");
         return;
       }
-      sendingInfo.hashtags = Array.from(new Set(sendingHahstags));
+      sendingInfo.hashtags = Array.from(new Set(sendingHahstags)).map((v) =>
+        v.substring(1, v.length)
+      );
     }
-    console.log(sendingInfo);
+    dispatch(addPost(sendingInfo, pictures));
   };
 
   const onChangePictures = (e) => {
@@ -91,61 +104,81 @@ function NewPostComponent({ location }) {
     }
   };
 
+  const onClickCancelPicture = (index) => {
+    setThumbnails(thumbnails.filter((v, i) => i !== index));
+    setPictures(pictures.filter((v, i) => i !== index));
+  };
+
   return (
-    <div className="new-post-body">
-      <div className="new-post-images">
-        <label
-          htmlFor="category_img_upload"
-          className="about-label post-image-label"
-        >
-          <i className="far fa-file-image" />
-          &nbsp;파일 선택
-        </label>
-        <input
-          type="file"
-          accept="image/jpg"
-          className="category-upload"
-          id="category_img_upload"
-          multiple="multiple"
-          onChange={onChangePictures}
-        />
-        <div className="new-post-thumbnails">
-          {thumbnails &&
-            thumbnails.map((t) => <img key={uuid()} src={t} alt="썸네일" />)}
+    <>
+      {loading ? (
+        <div className="main-loading">
+          <LoadingComponent />
         </div>
-      </div>
-      <div className="new-post-main">
-        <div>
-          <input
-            type="text"
-            placeholder="#해시태그 #해시태그 #해시태그 #해시태그 #해시태그"
-            onChange={onChangeInfo}
-            name="hashtags"
-            value={info.hashtags}
-          />
-          <Button variant="outline-primary" onClick={onClickSave}>
-            저장
-          </Button>
+      ) : (
+        <div className="new-post-body">
+          <div className="new-post-images">
+            <label
+              htmlFor="category_img_upload"
+              className="about-label post-image-label"
+            >
+              <i className="far fa-file-image" />
+              &nbsp;파일 선택
+            </label>
+            <input
+              type="file"
+              accept="image/jpg"
+              className="category-upload"
+              id="category_img_upload"
+              multiple="multiple"
+              onChange={onChangePictures}
+            />
+            <div className="new-post-thumbnails">
+              {thumbnails &&
+                thumbnails.map((t, i) => (
+                  <img
+                    key={uuid()}
+                    onClick={() => onClickCancelPicture(i)}
+                    src={t}
+                    alt="썸네일"
+                  />
+                ))}
+            </div>
+          </div>
+          <div className="new-post-main">
+            <div>
+              <input
+                type="text"
+                placeholder="#해시태그 #해시태그 #해시태그 #해시태그 #해시태그"
+                onChange={onChangeInfo}
+                name="hashtags"
+                value={info.hashtags}
+              />
+              <Button variant="outline-primary" onClick={onClickSave}>
+                저장
+              </Button>
+            </div>
+            <input
+              className="new-post-title"
+              name="title"
+              type="text"
+              placeholder="제목"
+              value={info.title}
+              onChange={onChangeInfo}
+            />
+            <textarea
+              placeholder="게시글 본문"
+              cols="30"
+              rows="20"
+              name="post"
+              value={info.post}
+              ref={mainRef}
+              onChange={onChangeInfo}
+            ></textarea>
+          </div>
         </div>
-        <input
-          className="new-post-title"
-          name="title"
-          type="text"
-          placeholder="제목"
-          value={info.title}
-          onChange={onChangeInfo}
-        />
-        <textarea
-          placeholder="게시글 본문"
-          cols="30"
-          rows="20"
-          name="post"
-          value={info.post}
-          ref={mainRef}
-          onChange={onChangeInfo}
-        ></textarea>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
 
