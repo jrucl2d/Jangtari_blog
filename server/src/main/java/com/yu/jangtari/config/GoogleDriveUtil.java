@@ -13,14 +13,12 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.security.GeneralSecurityException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -39,10 +37,8 @@ public class GoogleDriveUtil {
 
     public final String FILE_REF = "https://drive.google.com/uc?export=download&id=";
 
-    @Value("${google.secret.key.path}")
-    private Resource gdSecretKeys;
-    @Value("${google.credentials.folder.path}")
-    private Resource credentialsFolder;
+    private ClassPathResource gdSecretKeys = new ClassPathResource("/jangtari.json");
+    private ClassPathResource credentialsFolder = new ClassPathResource("/credentials");
     private String appname="jangtaritest";
     private GoogleAuthorizationCodeFlow flow;
 
@@ -50,14 +46,26 @@ public class GoogleDriveUtil {
         // Load client secrets.
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(gdSecretKeys.getInputStream()));
 
+        InputStream inputStream = credentialsFolder.getInputStream();
+        File file = new File("/credentials");
+        OutputStream outputStream = new FileOutputStream(file);
+        byte[] buf = new byte[1024];
+        int len = 0;
+        while((len = inputStream.read(buf)) > 0){
+            outputStream.write(buf, 0, len);
+        }
+        outputStream.close();
+        inputStream.close();
+
         // Build flow and trigger user authorization request.
         flow = new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(credentialsFolder.getFile()))
+                .setDataStoreFactory(new FileDataStoreFactory(file))
                 .setAccessType("offline")
                 .build();
 
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+        file.delete();
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 

@@ -40,7 +40,7 @@ repositories {
     mavenCentral()
 }
 
-def webappDir = "$projectDir/frontend/webtoon"
+def webappDir = "$projectDir/frontend/front"
 
 // node 버전 및 npm, node 설치파일 저장 디렉토리 명시
 node {
