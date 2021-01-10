@@ -108,9 +108,24 @@ public class PostController {
         }
     }
     @PutMapping("/admin/post")
-    public ResponseEntity<CustomResponse> updatePost(@RequestBody PostDTO.Update thePost){
+    public ResponseEntity<CustomResponse> updatePost(@RequestPart("post") String postString,
+                                                  @RequestPart("images") List<MultipartFile> postImages) throws GeneralSecurityException, IOException {
         try{
-            postService.updatePost(thePost);
+            PostDTO.Update thePost = new ObjectMapper().readValue(postString, PostDTO.Update.class);
+            postService.updatePost(thePost, postImages);
+            return new ResponseEntity<>(CustomResponse.OK(),
+                    HttpStatus.CREATED);
+        } catch (CustomException e){
+            return new ResponseEntity<>(new CustomResponse<>
+                    (new CustomError(e), null),
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PutMapping("/admin/post/nimg")
+    public ResponseEntity<CustomResponse> updatePost2(@RequestPart("post") String postString) throws GeneralSecurityException, IOException {
+        try{
+            PostDTO.Update thePost = new ObjectMapper().readValue(postString, PostDTO.Update.class);
+            postService.updatePost(thePost, null);
             return new ResponseEntity<>(CustomResponse.OK(),
                     HttpStatus.CREATED);
         } catch (CustomException e){

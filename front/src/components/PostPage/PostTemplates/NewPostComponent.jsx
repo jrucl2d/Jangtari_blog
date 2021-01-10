@@ -73,7 +73,6 @@ function NewPostComponent({ location, history }) {
     }
     dispatch(addPost(sendingInfo, pictures));
   };
-
   const onChangePictures = (e) => {
     const fileArr = e.target.files;
 
@@ -84,7 +83,7 @@ function NewPostComponent({ location, history }) {
         nope = true;
       }
     });
-    setPictures(Object.values(fileArr));
+    setPictures([...pictures, ...Object.values(fileArr)]);
 
     if (nope) {
       alert("파일 크기가 1mb보다 큽니다.");
@@ -99,7 +98,7 @@ function NewPostComponent({ location, history }) {
       let reader = new FileReader();
       reader.onload = () => {
         fileURLs[i] = reader.result;
-        setThumbnails([...fileURLs]);
+        setThumbnails([...thumbnails, ...fileURLs]);
       };
       reader.readAsDataURL(file);
     }

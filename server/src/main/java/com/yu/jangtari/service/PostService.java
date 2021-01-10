@@ -109,24 +109,60 @@ public class PostService {
     }
 
     @Transactional
-    public void updatePost(PostDTO.Update thePost) throws CustomException{
-        Optional<Post> post = postRepository.findById(thePost.getId());
-        if(post.isPresent()){
-            post.get().setTitle(thePost.getTitle());
-            post.get().setTemplate(thePost.getTemplate());
-            post.get().setPost(thePost.getPost());
+    public void updatePost(PostDTO.Update thePost, List<MultipartFile> postImages) throws CustomException, GeneralSecurityException, IOException {
+        Optional<Post> postOp = postRepository.findById(thePost.getId());
+        if(postOp.isPresent()){
+            Post post = postOp.get();
 
-//            if(thePost.getPictures().size() > 0){
-//                pictureRepository.deleteByPostId(thePost.getId());
-//                List<Picture> pictures = new ArrayList<>();
-//                thePost.getPictures().forEach(p -> {
-//                    Picture picture = new Picture();
-//                    picture.setPicture(p.getPicture());
-//                    picture.setPost(post.get());
-//                    pictures.add(picture);
-//                });
-//                post.get().setPictures(pictures);
-//            }
+            post.setTitle(thePost.getTitle());
+            post.setTemplate(thePost.getTemplate());
+            post.setPost(thePost.getPost());
+
+            // 해시태그 설정
+            if(thePost.getHashtags() != null){
+                postRepository.deleteBeforeHashtags(thePost.getId());
+                List<String> hashtagStrings = new ArrayList<>();
+                thePost.getHashtags().forEach(ht -> {
+                    hashtagStrings.add(ht.getHashtag());
+                });
+                List<Hashtag> hashtags = postRepository.getHashtags(hashtagStrings);
+                hashtags.forEach(ht -> {
+                    hashtagStrings.remove(ht.getHashtag()); // 이미 존재하는 해시태그는 목록에서 삭제
+                    List<Post> beforePosts = ht.getPosts();
+                    beforePosts.add(post);
+                    ht.setPosts(beforePosts);
+                });
+                hashtagStrings.forEach(ht -> {
+                    Hashtag hashtag = new Hashtag();
+                    hashtag.setHashtag(ht);
+                    hashtag.setPosts(Arrays.asList(post));
+                    hashtags.add(hashtag);
+                });
+                post.setHashtags(hashtags);
+            }
+
+            // 사진 추가
+            if(postImages != null){
+                List<Picture> pictures = new ArrayList<>();
+                pictureRepository.deleteByPostId(thePost.getId());
+                Drive drive = googleDriveUtil.getDrive();
+                for(MultipartFile postImage : postImages) {
+                    File file = new File();
+                    file.setName(googleDriveUtil.getPictureName(postImage.getOriginalFilename()));
+                    file.setParents(Collections.singletonList(googleDriveUtil.POST_FOLDER));
+                    java.io.File tmpFile = googleDriveUtil.convert(postImage);
+                    FileContent content = new FileContent("image/jpeg", tmpFile);
+                    File uploadedFile = drive.files().create(file, content).setFields("id").execute();
+                    tmpFile.delete();
+                    String fileRef = googleDriveUtil.FILE_REF + uploadedFile.getId();
+                    Picture picture = new Picture();
+                    picture.setPost(post);
+                    picture.setPicture(fileRef);
+                    pictureRepository.save(picture);
+                }
+                post.setPictures(pictures);
+            }
+            postRepository.save(post);
         } else {
             throw new CustomException("존재하지 않는 게시글입니다.", "게시글 수정 실패 : id = " + thePost.getId());
         }

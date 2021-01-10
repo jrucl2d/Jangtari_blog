@@ -18,6 +18,7 @@ export const addPost = async (newInfo, pictures) => {
       categoryId: newInfo.categoryId,
       title: newInfo.title,
       post: newInfo.post,
+      template: newInfo.template,
       hashtags: newInfo.hashtags,
     })
   );
@@ -38,9 +39,35 @@ export const addPost = async (newInfo, pictures) => {
     });
   }
 };
-// export const update = async (newInfo) => {
-//   await axios.put("/admin/updateCategory", newInfo);
-// };
+export const updatePost = async (newInfo, pictures) => {
+  const formData = new FormData();
+  formData.append(
+    "post",
+    JSON.stringify({
+      id: newInfo.id,
+      title: newInfo.title,
+      post: newInfo.post,
+      template: newInfo.template,
+      hashtags: newInfo.hashtags,
+    })
+  );
+  if (pictures.length > 0) {
+    pictures.forEach((picture) => {
+      formData.append("images", picture);
+    });
+    await axios.put("/admin/post", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data; charset=UTF-8",
+      },
+    });
+  } else {
+    await axios.put("/admin/post/nimg", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data; charset=UTF-8",
+      },
+    });
+  }
+};
 
 export const deletePost = async (id) => {
   await axios.delete(`/admin/post/${id}`);

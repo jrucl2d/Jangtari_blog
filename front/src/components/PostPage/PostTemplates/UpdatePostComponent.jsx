@@ -4,25 +4,50 @@ import queryString from "query-string";
 import "../PostStyle.css";
 import { v4 as uuid } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
-import { addPost } from "../../../modules/postReducer";
+import { getOnePost, updatePost } from "../../../modules/postReducer";
 import LoadingComponent from "../../MainPage/LoadingComponent";
 
-function NewPostComponent({ location, history }) {
+function UpdatePostComponent({ location, history }) {
   const dispatch = useDispatch();
-  const { success, error, loading } = useSelector((state) => state.postReducer);
+  const { success, error, loading, post } = useSelector(
+    (state) => state.postReducer
+  );
   const [info, setInfo] = useState({
-    categoryId: location.pathname.split("/")[2],
+    id: null,
     hashtags: "",
     title: "",
     post: "",
-    template: queryString.parse(location.search).template,
+    template: null,
   });
   const [pictures, setPictures] = useState([]);
   const [thumbnails, setThumbnails] = useState([]);
   const mainRef = useRef();
+
   useEffect(() => {
+    if (post) return;
+    const id = queryString.parse(location.search).id;
+    dispatch(getOnePost(id));
     mainRef.current.focus();
+    // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if (!post) return;
+    const tmpHashtags = post.hashtags.map((v) => "#" + v.hashtag);
+    if (post.pictures && post.pictures[0] && post.pictures[0].picture) {
+      setPictures(post.pictures.map((v) => v.picture));
+      setThumbnails(post.pictures.map((v) => v.picture));
+    }
+    setInfo({
+      ...info,
+      id: queryString.parse(location.search).id,
+      title: post.title,
+      post: post.content,
+      template: queryString.parse(location.search).template,
+      hashtags: tmpHashtags.join(" "),
+    });
+    // eslint-disable-next-line
+  }, [post]);
 
   useEffect(() => {
     if (!success) return;
@@ -71,7 +96,7 @@ function NewPostComponent({ location, history }) {
         v.substring(1, v.length)
       );
     }
-    dispatch(addPost(sendingInfo, pictures));
+    dispatch(updatePost(sendingInfo, pictures));
   };
 
   const onChangePictures = (e) => {
@@ -84,7 +109,7 @@ function NewPostComponent({ location, history }) {
         nope = true;
       }
     });
-    setPictures(Object.values(fileArr));
+    setPictures([...pictures, ...Object.values(fileArr)]);
 
     if (nope) {
       alert("파일 크기가 1mb보다 큽니다.");
@@ -99,7 +124,7 @@ function NewPostComponent({ location, history }) {
       let reader = new FileReader();
       reader.onload = () => {
         fileURLs[i] = reader.result;
-        setThumbnails([...fileURLs]);
+        setThumbnails([...thumbnails, ...fileURLs]);
       };
       reader.readAsDataURL(file);
     }
@@ -183,4 +208,4 @@ function NewPostComponent({ location, history }) {
   );
 }
 
-export default NewPostComponent;
+export default UpdatePostComponent;

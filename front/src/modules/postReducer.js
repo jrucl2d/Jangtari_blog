@@ -36,14 +36,18 @@ export const addPost = (newInfo, pictures) => async (dispatch) => {
     dispatch({ type: "ADD_POST_ERROR", error: err });
   }
 };
-// export const updateCategory = (newInfo) => async (dispatch) => {
-//   try {
-//     await categoryAPI.update(newInfo);
-//     dispatch({ type: "UPDATE_INFO_SUCCESS", newInfo });
-//   } catch (err) {
-//     dispatch({ type: "UPDATE_INFO_ERROR", error: err });
-//   }
-// };
+export const updatePost = (newInfo, pictures) => async (dispatch) => {
+  dispatch({ type: "UPDATE_POST" });
+  try {
+    await postAPI.updatePost(newInfo, pictures);
+    dispatch({
+      type: "UPDATE_POST_SUCCESS",
+      success: "게시글을 수정하였습니다.",
+    });
+  } catch (err) {
+    dispatch({ type: "UPDATE_POST_ERROR", error: err });
+  }
+};
 export const deletePost = (id) => async (dispatch) => {
   dispatch({ type: "DELETE_POST" });
   try {
@@ -83,6 +87,14 @@ export default function postReducer(state = initialState, action) {
         error: null,
       };
     case "ADD_POST":
+    case "UPDATE_POST":
+      return {
+        ...state,
+        loading: true,
+        success: null,
+        error: null,
+        post: null,
+      };
     case "GET_ONE_POST":
       return {
         ...state,
@@ -134,6 +146,7 @@ export default function postReducer(state = initialState, action) {
         },
         error: null,
       };
+    case "UPDATE_POST_SUCCESS":
     case "ADD_POST_SUCCESS":
       return {
         ...state,
@@ -141,6 +154,7 @@ export default function postReducer(state = initialState, action) {
         success: action.success,
         error: null,
       };
+    case "UPDATE_POST_ERROR":
     case "ADD_POST_ERROR":
       return {
         ...state,
@@ -148,6 +162,7 @@ export default function postReducer(state = initialState, action) {
         error: action.error,
         success: null,
       };
+
     case "GET_ALL_POSTS_ERROR":
       return {
         ...state,

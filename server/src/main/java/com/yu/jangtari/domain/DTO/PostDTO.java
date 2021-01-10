@@ -53,6 +53,6 @@ public class PostDTO {
         private String title;
         private String post;
         private int template;
-        private List<PictureDTO> pictures = new ArrayList<>();
+        private List<HashtagDTO> hashtags = new ArrayList<>();
     }
 }
