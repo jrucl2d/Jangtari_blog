@@ -91,7 +91,7 @@ public class PostService {
             Drive drive = googleDriveUtil.getDrive();
             for(MultipartFile postImage : postImages) {
                 File file = new File();
-                file.setName(googleDriveUtil.getPictureName(postImage.getOriginalFilename()));
+                file.setName(googleDriveUtil.getPictureName(postImage.getName()));
                 file.setParents(Collections.singletonList(googleDriveUtil.POST_FOLDER));
                 java.io.File tmpFile = googleDriveUtil.convert(postImage);
                 FileContent content = new FileContent("image/jpeg", tmpFile);
@@ -148,7 +148,7 @@ public class PostService {
                 Drive drive = googleDriveUtil.getDrive();
                 for(MultipartFile postImage : postImages) {
                     File file = new File();
-                    file.setName(googleDriveUtil.getPictureName(postImage.getOriginalFilename()));
+                    file.setName(googleDriveUtil.getPictureName(postImage.getName()));
                     file.setParents(Collections.singletonList(googleDriveUtil.POST_FOLDER));
                     java.io.File tmpFile = googleDriveUtil.convert(postImage);
                     FileContent content = new FileContent("image/jpeg", tmpFile);
