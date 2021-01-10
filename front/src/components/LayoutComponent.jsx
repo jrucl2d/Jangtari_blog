@@ -10,6 +10,7 @@ import CategorySettingComponent from "./CategoryPage/CategorySettingComponent";
 import PostListComponent from "./PostPage/PostListComponent";
 import TemplateLayout from "./PostPage/PostTemplates/TemplateLayout";
 import NewPostComponent from "./PostPage/PostTemplates/NewPostComponent";
+import UpdatePostComponent from "./PostPage/PostTemplates/UpdatePostComponent";
 
 function LayoutComponent() {
   const menuButtonRef = useRef(null);
@@ -54,6 +55,10 @@ function LayoutComponent() {
       <Route
         path="/category/:categoryId/add/post"
         component={NewPostComponent}
+      />
+      <Route
+        path="/category/:categoryId/update/post"
+        component={UpdatePostComponent}
       />
       <footer>
         <div className="footer-icons">

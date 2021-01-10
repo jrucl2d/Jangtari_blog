@@ -14,6 +14,7 @@ function PostListComponent({ location, history }) {
     keyword: "",
   });
   const [show, setShow] = useState(false);
+  const [updateMode, setUpdateMode] = useState(null); // 포스트 id와 템플릿이 들어가면 updatemode
   const { result, success, loading, error } = useSelector(
     (state) => state.postReducer
   );
@@ -124,7 +125,10 @@ function PostListComponent({ location, history }) {
     history.push(theUrl);
   };
 
-  const onClickUpdate = (e) => {};
+  const onClickUpdate = (id, template) => {
+    setShow(true);
+    setUpdateMode({ id, template });
+  };
   const onClickDelete = (id) => {
     if (window.confirm("정말로 삭제하시겠습니까?")) {
       dispatch(deletePost(id));
@@ -201,6 +205,7 @@ function PostListComponent({ location, history }) {
                       variant="outline-light"
                       onClick={() => {
                         setShow(true);
+                        setUpdateMode(null);
                       }}
                     >
                       <i className="fas fa-plus"></i>
@@ -209,6 +214,7 @@ function PostListComponent({ location, history }) {
                       show={show}
                       setShow={setShow}
                       loc={location.pathname.split("/")[2]}
+                      updateMode={updateMode}
                     />
                   </>
                 )}
@@ -235,13 +241,20 @@ function PostListComponent({ location, history }) {
                         ? result.result.content[i].title
                         : null}
                     </Link>
-                    {result &&
+                    {localStorage.getItem("role") &&
+                      localStorage.getItem("role") === "ADMIN" &&
+                      result &&
                       result.result.content.length > 0 &&
                       i < result.result.content.length && (
                         <div className="post-list-setting">
                           <Button
                             variant="outline-primary"
-                            onClick={onClickUpdate}
+                            onClick={() =>
+                              onClickUpdate(
+                                result.result.content[i].id,
+                                result.result.content[i].template
+                              )
+                            }
                           >
                             수정
                           </Button>
@@ -300,7 +313,7 @@ function PostListComponent({ location, history }) {
 
 export default PostListComponent;
 
-function TemplateModal({ show, setShow, loc }) {
+function TemplateModal({ show, setShow, loc, updateMode }) {
   return (
     <Modal
       className="category-modal"
@@ -312,15 +325,45 @@ function TemplateModal({ show, setShow, loc }) {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          템플릿을 선택하세요.
+          {updateMode === null
+            ? "템플릿을 선택하세요."
+            : `기존 템플릿은 ${updateMode.template}입니다. 바꾸시겠습니까?`}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body className="template-select-modal">
-        <Link to={`/category/${loc}/add/post?template=${0}`}>
-          <img className="template-select" src="/template0.PNG" alt="템플릿0" />
+        <Link
+          to={
+            updateMode === null
+              ? `/category/${loc}/add/post?template=${0}`
+              : `/category/${loc}/update/post?id=${updateMode.id}&template=${0}`
+          }
+        >
+          <img
+            className={`template-select ${
+              updateMode && +updateMode.template === +0
+                ? "before-selected-template"
+                : ""
+            }`}
+            src="/template0.PNG"
+            alt="템플릿0"
+          />
         </Link>
-        <Link to={`/category/${loc}/add/post?template=${1}`}>
-          <img className="template-select" src="/template1.PNG" alt="템플릿1" />
+        <Link
+          to={
+            updateMode === null
+              ? `/category/${loc}/add/post?template=${1}`
+              : `/category/${loc}/update/post?id=${updateMode.id}&template=${1}`
+          }
+        >
+          <img
+            className={`template-select ${
+              updateMode && +updateMode.template === +1
+                ? "before-selected-template"
+                : ""
+            }`}
+            src="/template1.PNG"
+            alt="템플릿1"
+          />
         </Link>
       </Modal.Body>
       <Modal.Footer>

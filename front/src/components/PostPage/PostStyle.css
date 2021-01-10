@@ -301,6 +301,9 @@
   width: 100%;
   border: 1px solid white;
 }
+.before-selected-template {
+  border: 1px solid red;
+}
 .new-post-body {
   height: 100%;
   width: 100vw;
@@ -631,7 +634,9 @@
   }
 
   /* 게시글 추가 */
-
+  #contained-modal-title-vcenter {
+    font-size: var(--mbig);
+  }
   .new-post-main {
     font-size: var(--mmiddle);
   }
