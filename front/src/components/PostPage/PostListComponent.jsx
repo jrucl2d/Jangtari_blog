@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Button, Dropdown, DropdownButton, Modal } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { getAllPosts } from "../../modules/postReducer";
+import { deletePost, getAllPosts } from "../../modules/postReducer";
 import LoadingComponent from "../MainPage/LoadingComponent";
 import qs from "query-string";
 import "./PostStyle.css";
@@ -14,9 +14,11 @@ function PostListComponent({ location, history }) {
     keyword: "",
   });
   const [show, setShow] = useState(false);
-  const { result, loading, error } = useSelector((state) => state.postReducer);
+  const { result, success, loading, error } = useSelector(
+    (state) => state.postReducer
+  );
 
-  useEffect(() => {
+  const getPostsFunc = useCallback(() => {
     const id = location.pathname.split("/")[2];
     const query = qs.parse(location.search);
     let theUrl = `/category/${id}/posts`;
@@ -51,10 +53,21 @@ function PostListComponent({ location, history }) {
   }, [location]);
 
   useEffect(() => {
+    getPostsFunc();
+    // eslint-disable-next-line
+  }, [location]);
+
+  useEffect(() => {
     if (error) {
       alert("에러가 발생했습니다. 잠시 후에 다시 시도해주세요.");
     }
   }, [error]);
+
+  useEffect(() => {
+    if (!success) return;
+    getPostsFunc();
+    // eslint-disable-next-line
+  }, [success]);
 
   const onClickPageNumber = (e) => {
     const id = location.pathname.split("/")[2];
@@ -109,6 +122,15 @@ function PostListComponent({ location, history }) {
       searchInfo.type[0]
     }&keyword=${searchInfo.keyword}`;
     history.push(theUrl);
+  };
+
+  const onClickUpdate = (e) => {};
+  const onClickDelete = (id) => {
+    if (window.confirm("정말로 삭제하시겠습니까?")) {
+      dispatch(deletePost(id));
+    } else {
+      return;
+    }
   };
 
   return (
@@ -213,6 +235,26 @@ function PostListComponent({ location, history }) {
                         ? result.result.content[i].title
                         : null}
                     </Link>
+                    {result &&
+                      result.result.content.length > 0 &&
+                      i < result.result.content.length && (
+                        <div className="post-list-setting">
+                          <Button
+                            variant="outline-primary"
+                            onClick={onClickUpdate}
+                          >
+                            수정
+                          </Button>
+                          <Button
+                            variant="outline-danger"
+                            onClick={() => {
+                              onClickDelete(result.result.content[i].id);
+                            }}
+                          >
+                            삭제
+                          </Button>
+                        </div>
+                      )}
                   </li>
                 ))}
             </div>

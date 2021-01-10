@@ -42,6 +42,6 @@ export const addPost = async (newInfo, pictures) => {
 //   await axios.put("/admin/updateCategory", newInfo);
 // };
 
-// export const deleteCate = async (id) => {
-//   await axios.delete(`/admin/deleteCategory/${id}`);
-// };
+export const deletePost = async (id) => {
+  await axios.delete(`/admin/post/${id}`);
+};

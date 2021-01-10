@@ -22,6 +22,8 @@ function AboutComponent() {
 
   useEffect(() => {
     if (!success) return;
+    if (success.split(" ")[success.split(" ").length - 1] === "환영합니다.")
+      return;
     alert(success);
     // eslint-disable-next-line
   }, [success]);

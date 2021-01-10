@@ -41,17 +41,18 @@ export const addPost = (newInfo, pictures) => async (dispatch) => {
 //     await categoryAPI.update(newInfo);
 //     dispatch({ type: "UPDATE_INFO_SUCCESS", newInfo });
 //   } catch (err) {
-//     dispatch({ type: "UPDATE_INFO_ERROR,", error: err });
+//     dispatch({ type: "UPDATE_INFO_ERROR", error: err });
 //   }
 // };
-// export const deleteCategory = (id) => async (dispatch) => {
-//   try {
-//     await categoryAPI.deleteCate(id);
-//     dispatch({ type: "DELETE_INFO_SUCCESS", id });
-//   } catch (err) {
-//     dispatch({ type: "DELETE_INFO_ERROR,", error: err });
-//   }
-// };
+export const deletePost = (id) => async (dispatch) => {
+  dispatch({ type: "DELETE_POST" });
+  try {
+    await postAPI.deletePost(id);
+    dispatch({ type: "DELETE_POST_SUCCESS", id });
+  } catch (err) {
+    dispatch({ type: "DELETE_POST_ERROR", error: err });
+  }
+};
 
 const initialState = {
   loading: false,
@@ -91,6 +92,27 @@ export default function postReducer(state = initialState, action) {
         success: null,
         error: null,
       };
+    case "DELETE_POST":
+      return {
+        ...state,
+        loading: true,
+        success: null,
+        error: null,
+      };
+    case "DELETE_POST_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        success: true,
+        error: null,
+      };
+    case "DELETE_POST_ERROR":
+      return {
+        ...state,
+        loading: false,
+        success: action.id,
+        error: action.error,
+      };
     case "GET_ONE_POST_SUCCESS":
       return {
         ...state,
@@ -119,22 +141,6 @@ export default function postReducer(state = initialState, action) {
         success: action.success,
         error: null,
       };
-    // case "UPDATE_INFO_SUCCESS":
-    //   return {
-    //     ...state,
-    //     loading: false,
-    //     result: state.result.map((v) =>
-    //       v.id === action.newInfo.id ? action.newInfo : v
-    //     ),
-    //     error: null,
-    //   };
-    // case "DELETE_INFO_SUCCESS":
-    //   return {
-    //     ...state,
-    //     loading: false,
-    //     result: state.result.filter((v) => v.id !== action.id),
-    //     error: null,
-    //   };
     case "ADD_POST_ERROR":
       return {
         ...state,

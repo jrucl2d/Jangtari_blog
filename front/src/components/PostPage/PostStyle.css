@@ -87,6 +87,9 @@
   justify-content: space-between;
   align-items: center;
 }
+.post-list-setting button i {
+  width: 1vw;
+}
 
 .post-list-title {
   width: 20vw;
@@ -511,6 +514,10 @@
   }
   .post-list-numbers {
     color: rgb(190, 190, 190);
+  }
+  .post-list-setting button {
+    width: 12vw;
+    font-size: var(--msmall);
   }
 
   /* 포스트 상세 페이지 */

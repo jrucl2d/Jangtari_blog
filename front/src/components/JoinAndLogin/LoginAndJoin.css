@@ -213,6 +213,9 @@ h1 > button {
   .about-content {
     flex-direction: column;
   }
+  .about-label {
+    width: 40vw;
+  }
   .about-page h1 {
     font-size: var(--mlarge);
     margin-bottom: 0.5rem;
