@@ -8,7 +8,7 @@ function MainComponent() {
   const { categories, error, loading } = useSelector(
     (state) => state.categoryReducer
   );
-  const { error: jError, success, loading: jLoading } = useSelector(
+  const { error: jError, loading: jLoading } = useSelector(
     (state) => state.jangtariReducer
   );
 
@@ -17,13 +17,6 @@ function MainComponent() {
       alert("에러가 발생했습니다. 잠시 후에 다시 시도해주세요.");
     }
   }, [error, jError]);
-
-  useEffect(() => {
-    if (!success) return;
-    if (success === "logoutSuc") {
-      alert("로그아웃 했습니다.");
-    }
-  }, [success]);
 
   return (
     <>

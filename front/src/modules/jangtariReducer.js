@@ -52,11 +52,15 @@ export const join = (info) => async (dispatch) => {
     await jangttakAPI.join(info);
     dispatch({
       type: "JOIN_SUCCESS",
-      success: "회원가입에 성공했습니다.",
+      success: "join",
     });
   } catch (err) {
     dispatch({ type: "JOIN_ERROR", error: err });
   }
+};
+
+export const initSuccessOfJang = () => {
+  return { type: "INIT_JANG" };
 };
 
 const initialState = {
@@ -68,6 +72,11 @@ const initialState = {
 
 export default function jangtariReducer(state = initialState, action) {
   switch (action.type) {
+    case "INIT_JANG":
+      return {
+        ...state,
+        success: null,
+      };
     case "GET_JANGTAK":
       return {
         ...state,
@@ -105,7 +114,7 @@ export default function jangtariReducer(state = initialState, action) {
       return {
         ...state,
         loading: false,
-        success: "logoutSuc",
+        success: "logout",
         error: null,
       };
     case "JOIN_SUCCESS":
@@ -162,7 +171,7 @@ export default function jangtariReducer(state = initialState, action) {
         ...state,
         loading: false,
         error: null,
-        success: `${action.nickname}님 환영합니다.`,
+        success: "login",
       };
     case "LOG_IN_ERROR":
       return {

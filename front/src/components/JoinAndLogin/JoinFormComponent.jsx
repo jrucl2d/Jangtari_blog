@@ -3,7 +3,7 @@ import "./LoginAndJoin.css";
 import { useDispatch, useSelector } from "react-redux";
 import { Form, Button } from "react-bootstrap";
 import LoadingComponent from "../MainPage/LoadingComponent";
-import { join } from "../../modules/jangtariReducer";
+import { initSuccessOfJang, join } from "../../modules/jangtariReducer";
 
 function JoinFormComponent({ history }) {
   const dispatch = useDispatch();
@@ -33,7 +33,12 @@ function JoinFormComponent({ history }) {
 
   useEffect(() => {
     if (!success) return;
-    history.push("/");
+    if (success === "join") {
+      alert("회원가입 성공");
+      dispatch(initSuccessOfJang());
+      history.push("/");
+    }
+    // eslint-disable-next-line
   }, [success, history]);
 
   useEffect(() => {

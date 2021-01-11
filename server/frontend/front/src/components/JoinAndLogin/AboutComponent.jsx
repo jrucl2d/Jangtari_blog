@@ -7,7 +7,7 @@ import "./LoginAndJoin.css";
 
 function AboutComponent() {
   const dispatch = useDispatch();
-  const { info, error, success, loading } = useSelector(
+  const { info, error, loading } = useSelector(
     (state) => state.jangtariReducer
   );
 
@@ -19,14 +19,6 @@ function AboutComponent() {
     picture: "",
   });
   const [newPicture, setNewPicture] = useState(null);
-
-  useEffect(() => {
-    if (!success) return;
-    if (success.split(" ")[success.split(" ").length - 1] === "환영합니다.")
-      return;
-    alert(success);
-    // eslint-disable-next-line
-  }, [success]);
 
   useEffect(() => {
     if (info === null) {

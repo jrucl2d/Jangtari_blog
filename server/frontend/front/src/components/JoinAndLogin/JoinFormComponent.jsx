@@ -33,7 +33,6 @@ function JoinFormComponent({ history }) {
 
   useEffect(() => {
     if (!success) return;
-    alert(success);
     history.push("/");
   }, [success, history]);
 
