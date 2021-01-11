@@ -24,15 +24,9 @@ function CategorySettingComponent() {
     picture: "",
   });
 
-  const { categories, success, error, loading } = useSelector(
+  const { categories, error, loading } = useSelector(
     (state) => state.categoryReducer
   );
-
-  useEffect(() => {
-    if (!success) return;
-    alert(success);
-    // eslint-disable-next-line
-  }, [success, categories]);
 
   useEffect(() => {
     if (error) {

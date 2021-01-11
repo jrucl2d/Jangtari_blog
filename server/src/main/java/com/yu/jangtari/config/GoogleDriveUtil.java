@@ -38,7 +38,7 @@ public class GoogleDriveUtil {
     public final String FILE_REF = "https://drive.google.com/uc?export=download&id=";
 
     private ClassPathResource gdSecretKeys = new ClassPathResource("/jangtari.json");
-    private ClassPathResource credentialsFolder = new ClassPathResource("/credentials");
+    private String token = "credentials";
     private String appname="jangtaritest";
     private GoogleAuthorizationCodeFlow flow;
 
@@ -46,26 +46,14 @@ public class GoogleDriveUtil {
         // Load client secrets.
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(gdSecretKeys.getInputStream()));
 
-        InputStream inputStream = credentialsFolder.getInputStream();
-        File file = new File("/credentials");
-        OutputStream outputStream = new FileOutputStream(file);
-        byte[] buf = new byte[1024];
-        int len = 0;
-        while((len = inputStream.read(buf)) > 0){
-            outputStream.write(buf, 0, len);
-        }
-        outputStream.close();
-        inputStream.close();
-
         // Build flow and trigger user authorization request.
         flow = new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(file))
+                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(token)))
                 .setAccessType("offline")
                 .build();
 
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-        file.delete();
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 

@@ -28,7 +28,6 @@ function LoginFormComponent({ history }) {
   useEffect(() => {
     if (!success) return;
     if (success === "logoutSuc") return;
-    alert(success);
     history.goBack();
   }, [success, history]);
 

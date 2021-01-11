@@ -27,7 +27,6 @@ function NewPostComponent({ location, history }) {
   useEffect(() => {
     if (!success) return;
     history.goBack();
-    alert(success);
   }, [success, history]);
 
   useEffect(() => {
