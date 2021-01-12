@@ -43,24 +43,29 @@ function SideMenuComponent({ isToggle, onClickMenuButton }) {
             </Link>
           </li>
           {localStorage.getItem("role") === null ? (
-            <li>
-              <Link onClick={() => onClickMenuButton()} to="/loginForm">
-                로그인
-              </Link>
-            </li>
+            <>
+              <li>
+                <Link onClick={() => onClickMenuButton()} to="/loginForm">
+                  로그인
+                </Link>
+              </li>
+              <li>
+                <Link onClick={() => onClickMenuButton()} to="/joinForm">
+                  회원가입
+                </Link>
+              </li>
+            </>
           ) : (
-            <li>
-              <Link onClick={onClickLogout} to="/">
-                로그아웃
-              </Link>
-            </li>
-          )}
-          {localStorage.getItem("role") == null && (
-            <li>
-              <Link onClick={() => onClickMenuButton()} to="/joinForm">
-                회원가입
-              </Link>
-            </li>
+            <>
+              <li>
+                <Link onClick={onClickLogout} to="/">
+                  로그아웃
+                </Link>
+              </li>
+              <li>
+                <Link to="/">정보변경</Link>
+              </li>
+            </>
           )}
         </ul>
         <h2>

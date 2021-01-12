@@ -36,7 +36,7 @@ public class PostController {
 
     @GetMapping("almighty/hashtag/clean")
     public @ResponseBody String cleanTrashHashtags(){
-//        postService.deleteTrashHashtags();
+        postService.deleteTrashHashtags();
         return "haha";
     }
 

@@ -100,7 +100,7 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
 
         query = from(post);
         QHashtag hashtag = QHashtag.hashtag1;
-        JPQLQuery<String> hashtagTuple = query.select(hashtag.hashtag).distinct().innerJoin(post.hashtags, hashtag);
+        JPQLQuery<String> hashtagTuple = query.select(hashtag.hashtag).distinct().innerJoin(post.hashtags, hashtag).where(post.id.eq(postId));
         List<String> hashtagLists = hashtagTuple.fetch();
         List<HashtagDTO> hashtags = new ArrayList<>();
         hashtagLists.forEach(v -> hashtags.add(new HashtagDTO(v)));

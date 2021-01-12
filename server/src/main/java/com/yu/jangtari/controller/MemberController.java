@@ -1,14 +1,9 @@
 package com.yu.jangtari.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.client.http.FileContent;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.File;
 import com.yu.jangtari.common.CustomError;
 import com.yu.jangtari.common.CustomException;
 import com.yu.jangtari.common.CustomResponse;
 import com.yu.jangtari.config.CookieUtil;
-import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.config.JWTTokenProvider;
 import com.yu.jangtari.config.RedisUtil;
 import com.yu.jangtari.domain.DTO.MemberDTO;
@@ -30,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
 
