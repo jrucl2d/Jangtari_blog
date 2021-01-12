@@ -39,7 +39,7 @@ export const addPost = async (newInfo, pictures) => {
     });
   }
 };
-export const updatePost = async (newInfo, pictures) => {
+export const updatePost = async (newInfo, pictures, deletePictures) => {
   const formData = new FormData();
   formData.append(
     "post",
@@ -49,8 +49,10 @@ export const updatePost = async (newInfo, pictures) => {
       post: newInfo.post,
       template: newInfo.template,
       hashtags: newInfo.hashtags,
+      delPics: deletePictures,
     })
   );
+
   if (pictures.length > 0) {
     pictures.forEach((picture) => {
       formData.append("images", picture);

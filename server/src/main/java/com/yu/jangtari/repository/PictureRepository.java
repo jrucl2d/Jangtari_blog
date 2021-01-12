@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface PictureRepository extends CrudRepository<Picture, Long> {
 
     @Modifying
-    @Query("DELETE FROM Picture p where p.post.id=:postId")
-    public void deleteByPostId(@Param("postId") Long postId);
+    @Query("DELETE FROM Picture p where p.id in :postIds")
+    public void deleteByIds(@Param("postIds")List<Long> postIds);
 }

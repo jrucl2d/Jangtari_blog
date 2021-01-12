@@ -7,5 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PictureDTO {
+    private Long id;
     private String picture;
 }

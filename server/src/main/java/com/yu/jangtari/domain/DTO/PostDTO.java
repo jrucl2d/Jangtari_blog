@@ -54,5 +54,6 @@ public class PostDTO {
         private String post;
         private int template;
         private List<HashtagDTO> hashtags = new ArrayList<>();
+        private List<Long> delPics = new ArrayList<>();
     }
 }

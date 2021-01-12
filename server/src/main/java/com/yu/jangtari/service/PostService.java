@@ -143,8 +143,11 @@ public class PostService {
 
             // 사진 추가
             if(postImages != null){
+                // 삭제할 사진 삭제
+                if(thePost.getDelPics().size() > 0){
+                    pictureRepository.deleteByIds(thePost.getDelPics());
+                }
                 List<Picture> pictures = new ArrayList<>();
-                pictureRepository.deleteByPostId(thePost.getId());
                 Drive drive = googleDriveUtil.getDrive();
                 for(MultipartFile postImage : postImages) {
                     File file = new File();

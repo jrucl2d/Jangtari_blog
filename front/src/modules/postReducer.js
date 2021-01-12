@@ -36,10 +36,12 @@ export const addPost = (newInfo, pictures) => async (dispatch) => {
     dispatch({ type: "ADD_POST_ERROR", error: err });
   }
 };
-export const updatePost = (newInfo, pictures) => async (dispatch) => {
+export const updatePost = (newInfo, pictures, deletePictures) => async (
+  dispatch
+) => {
   dispatch({ type: "UPDATE_POST" });
   try {
-    await postAPI.updatePost(newInfo, pictures);
+    await postAPI.updatePost(newInfo, pictures, deletePictures);
     dispatch({
       type: "UPDATE_POST_SUCCESS",
       success: "게시글을 수정하였습니다.",
