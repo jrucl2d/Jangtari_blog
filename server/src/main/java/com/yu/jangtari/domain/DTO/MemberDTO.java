@@ -43,4 +43,13 @@ public class MemberDTO {
         private String nickname;
         private String introduce;
     }
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Check{
+        private String password;
+    }
+
 }

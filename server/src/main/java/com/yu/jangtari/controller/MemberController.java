@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -67,6 +68,26 @@ public class MemberController {
                 HttpStatus.OK);
     }
 
+    @PostMapping("/check")
+    public ResponseEntity<CustomResponse> check(@RequestBody MemberDTO.Check password, Principal principal){
+        String username = principal.getName();
+        Optional<Member> found = memberRepository.findByUsername(username);
+        if(!found.isPresent()){
+            return new ResponseEntity<>(new CustomResponse(
+                    new CustomError(new CustomException("유저 존재하지 않음", "회원인증 실패")),null),
+                    HttpStatus.BAD_REQUEST);
+        }
+        String encodedPW = found.get().getPassword();
+
+        if(passwordEncoder.matches(password.getPassword(), encodedPW)){
+            return new ResponseEntity<>(CustomResponse.OK(),
+                    HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new CustomResponse(
+                    new CustomError(new CustomException("비밀번호 인증 오류", "회원인증 실패")),null),
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
     @Transactional
     @PutMapping("/admin/jangtari")
     public ResponseEntity<CustomResponse> updateInfo(@RequestPart("jangtari") String jangtariString,
