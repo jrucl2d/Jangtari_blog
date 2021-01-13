@@ -28,6 +28,7 @@ function LoginFormComponent({ history }) {
   useEffect(() => {
     if (!success) return;
     if (success === "login") {
+      alert(`${localStorage.getItem("nickname")}님 어서오세요.`);
       dispatch(initSuccessOfJang());
       history.goBack();
     }

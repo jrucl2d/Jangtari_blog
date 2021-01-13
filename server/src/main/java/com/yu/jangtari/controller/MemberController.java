@@ -126,7 +126,39 @@ public class MemberController {
         }
 
     }
+    @PostMapping("/member")
+    public ResponseEntity<CustomResponse> memberUpdate(@RequestBody MemberDTO.Add member, HttpServletRequest request, HttpServletResponse response) {
 
+        try {
+            Optional<Member> member1 = memberRepository.findByUsername(member.getUsername());
+            if(!member1.isPresent()){
+                return new ResponseEntity<>(new CustomResponse(
+                        new CustomError(new CustomException("회원 정보 없음", "회원 정보 업데이트 실패")),null),
+                        HttpStatus.BAD_REQUEST);
+            }
+            member1.get().setNickname(member.getNickname());
+            member1.get().setPassword(passwordEncoder.encode(member.getPassword()));
+            memberRepository.save(member1.get());
+
+            // 로그아웃 처리
+            Cookie accessCookie = new Cookie("accesstest", null);
+            accessCookie.setMaxAge(0); // expirationTime을 0으로
+            accessCookie.setPath("/"); // 모든 경로에서 삭제
+            response.addCookie(accessCookie);
+
+            Cookie refreshCookie = cookieUtil.getCookie(request,jwtTokenProvider.REFRESH_TOKEN_STRING);
+            String refreshToken = refreshCookie.getValue();
+            redisUtil.deleteData(refreshToken);
+
+            return new ResponseEntity<>(CustomResponse.OK(),
+                    HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(new CustomResponse(
+                    new CustomError(new CustomException(e.getMessage(), "회원 정보 업데이트 실패")),null),
+                    HttpStatus.BAD_REQUEST);
+        }
+
+    }
     // 로그인
     @PostMapping("/login")
     public ResponseEntity<CustomResponse> login(@RequestBody MemberDTO.Login member,

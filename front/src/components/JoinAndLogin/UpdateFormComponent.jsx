@@ -36,6 +36,8 @@ function UpdateFormComponent({ history }) {
   useEffect(() => {
     if (!success) return;
     if (success === "memberChange") {
+      alert("정보를 변경했습니다. 로그인을 다시 해주세요.");
+      localStorage.clear();
       history.push("/");
     }
     // eslint-disable-next-line
@@ -83,7 +85,7 @@ function UpdateFormComponent({ history }) {
               />
             </Form.Group>
             <Form.Group controlId="nickname">
-              <Form.Label>닉네임</Form.Label>
+              <Form.Label>변경할 닉네임</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="닉네임 입력"
@@ -93,7 +95,7 @@ function UpdateFormComponent({ history }) {
               />
             </Form.Group>
             <Form.Group controlId="password">
-              <Form.Label>비밀번호</Form.Label>
+              <Form.Label>변경할 비밀번호</Form.Label>
               <Form.Control
                 type="password"
                 placeholder="비밀번호 입력"
