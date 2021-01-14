@@ -1,0 +1,63 @@
+@font-face {
+  font-family: "HoonDdukbokki";
+  src: url("./fonts/HoonDdukbokki.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+:root {
+  --large-font: 2rem;
+  --big-font: 1.6rem;
+  --middle-font: 1.3rem;
+  --small-font: 1rem;
+  --mlarge: 1.4rem;
+  --mbig: 1.1rem;
+  --mmiddle: 1rem;
+  --msmall: 0.7rem;
+}
+
+html,
+body {
+  background-color: black;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "HoonDdukbokki";
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+a {
+  text-decoration: none;
+  color: white;
+}
+a:visited {
+  color: white;
+}
+a:hover {
+  color: rgb(1, 1, 1, 0.2);
+  text-decoration: none;
+}
+.main-title a:hover {
+  color: white;
+  text-decoration: none;
+}
+ul {
+  list-style: none;
+}
+
+/* 태블릿 */
+@media (min-width: 768px) and (max-width: 1024px) {
+}
+/* 태블릿 가로 */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+}
+/* 폰 */
+@media screen and (max-width: 767px) {
+}
