@@ -52,22 +52,61 @@ export const join = (info) => async (dispatch) => {
     await jangttakAPI.join(info);
     dispatch({
       type: "JOIN_SUCCESS",
-      success: "회원가입에 성공했습니다.",
+      success: "join",
     });
   } catch (err) {
     dispatch({ type: "JOIN_ERROR", error: err });
   }
 };
 
+export const checkPW = (password) => async (dispatch) => {
+  dispatch({ type: "CHECK_PW" });
+  try {
+    await jangttakAPI.check(password);
+    dispatch({ type: "CHECK_PW_SUCCESS" });
+  } catch (err) {
+    dispatch({ type: "CHECK_PW_ERROR", error: "checkErr" });
+  }
+};
+
+export const initSuccessOfJang = () => {
+  return { type: "INIT_JANG" };
+};
+export const initCheckSucOfJang = () => {
+  return { type: "INIT_CHECK_JANG" };
+};
 const initialState = {
   loading: false,
   info: null,
   success: null,
   error: null,
+  checkSuc: false,
+};
+export const updateMember = (info) => async (dispatch) => {
+  dispatch({ type: "UPDATE_MEMBER" });
+  try {
+    await jangttakAPI.update(info);
+    dispatch({
+      type: "UPDATE_MEMBER_SUCCESS",
+      success: "memberChange",
+    });
+  } catch (err) {
+    dispatch({ type: "UPDATE_MEMBER_ERROR", error: err });
+  }
 };
 
 export default function jangtariReducer(state = initialState, action) {
   switch (action.type) {
+    case "INIT_JANG":
+      return {
+        ...state,
+        success: null,
+      };
+    case "INIT_CHECK_JANG":
+      return {
+        ...state,
+        checkSuc: false,
+      };
     case "GET_JANGTAK":
       return {
         ...state,
@@ -83,6 +122,18 @@ export default function jangtariReducer(state = initialState, action) {
         error: null,
         loading: true,
       };
+    case "CHECK_PW":
+    case "LOG_OUT":
+    case "JOIN":
+    case "UPDATE_MEMBER":
+    case "LOG_IN":
+      return {
+        ...state,
+        success: null,
+        error: null,
+        loading: true,
+        checkSuc: false,
+      };
     case "GET_SUCCESS":
       return {
         ...state,
@@ -91,21 +142,25 @@ export default function jangtariReducer(state = initialState, action) {
         success: null,
         error: null,
       };
-    case "LOG_OUT":
-    case "JOIN":
-    case "LOG_IN":
+    case "CHECK_PW_SUCCESS":
       return {
         ...state,
-        success: null,
-        error: null,
-        loading: true,
+        loading: false,
+        checkSuc: true,
+      };
+    case "CHECK_PW_ERROR":
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+        checkSuc: false,
       };
     case "LOG_OUT_SUCCESS":
       localStorage.clear();
       return {
         ...state,
         loading: false,
-        success: "logoutSuc",
+        success: "logout",
         error: null,
       };
     case "JOIN_SUCCESS":
@@ -115,20 +170,20 @@ export default function jangtariReducer(state = initialState, action) {
         error: null,
         success: action.success,
       };
-    case "JOIN_ERROR":
+    case "UPDATE_MEMBER_SUCCESS":
       return {
         ...state,
         loading: false,
-        error: action.error,
-        success: null,
+        error: null,
+        success: action.success,
       };
-    case "GET_ERROR":
+    case "JOIN_ERROR":
+    case "UPDATE_MEMBER_ERROR":
       return {
         ...state,
         loading: false,
-        info: null,
-        success: null,
         error: action.error,
+        success: null,
       };
     case "SET_INFO_SUCCESS":
       return {
@@ -138,6 +193,7 @@ export default function jangtariReducer(state = initialState, action) {
         success: action.newInfo.nickname + "으로 변경되었습니다.",
         error: null,
       };
+    case "GET_ERROR":
     case "SET_INFO_ERROR":
       return {
         ...state,
@@ -162,7 +218,7 @@ export default function jangtariReducer(state = initialState, action) {
         ...state,
         loading: false,
         error: null,
-        success: `${action.nickname}님 환영합니다.`,
+        success: "login",
       };
     case "LOG_IN_ERROR":
       return {

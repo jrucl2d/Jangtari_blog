@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./LoginAndJoin.css";
 import { Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../../modules/jangtariReducer";
+import { initSuccessOfJang, login } from "../../modules/jangtariReducer";
 import LoadingComponent from "../MainPage/LoadingComponent";
 
 function LoginFormComponent({ history }) {
@@ -27,8 +27,12 @@ function LoginFormComponent({ history }) {
 
   useEffect(() => {
     if (!success) return;
-    if (success === "logoutSuc") return;
-    history.goBack();
+    if (success === "login") {
+      alert(`${localStorage.getItem("nickname")}님 어서오세요.`);
+      dispatch(initSuccessOfJang());
+      history.goBack();
+    }
+    // eslint-disable-next-line
   }, [success, history]);
 
   const onClickSubmit = async (e) => {

@@ -44,3 +44,11 @@ export const join = async (info) => {
 export const logout = async () => {
   await axios.get("/signout");
 };
+export const check = async (password) => {
+  await axios.post("/check", {
+    password,
+  });
+};
+export const update = async (info) => {
+  await axios.post("/member", info);
+};

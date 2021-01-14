@@ -20,6 +20,7 @@ function UpdatePostComponent({ location, history }) {
     template: null,
   });
   const [pictures, setPictures] = useState([]);
+  const [deletePictures, setDeletePictures] = useState([]);
   const [thumbnails, setThumbnails] = useState([]);
   const mainRef = useRef();
 
@@ -35,7 +36,7 @@ function UpdatePostComponent({ location, history }) {
     if (!post) return;
     const tmpHashtags = post.hashtags.map((v) => "#" + v.hashtag);
     if (post.pictures && post.pictures[0] && post.pictures[0].picture) {
-      setPictures(post.pictures.map((v) => v.picture));
+      setPictures(post.pictures.map((v) => v));
       setThumbnails(post.pictures.map((v) => v.picture));
     }
     setInfo({
@@ -95,7 +96,8 @@ function UpdatePostComponent({ location, history }) {
         v.substring(1, v.length)
       );
     }
-    dispatch(updatePost(sendingInfo, pictures));
+    const sendingPictures = pictures.filter((v) => !v.picture);
+    dispatch(updatePost(sendingInfo, sendingPictures, deletePictures));
   };
 
   const onChangePictures = (e) => {
@@ -130,6 +132,12 @@ function UpdatePostComponent({ location, history }) {
   };
 
   const onClickCancelPicture = (index) => {
+    if (
+      pictures[index].picture &&
+      typeof pictures[index].picture === "string"
+    ) {
+      setDeletePictures([...deletePictures, pictures[index].id]);
+    }
     setThumbnails(thumbnails.filter((v, i) => i !== index));
     setPictures(pictures.filter((v, i) => i !== index));
   };

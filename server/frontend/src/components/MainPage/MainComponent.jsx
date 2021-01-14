@@ -4,11 +4,11 @@ import CategoryComponent from "./CategoryComponent";
 import LoadingComponent from "./LoadingComponent";
 import ScrollContainer from "react-indiana-drag-scroll";
 
-function MainComponent() {
+function MainComponent({ history }) {
   const { categories, error, loading } = useSelector(
     (state) => state.categoryReducer
   );
-  const { error: jError, loading: jLoading } = useSelector(
+  const { error: jError, loading: jLoading, checkSuc } = useSelector(
     (state) => state.jangtariReducer
   );
 
@@ -16,7 +16,17 @@ function MainComponent() {
     if (error || jError === "logoutError") {
       alert("에러가 발생했습니다. 잠시 후에 다시 시도해주세요.");
     }
+    if (jError === "checkErr") {
+      alert("비밀번호가 맞지 않습니다.");
+    }
   }, [error, jError]);
+
+  useEffect(() => {
+    if (checkSuc) {
+      history.push("/updateForm");
+    }
+    // eslint-disable-next-line
+  }, [checkSuc]);
 
   return (
     <>

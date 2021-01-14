@@ -85,7 +85,6 @@ function CommentComponent() {
         comment: theComment,
         id: commentId,
       });
-      alert("댓글을 수정했습니다.");
       setNewCommentRefresh(true);
     } catch (err) {
       console.error(err);

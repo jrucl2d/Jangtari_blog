@@ -11,6 +11,7 @@ import PostListComponent from "./PostPage/PostListComponent";
 import TemplateLayout from "./PostPage/PostTemplates/TemplateLayout";
 import NewPostComponent from "./PostPage/PostTemplates/NewPostComponent";
 import UpdatePostComponent from "./PostPage/PostTemplates/UpdatePostComponent";
+import UpdateFormComponent from "./JoinAndLogin/UpdateFormComponent";
 
 function LayoutComponent() {
   const menuButtonRef = useRef(null);
@@ -45,6 +46,7 @@ function LayoutComponent() {
       <Route exact path="/about" component={AboutComponent} />
       <Route exact path="/loginForm" component={LoginFormComponent} />
       <Route exact path="/joinForm" component={JoinFormComponent} />
+      <Route exact path="/updateForm" component={UpdateFormComponent} />
       <Route
         exact
         path="/update/category"

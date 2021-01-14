@@ -3,46 +3,45 @@ import "./LoginAndJoin.css";
 import { useDispatch, useSelector } from "react-redux";
 import { Form, Button } from "react-bootstrap";
 import LoadingComponent from "../MainPage/LoadingComponent";
-import { join } from "../../modules/jangtariReducer";
+import {
+  initCheckSucOfJang,
+  updateMember,
+} from "../../modules/jangtariReducer";
 
-function JoinFormComponent({ history }) {
+function UpdateFormComponent({ history }) {
   const dispatch = useDispatch();
-  const { success, error, loading } = useSelector(
+  const { success, checkSuc, error, loading } = useSelector(
     (state) => state.jangtariReducer
   );
   const [info, setInfo] = useState({
-    username: "",
-    nickname: "",
+    username: localStorage.getItem("username"),
+    nickname: localStorage.getItem("nickname"),
     password: "",
-    password2: "",
   });
-  const [showPWWarn, setShowPWWarn] = useState(false);
 
   useEffect(() => {
-    if (localStorage.getItem("role")) {
-      alert("로그인 했는데 왜 왔니");
+    if (!checkSuc) {
+      alert("접근 불가");
       history.push("/");
     }
+    dispatch(initCheckSucOfJang());
     // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     if (!error) return;
-    alert("이미 존재하는 회원입니다.");
+    alert("에러가 발생했습니다.");
   }, [error]);
 
   useEffect(() => {
     if (!success) return;
-    history.push("/");
-  }, [success, history]);
-
-  useEffect(() => {
-    if (info.password !== info.password2) {
-      setShowPWWarn(true);
-    } else {
-      setShowPWWarn(false);
+    if (success === "memberChange") {
+      alert("정보를 변경했습니다. 로그인을 다시 해주세요.");
+      localStorage.clear();
+      history.push("/");
     }
-  }, [info.password, info.password2]);
+    // eslint-disable-next-line
+  }, [success, history]);
 
   const onChangeInfo = (e) => {
     setInfo({
@@ -51,17 +50,12 @@ function JoinFormComponent({ history }) {
     });
   };
   const onClickSubmit = async (e) => {
-    if (
-      info.username === "" ||
-      info.nickname === "" ||
-      info.password === "" ||
-      info.password2 === ""
-    ) {
+    if (info.username === "" || info.nickname === "" || info.password === "") {
       alert("모든 정보를 입력해주세요.");
       return;
     }
     dispatch(
-      join({
+      updateMember({
         username: info.username,
         nickname: info.nickname,
         password: info.password,
@@ -77,20 +71,21 @@ function JoinFormComponent({ history }) {
         </div>
       ) : (
         <>
-          <h1>회원가입</h1>
+          <h1>정보 변경</h1>
           <Form className="join-login-form join-form">
             <Form.Group controlId="username">
               <Form.Label>아이디</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="아이디 입력"
+                style={{ backgroundColor: "grey", color: "white" }}
                 onChange={onChangeInfo}
                 name="username"
                 value={info.username}
+                readOnly
               />
             </Form.Group>
             <Form.Group controlId="nickname">
-              <Form.Label>닉네임</Form.Label>
+              <Form.Label>변경할 닉네임</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="닉네임 입력"
@@ -100,7 +95,7 @@ function JoinFormComponent({ history }) {
               />
             </Form.Group>
             <Form.Group controlId="password">
-              <Form.Label>비밀번호</Form.Label>
+              <Form.Label>변경할 비밀번호</Form.Label>
               <Form.Control
                 type="password"
                 placeholder="비밀번호 입력"
@@ -109,28 +104,14 @@ function JoinFormComponent({ history }) {
                 value={info.password}
               />
             </Form.Group>
-            <Form.Group controlId="password2">
-              <Form.Label>비밀번호 확인</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="비밀번호 재입력"
-                onChange={onChangeInfo}
-                name="password2"
-                value={info.password2}
-              />
-            </Form.Group>
-            {showPWWarn ? (
-              <div className="join-password-check">
-                비밀번호가 맞지 않습니다.
-              </div>
-            ) : null}
+
             <Button
               id="join-button"
               variant="outline-primary"
               type="button"
               onClick={onClickSubmit}
             >
-              회원가입
+              변경
             </Button>
           </Form>
         </>
@@ -139,4 +120,4 @@ function JoinFormComponent({ history }) {
   );
 }
 
-export default JoinFormComponent;
+export default UpdateFormComponent;
