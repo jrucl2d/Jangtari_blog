@@ -12,7 +12,7 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath "io.spring.gradle:dependency-management-plugin:1.0.7.RELEASE"
         classpath("gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:${querydslPluginVersion}")
-//        classpath "com.moowork.gradle:gradle-node-plugin:1.3.1"
+        classpath "com.moowork.gradle:gradle-node-plugin:1.3.1"
     }
 }
 
@@ -20,11 +20,11 @@ plugins {
     id 'org.springframework.boot' version '2.4.1'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
     id 'java'
-//    id "com.moowork.node" version "1.3.1"
+    id "com.moowork.node" version "1.3.1"
 }
 
 apply plugin: "com.ewerk.gradle.plugins.querydsl"
-//apply plugin: "com.moowork.node"
+apply plugin: "com.moowork.node"
 
 group = 'com.yu'
 version = '0.0.1-SNAPSHOT'
@@ -39,42 +39,42 @@ configurations {
 repositories {
     mavenCentral()
 }
-//
-//def webappDir = "$projectDir/frontend/front"
-//
-//// node 버전 및 npm, node 설치파일 저장 디렉토리 명시
-//node {
-//    version = '12.18.3'
-//    npmVersion = '6.14.10'
-//    distBaseUrl = 'https://nodejs.org/dist'
-//    download = false
-//    workDir = file("${project.buildDir}/nodejs")
-//    npmWorkDir = file("${project.buildDir}/npm")
-//    yarnWorkDir = file("${project.buildDir}/yarn")
-//    nodeModulesDir = file("${project.projectDir}")
-//}
-//
-//// npm install 과정
-//task appNpmInstall(type: NpmTask) {
-//    workingDir = file("${project.projectDir}/frontend/front")
-//    args = ["install"]
-//}
-//
-//// yarn build
-//task yarnBuild(type: YarnTask) {
-//    workingDir = file("${project.projectDir}/frontend/front")
-//    args = ['build']
-//}
-//
-//// 빌드된 결과 resources로 이동
-//task copyWebApp(type: Copy) {
-//    from "frontend/front/build"
-//    into 'build/resources/main/static/.'
-//}
-//
-//yarnBuild.dependsOn appNpmInstall
-//copyWebApp.dependsOn yarnBuild
-//compileJava.dependsOn copyWebApp
+
+def webappDir = "$projectDir/frontend/front"
+
+// node 버전 및 npm, node 설치파일 저장 디렉토리 명시
+node {
+    version = '12.18.3'
+    npmVersion = '6.14.10'
+    distBaseUrl = 'https://nodejs.org/dist'
+    download = false
+    workDir = file("${project.buildDir}/nodejs")
+    npmWorkDir = file("${project.buildDir}/npm")
+    yarnWorkDir = file("${project.buildDir}/yarn")
+    nodeModulesDir = file("${project.projectDir}")
+}
+
+// npm install 과정
+task appNpmInstall(type: NpmTask) {
+    workingDir = file("${project.projectDir}/frontend/front")
+    args = ["install"]
+}
+
+// yarn build
+task yarnBuild(type: YarnTask) {
+    workingDir = file("${project.projectDir}/frontend/front")
+    args = ['build']
+}
+
+// 빌드된 결과 resources로 이동
+task copyWebApp(type: Copy) {
+    from "frontend/front/build"
+    into 'build/resources/main/static/.'
+}
+
+yarnBuild.dependsOn appNpmInstall
+copyWebApp.dependsOn yarnBuild
+compileJava.dependsOn copyWebApp
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
