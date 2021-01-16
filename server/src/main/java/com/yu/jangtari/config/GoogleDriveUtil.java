@@ -27,6 +27,7 @@ import java.util.List;
 
 @Service
 public class GoogleDriveUtil {
+// redirect URL을 적용해야 함
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
