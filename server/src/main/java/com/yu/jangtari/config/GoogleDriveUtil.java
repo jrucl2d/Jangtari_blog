@@ -2,6 +2,7 @@ package com.yu.jangtari.config;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+import com.google.api.client.extensions.java6.auth.oauth2.VerificationCodeReceiver;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
@@ -43,22 +44,23 @@ public class GoogleDriveUtil {
     private String appname="jangtaritest";
     private GoogleAuthorizationCodeFlow flow;
 
-    private Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
+    public GoogleAuthorizationCodeFlow getFlow(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets.
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(gdSecretKeys.getInputStream()));
 
         // Build flow and trigger user authorization request.
-        flow = new GoogleAuthorizationCodeFlow.Builder(
+        return new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
                 .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(token)))
                 .setAccessType("offline")
                 .build();
+    }
 
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder()
-                .setHost("www.gamsk.kro.kr")
-                .setPort(8888).build();
+    private Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
 
-        return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+        flow = getFlow(HTTP_TRANSPORT);
+
+        return flow.loadCredential("user");
     }
 
     public Drive getDrive() throws GeneralSecurityException, IOException {
