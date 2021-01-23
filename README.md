@@ -1,6 +1,7 @@
 # Jangtari_blog
 
-개인 블로그 프로젝트
+개인 블로그 프로젝트 <br/>
+주소 : https://www.gamsk.kro.kr (세부사항 설정 중)
 
 ## 1. 동기 및 개발 목표
 
@@ -84,6 +85,18 @@
 
 ### 4.5 HTTPS 적용
 
+- 무료 오픈소스 SSL인 Let's Encrypt을 적용했다.
+- 복잡한 과정을 거칠 것 없이 nginx와 certbot을 사용하면 매우 손쉽게 https를 적용할 수 있다.
+- [참고 문헌]
+- https://hotheadfactory.com/?p=2081
+
+### 4.6 서버 구동
+
+- java -jar \*.jar로 구동할 수 있지만 터미널을 종료해도 영구히 실행시키기 위해서는 nohup 명령어를 사용해야 한다.
+- 아래 블로그를 참고해 nohup 명령어로 서버를 구동시켰다.
+- [참고 문헌]
+- https://in-idea.tistory.com/30
+
 ## 5. TODO LIST
 
 ### 5.1 공통 기능
@@ -123,4 +136,4 @@
 - [x] 배포할 클라우드 환경 세팅 : 오라클 클라우드
 - [x] 도메인 설정 : 무료 도메인
 - [x] nginx를 사용한 포트 포워딩 : 80(HTTP) -> 8080(톰켓 서버 포트)
-- [ ] HTTPS 적용
+- [x] HTTPS 적용
