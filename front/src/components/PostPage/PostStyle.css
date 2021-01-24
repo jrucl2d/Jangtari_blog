@@ -532,11 +532,11 @@
 
   /* 제목 아래 */
   .post-main-content {
-    margin: 0 1vw;
+    margin: 0 0.6rem;
     flex-direction: column;
   }
   .post-main-content button {
-    margin-top: 1vh;
+    margin-top: 0.6rem;
     height: 2.4rem;
   }
 
@@ -545,7 +545,7 @@
     font-size: var(--mbig);
     width: 90vw;
     margin: 0 auto;
-    margin-top: 1vh;
+    margin-top: 0.6rem;
     font-style: italic;
     text-align: center;
   }
@@ -609,17 +609,17 @@
 
   /* 이미지 */
   .post-image {
-    width: 95vw;
-    height: 95vw;
+    width: 95%;
+    height: 20rem;
     margin: 0 auto;
     position: relative;
     text-align: center;
-    line-height: 93vw;
+    line-height: 18rem;
   }
   .image-to-left-mobile,
   .image-to-right-mobile {
-    width: 47.5vw;
-    height: 95vw;
+    width: 47.5%;
+    height: 20rem;
     position: absolute;
   }
   .image-to-left-mobile {
