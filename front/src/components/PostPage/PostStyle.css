@@ -486,6 +486,10 @@
   .post-list {
     width: 90vw;
     height: 70vh;
+    margin-bottom: 10vh;
+  }
+  .post-list + footer {
+    display: none;
   }
   .post-list-box {
     height: 63vh;
@@ -526,17 +530,16 @@
   /* 포스트 상세 페이지 */
   .post-main-box {
     margin-top: 1rem;
-    display: flex;
-    flex-direction: column;
+    display: block;
   }
 
   /* 제목 아래 */
   .post-main-content {
     margin: 0 0.6rem;
-    flex-direction: column;
+    display: block;
   }
   .post-main-content button {
-    margin-top: 0.6rem;
+    margin: 0.6rem;
     height: 2.4rem;
   }
 
