@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class CustomResponse<T> {
-    private CustomError error;
+    private ErrorResponse error;
     private T result;
 
     public static CustomResponse<String> OK() {

@@ -1,6 +1,6 @@
 package com.yu.jangtari.controller;
 
-import com.yu.jangtari.common.CustomError;
+import com.yu.jangtari.common.ErrorResponse;
 import com.yu.jangtari.common.CustomException;
 import com.yu.jangtari.common.CustomResponse;
 import com.yu.jangtari.domain.DTO.CommentDTO;
@@ -27,7 +27,7 @@ public class CommentController {
                     HttpStatus.CREATED);
         } catch (CustomException e){
             return new ResponseEntity<>(new CustomResponse<>
-                    (new CustomError(e), null),
+                    (new ErrorResponse(e), null),
                     HttpStatus.BAD_REQUEST);
         }
     }
@@ -43,7 +43,7 @@ public class CommentController {
                     HttpStatus.CREATED);
         } catch (CustomException e){
             return new ResponseEntity<>(new CustomResponse<>
-                    (new CustomError(e), null),
+                    (new ErrorResponse(e), null),
                     HttpStatus.BAD_REQUEST);
         }
     }
@@ -59,7 +59,7 @@ public class CommentController {
                     HttpStatus.OK);
         } catch(CustomException e){
             return new ResponseEntity<>(new CustomResponse
-                    (new CustomError(e), null),
+                    (new ErrorResponse(e), null),
                     HttpStatus.BAD_REQUEST);
         }
     }
@@ -72,7 +72,7 @@ public class CommentController {
                     HttpStatus.CREATED);
         } catch (CustomException e){
             return new ResponseEntity<>(new CustomResponse<>
-                    (new CustomError(e), null),
+                    (new ErrorResponse(e), null),
                     HttpStatus.BAD_REQUEST);
         }
     }

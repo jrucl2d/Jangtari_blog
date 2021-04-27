@@ -1,6 +1,6 @@
 package com.yu.jangtari.controller;
 
-import com.yu.jangtari.common.CustomError;
+import com.yu.jangtari.common.ErrorResponse;
 import com.yu.jangtari.common.CustomException;
 import com.yu.jangtari.common.CustomResponse;
 import com.yu.jangtari.config.CookieUtil;
@@ -57,7 +57,7 @@ public class MemberController {
         Optional<Member> member = memberRepository.findById(1L);
         if(!member.isPresent()){
             return new ResponseEntity<>(new CustomResponse(
-                    new CustomError(new CustomException("그런사람 없음...", "장따리 찾기 실패")),null),
+                    new ErrorResponse(new CustomException("그런사람 없음...", "장따리 찾기 실패")),null),
                     HttpStatus.BAD_REQUEST);
         }
         MemberDTO.Info response = new MemberDTO.Info();
@@ -74,7 +74,7 @@ public class MemberController {
         Optional<Member> found = memberRepository.findByUsername(username);
         if(!found.isPresent()){
             return new ResponseEntity<>(new CustomResponse(
-                    new CustomError(new CustomException("유저 존재하지 않음", "회원인증 실패")),null),
+                    new ErrorResponse(new CustomException("유저 존재하지 않음", "회원인증 실패")),null),
                     HttpStatus.BAD_REQUEST);
         }
         String encodedPW = found.get().getPassword();
@@ -84,7 +84,7 @@ public class MemberController {
                     HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new CustomResponse(
-                    new CustomError(new CustomException("비밀번호 인증 오류", "회원인증 실패")),null),
+                    new ErrorResponse(new CustomException("비밀번호 인증 오류", "회원인증 실패")),null),
                     HttpStatus.BAD_REQUEST);
         }
     }
@@ -121,7 +121,7 @@ public class MemberController {
                     HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(new CustomResponse(
-                    new CustomError(new CustomException(e.getMessage(), "회원가입 실패")),null),
+                    new ErrorResponse(new CustomException(e.getMessage(), "회원가입 실패")),null),
                     HttpStatus.BAD_REQUEST);
         }
 
@@ -133,7 +133,7 @@ public class MemberController {
             Optional<Member> member1 = memberRepository.findByUsername(member.getUsername());
             if(!member1.isPresent()){
                 return new ResponseEntity<>(new CustomResponse(
-                        new CustomError(new CustomException("회원 정보 없음", "회원 정보 업데이트 실패")),null),
+                        new ErrorResponse(new CustomException("회원 정보 없음", "회원 정보 업데이트 실패")),null),
                         HttpStatus.BAD_REQUEST);
             }
             member1.get().setNickname(member.getNickname());
@@ -154,7 +154,7 @@ public class MemberController {
                     HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(new CustomResponse(
-                    new CustomError(new CustomException(e.getMessage(), "회원 정보 업데이트 실패")),null),
+                    new ErrorResponse(new CustomException(e.getMessage(), "회원 정보 업데이트 실패")),null),
                     HttpStatus.BAD_REQUEST);
         }
 
@@ -167,13 +167,13 @@ public class MemberController {
         Optional<Member> member1 = memberRepository.findByUsername(member.getUsername());
         if(!member1.isPresent()){
             return new ResponseEntity<>(new CustomResponse(
-                    new CustomError(new CustomException("회원 정보 없음", "로그인 실패")),null),
+                    new ErrorResponse(new CustomException("회원 정보 없음", "로그인 실패")),null),
                     HttpStatus.UNAUTHORIZED);
         }
 
         if(!passwordEncoder.matches(member.getPassword(), member1.get().getPassword())){
             return new ResponseEntity<>(new CustomResponse(
-                    new CustomError(new CustomException("비밀번호 오류", "로그인 실패")),null),
+                    new ErrorResponse(new CustomException("비밀번호 오류", "로그인 실패")),null),
                     HttpStatus.UNAUTHORIZED);
         }
         String accessToken = jwtTokenProvider.createAccessToken(member.getUsername());

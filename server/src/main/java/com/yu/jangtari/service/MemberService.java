@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
-import com.yu.jangtari.common.CustomError;
+import com.yu.jangtari.common.ErrorResponse;
 import com.yu.jangtari.common.CustomException;
 import com.yu.jangtari.common.CustomResponse;
 import com.yu.jangtari.config.GoogleDriveUtil;
@@ -36,7 +36,7 @@ public class MemberService {
         Optional<Member> memberO = memberRepository.findById(1L);
         if(!memberO.isPresent()){
             return new ResponseEntity<>(new CustomResponse(
-                    new CustomError(new CustomException("그런사람 없음...", "장따리 찾기 실패")),null),
+                    new ErrorResponse(new CustomException("그런사람 없음...", "장따리 찾기 실패")),null),
                     HttpStatus.BAD_REQUEST);
         }
         Member member = memberO.get();
