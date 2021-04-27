@@ -12,7 +12,6 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath "io.spring.gradle:dependency-management-plugin:1.0.7.RELEASE"
         classpath("gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:${querydslPluginVersion}")
-        classpath "com.moowork.gradle:gradle-node-plugin:1.3.1"
     }
 }
 
@@ -20,11 +19,9 @@ plugins {
     id 'org.springframework.boot' version '2.4.1'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
     id 'java'
-    id "com.moowork.node" version "1.3.1"
 }
 
 apply plugin: "com.ewerk.gradle.plugins.querydsl"
-apply plugin: "com.moowork.node"
 
 group = 'com.yu'
 version = '0.0.1-SNAPSHOT'
@@ -40,42 +37,6 @@ repositories {
     mavenCentral()
 }
 
-def webappDir = "$projectDir/frontend/front"
-
-// node 버전 및 npm, node 설치파일 저장 디렉토리 명시
-node {
-    version = '12.18.3'
-    npmVersion = '6.14.10'
-    distBaseUrl = 'https://nodejs.org/dist'
-    download = false
-    workDir = file("${project.buildDir}/nodejs")
-    npmWorkDir = file("${project.buildDir}/npm")
-    yarnWorkDir = file("${project.buildDir}/yarn")
-    nodeModulesDir = file("${project.projectDir}")
-}
-
-// npm install 과정
-task appNpmInstall(type: NpmTask) {
-    workingDir = file("${project.projectDir}/frontend/front")
-    args = ["install"]
-}
-
-// yarn build
-task yarnBuild(type: YarnTask) {
-    workingDir = file("${project.projectDir}/frontend/front")
-    args = ['build']
-}
-
-// 빌드된 결과 resources로 이동
-task copyWebApp(type: Copy) {
-    from "frontend/front/build"
-    into 'build/resources/main/static/.'
-}
-
-yarnBuild.dependsOn appNpmInstall
-copyWebApp.dependsOn yarnBuild
-compileJava.dependsOn copyWebApp
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -88,13 +49,13 @@ dependencies {
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation('junit:junit:4.13')
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
     compile("com.querydsl:querydsl-jpa") // querydsl
     compile("com.querydsl:querydsl-apt") // querydsl
+    // Swagger 2
+    implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 
     compile group: 'com.google.oauth-client', name: 'google-oauth-client-jetty', version: '1.31.2'
     compile 'com.google.api-client:google-api-client:1.23.0'
