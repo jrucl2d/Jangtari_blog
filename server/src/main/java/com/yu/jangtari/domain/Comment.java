@@ -1,10 +1,7 @@
 package com.yu.jangtari.domain;
 
 import com.sun.istack.NotNull;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -13,17 +10,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
 @ToString(exclude = {"post", "recomment"})
 @Entity
+@Table(name = "comment")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of="id")
-public class Comment {
+public class Comment extends DateAuditing{
     @Id
+    @Column(name = "comment_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    private String comment;
+    @Column(nullable = false)
+    private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -40,7 +39,6 @@ public class Comment {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @CreationTimestamp
-    private Timestamp createddate;
-
+    @Embedded
+    private DeleteFlag deleteFlag;
 }

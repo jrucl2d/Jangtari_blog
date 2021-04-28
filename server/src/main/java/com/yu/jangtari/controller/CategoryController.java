@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yu.jangtari.common.CustomException;
 import com.yu.jangtari.common.ErrorResponse;
 import com.yu.jangtari.common.CustomResponse;
+import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.DTO.CategoryDTO;
 import com.yu.jangtari.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,77 +24,84 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping("/categories")
-    public ResponseEntity<CustomResponse> getAllCategory() {
-        List<CategoryDTO.Get> response = categoryService.getAllCategories();
-        return new ResponseEntity<>(new CustomResponse<>
-                (null, response),
-                HttpStatus.OK);
+    public List<CategoryDTO.Get> getAllCategory() {
+        List<Category> response = categoryService.getAllCategories();
+        return null;
     }
 
     @PostMapping("/admin/category")
     public ResponseEntity<CustomResponse> addCategory(@RequestPart("category") String newCategory,
                                                       @RequestPart("image") MultipartFile categoryImage) throws GeneralSecurityException, IOException {
-        try{
-            Long newId = categoryService.addCategory(newCategory, categoryImage);
-            return new ResponseEntity<>(new CustomResponse<>(null, newId),
-                    HttpStatus.CREATED);
-        } catch (CustomException e){
-            return new ResponseEntity<>(new CustomResponse<>
-                    (new ErrorResponse(e), null),
-                    HttpStatus.BAD_REQUEST);
-        }
+//        try{
+//            Long newId = categoryService.addCategory(newCategory, categoryImage);
+//            return new ResponseEntity<>(new CustomResponse<>(null, newId),
+//                    HttpStatus.CREATED);
+//        } catch (CustomException e){
+//            return new ResponseEntity<>(new CustomResponse<>
+//                    (new ErrorResponse(e), null),
+//                    HttpStatus.BAD_REQUEST);
+//        }
+        return null;
     }
     @PostMapping("/admin/category/nimg")
     public ResponseEntity<CustomResponse> addCategory2(@RequestPart("category") String newCategory) throws GeneralSecurityException, IOException {
-        try{
-            Long newId = categoryService.addCategory(newCategory, null);
-            return new ResponseEntity<>(new CustomResponse<>(null, newId),
-                    HttpStatus.CREATED);
-        } catch (CustomException e){
-            return new ResponseEntity<>(new CustomResponse<>
-                    (new ErrorResponse(e), null),
-                    HttpStatus.BAD_REQUEST);
-        }
+//        try{
+//            Long newId = categoryService.addCategory(newCategory, null);
+//            return new ResponseEntity<>(new CustomResponse<>(null, newId),
+//                    HttpStatus.CREATED);
+//        } catch (CustomException e){
+//            return new ResponseEntity<>(new CustomResponse<>
+//                    (new ErrorResponse(e), null),
+//                    HttpStatus.BAD_REQUEST);
+//        }
+        return null;
+
     }
 
     @PutMapping("/admin/category")
     public ResponseEntity<CustomResponse> updateCategory(@RequestPart("category") String categoryString,
                                                          @RequestPart("image")MultipartFile categoryImage) throws GeneralSecurityException, IOException{
-        try {
-            CategoryDTO.Update theCategory = new ObjectMapper().readValue(categoryString, CategoryDTO.Update.class);
-            categoryService.updateCategory(theCategory, categoryImage);
-            return new ResponseEntity<>(CustomResponse.OK(),
-                    HttpStatus.ACCEPTED);
-        } catch (CustomException e){
-            return new ResponseEntity<>(new CustomResponse<>
-                    (new ErrorResponse(e), null),
-                    HttpStatus.BAD_REQUEST);
-        }
+//        try {
+//            CategoryDTO.Update theCategory = new ObjectMapper().readValue(categoryString, CategoryDTO.Update.class);
+//            categoryService.updateCategory(theCategory, categoryImage);
+//            return new ResponseEntity<>(CustomResponse.OK(),
+//                    HttpStatus.ACCEPTED);
+//        } catch (CustomException e){
+//            return new ResponseEntity<>(new CustomResponse<>
+//                    (new ErrorResponse(e), null),
+//                    HttpStatus.BAD_REQUEST);
+//        }
+        return null;
+
     }
     @PutMapping("/admin/category/nimg")
     public ResponseEntity<CustomResponse> updateCategory2(@RequestPart("category") String categoryString) throws GeneralSecurityException, IOException{
-        try {
-            CategoryDTO.Update theCategory = new ObjectMapper().readValue(categoryString, CategoryDTO.Update.class);
-            categoryService.updateCategory(theCategory, null);
-            return new ResponseEntity<>(CustomResponse.OK(),
-                    HttpStatus.ACCEPTED);
-        } catch (CustomException e){
-            return new ResponseEntity<>(new CustomResponse<>
-                    (new ErrorResponse(e), null),
-                    HttpStatus.BAD_REQUEST);
-        }
+//        try {
+//            CategoryDTO.Update theCategory = new ObjectMapper().readValue(categoryString, CategoryDTO.Update.class);
+//            categoryService.updateCategory(theCategory, null);
+//            return new ResponseEntity<>(CustomResponse.OK(),
+//                    HttpStatus.ACCEPTED);
+//        } catch (CustomException e){
+//            return new ResponseEntity<>(new CustomResponse<>
+//                    (new ErrorResponse(e), null),
+//                    HttpStatus.BAD_REQUEST);
+//        }
+        return null;
+
     }
 
     @DeleteMapping("/admin/category/{id}")
     public ResponseEntity<CustomResponse> deleteCategory(@PathVariable(value = "id") Long theId){
-        try {
-            categoryService.deleteCategory(theId);
-            return new ResponseEntity<>(CustomResponse.OK(),
-                    HttpStatus.ACCEPTED);
-        } catch (CustomException e){
-            return new ResponseEntity<>(new CustomResponse<>
-                    (new ErrorResponse(e), null),
-                    HttpStatus.BAD_REQUEST);
-        }
+//        try {
+//            categoryService.deleteCategory(theId);
+//            return new ResponseEntity<>(CustomResponse.OK(),
+//                    HttpStatus.ACCEPTED);
+//        } catch (CustomException e){
+//            return new ResponseEntity<>(new CustomResponse<>
+//                    (new ErrorResponse(e), null),
+//                    HttpStatus.BAD_REQUEST);
+//        }
+        return null;
+
     }
 }

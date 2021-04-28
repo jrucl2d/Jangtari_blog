@@ -1,33 +1,26 @@
 package com.yu.jangtari.domain;
 
-import com.sun.istack.NotNull;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.*;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
 @ToString(exclude = "posts")
 @Entity
+@Table(name = "hashtag")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of="id")
-public class Hashtag {
+public class Hashtag extends DateAuditing{
     @Id
+    @Column(name = "hashtag_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    private String hashtag;
+    @Column(nullable = false)
+    private String content;
 
-    @ManyToMany(mappedBy = "hashtags",cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Post> posts = new ArrayList<>();
-
-    @CreationTimestamp
-    private Timestamp createddate;
+    @OneToMany(mappedBy = "hashtag")
+    private List<PostHashtag> postHashtags = new ArrayList<>();
 }

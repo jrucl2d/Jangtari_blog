@@ -1,32 +1,28 @@
 package com.yu.jangtari.domain;
 
 import com.sun.istack.NotNull;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Getter
-@Setter
 @ToString(exclude = "post")
 @Entity
+@Table(name = "picture")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of="id")
-public class Picture {
+public class Picture extends DateAuditing {
     @Id
+    @Column(name = "picture")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    private String picture;
+    @Column(nullable = false)
+    private String url;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
-
-    @CreationTimestamp
-    private Timestamp createddate;
 }

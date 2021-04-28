@@ -1,28 +1,29 @@
 package com.yu.jangtari.domain;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Getter
-@Setter
 @ToString
 @Entity
+@Table(name = "member")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of="id")
-public class Member {
+public class Member extends DateAuditing{
     @Id
+    @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(nullable = false)
     private String nickname;
 
+    @Column(nullable = false)
     private String password;
 
     private String introduce;
@@ -32,8 +33,6 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private RoleType role;
 
-    @CreationTimestamp
-    private Timestamp createddate;
-
-    private Timestamp deleteddate;
+    @Embedded
+    DeleteFlag deleteFlag;
 }
