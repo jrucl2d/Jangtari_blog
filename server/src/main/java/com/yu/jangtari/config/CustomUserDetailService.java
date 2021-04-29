@@ -1,7 +1,7 @@
 package com.yu.jangtari.config;
 
 import com.yu.jangtari.domain.Member;
-import com.yu.jangtari.repository.MemberRepository;
+import com.yu.jangtari.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -2,74 +2,117 @@ package com.yu.jangtari.MemberTest;
 
 import com.yu.jangtari.RepositoryTest;
 import com.yu.jangtari.domain.Member;
-import com.yu.jangtari.repository.MemberRepository;
+import com.yu.jangtari.repository.member.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.LongStream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MemberRepositoryTest extends RepositoryTest {
     
     @Autowired
     MemberRepository memberRepository;
 
-    @Test
-    @DisplayName("전체 정보 가지는 인원 생성 성공")
-    void createMember_O() {
-        List<Member> members = makeMembers();
-        Member newMember = memberRepository.save(members.get(0));
-        compareMemberObj(members.get(0), newMember, 1L);
+    @Nested
+    @DisplayName("성공 테스트")
+    class SuccessTest {
+        @Test
+        @DisplayName("모든 정 있는 Member save 성공")
+        void saveMember_O() {
+            List<Member> members = makeMembers();
+            Member newMember = memberRepository.save(members.get(0));
+            compareMemberObj(members.get(0), newMember);
+        }
+
+        @Test
+        @DisplayName("intoduce 없는 Member save 성공")
+        void saveMember_without_introduce_O() {
+            List<Member> members = makeMembers();
+            Member newMember = memberRepository.save(members.get(1));
+            compareMemberObj(members.get(1), newMember);
+        }
+
+        @Test
+        @DisplayName("picture 없는 Member save 성공")
+        void saveMember_without_picture_O() {
+            List<Member> members = makeMembers();
+            Member newMember = memberRepository.save(members.get(2));
+            compareMemberObj(members.get(2), newMember);
+        }
     }
 
-    @Test
-    @DisplayName("intoduce 정보 안 가지는 인원 생성 성공")
-    void createMember_without_introduce_O() {
-//        List<Member> members = makeMembers();
-//        Member newMember = memberRepository.save(members.get(5));
-//        compareMemberObj(members.get(5), newMember, 2L);
-        List<Member> members = (List<Member>) memberRepository.findAll();
-        System.out.println(members.size());
+    @Nested
+    @DisplayName("실패 테스트")
+    class FailureTest {
+        @Test
+        @DisplayName("username 없는 Member save 보실패")
+        void saveMember_without_username_X() {
+            List<Member> members = makeMembers();
+            // Exception thrown when an attempt to insert or update data results in violation of an integrity constraint
+            assertThrows(DataIntegrityViolationException.class, () -> memberRepository.save(members.get(3)));
+        }
+        @Test
+        @DisplayName("nickname 없는 Member save 보실패")
+        void saveMember_without_nickname_X() {
+            List<Member> members = makeMembers();
+            assertThrows(DataIntegrityViolationException.class, () -> memberRepository.save(members.get(4)));
+        }
+        @Test
+        @DisplayName("password 없는 Member save 보실패")
+        void saveMember_without_password_X() {
+            List<Member> members = makeMembers();
+            // Exception thrown when an attempt to insert or update data results in violation of an integrity constraint
+            assertThrows(DataIntegrityViolationException.class, () -> memberRepository.save(members.get(5)));
+        }
     }
 
-
-    void compareMemberObj(Member newMember, Member beforeMember, Long id) {
+    void compareMemberObj(Member newMember, Member beforeMember) {
         assertThat(newMember.getUsername()).isEqualTo(beforeMember.getUsername());
         assertThat(newMember.getNickname()).isEqualTo(beforeMember.getNickname());
         assertThat(newMember.getRole()).isEqualTo(beforeMember.getRole());
         assertThat(newMember.getDeleteFlag()).isEqualTo(beforeMember.getDeleteFlag());
         assertThat(newMember.getCreatedDate()).isNotNull();
         assertThat(newMember.getUpdateDate()).isNotNull();
-        assertThat(newMember.getId()).isEqualTo(id);
         assertThat(newMember.getPicture()).isEqualTo(beforeMember.getPicture());
         assertThat(newMember.getIntroduce()).isEqualTo(beforeMember.getIntroduce());
     }
 
     List<Member> makeMembers() {
         List<Member> members = new ArrayList<>();
-        LongStream.range(0, 5).forEach(id -> {
-            members.add(Member.builder()
-                    .username("username " + id)
-                    .nickname("nickname " + id)
-                    .introduce("introduce " + id)
-                    .password("password " + id)
-                    .picture("picture " + id).build());
-        });
-        // introduce가 없는 5번
-        members.add(Member.builder()
+        members.add(Member.builder() // 전체 정보 있는 객체
+                .username("username 1")
+                .nickname("nickname 1")
+                .introduce("introduce 1")
+                .password("password 1")
+                .picture("picture 1").build());
+        members.add(Member.builder() // introduce 없는 객체
+                .username("username 2")
+                .nickname("nickname 2")
+                .password("password 2")
+                .picture("picture 2").build());
+        members.add(Member.builder() // picture 없는 객체
+                .username("username 3")
+                .nickname("nickname 3")
+                .password("password 3")
+                .introduce("introduce 3").build());
+        members.add(Member.builder() // username 없는 객체
+                .nickname("nickname 4")
+                .password("password 4")
+                .introduce("introduce 4").build());
+        members.add(Member.builder() // nickname 없는 객체
                 .username("username 5")
-                .nickname("nickname 5")
                 .password("password 5")
-                .picture("picture 5").build());
-        // picture이 없는 6번
-        members.add(Member.builder()
+                .introduce("introduce 5").build());
+        members.add(Member.builder() // password 없는 객체
                 .username("username 6")
                 .nickname("nickname 6")
-                .password("password 6")
                 .introduce("introduce 6").build());
         return members;
     }
