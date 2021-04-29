@@ -1,35 +1,40 @@
 package com.yu.jangtari.domain;
 
-import com.sun.istack.NotNull;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.*;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
-@ToString
 @Entity
-@EqualsAndHashCode(of="id")
-public class Category {
+@Getter
+@ToString
+@Table(name = "category") // 클래스명 바뀔 경우의 영향 최소화
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(of="id", callSuper = false)
+public class Category extends DateAuditing {
+
     @Id
+    @Column(name = "category_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @Column(name = "category_name", nullable = false)
     private String name;
 
+    @Column(name = "category_picture")
     private String picture;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
-    private List<Post> posts = new ArrayList<>();
+    @OneToMany(mappedBy = "category", cascade = {CascadeType.PERSIST, CascadeType.MERGE}) // soft delete 구현을 위해 REMOVE는 제외
+    private List<Post> posts = new ArrayList<>(); // 비어있음을 판단할 때 null보다 isEmtpy가 더 직관
 
-    @CreationTimestamp
-    private Timestamp createddate;
+    @Embedded
+    private DeleteFlag deleteFlag;
+
+    @Builder
+    public Category(String name, String picture) {
+        this.name = name;
+        this.picture = picture;
+    }
+    // addPost 메소드 추가 필요
 }
