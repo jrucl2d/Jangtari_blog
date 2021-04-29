@@ -1,37 +1,45 @@
-//package com.yu.jangtari.service;
-//
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.google.api.client.http.FileContent;
-//import com.google.api.services.drive.Drive;
-//import com.google.api.services.drive.model.File;
-//import com.yu.jangtari.common.ErrorResponse;
-//import com.yu.jangtari.common.CustomException;
-//import com.yu.jangtari.common.CustomResponse;
-//import com.yu.jangtari.config.GoogleDriveUtil;
-//import com.yu.jangtari.domain.DTO.MemberDTO;
-//import com.yu.jangtari.domain.Member;
-//import com.yu.jangtari.repository.MemberRepository;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.stereotype.Service;
-//import org.springframework.web.multipart.MultipartFile;
-//
-//import java.io.IOException;
-//import java.security.GeneralSecurityException;
-//import java.util.Collections;
-//import java.util.Optional;
-//
-//@Service
-//public class MemberService {
-//
-//    @Autowired
-//    private MemberRepository memberRepository;
-//
-//    @Autowired
-//    private GoogleDriveUtil googleDriveUtil;
-//
-//
+package com.yu.jangtari.service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.http.FileContent;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
+import com.yu.jangtari.common.ErrorResponse;
+import com.yu.jangtari.common.exception.NoSuchMemberException;
+import com.yu.jangtari.config.GoogleDriveUtil;
+import com.yu.jangtari.domain.DTO.MemberDTO;
+import com.yu.jangtari.domain.Member;
+import com.yu.jangtari.repository.member.MemberRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
+import java.util.Optional;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class MemberService {
+    private final MemberRepository memberRepository;
+    private final GoogleDriveUtil googleDriveUtil;
+
+    /**
+     * soft delete을 구현하기 위해 service에서 dirty checking을 활용
+     */
+    public Member deleteMember(Long id) {
+        Member member = memberRepository.findById(id).orElseThrow(() -> new NoSuchMemberException());
+        member.getDeleteFlag().softDelete();
+        return member;
+    }
+
+
 //    public ResponseEntity<CustomResponse> jangtariUpdate(String jangtariString, MultipartFile jangtariImage) throws IOException, GeneralSecurityException {
 //        Optional<Member> memberO = memberRepository.findById(1L);
 //        if(!memberO.isPresent()){
@@ -61,4 +69,4 @@
 //        return new ResponseEntity<>(CustomResponse.OK(),
 //                HttpStatus.OK);
 //    }
-//}
+}

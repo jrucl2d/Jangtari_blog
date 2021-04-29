@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * @author yuseonggeun
- * 프론트에게 동일한 Error Response를 전해주기 위한 POJP 객
+ * 프론트에게 동일한 Error Response를 전해주기 위한 POJP 객체
  */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

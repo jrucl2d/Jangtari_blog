@@ -1,57 +1,50 @@
-//package com.yu.jangtari.controller;
-//
-//import com.yu.jangtari.common.ErrorResponse;
-//import com.yu.jangtari.common.CustomException;
-//import com.yu.jangtari.common.CustomResponse;
-//import com.yu.jangtari.config.CookieUtil;
-//import com.yu.jangtari.config.JWTTokenProvider;
-//import com.yu.jangtari.config.RedisUtil;
-//import com.yu.jangtari.domain.DTO.MemberDTO;
-//import com.yu.jangtari.domain.Member;
-//import com.yu.jangtari.domain.RoleType;
-//import com.yu.jangtari.repository.MemberRepository;
-//import com.yu.jangtari.service.MemberService;
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.security.crypto.password.PasswordEncoder;
-//import org.springframework.transaction.annotation.Transactional;
-//import org.springframework.web.bind.annotation.*;
-//import org.springframework.web.multipart.MultipartFile;
-//
-//import javax.servlet.http.Cookie;
-//import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.http.HttpServletResponse;
-//import java.io.IOException;
-//import java.security.GeneralSecurityException;
-//import java.security.Principal;
-//import java.util.HashMap;
-//import java.util.Optional;
-//
-//
-//@RequiredArgsConstructor
-//@RestController
-//public class MemberController {
-//
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
-//
-//    @Autowired
-//    private JWTTokenProvider jwtTokenProvider;
-//
-//    @Autowired
-//    private MemberRepository memberRepository;
-//
-//    @Autowired
-//    private RedisUtil redisUtil;
-//
-//    @Autowired
-//    private CookieUtil cookieUtil;
-//
-//    @Autowired
-//    private MemberService memberService;
-//
+package com.yu.jangtari.controller;
+
+import com.yu.jangtari.common.ErrorResponse;
+import com.yu.jangtari.config.CookieUtil;
+import com.yu.jangtari.config.JWTTokenProvider;
+import com.yu.jangtari.config.RedisUtil;
+import com.yu.jangtari.domain.DTO.MemberDTO;
+import com.yu.jangtari.domain.Member;
+import com.yu.jangtari.domain.RoleType;
+import com.yu.jangtari.repository.member.MemberRepository;
+import com.yu.jangtari.service.MemberService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.Optional;
+
+
+@RestController
+@RequiredArgsConstructor
+public class MemberController {
+
+    private final PasswordEncoder passwordEncoder;
+    private final JWTTokenProvider jwtTokenProvider;
+    private final MemberRepository memberRepository;
+    private final RedisUtil redisUtil;
+    private final CookieUtil cookieUtil;
+    private final MemberService memberService;
+
+    @DeleteMapping("/member/{memberId}")
+    public ResponseEntity<String> deleteMember(@PathVariable(value = "memberId") Long memberId) {
+        memberService.deleteMember(memberId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 //    @GetMapping("/jangtari")
 //    public ResponseEntity<CustomResponse> getInfo(){
 //        Optional<Member> member = memberRepository.findById(1L);
@@ -209,4 +202,4 @@
 //        return new ResponseEntity<>(CustomResponse.OK(),
 //                HttpStatus.OK);
 //    }
-//}
+}

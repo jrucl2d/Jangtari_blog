@@ -11,7 +11,10 @@ public enum ErrorCode {
     INVALID_INPUT_VALUE(400, "yu001", "Invalid Input Value"),
     ACCESS_DENIED(403, "yu002", "Access Denied"),
     INTERNAL_SERVER_ERROR(500, "yu003", "Internal Server Error"),
-    METHOD_NOT_SUPPORTED(405, "yu004", "HTTP Method Not Supported");
+    METHOD_NOT_SUPPORTED(405, "yu004", "HTTP Method Not Supported"),
+
+    // Member
+    MEMBER_NOT_FOUND(404, "yu005", "No Such Member");
 
     private final String code;
     private final String message;

@@ -1,5 +1,6 @@
 package com.yu.jangtari.common;
 
+import com.yu.jangtari.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +45,14 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleAccessDeniedException (AccessDeniedException e) {
         log.error("Handle Access Denied Exception : ", e);
         final ErrorResponse errorResponse = buildError(ErrorCode.ACCESS_DENIED);
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    // 비즈니스 로직 진행 중 발생한 예외 처리
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ResponseEntity<ErrorResponse> handleBusinessException (BusinessException e) {
+        log.error("Handle Business Exception : ", e);
+        final ErrorResponse errorResponse = buildError(e.getErrorCode());
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
