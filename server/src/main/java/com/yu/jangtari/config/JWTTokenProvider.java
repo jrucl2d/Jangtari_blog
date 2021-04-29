@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
 
-@RequiredArgsConstructor
 @Component
 public class JWTTokenProvider {
 
@@ -27,9 +27,13 @@ public class JWTTokenProvider {
     public final String REFRESH_TOKEN_STRING = "refreshtest";
 
     private String secretKey = "test";
+    private UserDetailsService userDetailsService;
 
+    @Autowired
+    protected JWTTokenProvider(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
-    private final UserDetailsService userDetailsService;
 
     // 객체 초기화시에 secretKey를 Base64로 인코딩
     @PostConstruct

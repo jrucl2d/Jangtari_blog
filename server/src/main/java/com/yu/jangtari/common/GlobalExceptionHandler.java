@@ -1,5 +1,6 @@
 package com.yu.jangtari.common;
 
+import com.yu.jangtari.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,15 +10,16 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
+@RestController
 @Slf4j
 public class GlobalExceptionHandler {
-
 
     /*
     * java.validatin.Valid 혹은 @Validated에 의해 binding error가 발생할 경우.
@@ -47,12 +49,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
-    // 직접 핸들링하지 않는 다른 모든 예외를 처리
-    @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ErrorResponse> handleException(Exception e) {
-        log.error("Handle any other exception : ", e);
-        final ErrorResponse errorResponse = buildError(ErrorCode.INTERNAL_SERVER_ERROR);
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    // 비즈니스 로직 진행 중 발생한 예외 처리
+    @ExceptionHandler(BusinessException.class)
+    protected ResponseEntity<ErrorResponse> handleBusinessException (BusinessException e) {
+        log.error("Handle Business Exception : ", e);
+        final ErrorResponse errorResponse = buildError(e.getErrorCode());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     // 파라미터 검증에 의한 FieldError를 갖지 않는 에러 생성
