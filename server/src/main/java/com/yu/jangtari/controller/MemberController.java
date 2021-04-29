@@ -32,11 +32,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberController {
 
-    private final PasswordEncoder passwordEncoder;
-    private final JWTTokenProvider jwtTokenProvider;
-    private final MemberRepository memberRepository;
-    private final RedisUtil redisUtil;
-    private final CookieUtil cookieUtil;
+//    private final PasswordEncoder passwordEncoder;
+//    private final JWTTokenProvider jwtTokenProvider;
+//    private final MemberRepository memberRepository;
+//    private final RedisUtil redisUtil;
+//    private final CookieUtil cookieUtil;
     private final MemberService memberService;
 
     @DeleteMapping("/member/{memberId}")

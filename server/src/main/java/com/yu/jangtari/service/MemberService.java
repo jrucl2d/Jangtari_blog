@@ -39,7 +39,6 @@ public class MemberService {
         return member;
     }
 
-
 //    public ResponseEntity<CustomResponse> jangtariUpdate(String jangtariString, MultipartFile jangtariImage) throws IOException, GeneralSecurityException {
 //        Optional<Member> memberO = memberRepository.findById(1L);
 //        if(!memberO.isPresent()){
