@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "picture")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of="id")
+@EqualsAndHashCode(of="id", callSuper = false)
 public class Picture extends DateAuditing {
     @Id
     @Column(name = "picture")

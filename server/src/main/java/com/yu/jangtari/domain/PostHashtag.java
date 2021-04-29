@@ -1,6 +1,7 @@
 package com.yu.jangtari.domain;
 
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name="post_hashtag")
+@EqualsAndHashCode(of="id", callSuper = false)
 public class PostHashtag extends DateAuditing{
     @Id
     @Column(name = "post_hashtag_id")

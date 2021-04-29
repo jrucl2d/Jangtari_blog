@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@ToString(exclude = "posts")
+@ToString(exclude = "postHashtags")
 @Entity
 @Table(name = "hashtag")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of="id")
+@EqualsAndHashCode(of="id", callSuper = false)
 public class Hashtag extends DateAuditing{
     @Id
     @Column(name = "hashtag_id")

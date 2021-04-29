@@ -11,6 +11,7 @@ import java.util.List;
 @ToString
 @Table(name = "category") // 클래스명 바뀔 경우의 영향 최소화
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(of="id", callSuper = false)
 public class Category extends DateAuditing {
 
     @Id

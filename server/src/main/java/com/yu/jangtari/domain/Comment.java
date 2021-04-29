@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "comment")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of="id")
+@EqualsAndHashCode(of="id", callSuper = false)
 public class Comment extends DateAuditing{
     @Id
     @Column(name = "comment_id")

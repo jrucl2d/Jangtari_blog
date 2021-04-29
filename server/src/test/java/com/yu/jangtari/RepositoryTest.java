@@ -2,6 +2,7 @@ package com.yu.jangtari;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /*
@@ -12,5 +13,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  */
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
+@EnableJpaAuditing
 public class RepositoryTest {
 }
