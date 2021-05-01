@@ -1,4 +1,5 @@
 # Jangtari_blog
+## -- 리팩토링 진행중 --
 
 개인 블로그 프로젝트 <br/>
 주소 : https://www.gamsk.kro.kr (세부사항 설정 중)
