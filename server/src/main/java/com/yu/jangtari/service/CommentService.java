@@ -1,33 +1,22 @@
-//package com.yu.jangtari.service;
-//
-//import com.yu.jangtari.common.CustomException;
-//import com.yu.jangtari.domain.Comment;
-//import com.yu.jangtari.domain.DTO.CommentDTO;
-//import com.yu.jangtari.domain.Member;
-//import com.yu.jangtari.domain.Post;
-//import com.yu.jangtari.repository.CommentRepository;
-//import com.yu.jangtari.repository.MemberRepository;
-//import com.yu.jangtari.repository.post.PostRepository;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
-//
-//import java.util.Arrays;
-//import java.util.List;
-//import java.util.Optional;
-//
-//@Service
-//public class CommentService {
-//
-//    @Autowired
-//    private CommentRepository commentRepository;
-//
-//    @Autowired
-//    private MemberRepository memberRepository;
-//
-//    @Autowired
+package com.yu.jangtari.service;
+
+import com.yu.jangtari.common.exception.NoSuchCommentException;
+import com.yu.jangtari.domain.Comment;
+import com.yu.jangtari.repository.CommentRepository;
+import com.yu.jangtari.repository.member.MemberRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+
+@Service
+@RequiredArgsConstructor
+public class CommentService {
+    private CommentRepository commentRepository;
+    private MemberRepository memberRepository;
 //    private PostRepository postRepository;
-//
+
 //    @Transactional(readOnly = true)
 //    public List<CommentDTO.Get> getComments(Long postId) throws CustomException {
 //
@@ -78,12 +67,19 @@
 //            throw new CustomException("존재하지 않는 댓글입니다.", "게시글 수정 실패 : id = " + comment.getId());
 //        }
 //    }
-//
-//    public void deleteComment(Long commentId) throws CustomException{
-//        try{
-//            commentRepository.deleteById(commentId);
-//        } catch (Exception e){
-//            throw new CustomException("존재하지 않는 댓글입니다.", "댓글 삭제 실패 : id = " + commentId);
-//        }
-//    }
-//}
+
+    // 대댓글까지 모두 삭제, dirty checking을 사
+    public void deleteComment(Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchCommentException());
+        deleteChildcomments(comment);
+        comment.softDelete();
+    }
+
+    /**용
+     * 코드 내부의 여러 parallelStream들은 thread pool을 공유하므로 사용에 주의해야 한다.
+     * 참고 : https://multifrontgarden.tistory.com/254
+     */
+    private void deleteChildcomments(Comment comment) {
+        comment.getSubcomments().parallelStream().forEach(subcomment -> subcomment.softDelete());
+    }
+}
