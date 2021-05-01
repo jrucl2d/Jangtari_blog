@@ -5,7 +5,9 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.*;
+import com.yu.jangtari.repository.HashtagRepository;
 import com.yu.jangtari.repository.category.CategoryRepository;
+import com.yu.jangtari.repository.post.PostRepository;
 import com.yu.jangtari.vo.PageMakerVO;
 import com.yu.jangtari.vo.PageVO;
 import com.yu.jangtari.domain.DTO.PostDTO;
@@ -24,17 +26,24 @@ import java.util.*;
 @RequiredArgsConstructor
 public class PostService {
 
-//    @Autowired
-//    private PostRepository postRepository;
-
+    private final PostRepository postRepository;
+    private final HashtagRepository hashtagRepository;
     private final CategoryRepository categoryRepository;
     private final PictureRepository pictureRepository;
     private final GoogleDriveUtil googleDriveUtil;
 
 
-    public void addPost(PostDTO.Add postDTO) {
-        Category category = categoryRepository.findById(postDTO.getCategoryId()).orElseThrow();
-        category.addPost(postDTO.toEntity());
+    public Post addPost(PostDTO.Add postDTO) {
+        Category category = categoryRepository.findById(postDTO.getCategoryId()).orElseThrow(); // Exception 추가
+        Post savedPost = postRepository.save(postDTO.toEntity(category)); // 이 과정에서 pictures에 대한 영속성 전이가 추가되어야 함
+        List<PostHashtag> postHashtags = savedPost.getPostHashtags();
+        postDTO.getHashtags().parallelStream().forEach(hashtagDTO -> {
+            Hashtag hashtag = hashtagRepository.save(new Hashtag(hashtagDTO.getHashtag()));
+            PostHashtag postHashtag = PostHashtag.builder().post(savedPost).hashtag(hashtag).build();
+            postHashtags.add(postHashtag);
+        });
+        postRepository.save(savedPost); // 영속성 전이로 postHastag 저장
+        return savedPost;
     }
 
 //    @Transactional

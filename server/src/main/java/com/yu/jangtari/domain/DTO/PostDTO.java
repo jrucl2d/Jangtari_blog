@@ -1,5 +1,6 @@
 package com.yu.jangtari.domain.DTO;
 
+import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.Post;
 import com.yu.jangtari.domain.PostHashtag;
 import lombok.*;
@@ -42,7 +43,7 @@ public class PostDTO {
         private int template;
         private List<HashtagDTO> hashtags = new ArrayList<>();
 
-        public Post toEntity() {
+        public Post toEntity(Category category) {
             return Post.builder().build();
         }
     }
