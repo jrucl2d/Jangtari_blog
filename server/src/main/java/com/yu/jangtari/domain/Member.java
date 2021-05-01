@@ -46,8 +46,4 @@ public class Member extends DateAuditing {
         this.role = RoleType.USER;
         this.deleteFlag = DeleteFlag.initDeleteFlag();
     }
-
-    public void softDelete() {
-        this.deleteFlag.softDelete();
-    }
 }

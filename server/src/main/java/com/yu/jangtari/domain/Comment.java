@@ -43,8 +43,4 @@ public class Comment extends DateAuditing{
     public Comment(String content, Member member, Post post) {
 
     }
-
-    public void softDelete() {
-        this.deleteFlag.softDelete();
-    }
 }

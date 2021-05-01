@@ -72,7 +72,7 @@ public class CommentService {
     public void deleteComment(Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchCommentException());
         deleteChildcomments(comment);
-        comment.softDelete();
+        comment.getDeleteFlag().softDelete();
     }
 
     /**용
@@ -80,6 +80,6 @@ public class CommentService {
      * 참고 : https://multifrontgarden.tistory.com/254
      */
     private void deleteChildcomments(Comment comment) {
-        comment.getSubcomments().parallelStream().forEach(subcomment -> subcomment.softDelete());
+        comment.getSubcomments().parallelStream().forEach(subcomment -> subcomment.getDeleteFlag().softDelete());
     }
 }

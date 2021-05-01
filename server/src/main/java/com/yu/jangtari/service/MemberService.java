@@ -35,7 +35,7 @@ public class MemberService {
      */
     public Member deleteMember(Long id) {
         Member member = memberRepository.findById(id).orElseThrow(() -> new NoSuchMemberException());
-        member.softDelete();
+        member.getDeleteFlag().softDelete();
         return member;
     }
 
