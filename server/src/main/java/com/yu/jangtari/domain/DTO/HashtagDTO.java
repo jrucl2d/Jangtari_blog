@@ -1,12 +1,12 @@
 package com.yu.jangtari.domain.DTO;
 
+import com.yu.jangtari.domain.PostHashtag;
 import lombok.*;
 
 @Getter
-@Setter
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor
 public class HashtagDTO {
     private String hashtag;
+
 }

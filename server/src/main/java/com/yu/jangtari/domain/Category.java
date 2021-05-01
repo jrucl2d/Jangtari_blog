@@ -26,7 +26,7 @@ public class Category extends DateAuditing {
     private String picture;
 
     @OneToMany(mappedBy = "category", cascade = {CascadeType.PERSIST, CascadeType.MERGE}) // soft delete 구현을 위해 REMOVE는 제외
-    private List<Post> posts = new ArrayList<>(); // 비어있음을 판단할 때 null보다 isEmtpy가 더 직관
+    private List<Post> posts = new ArrayList<>(); // 비어있음을 판단할 때 null보다 isEmtpy가 더 직관적
 
     @Embedded
     private DeleteFlag deleteFlag;
@@ -36,5 +36,8 @@ public class Category extends DateAuditing {
         this.name = name;
         this.picture = picture;
     }
-    // addPost 메소드 추가 필요
+
+    public void addPost(Post post) {
+        this.posts.add(post);
+    }
 }

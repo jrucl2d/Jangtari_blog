@@ -1,9 +1,6 @@
 package com.yu.jangtari.domain;
 
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -28,4 +25,10 @@ public class PostHashtag extends DateAuditing{
 
     @Embedded
     private DeleteFlag deleteFlag;
+
+    @Builder
+    public PostHashtag(Post post, Hashtag hashtag) {
+        this.post = post;
+        this.hashtag =hashtag;
+    }
 }

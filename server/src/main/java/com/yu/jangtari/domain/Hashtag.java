@@ -23,4 +23,9 @@ public class Hashtag extends DateAuditing{
 
     @OneToMany(mappedBy = "hashtag")
     private List<PostHashtag> postHashtags = new ArrayList<>();
+
+    public Hashtag(String content, List<PostHashtag> postHashtags) {
+        this.content = content;
+        this.postHashtags = postHashtags;
+    }
 }
