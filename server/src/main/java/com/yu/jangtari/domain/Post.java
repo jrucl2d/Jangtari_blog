@@ -39,9 +39,19 @@ public class Post extends DateAuditing {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<PostHashtag> postHashtags = new ArrayList<>();
 
     @Embedded
     DeleteFlag deleteFlag;
+
+    @Builder
+    public Post(String title, String content, int template, List<Picture> pictures, Category category, List<PostHashtag> posthashtags) {
+        this.title = title;
+        this.content = content;
+        this.template = template;
+        this.pictures = pictures;
+        this.category = category;
+        this.postHashtags = posthashtags;
+    }
 }

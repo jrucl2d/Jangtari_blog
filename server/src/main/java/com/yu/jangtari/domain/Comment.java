@@ -1,11 +1,8 @@
 package com.yu.jangtari.domain;
 
-import com.sun.istack.NotNull;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,10 +27,10 @@ public class Comment extends DateAuditing{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="recomment_id")
-    private Comment recomment;
+    private Comment parentComment;
 
     @OneToMany(mappedBy = "recomment", cascade = CascadeType.ALL)
-    private List<Comment> subcomment = new ArrayList<>();
+    private List<Comment> subcomments = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
@@ -41,4 +38,9 @@ public class Comment extends DateAuditing{
 
     @Embedded
     private DeleteFlag deleteFlag;
+
+    @Builder
+    public Comment(String content, Member member, Post post) {
+
+    }
 }

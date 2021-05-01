@@ -1,5 +1,8 @@
 package com.yu.jangtari.domain.DTO;
 
+import com.yu.jangtari.domain.Category;
+import com.yu.jangtari.domain.Post;
+import com.yu.jangtari.domain.PostHashtag;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -31,16 +34,18 @@ public class PostDTO {
     }
 
     @Getter
-    @Setter
     @ToString
-    @AllArgsConstructor
-    @NoArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Add{
         private Long categoryId;
         private String title;
         private String post;
         private int template;
         private List<HashtagDTO> hashtags = new ArrayList<>();
+
+        public Post toEntity(Category category) {
+            return Post.builder().build();
+        }
     }
 
     @Getter

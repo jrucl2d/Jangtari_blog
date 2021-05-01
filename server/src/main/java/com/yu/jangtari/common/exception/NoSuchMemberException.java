@@ -5,5 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class NoSuchMemberException extends BusinessException{
-    private ErrorCode errorCode = ErrorCode.MEMBER_NOT_FOUND;
+    public NoSuchMemberException() {
+        this.errorCode = ErrorCode.MEMBER_NOT_FOUND;
+    }
 }

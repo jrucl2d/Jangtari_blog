@@ -13,8 +13,9 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(500, "yu003", "Internal Server Error"),
     METHOD_NOT_SUPPORTED(405, "yu004", "HTTP Method Not Supported"),
 
-    // Member
-    MEMBER_NOT_FOUND(404, "yu005", "No Such Member");
+    // Custom
+    MEMBER_NOT_FOUND(404, "yu005", "No Such Member"),
+    COMMENT_NOT_FOUND(404, "yu006", "No Such Comment");
 
     private final String code;
     private final String message;

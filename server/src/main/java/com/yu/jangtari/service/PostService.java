@@ -1,40 +1,51 @@
-//package com.yu.jangtari.service;
-//
-//import com.google.api.client.http.FileContent;
-//import com.google.api.services.drive.Drive;
-//import com.google.api.services.drive.model.File;
-//import com.yu.jangtari.common.CustomException;
-//import com.yu.jangtari.config.GoogleDriveUtil;
-//import com.yu.jangtari.vo.PageMakerVO;
-//import com.yu.jangtari.vo.PageVO;
-//import com.yu.jangtari.domain.Category;
-//import com.yu.jangtari.domain.DTO.PostDTO;
-//import com.yu.jangtari.domain.Hashtag;
-//import com.yu.jangtari.domain.Picture;
-//import com.yu.jangtari.domain.Post;
-//import com.yu.jangtari.repository.PictureRepository;
-//import com.yu.jangtari.repository.post.PostRepository;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
-//import org.springframework.web.multipart.MultipartFile;
-//
-//import java.io.IOException;
-//import java.security.GeneralSecurityException;
-//import java.util.*;
-//
-//@Service
-//public class PostService {
-//
-//    @Autowired
-//    private PostRepository postRepository;
-//
-//    @Autowired
-//    private PictureRepository pictureRepository;
-//
-//    @Autowired
-//    private GoogleDriveUtil googleDriveUtil;
-//
+package com.yu.jangtari.service;
+
+import com.google.api.client.http.FileContent;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
+import com.yu.jangtari.config.GoogleDriveUtil;
+import com.yu.jangtari.domain.*;
+import com.yu.jangtari.repository.HashtagRepository;
+import com.yu.jangtari.repository.category.CategoryRepository;
+import com.yu.jangtari.repository.post.PostRepository;
+import com.yu.jangtari.vo.PageMakerVO;
+import com.yu.jangtari.vo.PageVO;
+import com.yu.jangtari.domain.DTO.PostDTO;
+import com.yu.jangtari.repository.PictureRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.*;
+
+@Service
+@RequiredArgsConstructor
+public class PostService {
+
+    private final PostRepository postRepository;
+    private final HashtagRepository hashtagRepository;
+    private final CategoryRepository categoryRepository;
+    private final PictureRepository pictureRepository;
+    private final GoogleDriveUtil googleDriveUtil;
+
+
+    public Post addPost(PostDTO.Add postDTO) {
+        Category category = categoryRepository.findById(postDTO.getCategoryId()).orElseThrow(); // Exception 추가
+        Post savedPost = postRepository.save(postDTO.toEntity(category)); // 이 과정에서 pictures에 대한 영속성 전이가 추가되어야 함
+        List<PostHashtag> postHashtags = savedPost.getPostHashtags();
+        postDTO.getHashtags().parallelStream().forEach(hashtagDTO -> {
+            Hashtag hashtag = hashtagRepository.save(new Hashtag(hashtagDTO.getHashtag()));
+            PostHashtag postHashtag = PostHashtag.builder().post(savedPost).hashtag(hashtag).build();
+            postHashtags.add(postHashtag);
+        });
+        postRepository.save(savedPost); // 영속성 전이로 postHastag 저장
+        return savedPost;
+    }
+
 //    @Transactional
 //    public void deleteTrashHashtags(){
 //        postRepository.deleteTrashHashtags();
@@ -178,4 +189,4 @@
 //            throw new CustomException("존재하지 않는 게시글입니다.", "게시글 삭제 실패 : id = " + postId);
 //        }
 //    }
-//}
+}
