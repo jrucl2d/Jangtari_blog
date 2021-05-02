@@ -1,8 +1,6 @@
 package com.yu.jangtari.service;
 
-import com.google.api.client.http.FileContent;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.File;
+import com.yu.jangtari.common.GDFolder;
 import com.yu.jangtari.common.exception.FileTaskException;
 import com.yu.jangtari.common.exception.GoogleDriveException;
 import com.yu.jangtari.common.exception.NoSuchCategoryException;
@@ -11,20 +9,14 @@ import com.yu.jangtari.domain.*;
 import com.yu.jangtari.repository.HashtagRepository;
 import com.yu.jangtari.repository.category.CategoryRepository;
 import com.yu.jangtari.repository.post.PostRepository;
-import com.yu.jangtari.vo.PageMakerVO;
-import com.yu.jangtari.vo.PageVO;
 import com.yu.jangtari.domain.DTO.PostDTO;
-import com.yu.jangtari.repository.PictureRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -60,14 +52,8 @@ public class PostService {
 
     private Post addPicturesToPostIfExist(Post forSavePost, List<MultipartFile> pictureFiles) {
         if (!pictureFiles.isEmpty()) {
-            try {
-                List<String> pictureURLs = fileToURL(pictureFiles);
-                forSavePost.initPictures(pictureURLs);
-            } catch(GeneralSecurityException e1) {
-                throw new GoogleDriveException();
-            } catch (IOException e2) {
-                throw new FileTaskException();
-            }
+            List<String> pictureURLs = fileToURL(pictureFiles);
+            forSavePost.initPictures(pictureURLs);
         }
         return forSavePost;
     }
@@ -78,8 +64,8 @@ public class PostService {
      * @throws GeneralSecurityException Google Drive API 사용중 발생한 예외
      * @throws IOException googleDriveUtil.getDrive()시에 발생할 수 있는 예외
      */
-    private List<String> fileToURL(List<MultipartFile> pictureFiles) throws GeneralSecurityException, IOException {
-        return googleDriveUtil.fileToURL(pictureFiles);
+    private List<String> fileToURL(List<MultipartFile> pictureFiles) {
+        return googleDriveUtil.fileToURL(pictureFiles, GDFolder.POST);
     }
 
 //    @Transactional(readOnly = true)

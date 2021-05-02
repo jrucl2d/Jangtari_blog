@@ -1,6 +1,7 @@
 package com.yu.jangtari.PostTest;
 
 import com.yu.jangtari.ServiceTest;
+import com.yu.jangtari.common.GDFolder;
 import com.yu.jangtari.common.exception.FileTaskException;
 import com.yu.jangtari.common.exception.GoogleDriveException;
 import com.yu.jangtari.common.exception.NoSuchCategoryException;
@@ -82,7 +83,7 @@ public class PostServiceTest extends ServiceTest {
             given(categoryRepository.findById(any())).willReturn(Optional.of(category));
             given(postRepository.save(any())).willReturn(beforePost);
             given(hashtagRepository.saveAll(any())).willReturn(hashtags);
-            given(googleDriveUtil.fileToURL(postDTO.getPictures())).willReturn(Arrays.asList("pic1", "pic2"));
+            given(googleDriveUtil.fileToURL(postDTO.getPictures(), GDFolder.POST)).willReturn(Arrays.asList("pic1", "pic2"));
             // when
             Post post = postService.addPost(postDTO);
             // then
@@ -92,7 +93,7 @@ public class PostServiceTest extends ServiceTest {
                 assertThat(post.getPostHashtags().get(i).getPost()).isEqualTo(post);
             }
             assertThat(post.getComments().size()).isEqualTo(0);
-            verify(googleDriveUtil, times(1)).fileToURL(any());
+            verify(googleDriveUtil, times(1)).fileToURL(any(), any());
         }
     }
 
@@ -110,23 +111,23 @@ public class PostServiceTest extends ServiceTest {
         }
         @Test
         @DisplayName("addPost googleDriveUtil에서 GoogleDriveException 발생")
-        void addPost_Google_Drive_Exception_X() throws GeneralSecurityException, IOException {
+        void addPost_Google_Drive_Exception_X() {
             // given
             PostDTO.Add postDTO = makePostDTOwithPicture();
             Category category = makeCategory();
             given(categoryRepository.findById(any())).willReturn(Optional.of(category));
-            given(googleDriveUtil.fileToURL(postDTO.getPictures())).willThrow(new GeneralSecurityException());
+            given(googleDriveUtil.fileToURL(postDTO.getPictures(), GDFolder.POST)).willThrow(new GoogleDriveException());
             // when, then
             assertThrows(GoogleDriveException.class,() -> postService.addPost(postDTO));
         }
         @Test
         @DisplayName("addPost googleDriveUtil에서 FileTaskException 발생")
-        void addPost_File_Task_Exception_X() throws GeneralSecurityException, IOException {
+        void addPost_File_Task_Exception_X() {
             // given
             PostDTO.Add postDTO = makePostDTOwithPicture();
             Category category = makeCategory();
             given(categoryRepository.findById(any())).willReturn(Optional.of(category));
-            given(googleDriveUtil.fileToURL(postDTO.getPictures())).willThrow(new IOException());
+            given(googleDriveUtil.fileToURL(postDTO.getPictures(), GDFolder.POST)).willThrow(new FileTaskException());
             // when, then
             assertThrows(FileTaskException.class,() -> postService.addPost(postDTO));
         }

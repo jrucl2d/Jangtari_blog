@@ -44,5 +44,6 @@ public class Comment extends DateAuditing{
         this.content = content;
         this.member = member;
         this.post = post;
+        this.deleteFlag = DeleteFlag.initDeleteFlag();
     }
 }

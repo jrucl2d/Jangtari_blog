@@ -1,5 +1,6 @@
 package com.yu.jangtari.domain;
 
+import com.yu.jangtari.domain.DTO.CategoryDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -35,9 +36,10 @@ public class Category extends DateAuditing {
     public Category(String name, String picture) {
         this.name = name;
         this.picture = picture;
+        this.deleteFlag = DeleteFlag.initDeleteFlag();
     }
-
-    public void addPost(Post post) {
-        this.posts.add(post);
+    public void updateCategory(CategoryDTO.Update categoryDTO, String pictureURL) {
+        this.name = categoryDTO.getName();
+        if (pictureURL != null) this.picture = pictureURL;
     }
 }

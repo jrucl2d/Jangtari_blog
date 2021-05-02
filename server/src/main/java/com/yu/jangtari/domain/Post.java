@@ -52,6 +52,7 @@ public class Post extends DateAuditing {
         this.content = content;
         this.template = template;
         this.category = category;
+        this.deleteFlag = DeleteFlag.initDeleteFlag();
     }
 
     public void initPictures(List<String> pictures) {
