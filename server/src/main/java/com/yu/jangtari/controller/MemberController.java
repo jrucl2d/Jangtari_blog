@@ -32,33 +32,23 @@ public class MemberController {
 
 //    private final PasswordEncoder passwordEncoder;
 //    private final JWTTokenProvider jwtTokenProvider;
-//    private final MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 //    private final RedisUtil redisUtil;
 //    private final CookieUtil cookieUtil;
     private final MemberService memberService;
 
     @DeleteMapping("/member/{memberId}")
-    public ResponseEntity<String> deleteMember(@PathVariable(value = "memberId") Long memberId) {
+    @ResponseStatus(value = HttpStatus.OK)
+    public String deleteMember(@PathVariable(value = "memberId") Long memberId) {
         memberService.deleteMember(memberId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return "";
+    }
+    @GetMapping("/jangtari")
+    @ResponseStatus(value = HttpStatus.OK)
+    public MemberDTO.Get findJangtari() {
+        return new MemberDTO.Get(memberRepository.findById(1L).get());
     }
 
-//    @GetMapping("/jangtari")
-//    public ResponseEntity<CustomResponse> getInfo(){
-//        Optional<Member> member = memberRepository.findById(1L);
-//        if(!member.isPresent()){
-//            return new ResponseEntity<>(new CustomResponse(
-//                    new ErrorResponse(new CustomException("그런사람 없음...", "장따리 찾기 실패")),null),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//        MemberDTO.Info response = new MemberDTO.Info();
-//        response.setNickname(member.get().getNickname());
-//        response.setIntroduce(member.get().getIntroduce());
-//        response.setPicture(member.get().getPicture());
-//        return new ResponseEntity<>(new CustomResponse(null, response),
-//                HttpStatus.OK);
-//    }
-//
 //    @PostMapping("/check")
 //    public ResponseEntity<CustomResponse> check(@RequestBody MemberDTO.Check password, Principal principal){
 //        String username = principal.getName();

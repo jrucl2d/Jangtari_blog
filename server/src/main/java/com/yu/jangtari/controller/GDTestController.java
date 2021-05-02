@@ -15,11 +15,11 @@ import java.util.Collections;
 @RestController
 public class GDTestController {
 
-    @Autowired
-    private GoogleDriveUtil googleDriveUtil;
-
-    @GetMapping("/haha")
-    public void createFile() throws IOException, GeneralSecurityException {
+//    @Autowired
+//    private GoogleDriveUtil googleDriveUtil;
+//
+//    @GetMapping("/haha")
+//    public void createFile() throws IOException, GeneralSecurityException {
 //        Drive drive = googleDriveUtil.getDrive();
 //        File file = new File();
 //        file.setName("sample.jpg");
@@ -29,5 +29,5 @@ public class GDTestController {
 //
 //        String fileRef = String.format("{fileID : '%s'}", uploadedFile.getId());
 //        System.out.println(fileRef);
-    }
+//    }
 }
