@@ -1,8 +1,6 @@
 package com.yu.jangtari.controller;
 
 import com.yu.jangtari.common.ErrorResponse;
-import com.yu.jangtari.config.CookieUtil;
-import com.yu.jangtari.config.JWTTokenProvider;
 import com.yu.jangtari.config.RedisUtil;
 import com.yu.jangtari.domain.DTO.MemberDTO;
 import com.yu.jangtari.domain.Member;
@@ -13,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

@@ -82,11 +82,6 @@ public class PostService {
         return googleDriveUtil.fileToURL(pictureFiles);
     }
 
-//    @Transactional
-//    public void deleteTrashHashtags(){
-//        postRepository.deleteTrashHashtags();
-//    }
-//
 //    @Transactional(readOnly = true)
 //    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO, String type, String keyword) throws CustomException {
 //        return postRepository.getPostList(categoryId, pageVO, type, keyword);
@@ -96,65 +91,6 @@ public class PostService {
 //    public PostDTO.GetOne getPost(Long postId) {
 //        return postRepository.getPost(postId);
 //    }
-//
-//    @Transactional
-//    public void addPost(PostDTO.Add thePost, List<MultipartFile> postImages) throws CustomException, GeneralSecurityException, IOException {
-//        if(thePost.getTitle().equals("") || thePost.getTitle() == null || thePost.getPost().equals("") || thePost.getPost() == null){
-//            throw new CustomException("입력 정보가 충분하지 않습니다.", "게시글 추가 실패");
-//        }
-//        Post post = new Post();
-//        Category category = new Category();
-//        category.setId(thePost.getCategoryId());
-//        post.setCategory(category);
-//        post.setTitle(thePost.getTitle());
-//        post.setPost(thePost.getPost());
-//        post.setTemplate(thePost.getTemplate());
-//
-//        // 해시태그 추가
-//        if(thePost.getHashtags() != null){
-//            List<String> hashtagStrings = new ArrayList<>();
-//            thePost.getHashtags().forEach(ht -> {
-//                hashtagStrings.add(ht.getHashtag());
-//            });
-//            List<Hashtag> hashtags = postRepository.getHashtags(hashtagStrings);
-//            hashtags.forEach(ht -> {
-//                hashtagStrings.remove(ht.getHashtag()); // 이미 존재하는 해시태그는 목록에서 삭제
-//                List<Post> beforePosts = ht.getPosts();
-//                beforePosts.add(post);
-//                ht.setPosts(beforePosts);
-//            });
-//            hashtagStrings.forEach(ht -> {
-//                Hashtag hashtag = new Hashtag();
-//                hashtag.setHashtag(ht);
-//                hashtag.setPosts(Arrays.asList(post));
-//                hashtags.add(hashtag);
-//            });
-//            post.setHashtags(hashtags);
-//        }
-//
-//        // 사진 추가
-//        if(postImages != null){
-//            List<Picture> pictures = new ArrayList<>();
-//            Drive drive = googleDriveUtil.getDrive();
-//            for(MultipartFile postImage : postImages) {
-//                File file = new File();
-//                file.setName(googleDriveUtil.getPictureName(postImage.getName()));
-//                file.setParents(Collections.singletonList(googleDriveUtil.POST_FOLDER));
-//                java.io.File tmpFile = googleDriveUtil.convert(postImage);
-//                FileContent content = new FileContent("image/jpeg", tmpFile);
-//                File uploadedFile = drive.files().create(file, content).setFields("id").execute();
-//                tmpFile.delete();
-//                String fileRef = googleDriveUtil.FILE_REF + uploadedFile.getId();
-//                Picture picture = new Picture();
-//                picture.setPost(post);
-//                picture.setPicture(fileRef);
-//                pictureRepository.save(picture);
-//            }
-//            post.setPictures(pictures);
-//        }
-//        postRepository.save(post);
-//    }
-//
 //    @Transactional
 //    public void updatePost(PostDTO.Update thePost, List<MultipartFile> postImages) throws CustomException, GeneralSecurityException, IOException {
 //        Optional<Post> postOp = postRepository.findById(thePost.getId());

@@ -80,6 +80,6 @@ public class CommentService {
      * 참고 : https://multifrontgarden.tistory.com/254
      */
     private void deleteChildcomments(Comment comment) {
-        comment.getSubcomments().parallelStream().forEach(subcomment -> subcomment.getDeleteFlag().softDelete());
+        comment.getChildComments().parallelStream().forEach(subcomment -> subcomment.getDeleteFlag().softDelete());
     }
 }

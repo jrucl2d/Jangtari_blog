@@ -26,11 +26,11 @@ public class Comment extends DateAuditing{
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="recomment_id")
+    @JoinColumn(name="parent_id")
     private Comment parentComment;
 
-    @OneToMany(mappedBy = "recomment", cascade = CascadeType.ALL)
-    private List<Comment> subcomments = new ArrayList<>();
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL)
+    private List<Comment> childComments = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
@@ -41,6 +41,8 @@ public class Comment extends DateAuditing{
 
     @Builder
     public Comment(String content, Member member, Post post) {
-
+        this.content = content;
+        this.member = member;
+        this.post = post;
     }
 }
