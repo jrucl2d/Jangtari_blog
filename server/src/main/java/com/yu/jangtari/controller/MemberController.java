@@ -1,8 +1,6 @@
 package com.yu.jangtari.controller;
 
 import com.yu.jangtari.common.ErrorResponse;
-import com.yu.jangtari.config.CookieUtil;
-import com.yu.jangtari.config.JWTTokenProvider;
 import com.yu.jangtari.config.RedisUtil;
 import com.yu.jangtari.domain.DTO.MemberDTO;
 import com.yu.jangtari.domain.Member;
@@ -13,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,33 +32,23 @@ public class MemberController {
 
 //    private final PasswordEncoder passwordEncoder;
 //    private final JWTTokenProvider jwtTokenProvider;
-//    private final MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 //    private final RedisUtil redisUtil;
 //    private final CookieUtil cookieUtil;
     private final MemberService memberService;
 
     @DeleteMapping("/member/{memberId}")
-    public ResponseEntity<String> deleteMember(@PathVariable(value = "memberId") Long memberId) {
+    @ResponseStatus(value = HttpStatus.OK)
+    public String deleteMember(@PathVariable(value = "memberId") Long memberId) {
         memberService.deleteMember(memberId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return "";
+    }
+    @GetMapping("/jangtari")
+    @ResponseStatus(value = HttpStatus.OK)
+    public MemberDTO.Get findJangtari() {
+        return new MemberDTO.Get(memberRepository.findById(1L).get()); // 단순 정보 가져오기 이므로 융통성을 발휘해 repository 메소드 바로 이용
     }
 
-//    @GetMapping("/jangtari")
-//    public ResponseEntity<CustomResponse> getInfo(){
-//        Optional<Member> member = memberRepository.findById(1L);
-//        if(!member.isPresent()){
-//            return new ResponseEntity<>(new CustomResponse(
-//                    new ErrorResponse(new CustomException("그런사람 없음...", "장따리 찾기 실패")),null),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//        MemberDTO.Info response = new MemberDTO.Info();
-//        response.setNickname(member.get().getNickname());
-//        response.setIntroduce(member.get().getIntroduce());
-//        response.setPicture(member.get().getPicture());
-//        return new ResponseEntity<>(new CustomResponse(null, response),
-//                HttpStatus.OK);
-//    }
-//
 //    @PostMapping("/check")
 //    public ResponseEntity<CustomResponse> check(@RequestBody MemberDTO.Check password, Principal principal){
 //        String username = principal.getName();

@@ -3,6 +3,9 @@ package com.yu.jangtari.service;
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
+import com.yu.jangtari.common.exception.FileTaskException;
+import com.yu.jangtari.common.exception.GoogleDriveException;
+import com.yu.jangtari.common.exception.NoSuchCategoryException;
 import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.*;
 import com.yu.jangtari.repository.HashtagRepository;
@@ -21,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,28 +33,55 @@ public class PostService {
     private final PostRepository postRepository;
     private final HashtagRepository hashtagRepository;
     private final CategoryRepository categoryRepository;
-    private final PictureRepository pictureRepository;
     private final GoogleDriveUtil googleDriveUtil;
 
 
     public Post addPost(PostDTO.Add postDTO) {
-        Category category = categoryRepository.findById(postDTO.getCategoryId()).orElseThrow(); // Exception 추가
-        Post savedPost = postRepository.save(postDTO.toEntity(category)); // 이 과정에서 pictures에 대한 영속성 전이가 추가되어야 함
-        List<PostHashtag> postHashtags = savedPost.getPostHashtags();
-        postDTO.getHashtags().parallelStream().forEach(hashtagDTO -> {
-            Hashtag hashtag = hashtagRepository.save(new Hashtag(hashtagDTO.getHashtag()));
-            PostHashtag postHashtag = PostHashtag.builder().post(savedPost).hashtag(hashtag).build();
-            postHashtags.add(postHashtag);
-        });
-        postRepository.save(savedPost); // 영속성 전이로 postHastag 저장
+        // 1. Category 객체 find
+        Category category = categoryRepository.findById(postDTO.getCategoryId()).orElseThrow(
+                () -> new NoSuchCategoryException()
+        );
+
+        // 2. Post 객체 save, Picture 객체 save(영속성 전이)
+        Post forSavePost = postDTO.toEntity(category);
+        forSavePost = addPicturesToPostIfExist(forSavePost, postDTO.getPictures());
+        Post savedPost = postRepository.save(forSavePost);
+
+        // 3. Hashtag 객체 save
+        List<Hashtag> hashtags = postDTO.getHashtags();
+        hashtagRepository.saveAll(hashtags);
+
+        // 5. Post객체의 영속성 전이를 이용해 PostHashtag 저장
+        savedPost.initPostHashtags(hashtags);
+        postRepository.save(savedPost);
+        System.out.println(forSavePost);
         return savedPost;
     }
 
-//    @Transactional
-//    public void deleteTrashHashtags(){
-//        postRepository.deleteTrashHashtags();
-//    }
-//
+    private Post addPicturesToPostIfExist(Post forSavePost, List<MultipartFile> pictureFiles) {
+        if (!pictureFiles.isEmpty()) {
+            try {
+                List<String> pictureURLs = fileToURL(pictureFiles);
+                forSavePost.initPictures(pictureURLs);
+            } catch(GeneralSecurityException e1) {
+                throw new GoogleDriveException();
+            } catch (IOException e2) {
+                throw new FileTaskException();
+            }
+        }
+        return forSavePost;
+    }
+    /**
+     * parallelStream을 이용, 병렬성을 이용해 사진 저장 속도 상승
+     * @param pictureFiles
+     * @return picture URL의 List
+     * @throws GeneralSecurityException Google Drive API 사용중 발생한 예외
+     * @throws IOException googleDriveUtil.getDrive()시에 발생할 수 있는 예외
+     */
+    private List<String> fileToURL(List<MultipartFile> pictureFiles) throws GeneralSecurityException, IOException {
+        return googleDriveUtil.fileToURL(pictureFiles);
+    }
+
 //    @Transactional(readOnly = true)
 //    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO, String type, String keyword) throws CustomException {
 //        return postRepository.getPostList(categoryId, pageVO, type, keyword);
@@ -60,65 +91,6 @@ public class PostService {
 //    public PostDTO.GetOne getPost(Long postId) {
 //        return postRepository.getPost(postId);
 //    }
-//
-//    @Transactional
-//    public void addPost(PostDTO.Add thePost, List<MultipartFile> postImages) throws CustomException, GeneralSecurityException, IOException {
-//        if(thePost.getTitle().equals("") || thePost.getTitle() == null || thePost.getPost().equals("") || thePost.getPost() == null){
-//            throw new CustomException("입력 정보가 충분하지 않습니다.", "게시글 추가 실패");
-//        }
-//        Post post = new Post();
-//        Category category = new Category();
-//        category.setId(thePost.getCategoryId());
-//        post.setCategory(category);
-//        post.setTitle(thePost.getTitle());
-//        post.setPost(thePost.getPost());
-//        post.setTemplate(thePost.getTemplate());
-//
-//        // 해시태그 추가
-//        if(thePost.getHashtags() != null){
-//            List<String> hashtagStrings = new ArrayList<>();
-//            thePost.getHashtags().forEach(ht -> {
-//                hashtagStrings.add(ht.getHashtag());
-//            });
-//            List<Hashtag> hashtags = postRepository.getHashtags(hashtagStrings);
-//            hashtags.forEach(ht -> {
-//                hashtagStrings.remove(ht.getHashtag()); // 이미 존재하는 해시태그는 목록에서 삭제
-//                List<Post> beforePosts = ht.getPosts();
-//                beforePosts.add(post);
-//                ht.setPosts(beforePosts);
-//            });
-//            hashtagStrings.forEach(ht -> {
-//                Hashtag hashtag = new Hashtag();
-//                hashtag.setHashtag(ht);
-//                hashtag.setPosts(Arrays.asList(post));
-//                hashtags.add(hashtag);
-//            });
-//            post.setHashtags(hashtags);
-//        }
-//
-//        // 사진 추가
-//        if(postImages != null){
-//            List<Picture> pictures = new ArrayList<>();
-//            Drive drive = googleDriveUtil.getDrive();
-//            for(MultipartFile postImage : postImages) {
-//                File file = new File();
-//                file.setName(googleDriveUtil.getPictureName(postImage.getName()));
-//                file.setParents(Collections.singletonList(googleDriveUtil.POST_FOLDER));
-//                java.io.File tmpFile = googleDriveUtil.convert(postImage);
-//                FileContent content = new FileContent("image/jpeg", tmpFile);
-//                File uploadedFile = drive.files().create(file, content).setFields("id").execute();
-//                tmpFile.delete();
-//                String fileRef = googleDriveUtil.FILE_REF + uploadedFile.getId();
-//                Picture picture = new Picture();
-//                picture.setPost(post);
-//                picture.setPicture(fileRef);
-//                pictureRepository.save(picture);
-//            }
-//            post.setPictures(pictures);
-//        }
-//        postRepository.save(post);
-//    }
-//
 //    @Transactional
 //    public void updatePost(PostDTO.Update thePost, List<MultipartFile> postImages) throws CustomException, GeneralSecurityException, IOException {
 //        Optional<Post> postOp = postRepository.findById(thePost.getId());

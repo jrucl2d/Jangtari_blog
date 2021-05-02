@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @ToString(exclude = "category")
@@ -46,12 +47,22 @@ public class Post extends DateAuditing {
     DeleteFlag deleteFlag;
 
     @Builder
-    public Post(String title, String content, int template, List<Picture> pictures, Category category, List<PostHashtag> posthashtags) {
+    public Post(String title, String content, int template, Category category) {
         this.title = title;
         this.content = content;
         this.template = template;
-        this.pictures = pictures;
         this.category = category;
-        this.postHashtags = posthashtags;
+    }
+
+    public void initPictures(List<String> pictures) {
+        this.pictures = pictures.stream().map(url -> Picture.builder().post(this).url(url).build()).collect(Collectors.toList());
+    }
+
+    public void initPostHashtags(List<Hashtag> hashtags) {
+        this.postHashtags = hashtags.stream().map(hashtag ->
+                PostHashtag.builder()
+                        .post(this)
+                        .hashtag(hashtag)
+                        .build()).collect(Collectors.toList());
     }
 }
