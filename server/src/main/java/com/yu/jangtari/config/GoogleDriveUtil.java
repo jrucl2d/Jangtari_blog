@@ -14,6 +14,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
+import com.yu.jangtari.common.GDFolder;
 import com.yu.jangtari.common.exception.FileTaskException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -36,9 +37,8 @@ public class GoogleDriveUtil {
 
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
 
-    private final String CATEGORY_FOLDER = "1NzhQFXNOqY3dNYIHq0Rpf6AKZH-xHWVR";
-    private final String JANGTARI_FOLDER = "14CKUxuVzBqPz8RDwvLvUxaOJLI1Z62XK";
-    private final String POST_FOLDER = "1G7FMqlteOguD-St7TOIO_P6czMDD46lS";
+    // category, jangtari, post
+    private final String[] FOLDERS = {"1NzhQFXNOqY3dNYIHq0Rpf6AKZH-xHWVR", "14CKUxuVzBqPz8RDwvLvUxaOJLI1Z62XK", "1G7FMqlteOguD-St7TOIO_P6czMDD46lS"};
     private final String FILE_REF = "https://drive.google.com/uc?export=download&id=";
 
     private ClassPathResource gdSecretKeys = new ClassPathResource("/jangtari.json");
@@ -67,13 +67,13 @@ public class GoogleDriveUtil {
 
 
 
-    public List<String> fileToURL(List<MultipartFile> pictureFiles) throws GeneralSecurityException, IOException {
+    public List<String> fileToURL(List<MultipartFile> pictureFiles, GDFolder gdFolder) throws GeneralSecurityException, IOException {
         Drive drive = getDrive();
         List<String> pictureURLs = pictureFiles.parallelStream().map(pictureFile -> {
             com.google.api.services.drive.model.File file = new com.google.api.services.drive.model.File();
             file.setName(getPictureName(pictureFile.getName()));
-            file.setParents(Collections.singletonList(POST_FOLDER));
-            java.io.File tempFile = null;
+            file.setParents(Collections.singletonList(FOLDERS[gdFolder.getNumber()]));
+            File tempFile = null;
             String pictureURL = null;
             try {
                 tempFile = convert(pictureFile);

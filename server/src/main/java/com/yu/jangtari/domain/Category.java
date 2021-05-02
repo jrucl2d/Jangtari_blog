@@ -35,9 +35,6 @@ public class Category extends DateAuditing {
     public Category(String name, String picture) {
         this.name = name;
         this.picture = picture;
-    }
-
-    public void addPost(Post post) {
-        this.posts.add(post);
+        this.deleteFlag = DeleteFlag.initDeleteFlag();
     }
 }

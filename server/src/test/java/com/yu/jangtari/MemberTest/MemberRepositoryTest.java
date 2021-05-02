@@ -24,7 +24,7 @@ public class MemberRepositoryTest extends RepositoryTest {
     @DisplayName("성공 테스트")
     class SuccessTest {
         @Test
-        @DisplayName("모든 정 있는 Member save 성공")
+        @DisplayName("모든 정보 있는 Member save 성공")
         void saveMember_O() {
             // given
             List<Member> members = makeMembers();
@@ -61,7 +61,7 @@ public class MemberRepositoryTest extends RepositoryTest {
     @DisplayName("실패 테스트")
     class FailureTest {
         @Test
-        @DisplayName("save 보실패 - username 없는 Member")
+        @DisplayName("save 실패 - username 없는 Member")
         void saveMember_without_username_X() {
             // given
             List<Member> members = makeMembers();

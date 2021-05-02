@@ -1,40 +1,47 @@
 package com.yu.jangtari.service;
 
-import com.google.api.client.http.FileContent;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.File;
+import com.yu.jangtari.common.GDFolder;
+import com.yu.jangtari.common.exception.FileTaskException;
+import com.yu.jangtari.common.exception.GoogleDriveException;
 import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.DTO.CategoryDTO;
 import com.yu.jangtari.repository.category.CategoryRepository;
 //import com.yu.jangtari.repository.category.CategoryRepositoryQuerydsl;
+import com.yu.jangtari.repository.category.CategoryRepositoryQuerydsl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
-//    private final CategoryRepositoryQuerydsl categoryRepositoryQuerydsl;
+    private final CategoryRepositoryQuerydsl categoryRepositoryQuerydsl;
     private final GoogleDriveUtil googleDriveUtil;
 
-//    @Transactional(readOnly = true)
-//    public List<Category> getAllCategories(){
-//        return categoryRepositoryQuerydsl.getAllCategories();
-//    }
-//
-//    @Transactional
-//    public Long addCategory(String newCategory, MultipartFile categoryImageFile) throws CustomException, GeneralSecurityException, IOException {
+    @Transactional(readOnly = true)
+    public List<Category> getAllCategories(){
+        return categoryRepositoryQuerydsl.getAllCategories();
+    }
+
+    public Category addCategory(CategoryDTO.Add categoryDTO) {
+        try {
+            if (categoryDTO.getPicture().isEmpty()) return categoryRepository.save(categoryDTO.toEntity(null));
+            List<String> pictureURLs = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
+            return categoryRepository.save(categoryDTO.toEntity(pictureURLs.get(0)));
+        } catch (GeneralSecurityException e) {
+            throw new GoogleDriveException();
+        } catch (IOException e) {
+            throw new FileTaskException();
+        }
+    }
+//    public Long addCategory(String newCategory, MultipartFile categoryImageFile) throws GeneralSecurityException, IOException {
 //        Category category = new Category();
 //
 //        if(newCategory == null){
