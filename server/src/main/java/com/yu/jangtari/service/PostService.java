@@ -5,6 +5,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.yu.jangtari.common.exception.FileTaskException;
 import com.yu.jangtari.common.exception.GoogleDriveException;
+import com.yu.jangtari.common.exception.NoSuchCategoryException;
 import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.*;
 import com.yu.jangtari.repository.HashtagRepository;
@@ -32,13 +33,14 @@ public class PostService {
     private final PostRepository postRepository;
     private final HashtagRepository hashtagRepository;
     private final CategoryRepository categoryRepository;
-    private final PictureRepository pictureRepository;
     private final GoogleDriveUtil googleDriveUtil;
 
 
     public Post addPost(PostDTO.Add postDTO) {
         // 1. Category 객체 find
-        Category category = categoryRepository.findById(postDTO.getCategoryId()).orElseThrow(); // Exception 추가
+        Category category = categoryRepository.findById(postDTO.getCategoryId()).orElseThrow(
+                () -> new NoSuchCategoryException()
+        );
 
         // 2. Post 객체 save, Picture 객체 save(영속성 전이)
         Post forSavePost = postDTO.toEntity(category);
@@ -50,8 +52,9 @@ public class PostService {
         hashtagRepository.saveAll(hashtags);
 
         // 5. Post객체의 영속성 전이를 이용해 PostHashtag 저장
-        savedPost.addPostHashtags(hashtags);
+        savedPost.initPostHashtags(hashtags);
         postRepository.save(savedPost);
+        System.out.println(forSavePost);
         return savedPost;
     }
 
@@ -59,7 +62,7 @@ public class PostService {
         if (!pictureFiles.isEmpty()) {
             try {
                 List<String> pictureURLs = fileToURL(pictureFiles);
-                forSavePost.addPictures(pictureURLs);
+                forSavePost.initPictures(pictureURLs);
             } catch(GeneralSecurityException e1) {
                 throw new GoogleDriveException();
             } catch (IOException e2) {
@@ -76,25 +79,7 @@ public class PostService {
      * @throws IOException googleDriveUtil.getDrive()시에 발생할 수 있는 예외
      */
     private List<String> fileToURL(List<MultipartFile> pictureFiles) throws GeneralSecurityException, IOException {
-        Drive drive = googleDriveUtil.getDrive();
-        List<String> pictureURLs = pictureFiles.parallelStream().map(pictureFile -> {
-            File file = new File();
-            file.setName(googleDriveUtil.getPictureName(pictureFile.getName()));
-            file.setParents(Collections.singletonList(googleDriveUtil.POST_FOLDER));
-            java.io.File tempFile = null;
-            String pictureURL = null;
-            try {
-                tempFile = googleDriveUtil.convert(pictureFile);
-                FileContent content = new FileContent("image/jpeg", tempFile);
-                File uploadedFile = drive.files().create(file, content).setFields("id").execute();
-                tempFile.delete();
-                pictureURL = googleDriveUtil.FILE_REF + uploadedFile.getId();
-            } catch (IOException e) {
-                throw new FileTaskException(); // parellelStream 안에서 발생한 IOException
-            }
-            return pictureURL;
-        }).collect(Collectors.toList());
-        return pictureURLs;
+        return googleDriveUtil.fileToURL(pictureFiles);
     }
 
 //    @Transactional

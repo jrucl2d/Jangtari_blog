@@ -54,12 +54,12 @@ public class Post extends DateAuditing {
         this.category = category;
     }
 
-    public void addPictures(List<String> pictures) {
+    public void initPictures(List<String> pictures) {
         this.pictures = pictures.stream().map(url -> Picture.builder().post(this).url(url).build()).collect(Collectors.toList());
     }
 
-    public void addPostHashtags(List<Hashtag> hashtags) {
-        hashtags.stream().map(hashtag ->
+    public void initPostHashtags(List<Hashtag> hashtags) {
+        this.postHashtags = hashtags.stream().map(hashtag ->
                 PostHashtag.builder()
                         .post(this)
                         .hashtag(hashtag)

@@ -47,6 +47,17 @@ public class PostDTO {
         private List<String> hashtags = new ArrayList<>();
         private List<MultipartFile> pictures = new ArrayList<>();
 
+        @Builder
+        public Add(Long categoryId, String title, String content, int template, List<String> hashtags, List<MultipartFile> pictures) {
+            this.categoryId = categoryId;
+            this.title = title;
+            this.content = content;
+            this.hashtags = hashtags;
+            this.template = template;
+            this.hashtags = hashtags;
+            this.pictures = pictures;
+        }
+
         public Post toEntity(Category category) {
             return Post.builder()
                     .category(category)

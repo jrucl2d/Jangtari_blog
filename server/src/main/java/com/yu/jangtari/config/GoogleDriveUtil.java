@@ -7,12 +7,14 @@ import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.FileContent;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
+import com.yu.jangtari.common.exception.FileTaskException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -25,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GoogleDriveUtil {
@@ -33,11 +36,10 @@ public class GoogleDriveUtil {
 
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
 
-    public final String CATEGORY_FOLDER = "1NzhQFXNOqY3dNYIHq0Rpf6AKZH-xHWVR";
-    public final String JANGTARI_FOLDER = "14CKUxuVzBqPz8RDwvLvUxaOJLI1Z62XK";
-    public final String POST_FOLDER = "1G7FMqlteOguD-St7TOIO_P6czMDD46lS";
-
-    public final String FILE_REF = "https://drive.google.com/uc?export=download&id=";
+    private final String CATEGORY_FOLDER = "1NzhQFXNOqY3dNYIHq0Rpf6AKZH-xHWVR";
+    private final String JANGTARI_FOLDER = "14CKUxuVzBqPz8RDwvLvUxaOJLI1Z62XK";
+    private final String POST_FOLDER = "1G7FMqlteOguD-St7TOIO_P6czMDD46lS";
+    private final String FILE_REF = "https://drive.google.com/uc?export=download&id=";
 
     private ClassPathResource gdSecretKeys = new ClassPathResource("/jangtari.json");
     private String token = "credentials";
@@ -63,12 +65,35 @@ public class GoogleDriveUtil {
         return flow.loadCredential("user");
     }
 
-    public Drive getDrive() throws GeneralSecurityException, IOException {
+
+
+    public List<String> fileToURL(List<MultipartFile> pictureFiles) throws GeneralSecurityException, IOException {
+        Drive drive = getDrive();
+        List<String> pictureURLs = pictureFiles.parallelStream().map(pictureFile -> {
+            com.google.api.services.drive.model.File file = new com.google.api.services.drive.model.File();
+            file.setName(getPictureName(pictureFile.getName()));
+            file.setParents(Collections.singletonList(POST_FOLDER));
+            java.io.File tempFile = null;
+            String pictureURL = null;
+            try {
+                tempFile = convert(pictureFile);
+                FileContent content = new FileContent("image/jpeg", tempFile);
+                com.google.api.services.drive.model.File uploadedFile = drive.files().create(file, content).setFields("id").execute();
+                tempFile.delete();
+                pictureURL = FILE_REF + uploadedFile.getId();
+            } catch (IOException e) {
+                throw new FileTaskException(); // parellelStream 안에서 발생한 IOException
+            }
+            return pictureURL;
+        }).collect(Collectors.toList());
+        return pictureURLs;
+    }
+
+    private Drive getDrive() throws GeneralSecurityException, IOException {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT)).setApplicationName(appname).build();
     }
-
-    public File convert(MultipartFile file) throws IOException {
+    private File convert(MultipartFile file) throws IOException {
         File convFile = new File(file.getOriginalFilename());
         convFile.createNewFile();
         FileOutputStream fos = new FileOutputStream(convFile);
@@ -76,8 +101,7 @@ public class GoogleDriveUtil {
         fos.close();
         return convFile;
     }
-
-    public String getPictureName(String pictureName) {
+    private String getPictureName(String pictureName) {
         SimpleDateFormat format1 = new SimpleDateFormat ( "yyyy-MM-dd-HH:mm:ss");
         Date time = new Date();
         String dateString = format1.format(time);
