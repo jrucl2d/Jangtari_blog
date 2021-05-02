@@ -16,6 +16,7 @@ public class CategoryRepositoryQuerydsl {
     public List<Category> getAllCategories() {
         QCategory category = QCategory.category;
         return jpaQueryFactory.selectFrom(category)
+                .where(category.deleteFlag.deleteFlag.isNotNull())
                 .orderBy(category.createdDate.asc())
                 .fetch();
     }

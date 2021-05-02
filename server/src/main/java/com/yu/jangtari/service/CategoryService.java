@@ -1,20 +1,16 @@
 package com.yu.jangtari.service;
 
 import com.yu.jangtari.common.GDFolder;
-import com.yu.jangtari.common.exception.FileTaskException;
-import com.yu.jangtari.common.exception.GoogleDriveException;
+import com.yu.jangtari.common.exception.NoSuchCategoryException;
 import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.DTO.CategoryDTO;
 import com.yu.jangtari.repository.category.CategoryRepository;
-//import com.yu.jangtari.repository.category.CategoryRepositoryQuerydsl;
 import com.yu.jangtari.repository.category.CategoryRepositoryQuerydsl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.List;
 
 @Service
@@ -31,71 +27,22 @@ public class CategoryService {
     }
 
     public Category addCategory(CategoryDTO.Add categoryDTO) {
-        try {
-            if (categoryDTO.getPicture().isEmpty()) return categoryRepository.save(categoryDTO.toEntity(null));
-            List<String> pictureURLs = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
-            return categoryRepository.save(categoryDTO.toEntity(pictureURLs.get(0)));
-        } catch (GeneralSecurityException e) {
-            throw new GoogleDriveException();
-        } catch (IOException e) {
-            throw new FileTaskException();
-        }
+        if (categoryDTO.getPicture().isEmpty()) return categoryRepository.save(categoryDTO.toEntity(null));
+        List<String> pictureURLs = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
+        return categoryRepository.save(categoryDTO.toEntity(pictureURLs.get(0)));
     }
-//    public Long addCategory(String newCategory, MultipartFile categoryImageFile) throws GeneralSecurityException, IOException {
-//        Category category = new Category();
-//
-//        if(newCategory == null){
-//            throw new CustomException("입력 정보가 충분하지 않습니다.", "카테고리 추가 실패");
-//        }
-//        category.setName(newCategory);
-//        if(categoryImageFile != null){
-//            Drive drive = googleDriveUtil.getDrive();
-//            File file = new File();
-//            file.setName(googleDriveUtil.getPictureName(newCategory));
-//            file.setParents(Collections.singletonList(googleDriveUtil.CATEGORY_FOLDER));
-//            java.io.File tmpFile = googleDriveUtil.convert(categoryImageFile);
-//            FileContent content = new FileContent("image/jpeg", tmpFile);
-//            File uploadedFile = drive.files().create(file, content).setFields("id").execute();
-//            tmpFile.delete();
-//            String fileRef = googleDriveUtil.FILE_REF + uploadedFile.getId();
-//            category.setPicture(fileRef);
-//        }
-//        Category saved = categoryRepository.save(category);
-//        return saved.getId();
-//        return 1L;
-//    }
-//
-//    @Transactional
-//    public void updateCategory(CategoryDTO.Update theCategory, MultipartFile categoryImageFile) throws CustomException, GeneralSecurityException, IOException {
-//        if(theCategory.getId() == null || theCategory.getName() == null) {
-//            throw new CustomException("입력 정보가 충분하지 않습니다.", "카테고리 수정 실패 : id = " + theCategory.getId());
-//        }
-//        Optional<Category> category = categoryRepository.findById(theCategory.getId());
-//        if(category.isPresent()){
-//            category.get().setName(theCategory.getName());
-//            if(categoryImageFile != null){
-//                Drive drive = googleDriveUtil.getDrive();
-//                File file = new File();
-//                file.setName(googleDriveUtil.getPictureName(theCategory.getName()));
-//                file.setParents(Collections.singletonList(googleDriveUtil.CATEGORY_FOLDER));
-//                java.io.File tmpFile = googleDriveUtil.convert(categoryImageFile);
-//                FileContent content = new FileContent("image/jpeg", tmpFile);
-//                File uploadedFile = drive.files().create(file, content).setFields("id").execute();
-//                tmpFile.delete();
-//                String fileRef = googleDriveUtil.FILE_REF + uploadedFile.getId();
-//                category.get().setPicture(fileRef);
-//            }
-//            categoryRepository.save(category.get());
-//        } else {
-//            throw new CustomException("존재하지 않는 카테고리입니다.", "카테고리 수정 실패 : id = " + theCategory.getId());
-//        }
-//    }
-
-//    public void deleteCategory(Long theId) throws CustomException {
-//        try{
-//            categoryRepository.deleteById(theId);
-//        } catch (Exception e){
-//            throw new CustomException("존재하지 않는 카테고리입니다.", "카테고리 삭제 실패 : id = " + theId);
-//        }
-//    }
+    public Category updateCategory(CategoryDTO.Update categoryDTO) {
+        Category category = categoryRepository.findById(categoryDTO.getId()).orElseThrow(() -> new NoSuchCategoryException());
+        if (categoryDTO.getPicture().isEmpty()) category.updateCategory(categoryDTO, null);
+        else {
+            List<String> pictureURLS = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
+            category.updateCategory(categoryDTO, pictureURLS.get(0));
+        }
+        return category;
+    }
+    public Category deleteCategory(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NoSuchCategoryException());
+        category.getDeleteFlag().softDelete();
+        return category;
+    }
 }

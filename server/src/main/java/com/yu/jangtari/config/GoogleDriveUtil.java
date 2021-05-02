@@ -16,6 +16,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.yu.jangtari.common.GDFolder;
 import com.yu.jangtari.common.exception.FileTaskException;
+import com.yu.jangtari.common.exception.GoogleDriveException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -66,26 +67,38 @@ public class GoogleDriveUtil {
     }
 
 
-
-    public List<String> fileToURL(List<MultipartFile> pictureFiles, GDFolder gdFolder) throws GeneralSecurityException, IOException {
-        Drive drive = getDrive();
-        List<String> pictureURLs = pictureFiles.parallelStream().map(pictureFile -> {
-            com.google.api.services.drive.model.File file = new com.google.api.services.drive.model.File();
-            file.setName(getPictureName(pictureFile.getName()));
-            file.setParents(Collections.singletonList(FOLDERS[gdFolder.getNumber()]));
-            File tempFile = null;
-            String pictureURL = null;
-            try {
-                tempFile = convert(pictureFile);
-                FileContent content = new FileContent("image/jpeg", tempFile);
-                com.google.api.services.drive.model.File uploadedFile = drive.files().create(file, content).setFields("id").execute();
-                tempFile.delete();
-                pictureURL = FILE_REF + uploadedFile.getId();
-            } catch (IOException e) {
-                throw new FileTaskException(); // parellelStream 안에서 발생한 IOException
-            }
-            return pictureURL;
-        }).collect(Collectors.toList());
+    /**
+     * Google Drive API를 사용해 파일을 구글 드라이브에 저장하고 저장한 URL을 리턴해주는 메소드
+     * @param pictureFiles 사진 파일
+     * @param gdFolder 카테고리/포스트/사람 사진
+     * @return URL의 리스트
+     */
+    public List<String> fileToURL(List<MultipartFile> pictureFiles, GDFolder gdFolder) {
+        List<String> pictureURLs = null;
+        try {
+            Drive drive = getDrive();
+            pictureURLs = pictureFiles.parallelStream().map(pictureFile -> {
+                com.google.api.services.drive.model.File file = new com.google.api.services.drive.model.File();
+                file.setName(getPictureName(pictureFile.getName()));
+                file.setParents(Collections.singletonList(FOLDERS[gdFolder.getNumber()]));
+                File tempFile = null;
+                String pictureURL = null;
+                try {
+                    tempFile = convert(pictureFile);
+                    FileContent content = new FileContent("image/jpeg", tempFile);
+                    com.google.api.services.drive.model.File uploadedFile = drive.files().create(file, content).setFields("id").execute();
+                    tempFile.delete();
+                    pictureURL = FILE_REF + uploadedFile.getId();
+                } catch (IOException e) {
+                    throw new FileTaskException(); // parellelStream 안에서 발생한 IOException
+                }
+                return pictureURL;
+            }).collect(Collectors.toList());
+        } catch (GeneralSecurityException e) {
+            throw new GoogleDriveException();
+        } catch (IOException e) {
+            throw new FileTaskException();
+        }
         return pictureURLs;
     }
 

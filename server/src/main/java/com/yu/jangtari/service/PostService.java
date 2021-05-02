@@ -52,14 +52,8 @@ public class PostService {
 
     private Post addPicturesToPostIfExist(Post forSavePost, List<MultipartFile> pictureFiles) {
         if (!pictureFiles.isEmpty()) {
-            try {
-                List<String> pictureURLs = fileToURL(pictureFiles);
-                forSavePost.initPictures(pictureURLs);
-            } catch(GeneralSecurityException e1) {
-                throw new GoogleDriveException();
-            } catch (IOException e2) {
-                throw new FileTaskException();
-            }
+            List<String> pictureURLs = fileToURL(pictureFiles);
+            forSavePost.initPictures(pictureURLs);
         }
         return forSavePost;
     }
@@ -70,7 +64,7 @@ public class PostService {
      * @throws GeneralSecurityException Google Drive API 사용중 발생한 예외
      * @throws IOException googleDriveUtil.getDrive()시에 발생할 수 있는 예외
      */
-    private List<String> fileToURL(List<MultipartFile> pictureFiles) throws GeneralSecurityException, IOException {
+    private List<String> fileToURL(List<MultipartFile> pictureFiles) {
         return googleDriveUtil.fileToURL(pictureFiles, GDFolder.POST);
     }
 
