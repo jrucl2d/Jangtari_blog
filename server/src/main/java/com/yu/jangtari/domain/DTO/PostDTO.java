@@ -1,12 +1,15 @@
 package com.yu.jangtari.domain.DTO;
 
 import com.yu.jangtari.domain.Category;
+import com.yu.jangtari.domain.Hashtag;
 import com.yu.jangtari.domain.Post;
 import com.yu.jangtari.domain.PostHashtag;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PostDTO {
     @Getter
@@ -30,7 +33,7 @@ public class PostDTO {
         private String content;
         private List<CommentDTO.Get> comments = new ArrayList<>();
         private List<PictureDTO> pictures = new ArrayList<>();
-        private List<HashtagDTO> hashtags = new ArrayList<>();
+        private List<String> hashtags = new ArrayList<>();
     }
 
     @Getter
@@ -39,12 +42,21 @@ public class PostDTO {
     public static class Add{
         private Long categoryId;
         private String title;
-        private String post;
+        private String content;
         private int template;
-        private List<HashtagDTO> hashtags = new ArrayList<>();
+        private List<String> hashtags = new ArrayList<>();
+        private List<MultipartFile> pictures = new ArrayList<>();
 
         public Post toEntity(Category category) {
-            return Post.builder().build();
+            return Post.builder()
+                    .category(category)
+                    .title(title)
+                    .content(content)
+                    .template(template)
+                    .build();
+        }
+        public List<Hashtag> getHashtags() {
+            return hashtags.stream().map(hashtagString -> new Hashtag(hashtagString)).collect(Collectors.toList());
         }
     }
 
@@ -58,7 +70,7 @@ public class PostDTO {
         private String title;
         private String post;
         private int template;
-        private List<HashtagDTO> hashtags = new ArrayList<>();
+        private List<String> hashtags = new ArrayList<>();
         private List<Long> delPics = new ArrayList<>();
     }
 }

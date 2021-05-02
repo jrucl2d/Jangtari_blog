@@ -1,39 +1,37 @@
-//package com.yu.jangtari.controller;
-//
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.yu.jangtari.common.ErrorResponse;
-//import com.yu.jangtari.common.CustomException;
-//import com.yu.jangtari.common.CustomResponse;
-//import com.yu.jangtari.domain.Category;
-//import com.yu.jangtari.domain.Post;
-//import com.yu.jangtari.repository.post.PostRepository;
-//import com.yu.jangtari.vo.PageMakerVO;
-//import com.yu.jangtari.vo.PageVO;
-//import com.yu.jangtari.domain.DTO.PostDTO;
-//import com.yu.jangtari.service.PostService;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.web.bind.annotation.*;
-//import org.springframework.web.multipart.MultipartFile;
-//
-//import java.io.IOException;
-//import java.security.GeneralSecurityException;
-//import java.util.List;
-//import java.util.stream.IntStream;
-//
-//
-//@Controller
-//public class PostController {
-//
-//    @Autowired
-//    private PostService postService;
-//
-//    @Autowired
-//    private PostRepository postRepository;
-//
-//
+package com.yu.jangtari.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yu.jangtari.common.ErrorResponse;
+import com.yu.jangtari.domain.Category;
+import com.yu.jangtari.domain.Post;
+import com.yu.jangtari.repository.post.PostRepository;
+import com.yu.jangtari.vo.PageMakerVO;
+import com.yu.jangtari.vo.PageVO;
+import com.yu.jangtari.domain.DTO.PostDTO;
+import com.yu.jangtari.service.PostService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.List;
+import java.util.stream.IntStream;
+
+
+@Controller
+public class PostController {
+
+    @Autowired
+    private PostService postService;
+
+    @Autowired
+    private PostRepository postRepository;
+
+
 //    @GetMapping("almighty/hashtag/clean")
 //    public @ResponseBody String cleanTrashHashtags(){
 //        postService.deleteTrashHashtags();
@@ -147,4 +145,4 @@
 //                    HttpStatus.BAD_REQUEST);
 //        }
 //    }
-//}
+}

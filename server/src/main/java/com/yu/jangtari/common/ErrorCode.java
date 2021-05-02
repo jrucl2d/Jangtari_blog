@@ -15,7 +15,9 @@ public enum ErrorCode {
 
     // Custom
     MEMBER_NOT_FOUND(404, "yu005", "No Such Member"),
-    COMMENT_NOT_FOUND(404, "yu006", "No Such Comment");
+    COMMENT_NOT_FOUND(404, "yu006", "No Such Comment"),
+    FILE_ERROR(500, "yu007", "File Task Error"),
+    GOOGLE_DRIVE_ERROR(500, "yu008", "Google Dirve Error");
 
     private final String code;
     private final String message;
