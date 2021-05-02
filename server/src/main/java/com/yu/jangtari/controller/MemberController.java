@@ -46,7 +46,7 @@ public class MemberController {
     @GetMapping("/jangtari")
     @ResponseStatus(value = HttpStatus.OK)
     public MemberDTO.Get findJangtari() {
-        return new MemberDTO.Get(memberRepository.findById(1L).get());
+        return new MemberDTO.Get(memberRepository.findById(1L).get()); // 단순 정보 가져오기 이므로 융통성을 발휘해 repository 메소드 바로 이용
     }
 
 //    @PostMapping("/check")
