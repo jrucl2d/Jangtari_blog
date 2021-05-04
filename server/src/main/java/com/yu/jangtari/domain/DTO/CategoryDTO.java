@@ -4,7 +4,7 @@ import com.yu.jangtari.domain.Category;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,12 +13,12 @@ public class CategoryDTO {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Add{
-        @Valid
+        @NotEmpty
         private String name;
         private List<MultipartFile> picture = new ArrayList<>();
 
         @Builder
-        public Add(@Valid String name, List<MultipartFile> multipartFiles) {
+        public Add(String name, List<MultipartFile> multipartFiles) {
             this.name = name;
             this.picture = multipartFiles;
         }
@@ -33,14 +33,14 @@ public class CategoryDTO {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Update{
-        @Valid
+        @NotEmpty
         private Long id;
-        @Valid
+        @NotEmpty
         private String name;
         private List<MultipartFile> picture = new ArrayList<>();
 
         @Builder
-        public Update(@Valid Long id, @Valid String name, List<MultipartFile> picture) {
+        public Update(Long id, String name, List<MultipartFile> picture) {
             this.id = id;
             this.name = name;
             this.picture = picture;

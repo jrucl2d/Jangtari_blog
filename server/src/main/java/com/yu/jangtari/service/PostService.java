@@ -24,20 +24,18 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final HashtagRepository hashtagRepository;
-    private final CategoryRepository categoryRepository;
     private final GoogleDriveUtil googleDriveUtil;
+    private final CategoryService categoryService;
 
 
     public Post addPost(PostDTO.Add postDTO) {
-        // 1. Category 객체 find
-        Category category = categoryRepository.findById(postDTO.getCategoryId()).orElseThrow(
-                () -> new NoSuchCategoryException()
-        );
+        // 1. Category 객체 get
+        final Category category = categoryService.getCategory(postDTO.getCategoryId());
 
         // 2. Post 객체 save, Picture 객체 save(영속성 전이)
-        Post forSavePost = postDTO.toEntity(category);
-        forSavePost = addPicturesToPostIfExist(forSavePost, postDTO.getPictures());
-        Post savedPost = postRepository.save(forSavePost);
+        final Post forSavePost = postDTO.toEntity(category);
+        addPicturesToPostIfExist(forSavePost, postDTO.getPictures());
+        final Post savedPost = postRepository.save(forSavePost);
 
         // 3. Hashtag 객체 save
         List<Hashtag> hashtags = postDTO.getHashtags();
@@ -46,16 +44,14 @@ public class PostService {
         // 5. Post객체의 영속성 전이를 이용해 PostHashtag 저장
         savedPost.initPostHashtags(hashtags);
         postRepository.save(savedPost);
-        System.out.println(forSavePost);
         return savedPost;
     }
 
-    private Post addPicturesToPostIfExist(Post forSavePost, List<MultipartFile> pictureFiles) {
+    private void addPicturesToPostIfExist(Post forSavePost, List<MultipartFile> pictureFiles) {
         if (!pictureFiles.isEmpty()) {
             List<String> pictureURLs = fileToURL(pictureFiles);
             forSavePost.initPictures(pictureURLs);
         }
-        return forSavePost;
     }
     /**
      * parallelStream을 이용, 병렬성을 이용해 사진 저장 속도 상승

@@ -26,13 +26,19 @@ public class CategoryService {
         return categoryRepositoryQuerydsl.getAllCategories();
     }
 
+    @Transactional(readOnly = true)
+    public Category getCategory(Long categoryId) {
+        final Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NoSuchCategoryException());
+        return category;
+    }
+
     public Category addCategory(CategoryDTO.Add categoryDTO) {
         if (categoryDTO.getPicture().isEmpty()) return categoryRepository.save(categoryDTO.toEntity(null));
         List<String> pictureURLs = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
         return categoryRepository.save(categoryDTO.toEntity(pictureURLs.get(0)));
     }
     public Category updateCategory(CategoryDTO.Update categoryDTO) {
-        Category category = categoryRepository.findById(categoryDTO.getId()).orElseThrow(() -> new NoSuchCategoryException());
+        final Category category = getCategory(categoryDTO.getId());
         if (categoryDTO.getPicture().isEmpty()) category.updateCategory(categoryDTO, null);
         else {
             List<String> pictureURLS = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
@@ -41,7 +47,7 @@ public class CategoryService {
         return category;
     }
     public Category deleteCategory(Long categoryId) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NoSuchCategoryException());
+        final Category category = getCategory(categoryId);
         category.getDeleteFlag().softDelete();
         return category;
     }
