@@ -22,7 +22,6 @@ public class CategoryDTO {
             this.name = name;
             this.picture = multipartFiles;
         }
-
         public Category toEntity(String pictureURL) {
             return Category.builder()
                     .name(name)
@@ -48,15 +47,20 @@ public class CategoryDTO {
     }
 
     @Getter
-    @Setter
-    @ToString
-    @AllArgsConstructor
-    @NoArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Get{
         private Long id;
         private String name;
         private String picture;
+
+        @Builder
+        private Get(Long id, String name, String picture) {
+            this.id = id;
+            this.name = name;
+            this.picture = picture;
+        }
+        public static CategoryDTO.Get of(Category category) {
+            return Get.builder().id(category.getId()).name(category.getName()).picture(category.getPicture()).build();
+        }
     }
-
-
 }

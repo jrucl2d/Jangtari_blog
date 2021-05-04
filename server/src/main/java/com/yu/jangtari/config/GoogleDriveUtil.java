@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.security.GeneralSecurityException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -74,7 +75,7 @@ public class GoogleDriveUtil {
      * @return URL의 리스트
      */
     public List<String> fileToURL(List<MultipartFile> pictureFiles, GDFolder gdFolder) {
-        List<String> pictureURLs = null;
+        List<String> pictureURLs;
         try {
             Drive drive = getDrive();
             pictureURLs = pictureFiles.parallelStream().map(pictureFile -> {
