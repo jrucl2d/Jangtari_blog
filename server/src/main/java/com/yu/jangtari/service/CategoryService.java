@@ -26,22 +26,23 @@ public class CategoryService {
         return categoryRepositoryQuerydsl.getAllCategories();
     }
 
-    public Category addCategory(CategoryDTO.Add categoryDTO) {
-        if (categoryDTO.getPicture().isEmpty()) return categoryRepository.save(categoryDTO.toEntity(null));
-        List<String> pictureURLs = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
-        return categoryRepository.save(categoryDTO.toEntity(pictureURLs.get(0)));
+    @Transactional(readOnly = true)
+    public Category getCategory(Long categoryId) {
+        final Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NoSuchCategoryException());
+        return category;
     }
-    public Category updateCategory(CategoryDTO.Update categoryDTO) {
-        Category category = categoryRepository.findById(categoryDTO.getId()).orElseThrow(() -> new NoSuchCategoryException());
-        if (categoryDTO.getPicture().isEmpty()) category.updateCategory(categoryDTO, null);
-        else {
-            List<String> pictureURLS = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
-            category.updateCategory(categoryDTO, pictureURLS.get(0));
-        }
+    public Category addCategory(CategoryDTO.Add categoryDTO) {
+        String pictureURL = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
+        return categoryRepository.save(categoryDTO.toEntity(pictureURL));
+    }
+    public Category updateCategory(Long categoryId, CategoryDTO.Update categoryDTO) {
+        final Category category = getCategory(categoryId);
+        String pictureURL = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
+        category.updateCategory(categoryDTO, pictureURL);
         return category;
     }
     public Category deleteCategory(Long categoryId) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NoSuchCategoryException());
+        final Category category = getCategory(categoryId);
         category.getDeleteFlag().softDelete();
         return category;
     }

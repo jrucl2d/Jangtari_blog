@@ -3,10 +3,10 @@ package com.yu.jangtari.domain.DTO;
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.Hashtag;
 import com.yu.jangtari.domain.Post;
-import com.yu.jangtari.domain.PostHashtag;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,9 +40,13 @@ public class PostDTO {
     @ToString
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Add{
+        @NotEmpty
         private Long categoryId;
+        @NotEmpty
         private String title;
+        @NotEmpty
         private String content;
+        @NotEmpty
         private int template;
         private List<String> hashtags = new ArrayList<>();
         private List<MultipartFile> pictures = new ArrayList<>();

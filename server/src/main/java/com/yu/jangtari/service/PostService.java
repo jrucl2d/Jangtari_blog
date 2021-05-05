@@ -24,38 +24,31 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final HashtagRepository hashtagRepository;
-    private final CategoryRepository categoryRepository;
     private final GoogleDriveUtil googleDriveUtil;
+    private final CategoryService categoryService;
 
 
     public Post addPost(PostDTO.Add postDTO) {
-        // 1. Category 객체 find
-        Category category = categoryRepository.findById(postDTO.getCategoryId()).orElseThrow(
-                () -> new NoSuchCategoryException()
-        );
+        // 1. Category 객체 get
+        final Category category = categoryService.getCategory(postDTO.getCategoryId());
 
         // 2. Post 객체 save, Picture 객체 save(영속성 전이)
-        Post forSavePost = postDTO.toEntity(category);
-        forSavePost = addPicturesToPostIfExist(forSavePost, postDTO.getPictures());
-        Post savedPost = postRepository.save(forSavePost);
+        final Post forSavePost = postDTO.toEntity(category);
+        addPicturesToPostIfExist(forSavePost, postDTO.getPictures());
+        final Post savedPost = postRepository.save(forSavePost);
 
         // 3. Hashtag 객체 save
-        List<Hashtag> hashtags = postDTO.getHashtags();
-        hashtagRepository.saveAll(hashtags);
+        List<Hashtag> hashtags = hashtagRepository.saveAll(postDTO.getHashtags());
 
         // 5. Post객체의 영속성 전이를 이용해 PostHashtag 저장
         savedPost.initPostHashtags(hashtags);
         postRepository.save(savedPost);
-        System.out.println(forSavePost);
         return savedPost;
     }
 
-    private Post addPicturesToPostIfExist(Post forSavePost, List<MultipartFile> pictureFiles) {
-        if (!pictureFiles.isEmpty()) {
-            List<String> pictureURLs = fileToURL(pictureFiles);
-            forSavePost.initPictures(pictureURLs);
-        }
-        return forSavePost;
+    private void addPicturesToPostIfExist(Post forSavePost, List<MultipartFile> pictureFiles) {
+        List<String> pictureURLs = googleDriveUtil.filesToURLs(pictureFiles, GDFolder.POST);
+        forSavePost.initPictures(pictureURLs);
     }
     /**
      * parallelStream을 이용, 병렬성을 이용해 사진 저장 속도 상승
@@ -64,9 +57,6 @@ public class PostService {
      * @throws GeneralSecurityException Google Drive API 사용중 발생한 예외
      * @throws IOException googleDriveUtil.getDrive()시에 발생할 수 있는 예외
      */
-    private List<String> fileToURL(List<MultipartFile> pictureFiles) {
-        return googleDriveUtil.fileToURL(pictureFiles, GDFolder.POST);
-    }
 
 //    @Transactional(readOnly = true)
 //    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO, String type, String keyword) throws CustomException {

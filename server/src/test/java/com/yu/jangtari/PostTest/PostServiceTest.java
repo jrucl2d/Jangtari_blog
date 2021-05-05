@@ -11,8 +11,8 @@ import com.yu.jangtari.domain.DTO.PostDTO;
 import com.yu.jangtari.domain.Hashtag;
 import com.yu.jangtari.domain.Post;
 import com.yu.jangtari.repository.HashtagRepository;
-import com.yu.jangtari.repository.category.CategoryRepository;
 import com.yu.jangtari.repository.post.PostRepository;
+import com.yu.jangtari.service.CategoryService;
 import com.yu.jangtari.service.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -39,7 +38,7 @@ public class PostServiceTest extends ServiceTest {
     private PostService postService;
 
     @Mock
-    private CategoryRepository categoryRepository;
+    private CategoryService categoryService;
     @Mock
     private PostRepository postRepository;
     @Mock
@@ -58,7 +57,7 @@ public class PostServiceTest extends ServiceTest {
             Category category = makeCategory();
             Post beforePost = makePost(false);
             List<Hashtag> hashtags = makeHashtags();
-            given(categoryRepository.findById(any())).willReturn(Optional.of(category));
+            given(categoryService.getCategory(any())).willReturn(category);
             given(postRepository.save(any())).willReturn(beforePost);
             given(hashtagRepository.saveAll(any())).willReturn(hashtags);
 
@@ -80,10 +79,10 @@ public class PostServiceTest extends ServiceTest {
             Category category = makeCategory();
             Post beforePost = makePost(true);
             List<Hashtag> hashtags = makeHashtags();
-            given(categoryRepository.findById(any())).willReturn(Optional.of(category));
+            given(categoryService.getCategory(any())).willReturn(category);
             given(postRepository.save(any())).willReturn(beforePost);
             given(hashtagRepository.saveAll(any())).willReturn(hashtags);
-            given(googleDriveUtil.fileToURL(postDTO.getPictures(), GDFolder.POST)).willReturn(Arrays.asList("pic1", "pic2"));
+            given(googleDriveUtil.filesToURLs(postDTO.getPictures(), GDFolder.POST)).willReturn(Arrays.asList("pic1", "pic2"));
             // when
             Post post = postService.addPost(postDTO);
             // then
@@ -93,7 +92,7 @@ public class PostServiceTest extends ServiceTest {
                 assertThat(post.getPostHashtags().get(i).getPost()).isEqualTo(post);
             }
             assertThat(post.getComments().size()).isEqualTo(0);
-            verify(googleDriveUtil, times(1)).fileToURL(any(), any());
+            verify(googleDriveUtil, times(1)).filesToURLs(any(), any());
         }
     }
 
@@ -105,7 +104,7 @@ public class PostServiceTest extends ServiceTest {
         void addPost_No_Category_X() {
             // given
             PostDTO.Add postDTO = makePostDTOwithoutPicture();
-            given(categoryRepository.findById(any())).willReturn(Optional.empty());
+            given(categoryService.getCategory(any())).willThrow(NoSuchCategoryException.class);
             // when, then
             assertThrows(NoSuchCategoryException.class, () -> postService.addPost(postDTO));
         }
@@ -115,8 +114,8 @@ public class PostServiceTest extends ServiceTest {
             // given
             PostDTO.Add postDTO = makePostDTOwithPicture();
             Category category = makeCategory();
-            given(categoryRepository.findById(any())).willReturn(Optional.of(category));
-            given(googleDriveUtil.fileToURL(postDTO.getPictures(), GDFolder.POST)).willThrow(new GoogleDriveException());
+            given(categoryService.getCategory(any())).willReturn(category);
+            given(googleDriveUtil.filesToURLs(postDTO.getPictures(), GDFolder.POST)).willThrow(new GoogleDriveException());
             // when, then
             assertThrows(GoogleDriveException.class,() -> postService.addPost(postDTO));
         }
@@ -126,8 +125,8 @@ public class PostServiceTest extends ServiceTest {
             // given
             PostDTO.Add postDTO = makePostDTOwithPicture();
             Category category = makeCategory();
-            given(categoryRepository.findById(any())).willReturn(Optional.of(category));
-            given(googleDriveUtil.fileToURL(postDTO.getPictures(), GDFolder.POST)).willThrow(new FileTaskException());
+            given(categoryService.getCategory(any())).willReturn(category);
+            given(googleDriveUtil.filesToURLs(postDTO.getPictures(), GDFolder.POST)).willThrow(new FileTaskException());
             // when, then
             assertThrows(FileTaskException.class,() -> postService.addPost(postDTO));
         }

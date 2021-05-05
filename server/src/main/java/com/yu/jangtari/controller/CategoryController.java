@@ -1,104 +1,44 @@
 package com.yu.jangtari.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yu.jangtari.common.ErrorResponse;
-import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.DTO.CategoryDTO;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.yu.jangtari.service.CategoryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
+@RequiredArgsConstructor
 public class CategoryController {
-//
-//    @Autowired
-//    private CategoryService categoryService;
-//
-//    @GetMapping("/categories")
-//    public List<CategoryDTO.Get> getAllCategory() {
-//        List<Category> response = categoryService.getAllCategories();
-//        return null;
-//    }
-//
-//    @PostMapping("/admin/category")
-//    public ResponseEntity<CustomResponse> addCategory(@RequestPart("category") String newCategory,
-//                                                      @RequestPart("image") MultipartFile categoryImage) throws GeneralSecurityException, IOException {
-//        try{
-//            Long newId = categoryService.addCategory(newCategory, categoryImage);
-//            return new ResponseEntity<>(new CustomResponse<>(null, newId),
-//                    HttpStatus.CREATED);
-//        } catch (CustomException e){
-//            return new ResponseEntity<>(new CustomResponse<>
-//                    (new ErrorResponse(e), null),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//        return null;
-//    }
-//    @PostMapping("/admin/category/nimg")
-//    public ResponseEntity<CustomResponse> addCategory2(@RequestPart("category") String newCategory) throws GeneralSecurityException, IOException {
-//        try{
-//            Long newId = categoryService.addCategory(newCategory, null);
-//            return new ResponseEntity<>(new CustomResponse<>(null, newId),
-//                    HttpStatus.CREATED);
-//        } catch (CustomException e){
-//            return new ResponseEntity<>(new CustomResponse<>
-//                    (new ErrorResponse(e), null),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//        return null;
-//
-//    }
-//
-//    @PutMapping("/admin/category")
-//    public ResponseEntity<CustomResponse> updateCategory(@RequestPart("category") String categoryString,
-//                                                         @RequestPart("image")MultipartFile categoryImage) throws GeneralSecurityException, IOException{
-//        try {
-//            CategoryDTO.Update theCategory = new ObjectMapper().readValue(categoryString, CategoryDTO.Update.class);
-//            categoryService.updateCategory(theCategory, categoryImage);
-//            return new ResponseEntity<>(CustomResponse.OK(),
-//                    HttpStatus.ACCEPTED);
-//        } catch (CustomException e){
-//            return new ResponseEntity<>(new CustomResponse<>
-//                    (new ErrorResponse(e), null),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//        return null;
-//
-//    }
-//    @PutMapping("/admin/category/nimg")
-//    public ResponseEntity<CustomResponse> updateCategory2(@RequestPart("category") String categoryString) throws GeneralSecurityException, IOException{
-//        try {
-//            CategoryDTO.Update theCategory = new ObjectMapper().readValue(categoryString, CategoryDTO.Update.class);
-//            categoryService.updateCategory(theCategory, null);
-//            return new ResponseEntity<>(CustomResponse.OK(),
-//                    HttpStatus.ACCEPTED);
-//        } catch (CustomException e){
-//            return new ResponseEntity<>(new CustomResponse<>
-//                    (new ErrorResponse(e), null),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//        return null;
-//
-//    }
-//
-//    @DeleteMapping("/admin/category/{id}")
-//    public ResponseEntity<CustomResponse> deleteCategory(@PathVariable(value = "id") Long theId){
-//        try {
-//            categoryService.deleteCategory(theId);
-//            return new ResponseEntity<>(CustomResponse.OK(),
-//                    HttpStatus.ACCEPTED);
-//        } catch (CustomException e){
-//            return new ResponseEntity<>(new CustomResponse<>
-//                    (new ErrorResponse(e), null),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//        return null;
-//
-//    }
+    private final CategoryService categoryService;
+
+    @GetMapping("/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CategoryDTO.Get> getAllCategory() {
+        return categoryService.getAllCategories().stream().map(category -> CategoryDTO.Get.of(category)).collect(Collectors.toList());
+    }
+    @PostMapping(value = "/admin/category", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public CategoryDTO.Get addCategory(@RequestParam(value = "file", required = false) MultipartFile pictureFile, @Valid final CategoryDTO.Add categoryDTO) {
+        categoryDTO.addPictureIfExists(pictureFile);
+        return CategoryDTO.Get.of(categoryService.addCategory(categoryDTO));
+    }
+    @PostMapping(value = "/admin/category/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public CategoryDTO.Get updateCategory(@RequestParam(value = "file", required = false) MultipartFile pictureFile,
+                                          @PathVariable("id") final Long categoryId, @Valid final CategoryDTO.Update categoryDTO) {
+        categoryDTO.addPictureIfExists(pictureFile);
+        return CategoryDTO.Get.of(categoryService.updateCategory(categoryId, categoryDTO));
+    }
+    @DeleteMapping("/admin/category/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public String deleteCategory(@PathVariable(value = "id") Long categoryId){
+        categoryService.deleteCategory(categoryId);
+        return "OK";
+    }
 }
