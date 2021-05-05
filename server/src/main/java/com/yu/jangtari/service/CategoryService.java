@@ -31,19 +31,14 @@ public class CategoryService {
         final Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NoSuchCategoryException());
         return category;
     }
-
     public Category addCategory(CategoryDTO.Add categoryDTO) {
-        if (categoryDTO.getPicture().isEmpty()) return categoryRepository.save(categoryDTO.toEntity(null));
-        List<String> pictureURLs = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
-        return categoryRepository.save(categoryDTO.toEntity(pictureURLs.get(0)));
+        String pictureURL = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
+        return categoryRepository.save(categoryDTO.toEntity(pictureURL));
     }
-    public Category updateCategory(CategoryDTO.Update categoryDTO) {
-        final Category category = getCategory(categoryDTO.getId());
-        if (categoryDTO.getPicture().isEmpty()) category.updateCategory(categoryDTO, null);
-        else {
-            List<String> pictureURLS = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
-            category.updateCategory(categoryDTO, pictureURLS.get(0));
-        }
+    public Category updateCategory(Long categoryId, CategoryDTO.Update categoryDTO) {
+        final Category category = getCategory(categoryId);
+        String pictureURL = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
+        category.updateCategory(categoryDTO, pictureURL);
         return category;
     }
     public Category deleteCategory(Long categoryId) {

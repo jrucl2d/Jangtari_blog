@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     /*
-    * java.validatin.Valid 혹은 @Validated에 의해 binding error가 발생할 경우.
+    * java.validation.Valid 혹은 @Validated에 의해 binding error가 발생할 경우.
     * HttpMessageConverter에서 등록한 HttpMessageConverter가 binding에 실패할 경우.
     * @RequestBody, @RequestPart 어노테이션에서 발생
     */

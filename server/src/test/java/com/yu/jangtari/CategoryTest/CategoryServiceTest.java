@@ -61,13 +61,13 @@ public class CategoryServiceTest extends ServiceTest {
             // given
             CategoryDTO.Add categoryDTO = makeCategoryDTOwithPicture();
             Category category = categoryDTO.toEntity("pic1");
-            given(googleDriveUtil.fileToURL(any(), any())).willReturn(Arrays.asList("pic1"));
+            given(googleDriveUtil.fileToURL(any(), any())).willReturn("pic1");
             given(categoryRepository.save(any())).willReturn(category);
             // when
             Category savedCategory = categoryService.addCategory(categoryDTO);
             // then
             assertThat(savedCategory.getName()).isEqualTo(categoryDTO.getName());
-            assertThat(savedCategory.getPicture()).isEqualTo(categoryDTO.getPicture().get(0).getName());
+            assertThat(savedCategory.getPicture()).isEqualTo(categoryDTO.getPicture().getName());
             assertThat(savedCategory.getDeleteFlag().isDeleteFlag()).isFalse();
         }
         @Test
@@ -92,15 +92,15 @@ public class CategoryServiceTest extends ServiceTest {
             // given
             CategoryDTO.Add categoryDTO = makeCategoryDTOwithPicture();
             Category category = categoryDTO.toEntity("pic1");
-            given(googleDriveUtil.fileToURL(any(), any())).willReturn(Arrays.asList("pic1"));
+            given(googleDriveUtil.fileToURL(any(), any())).willReturn("pic1");
             given(categoryRepository.save(any())).willReturn(category);
             Category savedCategory = categoryService.addCategory(categoryDTO);
-            assertThat(savedCategory.getPicture()).isEqualTo(categoryDTO.getPicture().get(0).getName());
+            assertThat(savedCategory.getPicture()).isEqualTo(categoryDTO.getPicture().getName());
 
             CategoryDTO.Update updateDTO = makeUpdateCategoryDTOwithPicture();
             given(categoryRepository.findById(any())).willReturn(Optional.of(savedCategory));
             // when
-            categoryService.updateCategory(updateDTO);
+            categoryService.updateCategory(1L, updateDTO);
             // then
             verify(googleDriveUtil, times(2)).fileToURL(any(),any()); // add, update
         }
@@ -110,17 +110,17 @@ public class CategoryServiceTest extends ServiceTest {
             // given
             CategoryDTO.Add categoryDTO = makeCategoryDTOwithPicture();
             Category category = categoryDTO.toEntity("pic1");
-            given(googleDriveUtil.fileToURL(any(), any())).willReturn(Arrays.asList("pic1"));
+            given(googleDriveUtil.fileToURL(any(), any())).willReturn("pic1");
             given(categoryRepository.save(any())).willReturn(category);
             Category savedCategory = categoryService.addCategory(categoryDTO);
-            assertThat(savedCategory.getPicture()).isEqualTo(categoryDTO.getPicture().get(0).getName());
+            assertThat(savedCategory.getPicture()).isEqualTo(categoryDTO.getPicture().getName());
 
             CategoryDTO.Update updateDTO = makeUpdateCategoryDTOwithoutPicture();
             given(categoryRepository.findById(any())).willReturn(Optional.of(savedCategory));
             // when
-            Category updatedCategory = categoryService.updateCategory(updateDTO);
+            Category updatedCategory = categoryService.updateCategory(1L, updateDTO);
             // then
-            verify(googleDriveUtil, times(1)).fileToURL(any(),any()); // add
+            verify(googleDriveUtil, times(2)).fileToURL(any(),any()); // add
             assertThat(updatedCategory.getPicture()).isEqualTo("pic1");
         }
         @Test
@@ -166,34 +166,30 @@ public class CategoryServiceTest extends ServiceTest {
             CategoryDTO.Update updateDTO = makeUpdateCategoryDTOwithoutPicture();
             given(categoryRepository.findById(any())).willReturn(Optional.empty());
             // when, then
-            assertThrows(NoSuchCategoryException.class, () -> categoryService.updateCategory(updateDTO));
+            assertThrows(NoSuchCategoryException.class, () -> categoryService.updateCategory(1L, updateDTO));
         }
     }
 
     private CategoryDTO.Add makeCategoryDTOwithPicture() {
         return CategoryDTO.Add.builder()
                 .name("category")
-                .multipartFiles(Arrays.asList(new MockMultipartFile("pic1", new byte[]{0})))
+                .picture(new MockMultipartFile("pic1", new byte[]{0}))
                 .build();
     }
     private CategoryDTO.Add makeCategoryDTOwithoutPicture() {
         return CategoryDTO.Add.builder()
                 .name("category")
-                .multipartFiles(Arrays.asList())
                 .build();
     }
     private CategoryDTO.Update makeUpdateCategoryDTOwithPicture() {
         return CategoryDTO.Update.builder()
-                .id(1L)
                 .name("category")
-                .picture(Arrays.asList(new MockMultipartFile("pic2", new byte[]{0})))
+                .picture(new MockMultipartFile("pic2", new byte[]{0}))
                 .build();
     }
     private CategoryDTO.Update makeUpdateCategoryDTOwithoutPicture() {
         return CategoryDTO.Update.builder()
-                .id(1L)
                 .name("category")
-                .picture(Arrays.asList())
                 .build();
     }
 }

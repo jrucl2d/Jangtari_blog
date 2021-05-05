@@ -82,7 +82,7 @@ public class PostServiceTest extends ServiceTest {
             given(categoryService.getCategory(any())).willReturn(category);
             given(postRepository.save(any())).willReturn(beforePost);
             given(hashtagRepository.saveAll(any())).willReturn(hashtags);
-            given(googleDriveUtil.fileToURL(postDTO.getPictures(), GDFolder.POST)).willReturn(Arrays.asList("pic1", "pic2"));
+            given(googleDriveUtil.filesToURLs(postDTO.getPictures(), GDFolder.POST)).willReturn(Arrays.asList("pic1", "pic2"));
             // when
             Post post = postService.addPost(postDTO);
             // then
@@ -92,7 +92,7 @@ public class PostServiceTest extends ServiceTest {
                 assertThat(post.getPostHashtags().get(i).getPost()).isEqualTo(post);
             }
             assertThat(post.getComments().size()).isEqualTo(0);
-            verify(googleDriveUtil, times(1)).fileToURL(any(), any());
+            verify(googleDriveUtil, times(1)).filesToURLs(any(), any());
         }
     }
 
@@ -115,7 +115,7 @@ public class PostServiceTest extends ServiceTest {
             PostDTO.Add postDTO = makePostDTOwithPicture();
             Category category = makeCategory();
             given(categoryService.getCategory(any())).willReturn(category);
-            given(googleDriveUtil.fileToURL(postDTO.getPictures(), GDFolder.POST)).willThrow(new GoogleDriveException());
+            given(googleDriveUtil.filesToURLs(postDTO.getPictures(), GDFolder.POST)).willThrow(new GoogleDriveException());
             // when, then
             assertThrows(GoogleDriveException.class,() -> postService.addPost(postDTO));
         }
@@ -126,7 +126,7 @@ public class PostServiceTest extends ServiceTest {
             PostDTO.Add postDTO = makePostDTOwithPicture();
             Category category = makeCategory();
             given(categoryService.getCategory(any())).willReturn(category);
-            given(googleDriveUtil.fileToURL(postDTO.getPictures(), GDFolder.POST)).willThrow(new FileTaskException());
+            given(googleDriveUtil.filesToURLs(postDTO.getPictures(), GDFolder.POST)).willThrow(new FileTaskException());
             // when, then
             assertThrows(FileTaskException.class,() -> postService.addPost(postDTO));
         }

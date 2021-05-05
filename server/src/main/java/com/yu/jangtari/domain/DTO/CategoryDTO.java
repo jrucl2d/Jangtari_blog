@@ -5,8 +5,7 @@ import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
-import java.util.ArrayList;
-import java.util.List;
+import javax.validation.constraints.NotNull;
 
 public class CategoryDTO {
 
@@ -14,13 +13,14 @@ public class CategoryDTO {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Add{
         @NotEmpty
+        @NotNull
         private String name;
-        private List<MultipartFile> picture = new ArrayList<>();
+        private MultipartFile picture;
 
         @Builder
-        public Add(String name, List<MultipartFile> multipartFiles) {
+        public Add(String name, MultipartFile picture) {
             this.name = name;
-            this.picture = multipartFiles;
+            this.picture = picture;
         }
         public Category toEntity(String pictureURL) {
             return Category.builder()
@@ -28,21 +28,25 @@ public class CategoryDTO {
                     .picture(pictureURL)
                     .build();
         }
+        public void addPictureIfExists(MultipartFile pictureFile) {
+            if (pictureFile != null) this.picture = pictureFile;
+        }
     }
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Update{
         @NotEmpty
-        private Long id;
-        @NotEmpty
+        @NotNull
         private String name;
-        private List<MultipartFile> picture = new ArrayList<>();
+        private MultipartFile picture;
 
         @Builder
-        public Update(Long id, String name, List<MultipartFile> picture) {
-            this.id = id;
+        public Update(String name, MultipartFile picture) {
             this.name = name;
             this.picture = picture;
+        }
+        public void addPictureIfExists(MultipartFile pictureFile) {
+            if (pictureFile != null) this.picture = pictureFile;
         }
     }
 
