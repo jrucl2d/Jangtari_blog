@@ -24,15 +24,12 @@ public class CategoryController {
     }
     @PostMapping(value = "/admin/category", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDTO.Get addCategory(@RequestParam(value = "file", required = false) MultipartFile pictureFile, @Valid final CategoryDTO.Add categoryDTO) {
-        categoryDTO.addPictureIfExists(pictureFile);
+    public CategoryDTO.Get addCategory(@Valid CategoryDTO.Add categoryDTO) {
         return CategoryDTO.Get.of(categoryService.addCategory(categoryDTO));
     }
     @PostMapping(value = "/admin/category/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public CategoryDTO.Get updateCategory(@RequestParam(value = "file", required = false) MultipartFile pictureFile,
-                                          @PathVariable("id") final Long categoryId, @Valid final CategoryDTO.Update categoryDTO) {
-        categoryDTO.addPictureIfExists(pictureFile);
+    public CategoryDTO.Get updateCategory(@PathVariable("id") final Long categoryId, @Valid final CategoryDTO.Update categoryDTO) {
         return CategoryDTO.Get.of(categoryService.updateCategory(categoryId, categoryDTO));
     }
     @DeleteMapping("/admin/category/{id}")

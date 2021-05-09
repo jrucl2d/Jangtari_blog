@@ -4,16 +4,14 @@ import com.yu.jangtari.domain.Category;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 public class CategoryDTO {
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Add{
-        @NotEmpty
-        @NotNull
+        @NotBlank(message = "이름이 빈칸이면 안 됩니다.")
         private String name;
         private MultipartFile picture;
 
@@ -28,15 +26,12 @@ public class CategoryDTO {
                     .picture(pictureURL)
                     .build();
         }
-        public void addPictureIfExists(MultipartFile pictureFile) {
-            if (pictureFile != null) this.picture = pictureFile;
-        }
     }
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @ToString
     public static class Update{
-        @NotEmpty
-        @NotNull
+        @NotBlank(message = "이름이 빈칸이면 안 됩니다.")
         private String name;
         private MultipartFile picture;
 
@@ -44,9 +39,6 @@ public class CategoryDTO {
         public Update(String name, MultipartFile picture) {
             this.name = name;
             this.picture = picture;
-        }
-        public void addPictureIfExists(MultipartFile pictureFile) {
-            if (pictureFile != null) this.picture = pictureFile;
         }
     }
 
