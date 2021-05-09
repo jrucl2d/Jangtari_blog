@@ -1,33 +1,21 @@
 package com.yu.jangtari.CategoryTest;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.yu.jangtari.RepositoryTest;
+import com.yu.jangtari.IntegrationTest;
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.repository.category.CategoryRepository;
 import com.yu.jangtari.repository.category.CategoryRepositoryQuerydsl;
-import io.jsonwebtoken.lang.Collections;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@SpringBootTest
-public class QuerydslTest {
+public class CategoryQueryDslTest extends IntegrationTest {
 
     @Autowired
     private CategoryRepositoryQuerydsl repository;
