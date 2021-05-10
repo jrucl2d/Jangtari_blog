@@ -1,24 +1,21 @@
 package com.yu.jangtari.service;
 
 import com.yu.jangtari.common.GDFolder;
-import com.yu.jangtari.common.exception.FileTaskException;
-import com.yu.jangtari.common.exception.GoogleDriveException;
-import com.yu.jangtari.common.exception.NoSuchCategoryException;
+import com.yu.jangtari.common.exception.NoSuchPostException;
 import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.*;
 import com.yu.jangtari.repository.HashtagRepository;
-import com.yu.jangtari.repository.category.CategoryRepository;
 import com.yu.jangtari.repository.post.PostRepository;
 import com.yu.jangtari.domain.DTO.PostDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class PostService {
 
@@ -27,10 +24,9 @@ public class PostService {
     private final GoogleDriveUtil googleDriveUtil;
     private final CategoryService categoryService;
 
-
     public Post addPost(PostDTO.Add postDTO) {
         // 1. Category 객체 get
-        final Category category = categoryService.getCategory(postDTO.getCategoryId());
+        final Category category = categoryService.findOne(postDTO.getCategoryId());
 
         // 2. Post 객체 save, Picture 객체 save(영속성 전이)
         final Post forSavePost = postDTO.toEntity(category);
@@ -38,7 +34,7 @@ public class PostService {
         final Post savedPost = postRepository.save(forSavePost);
 
         // 3. Hashtag 객체 save
-        List<Hashtag> hashtags = hashtagRepository.saveAll(postDTO.getHashtags());
+        final List<Hashtag> hashtags = hashtagRepository.saveAll(postDTO.getHashtags());
 
         // 5. Post객체의 영속성 전이를 이용해 PostHashtag 저장
         savedPost.initPostHashtags(hashtags);
@@ -46,17 +42,15 @@ public class PostService {
         return savedPost;
     }
 
-    private void addPicturesToPostIfExist(Post forSavePost, List<MultipartFile> pictureFiles) {
-        List<String> pictureURLs = googleDriveUtil.filesToURLs(pictureFiles, GDFolder.POST);
+    @Transactional(readOnly = true)
+    public Post findOne(final Long postId) {
+        final Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchPostException());
+        return post;
+    }
+    private void addPicturesToPostIfExist(final Post forSavePost, final List<MultipartFile> pictureFiles) {
+        final List<String> pictureURLs = googleDriveUtil.filesToURLs(pictureFiles, GDFolder.POST);
         forSavePost.initPictures(pictureURLs);
     }
-    /**
-     * parallelStream을 이용, 병렬성을 이용해 사진 저장 속도 상승
-     * @param pictureFiles
-     * @return picture URL의 List
-     * @throws GeneralSecurityException Google Drive API 사용중 발생한 예외
-     * @throws IOException googleDriveUtil.getDrive()시에 발생할 수 있는 예외
-     */
 
 //    @Transactional(readOnly = true)
 //    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO, String type, String keyword) throws CustomException {

@@ -26,24 +26,24 @@ public class CategoryService {
         return categoryRepositoryQuerydsl.getAllCategories();
     }
 
-    @Transactional(readOnly = true)
-    public Category getCategory(Long categoryId) {
-        final Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NoSuchCategoryException());
-        return category;
-    }
-    public Category addCategory(CategoryDTO.Add categoryDTO) {
-        String pictureURL = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
+    public Category addCategory(final CategoryDTO.Add categoryDTO) {
+        final String pictureURL = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
         return categoryRepository.save(categoryDTO.toEntity(pictureURL));
     }
-    public Category updateCategory(Long categoryId, CategoryDTO.Update categoryDTO) {
-        final Category category = getCategory(categoryId);
-        String pictureURL = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
+    public Category updateCategory(final Long categoryId, final CategoryDTO.Update categoryDTO) {
+        final Category category = findOne(categoryId);
+        final String pictureURL = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
         category.updateCategory(categoryDTO, pictureURL);
         return category;
     }
-    public Category deleteCategory(Long categoryId) {
-        final Category category = getCategory(categoryId);
+    public Category deleteCategory(final Long categoryId) {
+        final Category category = findOne(categoryId);
         category.getDeleteFlag().softDelete();
+        return category;
+    }
+    @Transactional(readOnly = true)
+    public Category findOne(final Long categoryId) {
+        final Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NoSuchCategoryException());
         return category;
     }
 }

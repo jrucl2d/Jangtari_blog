@@ -57,7 +57,7 @@ public class PostServiceTest extends ServiceTest {
             Category category = makeCategory();
             Post beforePost = makePost(false);
             List<Hashtag> hashtags = makeHashtags();
-            given(categoryService.getCategory(any())).willReturn(category);
+            given(categoryService.findOne(any())).willReturn(category);
             given(postRepository.save(any())).willReturn(beforePost);
             given(hashtagRepository.saveAll(any())).willReturn(hashtags);
 
@@ -79,7 +79,7 @@ public class PostServiceTest extends ServiceTest {
             Category category = makeCategory();
             Post beforePost = makePost(true);
             List<Hashtag> hashtags = makeHashtags();
-            given(categoryService.getCategory(any())).willReturn(category);
+            given(categoryService.findOne(any())).willReturn(category);
             given(postRepository.save(any())).willReturn(beforePost);
             given(hashtagRepository.saveAll(any())).willReturn(hashtags);
             given(googleDriveUtil.filesToURLs(postDTO.getPictures(), GDFolder.POST)).willReturn(Arrays.asList("pic1", "pic2"));
@@ -104,7 +104,7 @@ public class PostServiceTest extends ServiceTest {
         void addPost_No_Category_X() {
             // given
             PostDTO.Add postDTO = makePostDTOwithoutPicture();
-            given(categoryService.getCategory(any())).willThrow(NoSuchCategoryException.class);
+            given(categoryService.findOne(any())).willThrow(NoSuchCategoryException.class);
             // when, then
             assertThrows(NoSuchCategoryException.class, () -> postService.addPost(postDTO));
         }
@@ -114,7 +114,7 @@ public class PostServiceTest extends ServiceTest {
             // given
             PostDTO.Add postDTO = makePostDTOwithPicture();
             Category category = makeCategory();
-            given(categoryService.getCategory(any())).willReturn(category);
+            given(categoryService.findOne(any())).willReturn(category);
             given(googleDriveUtil.filesToURLs(postDTO.getPictures(), GDFolder.POST)).willThrow(new GoogleDriveException());
             // when, then
             assertThrows(GoogleDriveException.class,() -> postService.addPost(postDTO));
@@ -125,7 +125,7 @@ public class PostServiceTest extends ServiceTest {
             // given
             PostDTO.Add postDTO = makePostDTOwithPicture();
             Category category = makeCategory();
-            given(categoryService.getCategory(any())).willReturn(category);
+            given(categoryService.findOne(any())).willReturn(category);
             given(googleDriveUtil.filesToURLs(postDTO.getPictures(), GDFolder.POST)).willThrow(new FileTaskException());
             // when, then
             assertThrows(FileTaskException.class,() -> postService.addPost(postDTO));
