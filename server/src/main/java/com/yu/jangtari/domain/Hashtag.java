@@ -11,14 +11,10 @@ import java.util.List;
 @Entity
 @Table(name = "hashtag")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of="id", callSuper = false)
+@EqualsAndHashCode(of="content", callSuper = false)
 public class Hashtag extends DateAuditing{
     @Id
-    @Column(name = "hashtag_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
+    @Column(name = "hashtag", nullable = false)
     private String content;
 
     @OneToMany(mappedBy = "hashtag")
