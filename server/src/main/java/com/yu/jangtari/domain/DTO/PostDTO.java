@@ -23,10 +23,7 @@ public class PostDTO {
         private int template;
     }
     @Getter
-    @Setter
-    @ToString
-    @AllArgsConstructor
-    @NoArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetOne{
         private Long id;
         private String title;
@@ -34,6 +31,28 @@ public class PostDTO {
         private List<CommentDTO.Get> comments = new ArrayList<>();
         private List<PictureDTO> pictures = new ArrayList<>();
         private List<String> hashtags = new ArrayList<>();
+
+        @Builder
+        public GetOne(Long id, String title, String content, List<CommentDTO.Get> comments, List<PictureDTO> pictures, List<String> hashtags) {
+            this.id = id;
+            this.title = title;
+            this.content = content;
+            this.comments = comments;
+            this.pictures = pictures;
+            this.hashtags = hashtags;
+        }
+        public static GetOne of(final Post post) {
+            return GetOne.builder()
+                    .id(post.getId())
+                    .title(post.getTitle())
+                    .content(post.getContent())
+                    .comments(null) // 여기 변경 필요
+                    .pictures(post.getPictures().stream().map(picture ->
+                        PictureDTO.builder().id(picture.getId()).picture(picture.getUrl()).build()
+                    ).collect(Collectors.toList()))
+                    .hashtags(post.getPostHashtags().stream().map(postHashtag -> postHashtag.getHashtag().getContent()).collect(Collectors.toList()))
+                    .build();
+        }
     }
 
     @Getter
@@ -62,7 +81,7 @@ public class PostDTO {
             this.pictures = pictures;
         }
 
-        public Post toEntity(Category category) {
+        public Post toEntity(final Category category) {
             return Post.builder()
                     .category(category)
                     .title(title)

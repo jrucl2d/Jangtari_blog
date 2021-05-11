@@ -1,43 +1,20 @@
 package com.yu.jangtari.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yu.jangtari.common.ErrorResponse;
-import com.yu.jangtari.domain.Category;
-import com.yu.jangtari.domain.Post;
-import com.yu.jangtari.repository.post.PostRepository;
-import com.yu.jangtari.vo.PageMakerVO;
-import com.yu.jangtari.vo.PageVO;
 import com.yu.jangtari.domain.DTO.PostDTO;
 import com.yu.jangtari.service.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.List;
-import java.util.stream.IntStream;
 
 
 @Controller
+@RequiredArgsConstructor
 public class PostController {
 
-    @Autowired
-    private PostService postService;
-
-    @Autowired
-    private PostRepository postRepository;
+    private final PostService postService;
 
 
-//    @GetMapping("almighty/hashtag/clean")
-//    public @ResponseBody String cleanTrashHashtags(){
-//        postService.deleteTrashHashtags();
-//        return "haha";
-//    }
-//
 //    @GetMapping("/bulk")
 //    public ResponseEntity<CustomResponse> theBulk(){
 //        IntStream.range(0, 300).forEach(i -> {
@@ -70,13 +47,11 @@ public class PostController {
 //        }
 //    }
 //
-//    @GetMapping("/post/{id}")
-//    public ResponseEntity<CustomResponse> getPost(@PathVariable(value = "id") Long postId){
-//        PostDTO.GetOne result = postService.getPost(postId);
-//        return new ResponseEntity<>(new CustomResponse<>
-//                (null, result),
-//                HttpStatus.OK);
-//    }
+    @GetMapping("/post/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public PostDTO.GetOne getPost(@PathVariable(value = "id") Long postId){
+        return PostDTO.GetOne.of(postService.findOne(postId));
+    }
 //
 //    @PostMapping("/admin/post")
 //    public ResponseEntity<CustomResponse> addPost(@RequestPart("post") String postString,
