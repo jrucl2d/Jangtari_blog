@@ -39,6 +39,12 @@ public class MemberService {
         return member;
     }
 
+    @Transactional(readOnly = true)
+    public Member getMemberByName(String username) {
+        return memberRepository.findByUsername(username).orElseThrow(() -> new NoSuchMemberException());
+    }
+
+
 //    public ResponseEntity<CustomResponse> jangtariUpdate(String jangtariString, MultipartFile jangtariImage) throws IOException, GeneralSecurityException {
 //        Optional<Member> memberO = memberRepository.findById(1L);
 //        if(!memberO.isPresent()){

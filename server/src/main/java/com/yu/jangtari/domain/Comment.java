@@ -46,4 +46,17 @@ public class Comment extends DateAuditing{
         this.post = post;
         this.deleteFlag = DeleteFlag.initDeleteFlag();
     }
+    public void initPostAndMember(final Post post, final Member member) {
+        this.post = post;
+        this.member = member;
+        post.addComment(this);
+    }
+    public Comment addChildComment(final Comment comment) {
+        comment.initParentComment(this);
+        this.childComments.add(comment);
+        return this;
+    }
+    private void initParentComment(final Comment comment) {
+        this.parentComment = comment;
+    }
 }
