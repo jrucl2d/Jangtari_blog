@@ -8,7 +8,7 @@ import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.DTO.CategoryDTO;
 import com.yu.jangtari.repository.category.CategoryRepository;
-import com.yu.jangtari.repository.category.CategoryRepositoryQuerydsl;
+import com.yu.jangtari.repository.category.CategoryRepositoryImpl;
 import com.yu.jangtari.service.CategoryService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,8 +35,6 @@ public class CategoryServiceTest extends ServiceTest {
     GoogleDriveUtil googleDriveUtil;
     @Mock
     CategoryRepository categoryRepository;
-    @Mock
-    CategoryRepositoryQuerydsl repositoryQuerydsl;
 
     @Nested
     @DisplayName("성공 테스트")
@@ -77,7 +75,7 @@ public class CategoryServiceTest extends ServiceTest {
             CategoryDTO.Add categoryDTO = makeCategoryDTOwithoutPicture();
             Category category = categoryDTO.toEntity("pic1");
             given(categoryRepository.save(any())).willReturn(category);
-            given(repositoryQuerydsl.getAllCategories()).willReturn(Arrays.asList(category, category, category));
+            given(categoryRepository.getAllCategories()).willReturn(Arrays.asList(category, category, category));
             // when
             categoryService.addCategory(categoryDTO);
             categoryService.addCategory(categoryDTO);

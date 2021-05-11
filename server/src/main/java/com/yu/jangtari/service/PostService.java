@@ -42,7 +42,12 @@ public class PostService {
         return savedPost;
     }
 
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
+//    public Post getOne(final Long postId) {
+//        postRepository.getOnePost(postId);
+//    }
+
+
     public Post findOne(final Long postId) {
         final Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchPostException());
         return post;

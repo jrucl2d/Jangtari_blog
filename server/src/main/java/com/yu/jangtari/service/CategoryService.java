@@ -6,7 +6,6 @@ import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.DTO.CategoryDTO;
 import com.yu.jangtari.repository.category.CategoryRepository;
-import com.yu.jangtari.repository.category.CategoryRepositoryQuerydsl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,12 +17,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
-    private final CategoryRepositoryQuerydsl categoryRepositoryQuerydsl;
     private final GoogleDriveUtil googleDriveUtil;
 
     @Transactional(readOnly = true)
     public List<Category> getAllCategories(){
-        return categoryRepositoryQuerydsl.getAllCategories();
+        return categoryRepository.getAllCategories();
     }
 
     public Category addCategory(final CategoryDTO.Add categoryDTO) {

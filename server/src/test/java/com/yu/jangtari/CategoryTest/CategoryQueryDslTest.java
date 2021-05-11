@@ -3,7 +3,6 @@ package com.yu.jangtari.CategoryTest;
 import com.yu.jangtari.IntegrationTest;
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.repository.category.CategoryRepository;
-import com.yu.jangtari.repository.category.CategoryRepositoryQuerydsl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,9 +17,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class CategoryQueryDslTest extends IntegrationTest {
 
     @Autowired
-    private CategoryRepositoryQuerydsl repository;
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private CategoryRepository repository;
 
     @Nested
     @DisplayName("성공 테스트")
@@ -31,7 +28,7 @@ public class CategoryQueryDslTest extends IntegrationTest {
             // given
             List<Category> categories = makeCategories();
             // when
-            categoryRepository.saveAll(categories);
+            repository.saveAll(categories);
             // then
             assertThat(repository.getAllCategories().size()).isEqualTo(10);
         }
