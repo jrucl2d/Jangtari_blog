@@ -38,5 +38,15 @@ public class CommentDomainTest {
         assertThat(comment.getChildComments().size()).isEqualTo(1);
         assertThat(childComment.getParentComment()).isNotNull();
     }
-
+    @Test
+    @DisplayName("Commentdp Post와 Member 추가 성공")
+    void initPostAndMember_O() {
+        Post post = Post.builder().build();
+        Member member = Member.builder().build();
+        Comment comment = Comment.builder().build();
+        comment.initPostAndMember(post, member);
+        assertThat(comment.getMember()).isNotNull();
+        assertThat(comment.getPost()).isNotNull();
+        assertThat(comment.getPost().getComments().get(0)).isEqualTo(comment);
+    }
 }

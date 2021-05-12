@@ -4,6 +4,8 @@ package com.yu.jangtari.domain.DTO;
 import com.yu.jangtari.domain.Member;
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
+
 public class MemberDTO {
 
     @Getter
@@ -23,14 +25,29 @@ public class MemberDTO {
     }
 
     @Getter
-    @Setter
-    @ToString
-    @AllArgsConstructor
-    @NoArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Add {
+        @NotBlank(message = "아이디가 빈칸이면 안 됩니다.")
         private String username;
+        @NotBlank(message = "닉네임이 빈칸이면 안 됩니다.")
         private String nickname;
+        @NotBlank(message = "비밀번호가 빈칸이면 안 됩니다.")
         private String password;
+
+        @Builder
+        public Add(String username, String nickname, String password) {
+            this.username = username;
+            this.nickname = nickname;
+            this.password = password;
+        }
+
+        public Member toEntity() {
+            return Member.builder()
+                    .username(username)
+                    .nickname(nickname)
+                    .password(password)
+                    .build();
+        }
     }
     @Getter
     @Setter

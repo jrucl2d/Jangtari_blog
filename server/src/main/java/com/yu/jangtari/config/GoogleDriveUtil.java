@@ -70,13 +70,13 @@ public class GoogleDriveUtil {
 
     /**
      * Google Drive API를 사용해 파일을 구글 드라이브에 저장하고 저장한 URL을 리턴해주는 메소드
-     * 사진 파일이 비었거나(isEmpty()) 없으면(null) 각각 emptyList 혹은 null을 리턴
+     * 사진 파일이 없으면(null) null을 리턴
      * @param pictureFiles 사진 파일
      * @param gdFolder     카테고리/포스트/사람 사진
      * @return URL의 리스트 / URL
      */
     public List<String> filesToURLs(List<MultipartFile> pictureFiles, GDFolder gdFolder) {
-        if (pictureFiles.isEmpty()) return Collections.emptyList();
+        if (pictureFiles == null) return Collections.emptyList();
         List<String> pictureURLs;
         try {
             Drive drive = getDrive();

@@ -44,6 +44,10 @@ public class MemberService {
         return memberRepository.findByUsername(username).orElseThrow(() -> new NoSuchMemberException());
     }
 
+    public Member addMember(MemberDTO.Add memberDTO) {
+        return memberRepository.save(memberDTO.toEntity());
+    }
+
 
 //    public ResponseEntity<CustomResponse> jangtariUpdate(String jangtariString, MultipartFile jangtariImage) throws IOException, GeneralSecurityException {
 //        Optional<Member> memberO = memberRepository.findById(1L);
