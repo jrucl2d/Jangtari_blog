@@ -47,7 +47,6 @@ public class PostService {
 //        postRepository.getOnePost(postId);
 //    }
 
-
     public Post findOne(final Long postId) {
         final Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchPostException());
         return post;

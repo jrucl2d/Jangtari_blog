@@ -1,37 +1,32 @@
-//package com.yu.jangtari.repository.post;
-//
-//import com.querydsl.core.QueryResults;
-//import com.querydsl.core.Tuple;
-//import com.querydsl.jpa.JPQLQuery;
-//import com.querydsl.jpa.impl.JPAQuery;
-//import com.querydsl.jpa.impl.JPAQueryFactory;
-//import com.yu.jangtari.domain.DTO.HashtagDTO;
-//import com.yu.jangtari.vo.PageMakerVO;
-//import com.yu.jangtari.vo.PageVO;
-//import com.yu.jangtari.domain.*;
-//import com.yu.jangtari.domain.DTO.CommentDTO;
-//import com.yu.jangtari.domain.DTO.PictureDTO;
-//import com.yu.jangtari.domain.DTO.PostDTO;
-//import org.springframework.data.domain.PageImpl;
-//import org.springframework.data.domain.Pageable;
-//import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
-//import org.springframework.stereotype.Repository;
-//
-//import javax.persistence.EntityManager;
-//import javax.persistence.PersistenceContext;
-//import java.util.ArrayList;
-//import java.util.List;
-//
-//@Repository
-//public class PostRepositoryImpl extends QuerydslRepositorySupport implements CustomPostRepository {
-//
-//    @PersistenceContext
-//    EntityManager em;
-//
-//    public PostRepositoryImpl(){
-//        super(Post.class);
-//    }
-//
+package com.yu.jangtari.repository.post;
+
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.yu.jangtari.domain.*;
+import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+
+public class PostRepositoryImpl extends QuerydslRepositorySupport implements CustomPostRepository {
+
+    private JPAQueryFactory jpaQueryFactory;
+
+    public PostRepositoryImpl(JPAQueryFactory jpaQueryFactory){
+        super(Post.class);
+        this.jpaQueryFactory = jpaQueryFactory;
+    }
+
+    /**
+     * Post 정보와 함께 Comment, Picture, Hashtag 정보도 같이 리턴해야 함
+     */
+    @Override
+    public Post getOne(Long postId) {
+        QPost post = QPost.post;
+        return jpaQueryFactory.selectFrom(post)
+                .where(post.id.eq(postId))
+                .leftJoin(post.comments)
+                .leftJoin(post.pictures)
+                .leftJoin(post.postHashtags)
+                .fetchOne();
+    }
+
 //    @Override
 //    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO, String type, String keyword) {
 //        Pageable pageable = pageVO.makePageable("DESC", "createddate");
@@ -135,4 +130,4 @@
 //        query.where(hashtag.hashtag.in(hashtags));
 //        return query.fetch();
 //    }
-//}
+}

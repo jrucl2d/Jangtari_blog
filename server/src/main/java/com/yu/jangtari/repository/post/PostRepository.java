@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface PostRepository extends CrudRepository<Post, Long> {
+public interface PostRepository extends CrudRepository<Post, Long>, CustomPostRepository {
 
 //    @Modifying
 //    @Query(value = "delete from hashtag where hashtag.id not in (select hashtag_id from post_hashtag)", nativeQuery = true)

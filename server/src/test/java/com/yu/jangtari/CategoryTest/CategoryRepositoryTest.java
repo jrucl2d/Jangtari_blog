@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class CategoryQueryDslTest extends IntegrationTest {
+public class CategoryRepositoryTest extends IntegrationTest {
 
     @Autowired
     private CategoryRepository repository;

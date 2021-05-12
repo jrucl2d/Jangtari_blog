@@ -54,16 +54,18 @@ public class Post extends DateAuditing {
         this.category = category;
         this.deleteFlag = DeleteFlag.initDeleteFlag();
     }
-
     public void initPictures(List<String> pictures) {
         this.pictures = pictures.stream().map(url -> Picture.builder().post(this).url(url).build()).collect(Collectors.toList());
     }
-
     public void initPostHashtags(List<Hashtag> hashtags) {
         this.postHashtags = hashtags.stream().map(hashtag ->
                 PostHashtag.builder()
                         .post(this)
                         .hashtag(hashtag)
                         .build()).collect(Collectors.toList());
+    }
+
+    public void addComment(final Comment comment) {
+        this.getComments().add(comment);
     }
 }

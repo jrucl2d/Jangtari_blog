@@ -1,5 +1,8 @@
 package com.yu.jangtari.domain.DTO;
 
+import com.yu.jangtari.domain.Comment;
+import com.yu.jangtari.domain.Member;
+import com.yu.jangtari.domain.Post;
 import lombok.*;
 
 public class CommentDTO {
@@ -17,15 +20,18 @@ public class CommentDTO {
     }
 
     @Getter
-    @Setter
-    @ToString
-    @AllArgsConstructor
-    @NoArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Add{
         private Long postId;
         private String commenter;
-        private String comment;
-        private Long recommentId;
+        private String content;
+        private Long parentCommentId;
+
+        public Comment toEntity() {
+            return Comment.builder()
+                    .content(content)
+                    .build();
+        }
     }
     @Getter
     @Setter
