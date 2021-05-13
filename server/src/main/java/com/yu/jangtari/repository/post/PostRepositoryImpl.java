@@ -4,6 +4,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yu.jangtari.domain.*;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
+import java.util.Optional;
+
 public class PostRepositoryImpl extends QuerydslRepositorySupport implements CustomPostRepository {
 
     private JPAQueryFactory jpaQueryFactory;
@@ -17,14 +19,14 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
      * Post 정보와 함께 Comment, Picture, Hashtag 정보도 같이 리턴해야 함
      */
     @Override
-    public Post getOne(Long postId) {
+    public Optional<Post> getOne(Long postId) {
         QPost post = QPost.post;
-        return jpaQueryFactory.selectFrom(post)
+        return Optional.of(jpaQueryFactory.selectFrom(post)
                 .where(post.id.eq(postId))
                 .leftJoin(post.comments)
                 .leftJoin(post.pictures)
                 .leftJoin(post.postHashtags)
-                .fetchOne();
+                .fetchOne());
     }
 
 //    @Override
