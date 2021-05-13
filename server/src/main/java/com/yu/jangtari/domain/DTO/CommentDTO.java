@@ -52,5 +52,12 @@ public class CommentDTO {
         private Long id;
         private String commenter;
         private String comment;
+
+        @Builder
+        public Update(Long id, String commenter, String comment) {
+            this.id = id;
+            this.commenter = commenter;
+            this.comment = comment;
+        }
     }
 }

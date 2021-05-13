@@ -11,7 +11,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(of="id", callSuper = false)
 public class Picture extends DateAuditing {
     @Id
-    @Column(name = "picture")
+    @Column(name = "picture_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

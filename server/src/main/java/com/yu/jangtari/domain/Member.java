@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of="id", callSuper = false) // 상속받은 객체에서 발생하는 에러 문구 제거
+@EqualsAndHashCode(of={"id", "username"}, callSuper = false) // 상속받은 객체에서 발생하는 에러 문구 제거
 public class Member extends DateAuditing {
     @Id
     @Column(name = "member_id")
