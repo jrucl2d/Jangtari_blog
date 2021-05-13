@@ -1,6 +1,7 @@
 package com.yu.jangtari.CategoryTest;
 
 import com.yu.jangtari.IntegrationTest;
+import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.DTO.CategoryDTO;
 import com.yu.jangtari.repository.category.CategoryRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -41,7 +41,7 @@ public class CategoryIntegreTest extends IntegrationTest {
         void put_O1() throws Exception {
             // given
             CategoryDTO.Add addDTO = makeCategoryDTOwithPicture();
-            categoryRepository.save(addDTO.toEntity("url"));
+            Category category = categoryRepository.save(addDTO.toEntity("url"));
 
             CategoryDTO.Update categoryDTO = makeUpdateCategoryDTOwithoutPicture();
             mockMvc.perform(multipart("/admin/category/1").param("name", categoryDTO.getName()))

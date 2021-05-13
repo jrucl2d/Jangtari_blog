@@ -1,5 +1,6 @@
 package com.yu.jangtari.domain;
 
+import com.yu.jangtari.domain.DTO.CommentDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -58,5 +59,9 @@ public class Comment extends DateAuditing{
     }
     private void initParentComment(final Comment comment) {
         this.parentComment = comment;
+    }
+
+    public void updateComemnt(CommentDTO.Update commentDTO) {
+        this.content = commentDTO.getComment();
     }
 }

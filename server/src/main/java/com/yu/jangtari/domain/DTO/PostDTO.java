@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -90,6 +91,7 @@ public class PostDTO {
                     .build();
         }
         public List<Hashtag> getHashtags() {
+            if (hashtags == null) return Arrays.asList(); // return EmptyList
             return hashtags.stream().map(hashtagString -> new Hashtag(hashtagString)).collect(Collectors.toList());
         }
     }
