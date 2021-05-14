@@ -26,9 +26,10 @@ public class PostService {
     private final CategoryService categoryService;
 
 
+    // Comment, PostHashtag, Picture을 join해서 같이 가져옴
     @Transactional(readOnly = true)
     public Post getOne(final Long postId) {
-        return postRepository.getOne(postId).orElseThrow(() -> new NoSuchMemberException());
+        return postRepository.getOne(postId).orElseThrow(() -> new NoSuchPostException());
     }
 
     public Post findOne(final Long postId) {
@@ -127,11 +128,14 @@ public class PostService {
 //        }
 //    }
 
-//    public void deletePost(Long postId) throws CustomException{
-//        try{
-//            postRepository.deleteById(postId);
-//        } catch (Exception e){
-//            throw new CustomException("존재하지 않는 게시글입니다.", "게시글 삭제 실패 : id = " + postId);
-//        }
-//    }
+    /**
+     * Post에 연관된 Comment, Post-Hashtag, Picture을 softDelete 처리해야 함
+     */
+    public void deletePost(Long postId) {
+        Post post = getOne(postId);
+        post.getComments().forEach(comment -> comment.getDeleteFlag().softDelete());
+        post.getPictures().forEach(picture -> picture.getDeleteFlag().softDelete());
+        post.getPostHashtags().forEach(postHashtag -> postHashtag.getDeleteFlag().softDelete());
+        post.getDeleteFlag().softDelete();
+    }
 }

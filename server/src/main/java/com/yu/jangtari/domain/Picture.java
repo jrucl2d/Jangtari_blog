@@ -22,9 +22,13 @@ public class Picture extends DateAuditing {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @Embedded
+    private DeleteFlag deleteFlag;
+
     @Builder
     public Picture(String url, Post post) {
         this.url = url;
         this.post = post;
+        this.deleteFlag = DeleteFlag.initDeleteFlag();
     }
 }

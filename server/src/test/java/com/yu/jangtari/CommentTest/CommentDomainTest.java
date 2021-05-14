@@ -14,9 +14,8 @@ public class CommentDomainTest {
         Comment comment = Comment
                 .builder()
                 .content("content")
-                .post(Post.builder().build())
-                .member(Member.builder().build())
                 .build();
+        comment.initPostAndMember(Post.builder().build(), Member.builder().build());
         assertThat(comment).isNotNull();
     }
     @Test
@@ -25,15 +24,13 @@ public class CommentDomainTest {
         Comment comment = Comment
                 .builder()
                 .content("content")
-                .post(Post.builder().build())
-                .member(Member.builder().build())
                 .build();
+        comment.initPostAndMember(Post.builder().build(), Member.builder().build());
         Comment childComment = Comment
                 .builder()
                 .content("child_content")
-                .post(Post.builder().build())
-                .member(Member.builder().build())
                 .build();
+        childComment.initPostAndMember(Post.builder().build(), Member.builder().build());
         comment.addChildComment(childComment);
         assertThat(comment.getChildComments().size()).isEqualTo(1);
         assertThat(childComment.getParentComment()).isNotNull();

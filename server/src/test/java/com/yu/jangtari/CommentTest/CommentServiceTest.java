@@ -105,7 +105,8 @@ public class CommentServiceTest extends ServiceTest {
         Post post = makePost();
         Member member = makeMember();
         Comment comment = makeComment(post, member);
-        Comment childComment = Comment.builder().post(post).member(member).content("child").build();
+        Comment childComment = Comment.builder().content("child").build();
+        comment.initPostAndMember(post, member);
         comment.addChildComment(childComment);
         given(commentRepository.findById(anyLong())).willReturn(Optional.of(childComment));
         // when
@@ -123,7 +124,8 @@ public class CommentServiceTest extends ServiceTest {
         Post post = makePost();
         Member member = makeMember();
         Comment comment = makeComment(post, member);
-        Comment childComment = Comment.builder().post(post).member(member).content("child").build();
+        Comment childComment = Comment.builder().content("child").build();
+        comment.initPostAndMember(post, member);
         comment.addChildComment(childComment);
         given(commentRepository.findById(anyLong())).willReturn(Optional.of(comment));
         // when
@@ -134,7 +136,9 @@ public class CommentServiceTest extends ServiceTest {
     }
 
     private Comment makeComment(Post post, Member member) {
-        return Comment.builder().content("content").post(post).member(member).build();
+        Comment comment = Comment.builder().content("content").build();
+        comment.initPostAndMember(post, member);
+        return comment;
     }
     private Post makePost() {
         return Post.builder().content("content").title("title").build();
