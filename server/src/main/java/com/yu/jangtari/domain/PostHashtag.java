@@ -7,6 +7,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@ToString(exclude = {"post"})
 @Table(name="post_hashtag")
 @EqualsAndHashCode(of="id", callSuper = false)
 public class PostHashtag extends DateAuditing{

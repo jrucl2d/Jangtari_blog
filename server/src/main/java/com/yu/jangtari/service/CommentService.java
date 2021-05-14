@@ -53,9 +53,7 @@ public class CommentService {
         return comment;
     }
 
-    /**
-     * Member 엔티티에 equals, hashCode가 id를 기반으로 구현되어 있다.
-     */
+    // Member 엔티티에 equals, hashCode가 id와 username을 기반으로 구현되어 있다.
     private void verifyCommenter(final String username, final Comment comment) {
         Member member = memberService.getMemberByName(username);
         if (!comment.getMember().equals(member)) {
@@ -65,7 +63,7 @@ public class CommentService {
 
     // 대댓글까지 모두 삭제, dirty checking을 사용
     public void deleteComment(Long commentId) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchCommentException());
+        Comment comment = getComment(commentId);
         deleteChildcomments(comment);
         comment.getDeleteFlag().softDelete();
     }

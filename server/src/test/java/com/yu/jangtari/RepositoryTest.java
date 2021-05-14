@@ -18,4 +18,5 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @Import(QuerydslConfig.class)
 @ActiveProfiles("test")
 public class RepositoryTest {
+
 }

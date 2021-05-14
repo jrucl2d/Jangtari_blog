@@ -41,10 +41,8 @@ public class Comment extends DateAuditing{
     private DeleteFlag deleteFlag;
 
     @Builder
-    public Comment(String content, Member member, Post post) {
+    public Comment(String content) {
         this.content = content;
-        this.member = member;
-        this.post = post;
         this.deleteFlag = DeleteFlag.initDeleteFlag();
     }
     public void initPostAndMember(final Post post, final Member member) {

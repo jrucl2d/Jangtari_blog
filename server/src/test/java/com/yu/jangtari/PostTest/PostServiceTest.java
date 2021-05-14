@@ -5,11 +5,10 @@ import com.yu.jangtari.common.GDFolder;
 import com.yu.jangtari.common.exception.FileTaskException;
 import com.yu.jangtari.common.exception.GoogleDriveException;
 import com.yu.jangtari.common.exception.NoSuchCategoryException;
+import com.yu.jangtari.common.exception.NoSuchPostException;
 import com.yu.jangtari.config.GoogleDriveUtil;
-import com.yu.jangtari.domain.Category;
+import com.yu.jangtari.domain.*;
 import com.yu.jangtari.domain.DTO.PostDTO;
-import com.yu.jangtari.domain.Hashtag;
-import com.yu.jangtari.domain.Post;
 import com.yu.jangtari.repository.HashtagRepository;
 import com.yu.jangtari.repository.post.PostRepository;
 import com.yu.jangtari.service.CategoryService;
@@ -25,10 +24,12 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -47,8 +48,8 @@ public class PostServiceTest extends ServiceTest {
     private GoogleDriveUtil googleDriveUtil;
 
     @Nested
-    @DisplayName("성공 테스트")
-    class SuccessTest {
+    @DisplayName("addPost 테스트")
+    class AddPostTest {
         @Test
         @DisplayName("addPost picture X, 성공")
         void addPost_without_picture_O() {
@@ -94,11 +95,6 @@ public class PostServiceTest extends ServiceTest {
             assertThat(post.getComments().size()).isEqualTo(0);
             verify(googleDriveUtil, times(1)).filesToURLs(any(), any());
         }
-    }
-
-    @Nested
-    @DisplayName("실패 테스트")
-    class FailureTest {
         @Test
         @DisplayName("addPost NoSuchCategoryException 발생")
         void addPost_No_Category_X() {
@@ -129,6 +125,52 @@ public class PostServiceTest extends ServiceTest {
             given(googleDriveUtil.filesToURLs(postDTO.getPictures(), GDFolder.POST)).willThrow(new FileTaskException());
             // when, then
             assertThrows(FileTaskException.class,() -> postService.addPost(postDTO));
+        }
+    }
+
+    @Nested
+    @DisplayName("getOne 테스트")
+    class GetOneTest {
+        @Test
+        @DisplayName("postId로 getOne 성공")
+        void getOne_O() {
+            // given
+            Post post = Post.builder().build();
+            given(postRepository.getOne(anyLong())).willReturn(Optional.of(post));
+            // when
+            Post findPost = postService.getOne(1L);
+            // then
+            assertThat(post).isEqualTo(findPost);
+        }
+        @Test
+        @DisplayName("없는 postId로 getOne시 NoSuchPostException발생")
+        void getOne_X() {
+            // given
+            given(postRepository.getOne(anyLong())).willReturn(Optional.empty());
+            // when
+            // then
+            assertThrows(NoSuchPostException.class, () -> postService.getOne(1L));
+        }
+    }
+    @Nested
+    @DisplayName("deletePost 테스트")
+    class DeletePostTest {
+        @Test
+        @DisplayName("deletePost 수행시 연관된 comment, picture, postHastag 모두 delete 처리 성공")
+        void deletePost_O() {
+            // given
+            Post post = Post.builder().build();
+            post.initPictures(Arrays.asList("picture1", "picture2"));
+            post.addComment(Comment.builder().build());
+            post.initPostHashtags(Arrays.asList(new Hashtag("h1"), new Hashtag("h2")));
+            given(postRepository.getOne(anyLong())).willReturn(Optional.of(post));
+            // when
+            postService.deletePost(1L);
+            // then
+            assertThat(post.getDeleteFlag().isDeleteFlag()).isTrue();
+            post.getPictures().forEach(picture -> assertThat(picture.getDeleteFlag().isDeleteFlag()).isTrue());
+            post.getComments().forEach(comment -> assertThat(comment.getDeleteFlag().isDeleteFlag()).isTrue());
+            post.getPostHashtags().forEach(postHashtag -> assertThat(postHashtag.getDeleteFlag().isDeleteFlag()).isTrue());
         }
     }
 

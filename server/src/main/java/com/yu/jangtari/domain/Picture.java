@@ -11,7 +11,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(of="id", callSuper = false)
 public class Picture extends DateAuditing {
     @Id
-    @Column(name = "picture")
+    @Column(name = "picture_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -22,9 +22,13 @@ public class Picture extends DateAuditing {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @Embedded
+    private DeleteFlag deleteFlag;
+
     @Builder
     public Picture(String url, Post post) {
         this.url = url;
         this.post = post;
+        this.deleteFlag = DeleteFlag.initDeleteFlag();
     }
 }

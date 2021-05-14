@@ -1,6 +1,7 @@
 package com.yu.jangtari.service;
 
 import com.yu.jangtari.common.GDFolder;
+import com.yu.jangtari.common.exception.NoSuchMemberException;
 import com.yu.jangtari.common.exception.NoSuchPostException;
 import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.*;
@@ -24,6 +25,18 @@ public class PostService {
     private final GoogleDriveUtil googleDriveUtil;
     private final CategoryService categoryService;
 
+
+    // Comment, PostHashtag, Picture을 join해서 같이 가져옴
+    @Transactional(readOnly = true)
+    public Post getOne(final Long postId) {
+        return postRepository.getOne(postId).orElseThrow(() -> new NoSuchPostException());
+    }
+
+    public Post findOne(final Long postId) {
+        final Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchPostException());
+        return post;
+    }
+
     public Post addPost(PostDTO.Add postDTO) {
         // 1. Category 객체 get
         final Category category = categoryService.findOne(postDTO.getCategoryId());
@@ -42,15 +55,6 @@ public class PostService {
         return savedPost;
     }
 
-    @Transactional(readOnly = true)
-    public Post getOne(final Long postId) {
-        return findOne(postId);
-    }
-
-    public Post findOne(final Long postId) {
-        final Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchPostException());
-        return post;
-    }
     private void addPicturesToPostIfExist(final Post forSavePost, final List<MultipartFile> pictureFiles) {
         final List<String> pictureURLs = googleDriveUtil.filesToURLs(pictureFiles, GDFolder.POST);
         forSavePost.initPictures(pictureURLs);
@@ -60,11 +64,7 @@ public class PostService {
 //    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO, String type, String keyword) throws CustomException {
 //        return postRepository.getPostList(categoryId, pageVO, type, keyword);
 //    }
-//
-//    @Transactional(readOnly = true)
-//    public PostDTO.GetOne getPost(Long postId) {
-//        return postRepository.getPost(postId);
-//    }
+
 //    @Transactional
 //    public void updatePost(PostDTO.Update thePost, List<MultipartFile> postImages) throws CustomException, GeneralSecurityException, IOException {
 //        Optional<Post> postOp = postRepository.findById(thePost.getId());
@@ -127,12 +127,15 @@ public class PostService {
 //            throw new CustomException("존재하지 않는 게시글입니다.", "게시글 수정 실패 : id = " + thePost.getId());
 //        }
 //    }
-//
-//    public void deletePost(Long postId) throws CustomException{
-//        try{
-//            postRepository.deleteById(postId);
-//        } catch (Exception e){
-//            throw new CustomException("존재하지 않는 게시글입니다.", "게시글 삭제 실패 : id = " + postId);
-//        }
-//    }
+
+    /**
+     * Post에 연관된 Comment, Post-Hashtag, Picture을 softDelete 처리해야 함
+     */
+    public void deletePost(Long postId) {
+        Post post = getOne(postId);
+        post.getComments().forEach(comment -> comment.getDeleteFlag().softDelete());
+        post.getPictures().forEach(picture -> picture.getDeleteFlag().softDelete());
+        post.getPostHashtags().forEach(postHashtag -> postHashtag.getDeleteFlag().softDelete());
+        post.getDeleteFlag().softDelete();
+    }
 }

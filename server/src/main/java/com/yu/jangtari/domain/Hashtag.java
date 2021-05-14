@@ -12,9 +12,9 @@ import java.util.List;
 @Table(name = "hashtag")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of="content", callSuper = false)
-public class Hashtag extends DateAuditing{
+public class Hashtag extends DateAuditing {
     @Id
-    @Column(name = "hashtag", nullable = false)
+    @Column(name = "hashtag")
     private String content;
 
     @OneToMany(mappedBy = "hashtag")
