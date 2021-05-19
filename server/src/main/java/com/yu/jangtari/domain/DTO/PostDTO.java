@@ -2,6 +2,7 @@ package com.yu.jangtari.domain.DTO;
 
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.Hashtag;
+import com.yu.jangtari.domain.Picture;
 import com.yu.jangtari.domain.Post;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -124,6 +125,10 @@ public class PostDTO {
         public List<Hashtag> getHashtags() {
             if (hashtags == null) return Arrays.asList();
             return hashtags.stream().map(hashtagString -> new Hashtag(hashtagString)).collect(Collectors.toList());
+        }
+        public List<Picture> getDeletePictures() {
+            if (delPics == null) return Arrays.asList();
+            return delPics.stream().map(delPic -> Picture.builder().url(delPic).build()).collect(Collectors.toList());
         }
     }
 }

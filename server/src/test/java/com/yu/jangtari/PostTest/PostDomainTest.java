@@ -42,7 +42,7 @@ public class PostDomainTest {
 
             // when
             assertThat(post.getPictures().size()).isEqualTo(0);
-            post.initPictures(Arrays.asList("haha", "haha2"));
+            post.addPictures(Arrays.asList("haha", "haha2"));
             // then
             assertThat(post.getPictures().size()).isEqualTo(2);
         }
