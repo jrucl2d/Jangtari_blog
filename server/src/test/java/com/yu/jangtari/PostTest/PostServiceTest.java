@@ -173,7 +173,33 @@ public class PostServiceTest extends ServiceTest {
             post.getPostHashtags().forEach(postHashtag -> assertThat(postHashtag.getDeleteFlag().isDeleteFlag()).isTrue());
         }
     }
+    @Nested
+    @DisplayName("updatePost 테스트")
+    class UpdatePostTest {
+        @Test
+        @DisplayName("updatePost에서 hashtag 바뀜")
+        void updatePost1_O() {
+            // given
+            PostDTO.Update postDTO = makeUpdatePostDTO();
+            Post beforePost = makePost(false);
+            given(postRepository.findById(any())).willReturn(Optional.of(beforePost));
+            given(hashtagRepository.saveAll(any())).willReturn(postDTO.getHashtags());
+            // when
+            Post post = postService.updatePost(postDTO);
+            // then
+            assertThat(post.getPostHashtags().size()).isEqualTo(3);
+        }
+    }
 
+    private PostDTO.Update makeUpdatePostDTO() {
+        return PostDTO.Update.builder()
+                .postId(1L)
+                .template(2)
+                .content("modified")
+                .title("modified title")
+                .hashtags(Arrays.asList(new String[] {"aaa", "bbb", "ccc"}))
+                .build();
+    }
     private PostDTO.Add makePostDTOwithoutPicture() {
         return PostDTO.Add.builder()
                 .title("post title")

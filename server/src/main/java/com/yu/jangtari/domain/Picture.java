@@ -8,14 +8,11 @@ import javax.persistence.*;
 @Entity
 @Table(name = "picture")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of="id", callSuper = false)
+@EqualsAndHashCode(of="url", callSuper = false)
 public class Picture extends DateAuditing {
-    @Id
-    @Column(name = "picture_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(nullable = false)
+    @Id
+    @Column(name = "picutre_url")
     private String url;
 
     @ManyToOne(fetch = FetchType.LAZY)

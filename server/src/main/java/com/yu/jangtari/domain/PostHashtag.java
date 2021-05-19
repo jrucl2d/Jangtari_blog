@@ -1,7 +1,6 @@
 package com.yu.jangtari.domain;
 
 import lombok.*;
-
 import javax.persistence.*;
 
 @Getter

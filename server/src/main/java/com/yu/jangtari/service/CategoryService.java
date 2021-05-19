@@ -23,7 +23,6 @@ public class CategoryService {
     public List<Category> getAllCategories(){
         return categoryRepository.getAllCategories();
     }
-
     public Category addCategory(final CategoryDTO.Add categoryDTO) {
         final String pictureURL = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
         return categoryRepository.save(categoryDTO.toEntity(pictureURL));

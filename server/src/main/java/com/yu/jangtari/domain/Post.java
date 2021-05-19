@@ -1,5 +1,6 @@
 package com.yu.jangtari.domain;
 
+import com.yu.jangtari.domain.DTO.PostDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -40,7 +41,7 @@ public class Post extends DateAuditing {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostHashtag> postHashtags = new ArrayList<>();
 
     @Embedded
@@ -67,5 +68,11 @@ public class Post extends DateAuditing {
 
     public void addComment(final Comment comment) {
         this.getComments().add(comment);
+    }
+
+    public void updateTitleContentTemplate(PostDTO.Update postDTO) {
+        this.title = postDTO.getTitle();
+        this.content = postDTO.getContent();
+        this.template = postDTO.getTemplate();
     }
 }

@@ -49,7 +49,7 @@ public class PostDTO {
                     .content(post.getContent())
                     .comments(null) // 여기 변경 필요
                     .pictures(post.getPictures().stream().map(picture ->
-                        PictureDTO.builder().id(picture.getId()).picture(picture.getUrl()).build()
+                        PictureDTO.builder().picture(picture.getUrl()).build()
                     ).collect(Collectors.toList()))
                     .hashtags(post.getPostHashtags().stream().map(postHashtag -> postHashtag.getHashtag().getContent()).collect(Collectors.toList()))
                     .build();
@@ -97,16 +97,33 @@ public class PostDTO {
     }
 
     @Getter
-    @Setter
-    @ToString
-    @AllArgsConstructor
-    @NoArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Update{
-        private Long id;
+        @NotEmpty
+        private Long postId;
+        @NotEmpty
         private String title;
-        private String post;
+        @NotEmpty
+        private String content;
+        @NotEmpty
         private int template;
         private List<String> hashtags = new ArrayList<>();
-        private List<Long> delPics = new ArrayList<>();
+        private List<String> delPics = new ArrayList<>();
+        private List<MultipartFile> addPics = new ArrayList<>();
+
+        @Builder
+        public Update(Long postId, String title, String content, int template, List<String> hashtags, List<String> delPics, List<MultipartFile> addPics) {
+            this.postId = postId;
+            this.title = title;
+            this.content = content;
+            this.template = template;
+            this.hashtags = hashtags;
+            this.delPics = delPics;
+            this.addPics = addPics;
+        }
+        public List<Hashtag> getHashtags() {
+            if (hashtags == null) return Arrays.asList();
+            return hashtags.stream().map(hashtagString -> new Hashtag(hashtagString)).collect(Collectors.toList());
+        }
     }
 }

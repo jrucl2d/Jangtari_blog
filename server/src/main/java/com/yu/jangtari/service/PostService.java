@@ -31,11 +31,15 @@ public class PostService {
     public Post getOne(final Long postId) {
         return postRepository.getOne(postId).orElseThrow(() -> new NoSuchPostException());
     }
-
     public Post findOne(final Long postId) {
         final Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchPostException());
         return post;
     }
+
+    //    @Transactional(readOnly = true)
+//    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO, String type, String keyword) throws CustomException {
+//        return postRepository.getPostList(categoryId, pageVO, type, keyword);
+//    }
 
     public Post addPost(PostDTO.Add postDTO) {
         // 1. Category 객체 get
@@ -60,10 +64,17 @@ public class PostService {
         forSavePost.initPictures(pictureURLs);
     }
 
-//    @Transactional(readOnly = true)
-//    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO, String type, String keyword) throws CustomException {
-//        return postRepository.getPostList(categoryId, pageVO, type, keyword);
-//    }
+    public Post updatePost(PostDTO.Update postDTO) {
+        // 1. Post 객체 get
+        final Post post = findOne(postDTO.getPostId());
+        // 2. hashtag, picture 제외한 내용 update
+        post.updateTitleContentTemplate(postDTO);
+        // 3. 기존의 hashtag들 삭제, 새로운 hashtag 추가
+        post.getPostHashtags().forEach(postHashtag -> postHashtag.getDeleteFlag().softDelete());
+        final List<Hashtag> hashtags = hashtagRepository.saveAll(postDTO.getHashtags());
+        post.initPostHashtags(hashtags);
+        return post;
+    }
 
 //    @Transactional
 //    public void updatePost(PostDTO.Update thePost, List<MultipartFile> postImages) throws CustomException, GeneralSecurityException, IOException {
