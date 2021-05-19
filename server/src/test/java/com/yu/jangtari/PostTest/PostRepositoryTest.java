@@ -83,7 +83,7 @@ public class PostRepositoryTest extends RepositoryTest {
     }
     private Post makePostInCategoryWithPicturesAndHashtags(Category category) {
         Post post = Post.builder().category(category).content("content").template(1).title("title").build();
-        post.initPictures(Arrays.asList("picture1", "picture2"));
+        post.addPictures(Arrays.asList("picture1", "picture2"));
         post = postRepository.save(post);
         List<Hashtag> hashtags = hashtagRepository.saveAll(Arrays.asList(new Hashtag("h1"), new Hashtag("h2")));
         post.initPostHashtags(hashtags);

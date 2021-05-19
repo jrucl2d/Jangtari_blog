@@ -39,7 +39,6 @@ public class CommentRepositoryTest extends RepositoryTest {
         em.createNativeQuery("alter table category alter column category_id restart with 1").executeUpdate();
         em.createNativeQuery("alter table post alter column post_id restart with 1").executeUpdate();
         em.createNativeQuery("alter table comment alter column comment_id restart with 1").executeUpdate();
-        em.createNativeQuery("alter table picture alter column picture_id restart with 1").executeUpdate();
         em.createNativeQuery("alter table post_hashtag alter column post_hashtag_id restart with 1").executeUpdate();
     }
 

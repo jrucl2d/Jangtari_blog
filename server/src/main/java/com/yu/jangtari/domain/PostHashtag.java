@@ -1,7 +1,6 @@
 package com.yu.jangtari.domain;
 
 import lombok.*;
-
 import javax.persistence.*;
 
 @Getter
@@ -30,7 +29,7 @@ public class PostHashtag extends DateAuditing{
     @Builder
     public PostHashtag(Post post, Hashtag hashtag) {
         this.post = post;
-        this.hashtag =hashtag;
+        this.hashtag = hashtag;
         this.deleteFlag = DeleteFlag.initDeleteFlag();
     }
 }

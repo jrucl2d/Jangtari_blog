@@ -1,7 +1,6 @@
 package com.yu.jangtari.service;
 
 import com.yu.jangtari.common.GDFolder;
-import com.yu.jangtari.common.exception.NoSuchMemberException;
 import com.yu.jangtari.common.exception.NoSuchPostException;
 import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.*;
@@ -31,11 +30,15 @@ public class PostService {
     public Post getOne(final Long postId) {
         return postRepository.getOne(postId).orElseThrow(() -> new NoSuchPostException());
     }
-
     public Post findOne(final Long postId) {
         final Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchPostException());
         return post;
     }
+
+    //    @Transactional(readOnly = true)
+//    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO, String type, String keyword) throws CustomException {
+//        return postRepository.getPostList(categoryId, pageVO, type, keyword);
+//    }
 
     public Post addPost(PostDTO.Add postDTO) {
         // 1. Category 객체 get
@@ -57,76 +60,31 @@ public class PostService {
 
     private void addPicturesToPostIfExist(final Post forSavePost, final List<MultipartFile> pictureFiles) {
         final List<String> pictureURLs = googleDriveUtil.filesToURLs(pictureFiles, GDFolder.POST);
-        forSavePost.initPictures(pictureURLs);
+        forSavePost.addPictures(pictureURLs);
+    }
+    private void updatePicturesOfPostIfExist(final Post post, final PostDTO.Update postDTO) {
+        post.removePicturesFromUpdateDTO(postDTO);
+        addPicturesToPostIfExist(post, postDTO.getAddPics());
     }
 
-//    @Transactional(readOnly = true)
-//    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO, String type, String keyword) throws CustomException {
-//        return postRepository.getPostList(categoryId, pageVO, type, keyword);
-//    }
-
-//    @Transactional
-//    public void updatePost(PostDTO.Update thePost, List<MultipartFile> postImages) throws CustomException, GeneralSecurityException, IOException {
-//        Optional<Post> postOp = postRepository.findById(thePost.getId());
-//        if(postOp.isPresent()){
-//            Post post = postOp.get();
-//
-//            post.setTitle(thePost.getTitle());
-//            post.setTemplate(thePost.getTemplate());
-//            post.setPost(thePost.getPost());
-//
-//            // 해시태그 설정
-//            if(thePost.getHashtags() != null){
-//                postRepository.deleteBeforeHashtags(thePost.getId());
-//                List<String> hashtagStrings = new ArrayList<>();
-//                thePost.getHashtags().forEach(ht -> {
-//                    hashtagStrings.add(ht.getHashtag());
-//                });
-//                List<Hashtag> hashtags = postRepository.getHashtags(hashtagStrings);
-//                hashtags.forEach(ht -> {
-//                    hashtagStrings.remove(ht.getHashtag()); // 이미 존재하는 해시태그는 목록에서 삭제
-//                    List<Post> beforePosts = ht.getPosts();
-//                    beforePosts.add(post);
-//                    ht.setPosts(beforePosts);
-//                });
-//                hashtagStrings.forEach(ht -> {
-//                    Hashtag hashtag = new Hashtag();
-//                    hashtag.setHashtag(ht);
-//                    hashtag.setPosts(Arrays.asList(post));
-//                    hashtags.add(hashtag);
-//                });
-//                post.setHashtags(hashtags);
-//            }
-//
-//            // 사진 추가
-//            if(postImages != null){
-//                // 삭제할 사진 삭제
-//                if(thePost.getDelPics().size() > 0){
-//                    pictureRepository.deleteByIds(thePost.getDelPics());
-//                }
-//                List<Picture> pictures = new ArrayList<>();
-//                Drive drive = googleDriveUtil.getDrive();
-//                for(MultipartFile postImage : postImages) {
-//                    File file = new File();
-//                    file.setName(googleDriveUtil.getPictureName(postImage.getName()));
-//                    file.setParents(Collections.singletonList(googleDriveUtil.POST_FOLDER));
-//                    java.io.File tmpFile = googleDriveUtil.convert(postImage);
-//                    FileContent content = new FileContent("image/jpeg", tmpFile);
-//                    File uploadedFile = drive.files().create(file, content).setFields("id").execute();
-//                    tmpFile.delete();
-//                    String fileRef = googleDriveUtil.FILE_REF + uploadedFile.getId();
-//                    Picture picture = new Picture();
-//                    picture.setPost(post);
-//                    picture.setPicture(fileRef);
-//                    pictureRepository.save(picture);
-//                }
-//                post.setPictures(pictures);
-//            }
-//            postRepository.save(post);
-//        } else {
-//            throw new CustomException("존재하지 않는 게시글입니다.", "게시글 수정 실패 : id = " + thePost.getId());
-//        }
-//    }
+    /**
+     * update 과정에서의 hashtag와 picture은 실제로 삭제한다.
+     * hashtag는 모두 삭제하고 추가한다.
+     * picture는 google drive에 업로드하는 데 걸리는 오버헤드를 생각해 프론트에서 삭제할 picture와 추가할 picture를 따로 받음
+     */
+    public Post updatePost(PostDTO.Update postDTO) {
+        // 1. Post 객체 get
+        final Post post = findOne(postDTO.getPostId());
+        // 2. hashtag, picture 제외한 내용 update
+        post.updateTitleContentTemplate(postDTO);
+        // 3. 기존의 hashtag들 실제로 삭제, 새로운 hashtag 추가
+        post.clearPostHashtags();
+        final List<Hashtag> hashtags = hashtagRepository.saveAll(postDTO.getHashtags());
+        post.initPostHashtags(hashtags);
+        // 4. 삭제할 picture들을 실제로 삭제, 새로운 picture 추가
+        updatePicturesOfPostIfExist(post, postDTO);
+        return post;
+    }
 
     /**
      * Post에 연관된 Comment, Post-Hashtag, Picture을 softDelete 처리해야 함
