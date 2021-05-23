@@ -11,7 +11,7 @@ import javax.persistence.PersistenceContext;
 
 // 서블릿 컨테이너를 모킹
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@ActiveProfiles("test")
+@ActiveProfiles(profiles = {"test"})
 @Transactional
 @AutoConfigureMockMvc
 public class IntegrationTest {

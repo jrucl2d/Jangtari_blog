@@ -249,7 +249,7 @@ public class PostServiceTest extends ServiceTest {
                 .categoryId(1L)
                 .template(1)
                 .hashtags(Arrays.asList("aaa", "bbb", "ccc"))
-                .pictures(Arrays.asList()).build();
+                .build();
     }
     private Post makePost(boolean withPicture) {
         PostDTO.Add postDTO = makeAddPostDTO();

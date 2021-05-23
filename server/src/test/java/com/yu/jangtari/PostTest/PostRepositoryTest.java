@@ -16,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -57,7 +58,7 @@ public class PostRepositoryTest extends RepositoryTest {
         // given
         // when
         // then
-        assertThrows(NullPointerException.class, () -> postRepository.getOne(1L).get());
+        assertThrows(NoSuchElementException.class, () -> postRepository.getOne(1L).get());
     }
     @Test
     @DisplayName("post add Test 성공 -> Integration test로 옮기는게 좋을듯")

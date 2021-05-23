@@ -1,14 +1,23 @@
 package com.yu.jangtari.repository.post;
 
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.yu.jangtari.common.PageRequest;
 import com.yu.jangtari.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class PostRepositoryImpl extends QuerydslRepositorySupport implements CustomPostRepository {
-
-    private JPAQueryFactory jpaQueryFactory;
+    private final String TITLE = "t";
+    private final String CONTENT = "c";
+    private final String HASHTAG = "h";
+    private final JPAQueryFactory jpaQueryFactory;
 
     public PostRepositoryImpl(JPAQueryFactory jpaQueryFactory){
         super(Post.class);
@@ -21,13 +30,62 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
     @Override
     public Optional<Post> getOne(Long postId) {
         QPost post = QPost.post;
-        return Optional.of(jpaQueryFactory.selectFrom(post)
+        return Optional.ofNullable(jpaQueryFactory.selectFrom(post)
                 .where(post.id.eq(postId))
                 .leftJoin(post.comments)
                 .leftJoin(post.pictures)
                 .leftJoin(post.postHashtags)
                 .fetchOne());
     }
+
+    @Override
+    public Page<Post> getPostList(Long categoryId, PageRequest pageRequest) {
+        final Pageable pageable = pageRequest.of();
+        String type = pageRequest.getType();
+        final String keyword = pageRequest.getType();
+        QPost post = QPost.post;
+        List<Post> fetch = jpaQueryFactory.selectFrom(post)
+                .where(post.category.id.eq(categoryId))
+                .where(post.deleteFlag.deleteFlag.isFalse()).fetch();
+        for (Post fetch1 : fetch) {
+            System.out.println(fetch1);
+        }
+        return null;
+    }
+
+//    @Override
+//    public Page<Post> getPostList(Long categoryId, PageRequest pageRequest) {
+//        final Pageable pageable = pageRequest.of();
+//        String type = pageRequest.getType();
+//        final String keyword = pageRequest.getType();
+//        JPQLQuery<Post> query;
+//        if (type == null) type = "nothing";
+//        if (type.equals(HASHTAG)) query = getPostListWithHashtag(categoryId, keyword, pageable);
+//        else {
+//            QPost post = QPost.post;
+//            query = jpaQueryFactory.selectFrom(post);
+//            query.where(post.category.id.eq(categoryId));
+//            if (type.equals(TITLE)) {
+//                query.where(post.title.containsIgnoreCase(keyword));
+//            }
+//            else if (type.equals(CONTENT)) {
+//                query.where(post.content.containsIgnoreCase(keyword));
+//            }
+////            query.where(post.deleteFlag.deleteFlag.isFalse());
+//        }
+//        query.fetchAll();
+//        final List<Post> posts = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query).fetch();
+//        return new PageImpl<>(posts, pageable, query.fetchCount());
+//    }
+//    private JPQLQuery<Post> getPostListWithHashtag(Long categoryId, String keyword, Pageable pageable) {
+//        final QPostHashtag postHashtag = QPostHashtag.postHashtag;
+//        return jpaQueryFactory
+//                .select(postHashtag.post)
+//                .from(postHashtag)
+//                .where(postHashtag.hashtag.content.eq(keyword))
+//                .where(postHashtag.post.category.id.eq(categoryId))
+//                .where(postHashtag.post.deleteFlag.deleteFlag.isFalse());
+//    }
 
 //    @Override
 //    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO, String type, String keyword) {
@@ -65,71 +123,5 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
 //        int totalPageSize = (int)(Math.ceil(results.getTotal() / (double)pageVO.getSize()));
 //
 //        return new PageMakerVO<>(new PageImpl<>(resultList, pageable, totalCount), totalPageSize);
-//    }
-//
-//    @Override
-//    public List<CommentDTO.Get> getCommentsOfPost(Long postId) {
-//
-//        QComment comment = QComment.comment1;
-//        JPQLQuery<Comment> query1 = from(comment);
-//        JPQLQuery<Tuple> tuple1 = query1.select(comment.id, comment.comment, comment.member.username, comment.member.nickname, comment.recomment.id);
-//        tuple1.where(comment.post.id.eq(postId)).orderBy(comment.recomment.id.asc()).orderBy(comment.createddate.asc());
-//        List<Tuple> list1 = tuple1.fetch();
-//
-//        List<CommentDTO.Get> comments = new ArrayList<>();
-//        list1.forEach(v -> comments.add(new CommentDTO.Get((Long)v.toArray()[0], (String)v.toArray()[1], (String)v.toArray()[2], (String)v.toArray()[3], (Long)v.toArray()[4])));
-//
-//        return comments;
-//    }
-//
-//    @Override
-//    public PostDTO.GetOne getPost(Long postId) {
-//        PostDTO.GetOne result = new PostDTO.GetOne();
-//
-//        // 게시글 + 사진
-//        QPost post = QPost.post1;
-//        QPicture picture = QPicture.picture1;
-//        JPQLQuery<Post> query = from(post);
-//        JPQLQuery<Tuple> tuple = query.select(post.id, post.title, post.post, picture.picture, picture.id);
-//        tuple.where(post.id.eq(postId));
-//        tuple.leftJoin(post.pictures, picture);
-//        List<Tuple> list = tuple.fetch();
-//
-//        query = from(post);
-//        QHashtag hashtag = QHashtag.hashtag1;
-//        JPQLQuery<String> hashtagTuple = query.select(hashtag.hashtag).distinct().innerJoin(post.hashtags, hashtag).where(post.id.eq(postId));
-//        List<String> hashtagLists = hashtagTuple.fetch();
-//        List<HashtagDTO> hashtags = new ArrayList<>();
-//        hashtagLists.forEach(v -> hashtags.add(new HashtagDTO(v)));
-//        result.setHashtags(hashtags);
-//
-//        result.setId((Long)list.get(0).toArray()[0]);
-//        result.setTitle((String)list.get(0).toArray()[1]);
-//        result.setContent((String)list.get(0).toArray()[2]);
-//
-//        List<PictureDTO> pictures = new ArrayList<>();
-//        list.forEach(v -> pictures.add(new PictureDTO((Long)v.toArray()[4], (String)v.toArray()[3])));
-//        result.setPictures(pictures);
-//
-//        // 댓글
-//        QComment comment = QComment.comment1;
-//        JPQLQuery<Comment> query1 = from(comment);
-//        JPQLQuery<Tuple> tuple1 = query1.select(comment.id, comment.comment, comment.member.username, comment.member.nickname, comment.recomment.id);
-//        tuple1.where(comment.post.id.eq(postId)).orderBy(comment.recomment.id.asc()).orderBy(comment.createddate.asc());
-//        List<Tuple> list1 = tuple1.fetch();
-//
-//        List<CommentDTO.Get> comments = new ArrayList<>();
-//        list1.forEach(v -> comments.add(new CommentDTO.Get((Long)v.toArray()[0], (String)v.toArray()[1], (String)v.toArray()[2], (String)v.toArray()[3], (Long)v.toArray()[4])));
-//        result.setComments(comments);
-//
-//        return result;
-//    }
-//
-//    @Override
-//    public List<Hashtag> getHashtags(List<String> hashtags) {
-//        QHashtag hashtag = QHashtag.hashtag1;
-//        JPQLQuery<Hashtag> query = from(hashtag);
-//        query.where(hashtag.hashtag.in(hashtags));
-//        return query.fetch();
 //    }
 }

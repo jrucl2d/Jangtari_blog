@@ -1,17 +1,13 @@
 package com.yu.jangtari.repository.post;
 
+import com.yu.jangtari.common.PageRequest;
 import com.yu.jangtari.domain.Post;
+import org.springframework.data.domain.Page;
 
 import java.util.Optional;
 
 
 public interface CustomPostRepository {
-
-//    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO, String type, String keyword);
-
-    public Optional<Post> getOne(Long postId);
-
-//    public List<Hashtag> getHashtags(List<String> hashtags);
-//
-//    public List<CommentDTO.Get> getCommentsOfPost(Long postId);
+    Optional<Post> getOne(Long postId);
+    Page<Post> getPostList(Long categoryId, PageRequest pageRequest);
 }

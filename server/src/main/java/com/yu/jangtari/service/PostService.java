@@ -1,6 +1,7 @@
 package com.yu.jangtari.service;
 
 import com.yu.jangtari.common.GDFolder;
+import com.yu.jangtari.common.PageRequest;
 import com.yu.jangtari.common.exception.NoSuchPostException;
 import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.*;
@@ -8,6 +9,7 @@ import com.yu.jangtari.repository.HashtagRepository;
 import com.yu.jangtari.repository.post.PostRepository;
 import com.yu.jangtari.domain.DTO.PostDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,10 +37,10 @@ public class PostService {
         return post;
     }
 
-    //    @Transactional(readOnly = true)
-//    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO, String type, String keyword) throws CustomException {
-//        return postRepository.getPostList(categoryId, pageVO, type, keyword);
-//    }
+    @Transactional(readOnly = true)
+    public Page<Post> getPostList(Long categoryId, PageRequest pageRequest) {
+        return postRepository.getPostList(categoryId, pageRequest);
+    }
 
     public Post addPost(PostDTO.Add postDTO) {
         // 1. Category 객체 get

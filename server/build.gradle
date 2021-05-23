@@ -11,7 +11,7 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath "io.spring.gradle:dependency-management-plugin:1.0.7.RELEASE"
-        classpath("gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:${querydslPluginVersion}")
+        classpath("gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:${querydslPluginVersion}") // querydsl 플러그인 의존성 등록
     }
 }
 
@@ -70,6 +70,7 @@ dependencies {
     compile 'com.google.apis:google-api-services-drive:v3-rev110-1.23.0'
 }
 
+apply plugin: "com.ewerk.gradle.plugins.querydsl" // Plugin 적용
 def querydslSrcDir = 'src/main/generated'
 
 querydsl {
