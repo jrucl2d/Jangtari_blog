@@ -14,20 +14,11 @@ public final class PageRequest {
     private String keyword;
 
     public PageRequest(int page, String type, String keyword) {
-        this.page = page;
+        this.page = Math.max(page - 1, 0);
         this.type = type;
-        this.keyword = keyword;
-    }
-    public void setPage(int page) {
-        this.page = page <= 0 ? 1 : page;
-    }
-    public void setType(String type) {
-        this.type = type;
-    }
-    public void setKeyword(String keyword) {
         this.keyword = keyword;
     }
     public Pageable of() {
-        return org.springframework.data.domain.PageRequest.of(page, DEFAULT_SIZE, Sort.Direction.DESC, "createdDate");
+        return org.springframework.data.domain.PageRequest.of(page, DEFAULT_SIZE, Sort.Direction.ASC, "createdDate");
     }
 }
