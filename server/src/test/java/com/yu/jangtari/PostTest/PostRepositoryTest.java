@@ -1,6 +1,7 @@
 package com.yu.jangtari.PostTest;
 
-import com.yu.jangtari.RepositoryTest;
+import com.yu.jangtari.IntegrationTest;
+import com.yu.jangtari.common.PageRequest;
 import com.yu.jangtari.domain.*;
 import com.yu.jangtari.repository.CommentRepository;
 import com.yu.jangtari.repository.HashtagRepository;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,7 +23,7 @@ import java.util.NoSuchElementException;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class PostRepositoryTest extends RepositoryTest {
+public class PostRepositoryTest extends IntegrationTest {
     @Autowired
     private PostRepository postRepository;
     @Autowired
@@ -33,20 +35,12 @@ public class PostRepositoryTest extends RepositoryTest {
     @Autowired
     private CommentRepository commentRepository;
 
-    @PersistenceContext
-    EntityManager em;
-
-    @AfterEach
-    void afterEach() {
-        em.createNativeQuery("alter table post alter column post_id restart with 1").executeUpdate();
-    }
-
     @Test
     @DisplayName("getOne 테스트 성공")
     void getOne_O() {
         // given
         Category category = makeCategory();
-        Post post = makePostInCategory(category);
+        Post post = makePost(category, null, null, 1);
         // when
         Post findPost = postRepository.getOne(1L).get();
         // then
@@ -64,10 +58,12 @@ public class PostRepositoryTest extends RepositoryTest {
     @DisplayName("post add Test 성공 -> Integration test로 옮기는게 좋을듯")
     void addPost_O() {
         // given
+        Category category = makeCategory();
         Member member = Member.builder().username("username").nickname("nickname").password("password").build();
         member = memberRepository.save(member);
-        Category category = makeCategory();
-        Post post = makePostInCategoryWithPicturesAndHashtags(category);
+        List<String> pictures = Arrays.asList("picture1", "picture2");
+        List<Hashtag> hashtags = Arrays.asList(new Hashtag("h1"), new Hashtag("h2"));
+        Post post = makePost(category, hashtags, pictures, 1);
         makeComment(post, member);
         // when
         Post findPost = postRepository.findById(1L).get();
@@ -76,22 +72,116 @@ public class PostRepositoryTest extends RepositoryTest {
         assertThat(findPost.getComments().size()).isEqualTo(1);
         assertThat(findPost.getPictures().size()).isEqualTo(2);
     }
+    @Test
+    @DisplayName("getPostList() title로 찾기")
+    void getPostList1_O() {
+        // given
+        Category category = makeCategory();
+        List<Hashtag> hashtags = Arrays.asList(new Hashtag("aaa"), new Hashtag("bbb"));
+        makePost(category, hashtags, null, 1);
+        Post post2 = makePost(category, hashtags, null, 2);
+        Post post3 = makePost(category, hashtags, null, 2);
+        PageRequest pageRequest = new PageRequest(1, "t", "title2");
+        // when
+        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
+        List<Post> postList = posts.toList();
+        // then
+        assertThat(posts.getTotalElements()).isEqualTo(2);
+        assertThat(postList.get(0)).isEqualTo(post2);
+        assertThat(postList.get(1)).isEqualTo(post3);
+    }
+    @Test
+    @DisplayName("getPostList() content로 찾기")
+    void getPostList2_O() {
+        // given
+        Category category = makeCategory();
+        List<Hashtag> hashtags = Arrays.asList(new Hashtag("aaa"), new Hashtag("bbb"));
+        makePost(category, hashtags, null, 1);
+        makePost(category, hashtags, null, 2);
+        makePost(category, hashtags, null, 2);
+        PageRequest pageRequest = new PageRequest(1, "c", "tent1");
+        // when
+        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
+        // then
+        assertThat(posts.getTotalElements()).isEqualTo(1);
+    }
+    @Test
+    @DisplayName("getPostList() hashtag로 찾기")
+    void getPostList3_O() {
+        // given
+        Category category = makeCategory();
+        List<Hashtag> hashtags = Arrays.asList(new Hashtag("aaa"), new Hashtag("bbb"));
+        makePost(category, hashtags, null, 1);
+        makePost(category, hashtags, null, 2);
+        makePost(category, hashtags, null, 2);
+        PageRequest pageRequest = new PageRequest(1, "h", "aaa");
+        // when
+        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
+        // then
+        assertThat(posts.getTotalElements()).isEqualTo(3);
+    }
+    @Test
+    @DisplayName("getPostList() 없는 hashtag로 찾기")
+    void getPostList4_O() {
+        // given
+        Category category = makeCategory();
+        List<Hashtag> hashtags = Arrays.asList(new Hashtag("aaa"), new Hashtag("bbb"));
+        makePost(category, hashtags, null, 1);
+        makePost(category, hashtags, null, 2);
+        makePost(category, hashtags, null, 2);
+        PageRequest pageRequest = new PageRequest(1, "h", "cc");
+        // when
+        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
+        // then
+        assertThat(posts.getTotalElements()).isEqualTo(0);
+    }
+    @Test
+    @DisplayName("getPostList() 조건 없이 찾기")
+    void getPostList5_O() {
+        // given
+        Category category = makeCategory();
+        List<Hashtag> hashtags = Arrays.asList(new Hashtag("aaa"), new Hashtag("bbb"));
+        makePost(category, hashtags, null, 1);
+        makePost(category, hashtags, null, 2);
+        makePost(category, hashtags, null, 2);
+        PageRequest pageRequest = new PageRequest(1, null, null);
+        // when
+        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
+        // then
+        assertThat(posts.getTotalElements()).isEqualTo(3);
+    }
+    @Test
+    @DisplayName("getPostList() delete된 post는 안 찾기")
+    void getPostList6_O() {
+        // given
+        Category category = makeCategory();
+        List<Hashtag> hashtags = Arrays.asList(new Hashtag("aaa"), new Hashtag("bbb"));
+        Post post1 = makePost(category, hashtags, null, 1);
+        makePost(category, hashtags, null, 1);
+        makePost(category, hashtags, null, 1);
+
+        post1.getDeleteFlag().softDelete();
+        postRepository.save(post1);
+
+        PageRequest pageRequest = new PageRequest(1, "t", "title1");
+        // when
+        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
+        // then
+        assertThat(posts.getTotalElements()).isEqualTo(2);
+    }
     private Comment makeComment(Post post, Member member) {
         Comment comment = Comment.builder().content("content").build();
         comment.initPostAndMember(post, member);
         commentRepository.save(comment);
         return comment;
     }
-    private Post makePostInCategoryWithPicturesAndHashtags(Category category) {
-        Post post = Post.builder().category(category).content("content").template(1).title("title").build();
-        post.addPictures(Arrays.asList("picture1", "picture2"));
+    private Post makePost(Category category, List<Hashtag> hashtags, List<String> pictures, int index) {
+        Post post = Post.builder().category(category).content("content"+index).template(1).title("title"+index).build();
+        if (hashtags == null && pictures == null) return postRepository.save(post);
+        if (pictures != null) post.addPictures(pictures);
         post = postRepository.save(post);
-        List<Hashtag> hashtags = hashtagRepository.saveAll(Arrays.asList(new Hashtag("h1"), new Hashtag("h2")));
-        post.initPostHashtags(hashtags);
-        return postRepository.save(post);
-    }
-    private Post makePostInCategory(Category category) {
-        Post post = Post.builder().category(category).content("content").template(1).title("title").build();
+        List<Hashtag> hashtagList = hashtagRepository.saveAll(hashtags);
+        post.initPostHashtags(hashtagList);
         return postRepository.save(post);
     }
     private Category makeCategory() {

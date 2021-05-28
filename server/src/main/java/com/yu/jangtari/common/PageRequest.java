@@ -14,14 +14,8 @@ public final class PageRequest {
     private String keyword;
 
     public PageRequest(int page, String type, String keyword) {
-        this.page = page;
+        this.page = Math.max(page - 1, 0);
         this.type = type;
-        this.keyword = keyword;
-    }
-    public void setType(String type) {
-        this.type = type;
-    }
-    public void setKeyword(String keyword) {
         this.keyword = keyword;
     }
     public Pageable of() {

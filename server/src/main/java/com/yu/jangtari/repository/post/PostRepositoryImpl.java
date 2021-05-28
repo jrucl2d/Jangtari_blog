@@ -39,55 +39,40 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
                 .fetchOne());
     }
 
-//    @Override
-//    public Page<Post> getPostList(Long categoryId, PageRequest pageRequest) {
-//        final Pageable pageable = pageRequest.of();
-//        String type = pageRequest.getType();
-//        final String keyword = pageRequest.getType();
-//        QPost post = QPost.post;
-//        List<Post> fetch = jpaQueryFactory.selectFrom(post)
-//                .where(post.category.id.eq(categoryId))
-//                .where(post.content.containsIgnoreCase("ont"))
-//                .where(post.deleteFlag.deleteFlag.isFalse()).fetch();
-//        for (Post fetch1 : fetch) {
-//            System.out.println(fetch1);
-//        }
-//        return null;
-//    }
-
     @Override
     public Page<Post> getPostList(Long categoryId, PageRequest pageRequest) {
-        if (pageRequest.getType() == null) pageRequest.setType("nothing");
         final Pageable pageable = pageRequest.of();
         final String type = pageRequest.getType();
         final String keyword = pageRequest.getKeyword();
+
         JPQLQuery<Post> query;
-        if (type.equals(HASHTAG)) query = getPostListWithHashtag(categoryId, keyword);
-        else {
-            QPost post = QPost.post;
-            query = jpaQueryFactory.selectFrom(post);
-            BooleanBuilder bb = new BooleanBuilder();
-            bb.and(post.category.id.eq(categoryId));
-            if (type.equals(TITLE)) {
-                bb.and(post.title.contains(keyword));
-            }
-            else if (type.equals(CONTENT)) {
-                bb.and(post.content.contains(keyword));
-            }
-            bb.and(post.deleteFlag.deleteFlag.isFalse());
-            query.where(bb);
-        }
+        QPost post = QPost.post;
+        // select, from
+        query = jpaQueryFactory.selectFrom(post);
+
+        // where
+        BooleanBuilder bb = new BooleanBuilder();
+        if (type != null) setSearchCondition(post, bb, keyword, type);
+        setCommonCondition(post, bb, categoryId);
+        query.where(bb);
+
         final List<Post> posts = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query).fetch();
         return new PageImpl<>(posts, pageable, query.fetchCount());
     }
-    private JPQLQuery<Post> getPostListWithHashtag(Long categoryId, String keyword) {
-        final QPostHashtag postHashtag = QPostHashtag.postHashtag;
-        return jpaQueryFactory
-                .select(postHashtag.post)
-                .from(postHashtag)
-                .where(postHashtag.hashtag.content.eq(keyword)
-                .and(postHashtag.post.category.id.eq(categoryId))
-                .and(postHashtag.post.deleteFlag.deleteFlag.isFalse()));
+    private void setSearchCondition(QPost post, BooleanBuilder bb, String keyword, String type) {
+        if (type.equals(TITLE)) {
+            bb.and(post.title.contains(keyword));
+        }
+        else if (type.equals(CONTENT)) {
+            bb.and(post.content.contains(keyword));
+        }
+        else if (type.equals(HASHTAG)) {
+            bb.and(post.postHashtags.any().hashtag.content.eq(keyword));
+        }
+    }
+    private void setCommonCondition(QPost post, BooleanBuilder bb, Long categoryId) {
+        bb.and(post.category.id.eq(categoryId));
+        bb.and(post.deleteFlag.deleteFlag.isFalse());
     }
 
 //    @Override
