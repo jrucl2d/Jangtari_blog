@@ -18,9 +18,6 @@ public final class PageRequest {
         this.type = type;
         this.keyword = keyword;
     }
-    public void setPage(int page) {
-        this.page = page <= 0 ? 1 : page;
-    }
     public void setType(String type) {
         this.type = type;
     }
@@ -28,6 +25,6 @@ public final class PageRequest {
         this.keyword = keyword;
     }
     public Pageable of() {
-        return org.springframework.data.domain.PageRequest.of(page, DEFAULT_SIZE, Sort.Direction.DESC, "createdDate");
+        return org.springframework.data.domain.PageRequest.of(page, DEFAULT_SIZE, Sort.Direction.ASC, "createdDate");
     }
 }

@@ -20,20 +20,24 @@ public class PostPageTest extends IntegrationTest {
     private PostService postService;
     @Autowired
     private CategoryService categoryService;
-    @Autowired
-    private PostRepository postRepository;
 
     @Test
     void test() {
         categoryService.addCategory(makeCategoryDTOwithoutPicture());
         postService.addPost(makeAddPostDTO());
         postService.addPost(makeAddPostDTO());
-        postService.addPost(makeAddPostDTO());
-        Page<Post> posts = postService.getPostList(1L, new PageRequest(1, null, "ten"));
+        postService.addPost(PostDTO.Add.builder()
+                .title("post a")
+                .content("post slslslsl")
+                .categoryId(1L)
+                .template(1)
+                .hashtags(Arrays.asList("aaa", "bbb", "ccc"))
+                .build());
+        Page<Post> posts = postService.getPostList(1L, new PageRequest(0, "t", "title"));
         System.out.println("니ㅓ니나ㅓ니ㅏㅓ니ㅏㅓ니");
-//        for (Post post : posts) {
-//            System.out.println(post);
-//        }
+        for (Post post : posts) {
+            System.out.println(post);
+        }
         System.out.println("거러거거ㅓ러걱");
     }
     private CategoryDTO.Add makeCategoryDTOwithoutPicture() {

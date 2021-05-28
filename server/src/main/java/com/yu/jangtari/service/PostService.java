@@ -98,4 +98,7 @@ public class PostService {
         post.getPostHashtags().forEach(postHashtag -> postHashtag.getDeleteFlag().softDelete());
         post.getDeleteFlag().softDelete();
     }
+    public void deletePostOfCategory(Long categoryId) {
+        
+    }
 }
