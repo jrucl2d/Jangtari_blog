@@ -2,10 +2,12 @@ package com.yu.jangtari.service;
 
 import com.yu.jangtari.common.GDFolder;
 import com.yu.jangtari.common.PageRequest;
+import com.yu.jangtari.common.exception.NoSuchCategoryException;
 import com.yu.jangtari.common.exception.NoSuchPostException;
 import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.*;
 import com.yu.jangtari.repository.HashtagRepository;
+import com.yu.jangtari.repository.category.CategoryRepository;
 import com.yu.jangtari.repository.post.PostRepository;
 import com.yu.jangtari.domain.DTO.PostDTO;
 import lombok.RequiredArgsConstructor;
@@ -20,20 +22,19 @@ import java.util.*;
 @Transactional
 @RequiredArgsConstructor
 public class PostService {
-
+    
+    private final CategoryRepository categoryRepository;
     private final PostRepository postRepository;
     private final HashtagRepository hashtagRepository;
     private final GoogleDriveUtil googleDriveUtil;
-    private final CategoryService categoryService;
-
 
     // Comment, PostHashtag, Picture을 join해서 같이 가져옴
     @Transactional(readOnly = true)
     public Post getOne(final Long postId) {
-        return postRepository.getOne(postId).orElseThrow(() -> new NoSuchPostException());
+        return postRepository.getOne(postId).orElseThrow(NoSuchPostException::new);
     }
     public Post findOne(final Long postId) {
-        final Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchPostException());
+        final Post post = postRepository.findById(postId).orElseThrow(NoSuchPostException::new);
         return post;
     }
 
@@ -44,7 +45,7 @@ public class PostService {
 
     public Post addPost(PostDTO.Add postDTO) {
         // 1. Category 객체 get
-        final Category category = categoryService.findOne(postDTO.getCategoryId());
+        final Category category = categoryRepository.findById(postDTO.getCategoryId()).orElseThrow(NoSuchCategoryException::new);
 
         // 2. Post 객체 save, Picture 객체 save(영속성 전이)
         final Post forSavePost = postDTO.toEntity(category);
@@ -88,17 +89,17 @@ public class PostService {
         return post;
     }
 
-    /**
-     * Post에 연관된 Comment, Post-Hashtag, Picture을 softDelete 처리해야 함
-     */
+    // Post에 연관된 Comment, Post-Hashtag, Picture을 softDelete 처리해야 함
     public void deletePost(Long postId) {
-        Post post = getOne(postId);
+        final Post post = getOne(postId);
         post.getComments().forEach(comment -> comment.getDeleteFlag().softDelete());
         post.getPictures().forEach(picture -> picture.getDeleteFlag().softDelete());
         post.getPostHashtags().forEach(postHashtag -> postHashtag.getDeleteFlag().softDelete());
         post.getDeleteFlag().softDelete();
     }
-    public void deletePostOfCategory(Long categoryId) {
-        
+
+    public void deletePostsOfCategory(Long categoryId) {
+        final List<Post> posts = postRepository.getPostListForDelete(categoryId);
+        posts.forEach(post -> deletePost(post.getId()));
     }
 }

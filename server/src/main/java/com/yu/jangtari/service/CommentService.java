@@ -29,7 +29,7 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public Comment getComment(final Long commentId) {
-        return commentRepository.findById(commentId).orElseThrow(() -> new NoSuchCommentException());
+        return commentRepository.findById(commentId).orElseThrow(NoSuchCommentException::new);
     }
 
     public Comment addComment(final CommentDTO.Add commentDTO) {
