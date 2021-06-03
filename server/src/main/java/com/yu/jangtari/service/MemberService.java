@@ -34,14 +34,14 @@ public class MemberService {
      * soft delete을 구현하기 위해 service에서 dirty checking을 활용
      */
     public Member deleteMember(Long id) {
-        Member member = memberRepository.findById(id).orElseThrow(() -> new NoSuchMemberException());
+        Member member = memberRepository.findById(id).orElseThrow(NoSuchMemberException::new);
         member.getDeleteFlag().softDelete();
         return member;
     }
 
     @Transactional(readOnly = true)
     public Member getMemberByName(String username) {
-        return memberRepository.findByUsername(username).orElseThrow(() -> new NoSuchMemberException());
+        return memberRepository.findByUsername(username).orElseThrow(NoSuchMemberException::new);
     }
 
     public Member addMember(MemberDTO.Add memberDTO) {
