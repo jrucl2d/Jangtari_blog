@@ -22,7 +22,7 @@ import java.util.*;
 @Transactional
 @RequiredArgsConstructor
 public class PostService {
-    
+
     private final CategoryRepository categoryRepository;
     private final PostRepository postRepository;
     private final HashtagRepository hashtagRepository;
