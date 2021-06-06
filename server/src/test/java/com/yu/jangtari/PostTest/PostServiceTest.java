@@ -10,8 +10,8 @@ import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.*;
 import com.yu.jangtari.domain.DTO.PostDTO;
 import com.yu.jangtari.repository.HashtagRepository;
+import com.yu.jangtari.repository.category.CategoryRepository;
 import com.yu.jangtari.repository.post.PostRepository;
-import com.yu.jangtari.service.CategoryService;
 import com.yu.jangtari.service.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,8 +20,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.mock.web.MockMultipartFile;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +37,7 @@ public class PostServiceTest extends ServiceTest {
     private PostService postService;
 
     @Mock
-    private CategoryService categoryService;
+    private CategoryRepository categoryRepository;
     @Mock
     private PostRepository postRepository;
     @Mock
@@ -58,7 +56,7 @@ public class PostServiceTest extends ServiceTest {
             Category category = makeCategory();
             Post beforePost = makePost(false);
             List<Hashtag> hashtags = makeHashtags();
-            given(categoryService.findOne(any())).willReturn(category);
+            given(categoryRepository.findById(anyLong())).willReturn(Optional.of(category));
             given(postRepository.save(any())).willReturn(beforePost);
             given(hashtagRepository.saveAll(any())).willReturn(hashtags);
 
@@ -74,13 +72,13 @@ public class PostServiceTest extends ServiceTest {
         }
         @Test
         @DisplayName("addPost picture O, 성공")
-        void addPost_with_picture_O() throws GeneralSecurityException, IOException {
+        void addPost_with_picture_O() {
             // given
             PostDTO.Add postDTO = makeAddPostDTO();
             Category category = makeCategory();
             Post beforePost = makePost(true);
             List<Hashtag> hashtags = makeHashtags();
-            given(categoryService.findOne(any())).willReturn(category);
+            given(categoryRepository.findById(anyLong())).willReturn(Optional.of(category));
             given(postRepository.save(any())).willReturn(beforePost);
             given(hashtagRepository.saveAll(any())).willReturn(hashtags);
             given(googleDriveUtil.filesToURLs(postDTO.getPictures(), GDFolder.POST)).willReturn(Arrays.asList("pic1", "pic2"));
@@ -100,7 +98,7 @@ public class PostServiceTest extends ServiceTest {
         void addPost_No_Category_X() {
             // given
             PostDTO.Add postDTO =  makeAddPostDTO();
-            given(categoryService.findOne(any())).willThrow(NoSuchCategoryException.class);
+            given(categoryRepository.findById(anyLong())).willThrow(NoSuchCategoryException.class);
             // when, then
             assertThrows(NoSuchCategoryException.class, () -> postService.addPost(postDTO));
         }
@@ -110,7 +108,7 @@ public class PostServiceTest extends ServiceTest {
             // given
             PostDTO.Add postDTO = makeAddPostDTO();
             Category category = makeCategory();
-            given(categoryService.findOne(any())).willReturn(category);
+            given(categoryRepository.findById(anyLong())).willReturn(Optional.of(category));
             given(googleDriveUtil.filesToURLs(postDTO.getPictures(), GDFolder.POST)).willThrow(new GoogleDriveException());
             // when, then
             assertThrows(GoogleDriveException.class,() -> postService.addPost(postDTO));
@@ -121,7 +119,7 @@ public class PostServiceTest extends ServiceTest {
             // given
             PostDTO.Add postDTO = makeAddPostDTO();
             Category category = makeCategory();
-            given(categoryService.findOne(any())).willReturn(category);
+            given(categoryRepository.findById(anyLong())).willReturn(Optional.of(category));
             given(googleDriveUtil.filesToURLs(postDTO.getPictures(), GDFolder.POST)).willThrow(new FileTaskException());
             // when, then
             assertThrows(FileTaskException.class,() -> postService.addPost(postDTO));
