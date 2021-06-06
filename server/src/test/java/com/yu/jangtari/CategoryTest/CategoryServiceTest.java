@@ -8,8 +8,8 @@ import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.DTO.CategoryDTO;
 import com.yu.jangtari.repository.category.CategoryRepository;
-import com.yu.jangtari.repository.category.CategoryRepositoryImpl;
 import com.yu.jangtari.service.CategoryService;
+import com.yu.jangtari.service.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,8 +25,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class CategoryServiceTest extends ServiceTest {
     @InjectMocks
@@ -35,6 +34,8 @@ public class CategoryServiceTest extends ServiceTest {
     GoogleDriveUtil googleDriveUtil;
     @Mock
     CategoryRepository categoryRepository;
+    @Mock
+    PostService postService;
 
     @Nested
     @DisplayName("성공 테스트")
@@ -96,7 +97,7 @@ public class CategoryServiceTest extends ServiceTest {
             assertThat(savedCategory.getPicture()).isEqualTo(categoryDTO.getPicture().getName());
 
             CategoryDTO.Update updateDTO = makeUpdateCategoryDTOwithPicture();
-            given(categoryRepository.findById(any())).willReturn(Optional.of(savedCategory));
+            given(categoryRepository.findById(anyLong())).willReturn(Optional.of(savedCategory));
             // when
             categoryService.updateCategory(1L, updateDTO);
             // then
@@ -114,7 +115,7 @@ public class CategoryServiceTest extends ServiceTest {
             assertThat(savedCategory.getPicture()).isEqualTo(categoryDTO.getPicture().getName());
 
             CategoryDTO.Update updateDTO = makeUpdateCategoryDTOwithoutPicture();
-            given(categoryRepository.findById(any())).willReturn(Optional.of(savedCategory));
+            given(categoryRepository.findById(anyLong())).willReturn(Optional.of(savedCategory));
             // when
             Category updatedCategory = categoryService.updateCategory(1L, updateDTO);
             // then
@@ -129,7 +130,9 @@ public class CategoryServiceTest extends ServiceTest {
             Category category = categoryDTO.toEntity(null);
             given(categoryRepository.save(any())).willReturn(category);
             Category savedCategory = categoryService.addCategory(categoryDTO);
-            given(categoryRepository.findById(any())).willReturn(Optional.of(savedCategory));
+            given(categoryRepository.findById(anyLong())).willReturn(Optional.of(savedCategory));
+            doNothing().when(postService).deletePostsOfCategory(anyLong());
+
             assertThat(savedCategory.getDeleteFlag().isDeleteFlag()).isFalse();
             // when
             Category afterDeletedCategory = categoryService.deleteCategory(1L);
