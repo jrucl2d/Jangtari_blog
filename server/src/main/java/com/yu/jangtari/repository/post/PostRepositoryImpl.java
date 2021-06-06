@@ -38,7 +38,16 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
                 .leftJoin(post.postHashtags)
                 .fetchOne());
     }
-
+    @Override
+    public List<Post> getPostListForDelete(Long categoryId) {
+        QPost post = QPost.post;
+        return jpaQueryFactory.selectFrom(post)
+                .where(post.category.id.eq(categoryId))
+                .leftJoin(post.comments)
+                .leftJoin(post.pictures)
+                .leftJoin(post.postHashtags)
+                .fetch();
+    }
     @Override
     public Page<Post> getPostList(Long categoryId, PageRequest pageRequest) {
         final Pageable pageable = pageRequest.of();
@@ -59,6 +68,7 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         final List<Post> posts = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query).fetch();
         return new PageImpl<>(posts, pageable, query.fetchCount());
     }
+
     private void setSearchCondition(QPost post, BooleanBuilder bb, String keyword, String type) {
         if (type.equals(TITLE)) {
             bb.and(post.title.contains(keyword));
@@ -74,42 +84,4 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         bb.and(post.category.id.eq(categoryId));
         bb.and(post.deleteFlag.deleteFlag.isFalse());
     }
-
-//    @Override
-//    public PageMakerVO<PostDTO.GetAll> getPostList(Long categoryId, PageVO pageVO, String type, String keyword) {
-//        Pageable pageable = pageVO.makePageable("DESC", "createddate");
-//
-//        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
-//
-//        QPost post = QPost.post1;
-//
-//        JPAQuery<Tuple> tmp = queryFactory.select(post.id, post.title, post.template)
-//                .from(post);
-//        if(type != null){
-//            if(type.equals("t")){
-//                tmp.where(post.title.contains(keyword).and(post.category.id.eq(categoryId)));
-//            }else if(type.equals("c")){
-//                tmp.where(post.post.contains(keyword).and(post.category.id.eq(categoryId)));
-//            } else if(type.equals("h")){
-//                QHashtag hashtag = QHashtag.hashtag1;
-//                tmp.where(post.category.id.eq(categoryId)).innerJoin(post.hashtags, hashtag).where(hashtag.hashtag.eq(keyword));
-//            }
-//        } else{
-//            tmp.where(post.category.id.eq(categoryId));
-//        }
-//        tmp.offset(pageable.getOffset()).limit(pageable.getPageSize());
-//        QueryResults<Tuple> results = tmp.fetchResults();
-//        List<Tuple> list = results.getResults();
-//
-//        List<PostDTO.GetAll> resultList = new ArrayList<>();
-//
-//        list.forEach(t -> {
-//            resultList.add(new PostDTO.GetAll((Long)t.toArray()[0], (String)t.toArray()[1], (Integer)t.toArray()[2]));
-//        });
-//        long totalCount = list.size();
-//
-//        int totalPageSize = (int)(Math.ceil(results.getTotal() / (double)pageVO.getSize()));
-//
-//        return new PageMakerVO<>(new PageImpl<>(resultList, pageable, totalCount), totalPageSize);
-//    }
 }

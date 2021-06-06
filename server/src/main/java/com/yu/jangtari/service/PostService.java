@@ -34,8 +34,7 @@ public class PostService {
         return postRepository.getOne(postId).orElseThrow(NoSuchPostException::new);
     }
     public Post findOne(final Long postId) {
-        final Post post = postRepository.findById(postId).orElseThrow(NoSuchPostException::new);
-        return post;
+        return postRepository.findById(postId).orElseThrow(NoSuchPostException::new);
     }
 
     @Transactional(readOnly = true)
@@ -92,14 +91,16 @@ public class PostService {
     // Post에 연관된 Comment, Post-Hashtag, Picture을 softDelete 처리해야 함
     public void deletePost(Long postId) {
         final Post post = getOne(postId);
+        deleteRelationOfPost(post);
+    }
+    public void deletePostsOfCategory(Long categoryId) {
+        final List<Post> posts = postRepository.getPostListForDelete(categoryId);
+        posts.forEach(this::deleteRelationOfPost);
+    }
+    private void deleteRelationOfPost(Post post) {
         post.getComments().forEach(comment -> comment.getDeleteFlag().softDelete());
         post.getPictures().forEach(picture -> picture.getDeleteFlag().softDelete());
         post.getPostHashtags().forEach(postHashtag -> postHashtag.getDeleteFlag().softDelete());
         post.getDeleteFlag().softDelete();
-    }
-
-    public void deletePostsOfCategory(Long categoryId) {
-        final List<Post> posts = postRepository.getPostListForDelete(categoryId);
-        posts.forEach(post -> deletePost(post.getId()));
     }
 }

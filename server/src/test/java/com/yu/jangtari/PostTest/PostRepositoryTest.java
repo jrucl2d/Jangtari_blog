@@ -55,6 +55,19 @@ public class PostRepositoryTest extends IntegrationTest {
         assertThrows(NoSuchElementException.class, () -> postRepository.getOne(1L).get());
     }
     @Test
+    @DisplayName("getOne 테스트 성공")
+    void getPostListForDelete_O() {
+        // given
+        Category category = makeCategory();
+        Post post1 = makePost(category, null, null, 1);
+        Post post2 = makePost(category, null, null, 2);
+        // when
+        List<Post> posts = postRepository.getPostListForDelete(category.getId());
+        // then
+        assertThat(post1).isEqualTo(posts.get(0));
+        assertThat(post2).isEqualTo(posts.get(1));
+    }
+    @Test
     @DisplayName("post add Test 성공 -> Integration test로 옮기는게 좋을듯")
     void addPost_O() {
         // given

@@ -11,6 +11,4 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends CrudRepository<Post, Long>, CustomPostRepository {
-    @Query("select p from Post p where p.category.id = :categoryId")
-    List<Post> getPostListForDelete(@Param(value = "categoryId") Long categoryId);
 }
