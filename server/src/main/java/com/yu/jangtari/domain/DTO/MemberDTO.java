@@ -49,41 +49,5 @@ public class MemberDTO {
                     .build();
         }
     }
-    @Getter
-    @Setter
-    @ToString
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class Login {
-        private String username;
-        private String password;
-    }
-    @Getter
-    @Setter
-    @ToString
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class Info{
-        private String nickname;
-        private String introduce;
-        private String picture;
-    }
-    @Getter
-    @Setter
-    @ToString
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class PutInfo{
-        private String nickname;
-        private String introduce;
-    }
-    @Getter
-    @Setter
-    @ToString
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class Check{
-        private String password;
-    }
 
 }

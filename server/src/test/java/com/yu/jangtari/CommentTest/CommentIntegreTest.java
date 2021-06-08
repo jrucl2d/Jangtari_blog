@@ -93,7 +93,7 @@ public class CommentIntegreTest extends IntegrationTest {
         List<Comment> comments = commentService.getCommentsOfPost(1L);
         assertThat(comments.size()).isEqualTo(1);
         assertThat(comments.get(0)).isEqualTo(comment);
-        CommentDTO.Update updateCommentDTO = CommentDTO.Update.builder().commenter("username").comment("modified").id(1L).build();
+        CommentDTO.Update updateCommentDTO = CommentDTO.Update.builder().commenter("username").content("modified").commentId(1L).build();
         // when
         Comment updatedComment = commentService.updateComment(updateCommentDTO);
         // then
@@ -110,7 +110,7 @@ public class CommentIntegreTest extends IntegrationTest {
         makePostInCategory(category);
         CommentDTO.Add commentDTO = CommentDTO.Add.builder().postId(1L).content("content").commenter(member.getUsername()).build();
         commentService.addComment(commentDTO);
-        CommentDTO.Update updateCommentDTO = CommentDTO.Update.builder().commenter(wrongMember.getUsername()).comment("modified").id(1L).build();
+        CommentDTO.Update updateCommentDTO = CommentDTO.Update.builder().commenter(wrongMember.getUsername()).content("modified").commentId(1L).build();
         // when, then
         assertThrows(NoMasterException.class, () -> commentService.updateComment(updateCommentDTO));
     }

@@ -1,30 +1,34 @@
 package com.yu.jangtari.domain.DTO;
 
 import com.yu.jangtari.domain.Comment;
-import com.yu.jangtari.domain.Member;
-import com.yu.jangtari.domain.Post;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 
 public class CommentDTO {
+
     @Getter
-    @Setter
-    @ToString
-    @AllArgsConstructor
-    @NoArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PACKAGE)
     public static class Get{
         private Long commentId;
-        private String comment;
+        private String content;
         private String username;
         private String nickname;
-        private Long recomment;
+        private Long parentComment;
+
+        public Get(Comment comment) {
+            this.commentId = comment.getId();
+            this.content = comment.getContent();
+            this.username = comment.getMember().getUsername();
+            this.nickname = comment.getMember().getNickname();
+            this.parentComment = comment.getParentComment().getId();
+        }
     }
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Add{
-        @NotBlank(message = "postId가 빈칸이면 안 됩니다.")
+        @NotBlank(message = "ID가 빈칸이면 안 됩니다.")
         private Long postId;
         @NotBlank(message = "작성자가 빈칸이면 안 됩니다.")
         private String commenter;
@@ -49,15 +53,15 @@ public class CommentDTO {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Update{
-        private Long id;
+        private Long commentId;
         private String commenter;
-        private String comment;
+        private String content;
 
         @Builder
-        public Update(Long id, String commenter, String comment) {
-            this.id = id;
+        public Update(Long commentId, String commenter, String content) {
+            this.commentId = commentId;
             this.commenter = commenter;
-            this.comment = comment;
+            this.content = content;
         }
     }
 }
