@@ -47,9 +47,9 @@ public class CommentService {
     }
 
     public Comment updateComment(final CommentDTO.Update commentDTO) {
-        Comment comment = getComment(commentDTO.getId());
+        Comment comment = getComment(commentDTO.getCommentId());
         verifyCommenter(commentDTO.getCommenter(), comment);
-        comment.updateComemnt(commentDTO);
+        comment.updateComment(commentDTO);
         return comment;
     }
 
@@ -73,6 +73,6 @@ public class CommentService {
      * 참고 : https://multifrontgarden.tistory.com/254
      */
     private void deleteChildcomments(Comment comment) {
-        comment.getChildComments().parallelStream().forEach(subcomment -> subcomment.getDeleteFlag().softDelete());
+        comment.getChildComments().parallelStream().forEach(childComment -> childComment.getDeleteFlag().softDelete());
     }
 }

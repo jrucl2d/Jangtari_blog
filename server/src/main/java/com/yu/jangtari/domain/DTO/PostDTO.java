@@ -8,9 +8,7 @@ import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +17,7 @@ public class PostDTO {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetOne{
-        private Long id;
+        private Long postId;
         private String title;
         private String content;
         private List<CommentDTO.Get> comments = new ArrayList<>();
@@ -27,8 +25,8 @@ public class PostDTO {
         private List<String> hashtags = new ArrayList<>();
 
         @Builder
-        public GetOne(Long id, String title, String content, List<CommentDTO.Get> comments, List<PictureDTO> pictures, List<String> hashtags) {
-            this.id = id;
+        public GetOne(Long postId, String title, String content, List<CommentDTO.Get> comments, List<PictureDTO> pictures, List<String> hashtags) {
+            this.postId = postId;
             this.title = title;
             this.content = content;
             this.comments = comments;
@@ -37,13 +35,11 @@ public class PostDTO {
         }
         public static GetOne of(final Post post) {
             return GetOne.builder()
-                    .id(post.getId())
+                    .postId(post.getId())
                     .title(post.getTitle())
                     .content(post.getContent())
                     .comments(post.getComments().stream().map(CommentDTO.Get::new).collect(Collectors.toList()))
-                    .pictures(post.getPictures().stream().map(picture ->
-                        PictureDTO.builder().picture(picture.getUrl()).build()
-                    ).collect(Collectors.toList()))
+                    .pictures(post.getPictures().stream().map(PictureDTO::new).collect(Collectors.toList()))
                     .hashtags(post.getPostHashtags().stream().map(postHashtag -> postHashtag.getHashtag().getContent()).collect(Collectors.toList()))
                     .build();
         }

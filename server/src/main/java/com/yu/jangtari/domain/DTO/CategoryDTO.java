@@ -45,13 +45,13 @@ public class CategoryDTO {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Get{
-        private Long id;
+        private Long categoryId;
         private String name;
         private String picture;
 
         @Builder
         private Get(Long id, String name, String picture) {
-            this.id = id;
+            this.categoryId = id;
             this.name = name;
             this.picture = picture;
         }

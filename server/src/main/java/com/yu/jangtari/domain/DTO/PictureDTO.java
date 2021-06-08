@@ -1,5 +1,6 @@
 package com.yu.jangtari.domain.DTO;
 
+import com.yu.jangtari.domain.Picture;
 import lombok.*;
 
 @Getter
@@ -7,8 +8,7 @@ import lombok.*;
 public class PictureDTO {
     private String picture;
 
-    @Builder
-    public PictureDTO(String picture) {
-        this.picture = picture;
+    public PictureDTO(Picture picture) {
+        this.picture = picture.getUrl();
     }
 }

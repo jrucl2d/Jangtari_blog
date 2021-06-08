@@ -59,7 +59,7 @@ public class Comment extends DateAuditing{
         this.parentComment = comment;
     }
 
-    public void updateComemnt(CommentDTO.Update commentDTO) {
-        this.content = commentDTO.getComment();
+    public void updateComment(CommentDTO.Update commentDTO) {
+        this.content = commentDTO.getContent();
     }
 }

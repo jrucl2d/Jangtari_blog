@@ -77,11 +77,11 @@ public class CommentServiceTest extends ServiceTest {
         Comment comment = makeComment(post, member);
         given(commentRepository.findById(anyLong())).willReturn(Optional.of(comment));
         given(memberService.getMemberByName(anyString())).willReturn(member);
-        CommentDTO.Update commentDTO = CommentDTO.Update.builder().id(1L).comment("newComment").commenter("username").build();
+        CommentDTO.Update commentDTO = CommentDTO.Update.builder().commentId(1L).content("newComment").commenter("username").build();
         // when
         Comment newComment = commentService.updateComment(commentDTO);
         // then
-        assertThat(newComment.getContent()).isEqualTo(commentDTO.getComment());
+        assertThat(newComment.getContent()).isEqualTo(commentDTO.getContent());
     }
 
     @Test
@@ -93,7 +93,7 @@ public class CommentServiceTest extends ServiceTest {
         Comment comment = makeComment(post, member);
         given(commentRepository.findById(anyLong())).willReturn(Optional.of(comment));
         given(memberService.getMemberByName(anyString())).willReturn(Member.builder().username("no").build());
-        CommentDTO.Update commentDTO = CommentDTO.Update.builder().id(1L).comment("newComment").commenter("username").build();
+        CommentDTO.Update commentDTO = CommentDTO.Update.builder().commentId(1L).content("newComment").commenter("username").build();
         // when, then
         assertThrows(NoMasterException.class, () -> commentService.updateComment(commentDTO));
     }
