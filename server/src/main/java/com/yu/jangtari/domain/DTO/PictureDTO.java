@@ -8,7 +8,7 @@ public class PictureDTO {
     private String picture;
 
     @Builder
-    public PictureDTO(Long id, String picture) {
+    public PictureDTO(String picture) {
         this.picture = picture;
     }
 }

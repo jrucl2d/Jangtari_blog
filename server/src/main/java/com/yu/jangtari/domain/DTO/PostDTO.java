@@ -7,23 +7,15 @@ import com.yu.jangtari.domain.Post;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class PostDTO {
-    @Getter
-    @Setter
-    @ToString
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class GetAll{
-        private Long id;
-        private String title;
-        private int template;
-    }
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetOne{
@@ -48,7 +40,7 @@ public class PostDTO {
                     .id(post.getId())
                     .title(post.getTitle())
                     .content(post.getContent())
-                    .comments(null) // 여기 변경 필요
+                    .comments(post.getComments().stream().map(CommentDTO.Get::new).collect(Collectors.toList()))
                     .pictures(post.getPictures().stream().map(picture ->
                         PictureDTO.builder().picture(picture.getUrl()).build()
                     ).collect(Collectors.toList()))
@@ -61,13 +53,13 @@ public class PostDTO {
     @ToString
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Add{
-        @NotEmpty
+        @NotBlank(message = "카테고리 ID가 빈칸이면 안 됩니다.")
         private Long categoryId;
-        @NotEmpty
+        @NotBlank(message = "제목이 빈칸이면 안 됩니다.")
         private String title;
-        @NotEmpty
+        @NotBlank(message = "내용이 빈칸이면 안 됩니다.")
         private String content;
-        @NotEmpty
+        @NotBlank(message = "템플릿이 빈칸이면 안 됩니다.")
         private int template;
         private List<String> hashtags = new ArrayList<>();
         private List<MultipartFile> pictures = new ArrayList<>();
@@ -92,21 +84,21 @@ public class PostDTO {
                     .build();
         }
         public List<Hashtag> getHashtags() {
-            if (hashtags == null) return Arrays.asList(); // return EmptyList
-            return hashtags.stream().map(hashtagString -> new Hashtag(hashtagString)).collect(Collectors.toList());
+            if (hashtags == null) return Collections.emptyList(); // return EmptyList
+            return hashtags.stream().map(Hashtag::new).collect(Collectors.toList());
         }
     }
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Update{
-        @NotEmpty
+        @NotBlank(message = "ID가 빈칸이면 안 됩니다.")
         private Long postId;
-        @NotEmpty
+        @NotBlank(message = "제목이 빈칸이면 안 됩니다.")
         private String title;
-        @NotEmpty
+        @NotBlank(message = "내용이 빈칸이면 안 됩니다.")
         private String content;
-        @NotEmpty
+        @NotBlank(message = "템플릿이 빈칸이면 안 됩니다.")
         private int template;
         private List<String> hashtags = new ArrayList<>();
         private List<String> delPics = new ArrayList<>();
@@ -123,11 +115,11 @@ public class PostDTO {
             this.addPics = addPics;
         }
         public List<Hashtag> getHashtags() {
-            if (hashtags == null) return Arrays.asList();
-            return hashtags.stream().map(hashtagString -> new Hashtag(hashtagString)).collect(Collectors.toList());
+            if (hashtags == null) return Collections.emptyList();
+            return hashtags.stream().map(Hashtag::new).collect(Collectors.toList());
         }
         public List<Picture> getDeletePictures() {
-            if (delPics == null) return Arrays.asList();
+            if (delPics == null) return Collections.emptyList();
             return delPics.stream().map(delPic -> Picture.builder().url(delPic).build()).collect(Collectors.toList());
         }
     }

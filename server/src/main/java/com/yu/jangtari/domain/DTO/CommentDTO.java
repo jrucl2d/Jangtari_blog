@@ -1,24 +1,28 @@
 package com.yu.jangtari.domain.DTO;
 
 import com.yu.jangtari.domain.Comment;
-import com.yu.jangtari.domain.Member;
-import com.yu.jangtari.domain.Post;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 
 public class CommentDTO {
+
     @Getter
-    @Setter
-    @ToString
-    @AllArgsConstructor
-    @NoArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PACKAGE)
     public static class Get{
         private Long commentId;
-        private String comment;
+        private String content;
         private String username;
         private String nickname;
-        private Long recomment;
+        private Long parentComment;
+
+        public Get(Comment comment) {
+            this.commentId = comment.getId();
+            this.content = comment.getContent();
+            this.username = comment.getMember().getUsername();
+            this.nickname = comment.getMember().getNickname();
+            this.parentComment = comment.getParentComment().getId();
+        }
     }
 
     @Getter
