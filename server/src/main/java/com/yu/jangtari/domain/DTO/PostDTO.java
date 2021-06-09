@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class PostDTO {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class GetOne{
+    public static class GetOne {
         private Long postId;
         private String title;
         private String content;
@@ -43,6 +43,14 @@ public class PostDTO {
                     .hashtags(post.getPostHashtags().stream().map(postHashtag -> postHashtag.getHashtag().getContent()).collect(Collectors.toList()))
                     .build();
         }
+    }
+
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class GetList {
+        private Long postId;
+        private String title;
+        private List
     }
 
     @Getter

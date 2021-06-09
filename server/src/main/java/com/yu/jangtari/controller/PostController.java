@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.stream.IntStream;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -14,25 +16,15 @@ public class PostController {
 
     private final PostService postService;
 
+    @GetMapping("/post/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public PostDTO.GetOne getPost(@PathVariable(value = "id") Long postId){
+        return PostDTO.GetOne.of(postService.findOne(postId));
+    }
+//    @GetMapping("/category/{id}/posts")
+//    @ResponseStatus(HttpStatus.OK)
 
-//    @GetMapping("/bulk")
-//    public ResponseEntity<CustomResponse> theBulk(){
-//        IntStream.range(0, 300).forEach(i -> {
-//            Post post = new Post();
-//            post.setTitle("벌크 " + i);
-//            post.setPost("내용 " + i);
-//            Category category = new Category();
-//            category.setId(1L);
-//            post.setCategory(category);
-//            postRepository.save(post);
-//        });
-//
-//        return new ResponseEntity<>(new CustomResponse<>
-//                (null, "good"),
-//                HttpStatus.OK);
-//
-//    }
-//
+
 //    @GetMapping("/category/{id}/posts")
 //    public ResponseEntity<CustomResponse> getPostList(@PathVariable(value = "id") Long categoryId, PageVO pageVO){
 //        try{
@@ -46,12 +38,7 @@ public class PostController {
 //                    HttpStatus.BAD_REQUEST);
 //        }
 //    }
-//
-    @GetMapping("/post/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public PostDTO.GetOne getPost(@PathVariable(value = "id") Long postId){
-        return PostDTO.GetOne.of(postService.findOne(postId));
-    }
+
 //
 //    @PostMapping("/admin/post")
 //    public ResponseEntity<CustomResponse> addPost(@RequestPart("post") String postString,
