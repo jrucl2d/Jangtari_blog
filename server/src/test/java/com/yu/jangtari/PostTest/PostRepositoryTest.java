@@ -47,6 +47,19 @@ public class PostRepositoryTest extends IntegrationTest {
         assertThat(post).isEqualTo(findPost);
     }
     @Test
+    @DisplayName("getOne hashtag, picture 같이 가져오기 성공")
+    void getOne1_O() {
+        // given
+        Category category = makeCategory();
+        List<Hashtag> hashtags = Arrays.asList(new Hashtag("aaa"), new Hashtag("bbb"));
+        List<String> pictures = Arrays.asList("picture1", "picture2");
+        Post post = makePost(category, hashtags, pictures, 1);
+        // when
+        Post findPost = postRepository.getOne(1L).get();
+        // then
+        assertThat(post).isEqualTo(findPost);
+    }
+    @Test
     @DisplayName("getOne 테스트 실패 - 존재하지 않는 post를 찾을 시 NullPointerException")
     void getOne_X() {
         // given
@@ -55,7 +68,7 @@ public class PostRepositoryTest extends IntegrationTest {
         assertThrows(NoSuchElementException.class, () -> postRepository.getOne(1L).get());
     }
     @Test
-    @DisplayName("getOne 테스트 성공")
+    @DisplayName("getPostListForDelete 테스트 성공")
     void getPostListForDelete_O() {
         // given
         Category category = makeCategory();

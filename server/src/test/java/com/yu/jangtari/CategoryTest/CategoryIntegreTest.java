@@ -41,7 +41,7 @@ public class CategoryIntegreTest extends IntegrationTest {
         void put_O1() throws Exception {
             // given
             CategoryDTO.Add addDTO = makeCategoryDTOwithPicture();
-            Category category = categoryRepository.save(addDTO.toEntity("url"));
+            categoryRepository.save(addDTO.toEntity("url"));
 
             CategoryDTO.Update categoryDTO = makeUpdateCategoryDTOwithoutPicture();
             mockMvc.perform(multipart("/admin/category/1").param("name", categoryDTO.getName()))

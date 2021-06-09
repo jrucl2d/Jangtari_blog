@@ -192,6 +192,25 @@ public class PostServiceTest extends ServiceTest {
             post.getComments().forEach(comment -> assertThat(comment.getDeleteFlag().isDeleteFlag()).isTrue());
             post.getPostHashtags().forEach(postHashtag -> assertThat(postHashtag.getDeleteFlag().isDeleteFlag()).isTrue());
         }
+        @Test
+        @DisplayName("deletePostsOfCategory 테스트 성공")
+        void deletePostsOfCategory_O() {
+            // given
+            Post post1 = makePost(false);
+            Post post2 = makePost(true);
+            List<Hashtag> hashtags = makeHashtags();
+            post2.initPostHashtags(hashtags);
+            post2.addComment(Comment.builder().content("comment1").build());
+            post2.addComment(Comment.builder().content("comment").build());
+            given(postRepository.getPostListForDelete(anyLong())).willReturn(Arrays.asList(post1, post2));
+            // when
+            postService.deletePostsOfCategory(1L);
+            assertThat(post1.getDeleteFlag().isDeleteFlag()).isTrue();
+            assertThat(post2.getDeleteFlag().isDeleteFlag()).isTrue();
+            post2.getPostHashtags().forEach(postHashtag -> assertThat(postHashtag.getDeleteFlag().isDeleteFlag()).isTrue());
+            post2.getComments().forEach(comment -> assertThat(comment.getDeleteFlag().isDeleteFlag()).isTrue());
+            post2.getPictures().forEach(picture -> assertThat(picture.getDeleteFlag().isDeleteFlag()).isTrue());
+        }
     }
     @Nested
     @DisplayName("updatePost 테스트")
