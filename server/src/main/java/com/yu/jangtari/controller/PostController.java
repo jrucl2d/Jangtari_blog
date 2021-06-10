@@ -7,6 +7,7 @@ import com.yu.jangtari.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,6 @@ public class PostController {
     public Page<PostDTO.GetList> getPostList(@PathVariable(value = "id") Long categoryId, PageRequest pageRequest) {
         return postService.getPostList(categoryId, pageRequest);
     }
-
 //    @GetMapping("/category/{id}/posts")
 //    public ResponseEntity<CustomResponse> getPostList(@PathVariable(value = "id") Long categoryId, PageVO pageVO){
 //        try{

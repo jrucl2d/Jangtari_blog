@@ -96,7 +96,7 @@ public class PostDTO {
                     .template(template)
                     .build();
         }
-        public List<Hashtag> getHashtags() {
+        public List<Hashtag> getHashtagsEntity() {
             if (hashtags == null) return Collections.emptyList(); // return EmptyList
             return hashtags.stream().map(Hashtag::new).collect(Collectors.toList());
         }

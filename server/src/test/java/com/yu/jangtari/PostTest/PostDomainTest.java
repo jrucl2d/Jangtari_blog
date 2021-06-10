@@ -32,7 +32,7 @@ public class PostDomainTest {
         @DisplayName("PostDTO.Add getHashtags() 성공")
         void getHashtags_O() {
             PostDTO.Add postDTO = makePostDTO();
-            assertThat(postDTO.getHashtags().size()).isEqualTo(2);
+            assertThat(postDTO.getHashtagsEntity().size()).isEqualTo(2);
         }
         @Test
         @DisplayName("Post initPictures() 성공")

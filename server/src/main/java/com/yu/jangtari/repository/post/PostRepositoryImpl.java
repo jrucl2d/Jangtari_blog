@@ -33,12 +33,17 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
     @Override
     public Optional<Post> getOne(Long postId) {
         QPost post = QPost.post;
-        return Optional.ofNullable(jpaQueryFactory.selectFrom(post)
+        QComment comment = QComment.comment;
+        QPicture picture = QPicture.picture;
+        QPostHashtag postHashtag = QPostHashtag.postHashtag;
+        final Post resultPost = jpaQueryFactory.selectFrom(post)
                 .where(post.id.eq(postId))
-                .leftJoin(post.comments)
-                .leftJoin(post.pictures)
-                .leftJoin(post.postHashtags)
-                .fetchOne());
+                .leftJoin(post.comments, comment).on(comment.deleteFlag.deleteFlag.eq(false))
+                .leftJoin(post.pictures, picture).on(picture.deleteFlag.deleteFlag.eq(false))
+                .leftJoin(post.postHashtags, postHashtag).on(postHashtag.deleteFlag.deleteFlag.eq(false))
+                .fetchOne();
+        if (resultPost == null || resultPost.getDeleteFlag().isDeleteFlag()) return Optional.empty();
+        return Optional.of(resultPost);
     }
     @Override
     public List<Post> getPostListForDelete(Long categoryId) {
