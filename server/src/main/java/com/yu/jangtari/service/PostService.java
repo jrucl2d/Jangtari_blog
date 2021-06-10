@@ -38,7 +38,7 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Post> getPostList(Long categoryId, PageRequest pageRequest) {
+    public Page<PostDTO.GetList> getPostList(Long categoryId, PageRequest pageRequest) {
         return postRepository.getPostList(categoryId, pageRequest);
     }
 
@@ -52,7 +52,7 @@ public class PostService {
         final Post savedPost = postRepository.save(forSavePost);
 
         // 3. Hashtag 객체 save
-        final List<Hashtag> hashtags = hashtagRepository.saveAll(postDTO.getHashtags());
+        final List<Hashtag> hashtags = hashtagRepository.saveAll(postDTO.getHashtagsEntity());
 
         // 5. Post객체의 영속성 전이를 이용해 PostHashtag 저장
         savedPost.initPostHashtags(hashtags);

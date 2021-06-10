@@ -3,19 +3,18 @@ package com.yu.jangtari.PostTest;
 import com.yu.jangtari.IntegrationTest;
 import com.yu.jangtari.common.PageRequest;
 import com.yu.jangtari.domain.*;
+import com.yu.jangtari.domain.DTO.PostDTO;
 import com.yu.jangtari.repository.CommentRepository;
 import com.yu.jangtari.repository.HashtagRepository;
+import com.yu.jangtari.repository.PictureRepository;
 import com.yu.jangtari.repository.category.CategoryRepository;
 import com.yu.jangtari.repository.member.MemberRepository;
 import com.yu.jangtari.repository.post.PostRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -34,6 +33,8 @@ public class PostRepositoryTest extends IntegrationTest {
     private HashtagRepository hashtagRepository;
     @Autowired
     private CommentRepository commentRepository;
+    @Autowired
+    private PictureRepository pictureRepository;
 
     @Test
     @DisplayName("getOne 테스트 성공")
@@ -54,17 +55,51 @@ public class PostRepositoryTest extends IntegrationTest {
         List<Hashtag> hashtags = Arrays.asList(new Hashtag("aaa"), new Hashtag("bbb"));
         List<String> pictures = Arrays.asList("picture1", "picture2");
         Post post = makePost(category, hashtags, pictures, 1);
+        for (Picture picture : pictureRepository.findAll()) {
+            System.out.println(picture);
+        }
+//        // when
+//        Post findPost = postRepository.getOne(1L).get();
+//        // then
+//        assertThat(post).isEqualTo(findPost);
+    }
+    @Test
+    @DisplayName("getOne 삭제된 comment 안 불러오기")
+    void getOne2_O() {
+        // given
+        Category category = makeCategory();
+        List<Hashtag> hashtags = Arrays.asList(new Hashtag("aaa"), new Hashtag("bbb"));
+        List<String> pictures = Arrays.asList("picture1", "picture2");
+        Post post = makePost(category, hashtags, pictures, 1);
+        post.addComment(Comment.builder().content("c1").build());
+        post.addComment(Comment.builder().content("c2").build());
+        post.getComments().get(1).getDeleteFlag().softDelete();
+        postRepository.save(post);
         // when
         Post findPost = postRepository.getOne(1L).get();
         // then
         assertThat(post).isEqualTo(findPost);
+        System.out.println("호호");
+        System.out.println(findPost);
     }
     @Test
-    @DisplayName("getOne 테스트 실패 - 존재하지 않는 post를 찾을 시 NullPointerException")
+    @DisplayName("getOne 테스트 실패 - 존재하지 않는 post를 찾을 시 NoSuchElementException")
     void getOne_X() {
+        // given, when, then
+        assertThrows(NoSuchElementException.class, () -> postRepository.getOne(1L).get());
+    }
+    @Test
+    @DisplayName("getOne 테스트 실패 - 삭제된 post를 찾을 시 NoSuchElementException")
+    void getOne1_X() {
         // given
-        // when
-        // then
+        Category category = makeCategory();
+        List<Hashtag> hashtags = Arrays.asList(new Hashtag("aaa"), new Hashtag("bbb"));
+        List<String> pictures = Arrays.asList("picture1", "picture2");
+        Post post = makePost(category, hashtags, pictures, 1);
+        // 삭제 처리
+        post.getDeleteFlag().softDelete();
+        postRepository.save(post);
+        // when, then
         assertThrows(NoSuchElementException.class, () -> postRepository.getOne(1L).get());
     }
     @Test
@@ -109,13 +144,14 @@ public class PostRepositoryTest extends IntegrationTest {
         Post post3 = makePost(category, hashtags, null, 2);
         PageRequest pageRequest = new PageRequest(1, "t", "title2");
         // when
-        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
-        List<Post> postList = posts.toList();
+        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
+        List<PostDTO.GetList> postList = posts.toList();
         // then
         assertThat(posts.getTotalElements()).isEqualTo(2);
-        assertThat(postList.get(0)).isEqualTo(post2);
-        assertThat(postList.get(1)).isEqualTo(post3);
-    }
+        assertThat(postList.get(0).getPostId()).isEqualTo(post2.getId());
+        assertThat(postList.get(0).getTitle()).isEqualTo(post2.getTitle());
+        assertThat(postList.get(1).getPostId()).isEqualTo(post3.getId());
+        assertThat(postList.get(1).getTitle()).isEqualTo(post3.getTitle());    }
     @Test
     @DisplayName("getPostList() content로 찾기")
     void getPostList2_O() {
@@ -127,7 +163,7 @@ public class PostRepositoryTest extends IntegrationTest {
         makePost(category, hashtags, null, 2);
         PageRequest pageRequest = new PageRequest(1, "c", "tent1");
         // when
-        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
+        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
         // then
         assertThat(posts.getTotalElements()).isEqualTo(1);
     }
@@ -142,7 +178,7 @@ public class PostRepositoryTest extends IntegrationTest {
         makePost(category, hashtags, null, 2);
         PageRequest pageRequest = new PageRequest(1, "h", "aaa");
         // when
-        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
+        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
         // then
         assertThat(posts.getTotalElements()).isEqualTo(3);
     }
@@ -157,7 +193,7 @@ public class PostRepositoryTest extends IntegrationTest {
         makePost(category, hashtags, null, 2);
         PageRequest pageRequest = new PageRequest(1, "h", "cc");
         // when
-        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
+        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
         // then
         assertThat(posts.getTotalElements()).isEqualTo(0);
     }
@@ -172,7 +208,7 @@ public class PostRepositoryTest extends IntegrationTest {
         makePost(category, hashtags, null, 2);
         PageRequest pageRequest = new PageRequest(1, null, null);
         // when
-        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
+        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
         // then
         assertThat(posts.getTotalElements()).isEqualTo(3);
     }
@@ -191,7 +227,7 @@ public class PostRepositoryTest extends IntegrationTest {
 
         PageRequest pageRequest = new PageRequest(1, "t", "title1");
         // when
-        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
+        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
         // then
         assertThat(posts.getTotalElements()).isEqualTo(2);
     }
@@ -203,9 +239,9 @@ public class PostRepositoryTest extends IntegrationTest {
     }
     private Post makePost(Category category, List<Hashtag> hashtags, List<String> pictures, int index) {
         Post post = Post.builder().category(category).content("content"+index).template(1).title("title"+index).build();
-        if (hashtags == null && pictures == null) return postRepository.save(post);
-        if (pictures != null) post.addPictures(pictures);
         post = postRepository.save(post);
+        if (hashtags == null && pictures == null) return post;
+//        if (pictures != null) post.addPictures(pictures);
         List<Hashtag> hashtagList = hashtagRepository.saveAll(hashtags);
         post.initPostHashtags(hashtagList);
         return postRepository.save(post);
