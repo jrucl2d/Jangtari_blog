@@ -23,10 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.mock.web.MockMultipartFile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -245,30 +242,30 @@ public class PostServiceTest extends ServiceTest {
         }
         @Test
         @DisplayName("updatePost에서 picture 바뀜")
-        void updatePost13_O() {
+        void updatePost3_O() {
             // given
             PostDTO.Update postDTO = makeUpdatePostDTO(true);
             Post beforePost = makePost(true);
             given(postRepository.findById(any())).willReturn(Optional.of(beforePost));
             given(hashtagRepository.saveAll(any())).willReturn(postDTO.getHashtags());
-            given(googleDriveUtil.filesToURLs(postDTO.getAddPics(), GDFolder.POST)).willReturn(Arrays.asList("pic3"));
+            given(googleDriveUtil.filesToURLs(postDTO.getAddPics(), GDFolder.POST)).willReturn(Collections.singletonList("pic3"));
             // when
             Post post = postService.updatePost(postDTO);
             // then
             assertThat(post.getPictures().size()).isEqualTo(2);
-            assertThat(!post.getPictures().contains(Picture.builder().url("pic1").build()));
-            assertThat(post.getPictures().contains(Picture.builder().url("pic3").build()));
+            assertThat(post.getPictures().contains(Picture.builder().url("pic1").build())).isFalse();
+            assertThat(post.getPictures().contains(Picture.builder().url("pic3").build())).isTrue();
         }
     }
     @Test
     void getPostList_O() {
         // given
-        List<Post> posts = new ArrayList<>();
-        IntStream.range(0, 10).forEach(i -> posts.add(makePost(false)));
-        Page<Post> postPage = new PageImpl<>(posts);
+        List<PostDTO.GetList> posts = new ArrayList<>();
+        IntStream.range(0, 10).forEach(i -> posts.add(PostDTO.GetList.of(makePost(false))));
+        Page<PostDTO.GetList> postPage = new PageImpl<>(posts);
         given(postRepository.getPostList(anyLong(), any())).willReturn(postPage);
         // when
-        Page<Post> resultPostPage = postService.getPostList(1L, new PageRequest(1, "h", "aaa"));
+        Page<PostDTO.GetList> resultPostPage = postService.getPostList(1L, new PageRequest(1, "h", "aaa"));
         // then
         assertThat(resultPostPage.getTotalElements()).isEqualTo(10);
     }

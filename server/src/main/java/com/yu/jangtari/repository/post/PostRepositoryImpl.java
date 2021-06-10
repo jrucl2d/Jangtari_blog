@@ -1,10 +1,12 @@
 package com.yu.jangtari.repository.post;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yu.jangtari.common.PageRequest;
 import com.yu.jangtari.domain.*;
+import com.yu.jangtari.domain.DTO.PostDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -49,15 +51,15 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
                 .fetch();
     }
     @Override
-    public Page<Post> getPostList(Long categoryId, PageRequest pageRequest) {
+    public Page<PostDTO.GetList> getPostList(Long categoryId, PageRequest pageRequest) {
         final Pageable pageable = pageRequest.of();
         final String type = pageRequest.getType();
         final String keyword = pageRequest.getKeyword();
 
-        JPQLQuery<Post> query;
+        JPQLQuery<PostDTO.GetList> query;
         QPost post = QPost.post;
         // select, from
-        query = jpaQueryFactory.selectFrom(post);
+        query = jpaQueryFactory.select(Projections.constructor(PostDTO.GetList.class, post.id, post.title)).from(post);
 
         // where
         BooleanBuilder bb = new BooleanBuilder();
@@ -65,7 +67,7 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         setCommonCondition(post, bb, categoryId);
         query.where(bb);
 
-        final List<Post> posts = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query).fetch();
+        final List<PostDTO.GetList> posts = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query).fetch();
         return new PageImpl<>(posts, pageable, query.fetchCount());
     }
 

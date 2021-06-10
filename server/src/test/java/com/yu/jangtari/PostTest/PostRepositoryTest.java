@@ -3,19 +3,17 @@ package com.yu.jangtari.PostTest;
 import com.yu.jangtari.IntegrationTest;
 import com.yu.jangtari.common.PageRequest;
 import com.yu.jangtari.domain.*;
+import com.yu.jangtari.domain.DTO.PostDTO;
 import com.yu.jangtari.repository.CommentRepository;
 import com.yu.jangtari.repository.HashtagRepository;
 import com.yu.jangtari.repository.category.CategoryRepository;
 import com.yu.jangtari.repository.member.MemberRepository;
 import com.yu.jangtari.repository.post.PostRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -109,13 +107,14 @@ public class PostRepositoryTest extends IntegrationTest {
         Post post3 = makePost(category, hashtags, null, 2);
         PageRequest pageRequest = new PageRequest(1, "t", "title2");
         // when
-        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
-        List<Post> postList = posts.toList();
+        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
+        List<PostDTO.GetList> postList = posts.toList();
         // then
         assertThat(posts.getTotalElements()).isEqualTo(2);
-        assertThat(postList.get(0)).isEqualTo(post2);
-        assertThat(postList.get(1)).isEqualTo(post3);
-    }
+        assertThat(postList.get(0).getPostId()).isEqualTo(post2.getId());
+        assertThat(postList.get(0).getTitle()).isEqualTo(post2.getTitle());
+        assertThat(postList.get(1).getPostId()).isEqualTo(post3.getId());
+        assertThat(postList.get(1).getTitle()).isEqualTo(post3.getTitle());    }
     @Test
     @DisplayName("getPostList() content로 찾기")
     void getPostList2_O() {
@@ -127,7 +126,7 @@ public class PostRepositoryTest extends IntegrationTest {
         makePost(category, hashtags, null, 2);
         PageRequest pageRequest = new PageRequest(1, "c", "tent1");
         // when
-        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
+        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
         // then
         assertThat(posts.getTotalElements()).isEqualTo(1);
     }
@@ -142,7 +141,7 @@ public class PostRepositoryTest extends IntegrationTest {
         makePost(category, hashtags, null, 2);
         PageRequest pageRequest = new PageRequest(1, "h", "aaa");
         // when
-        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
+        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
         // then
         assertThat(posts.getTotalElements()).isEqualTo(3);
     }
@@ -157,7 +156,7 @@ public class PostRepositoryTest extends IntegrationTest {
         makePost(category, hashtags, null, 2);
         PageRequest pageRequest = new PageRequest(1, "h", "cc");
         // when
-        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
+        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
         // then
         assertThat(posts.getTotalElements()).isEqualTo(0);
     }
@@ -172,7 +171,7 @@ public class PostRepositoryTest extends IntegrationTest {
         makePost(category, hashtags, null, 2);
         PageRequest pageRequest = new PageRequest(1, null, null);
         // when
-        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
+        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
         // then
         assertThat(posts.getTotalElements()).isEqualTo(3);
     }
@@ -191,7 +190,7 @@ public class PostRepositoryTest extends IntegrationTest {
 
         PageRequest pageRequest = new PageRequest(1, "t", "title1");
         // when
-        Page<Post> posts = postRepository.getPostList(1L, pageRequest);
+        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
         // then
         assertThat(posts.getTotalElements()).isEqualTo(2);
     }

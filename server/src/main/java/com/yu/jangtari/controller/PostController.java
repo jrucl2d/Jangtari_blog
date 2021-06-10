@@ -27,8 +27,7 @@ public class PostController {
     @GetMapping("/category/{id}/posts")
     @ResponseStatus(HttpStatus.OK)
     public Page<PostDTO.GetList> getPostList(@PathVariable(value = "id") Long categoryId, PageRequest pageRequest) {
-        final Page<Post> posts = postService.getPostList(categoryId, pageRequest);
-        return posts.map(PostDTO.GetList::of);
+        return postService.getPostList(categoryId, pageRequest);
     }
 
 //    @GetMapping("/category/{id}/posts")
