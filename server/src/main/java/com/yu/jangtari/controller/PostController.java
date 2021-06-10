@@ -1,8 +1,11 @@
 package com.yu.jangtari.controller;
 
+import com.yu.jangtari.common.PageRequest;
 import com.yu.jangtari.domain.DTO.PostDTO;
+import com.yu.jangtari.domain.Post;
 import com.yu.jangtari.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +24,12 @@ public class PostController {
     public PostDTO.GetOne getPost(@PathVariable(value = "id") Long postId){
         return PostDTO.GetOne.of(postService.findOne(postId));
     }
-//    @GetMapping("/category/{id}/posts")
-//    @ResponseStatus(HttpStatus.OK)
-
+    @GetMapping("/category/{id}/posts")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<PostDTO.GetList> getPostList(@PathVariable(value = "id") Long categoryId, PageRequest pageRequest) {
+        final Page<Post> posts = postService.getPostList(categoryId, pageRequest);
+        return posts.map(PostDTO.GetList::of);
+    }
 
 //    @GetMapping("/category/{id}/posts")
 //    public ResponseEntity<CustomResponse> getPostList(@PathVariable(value = "id") Long categoryId, PageVO pageVO){

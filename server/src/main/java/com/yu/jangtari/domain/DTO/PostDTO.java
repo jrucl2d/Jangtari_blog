@@ -50,7 +50,16 @@ public class PostDTO {
     public static class GetList {
         private Long postId;
         private String title;
-        private List
+
+        @Builder
+        public GetList(Long postId, String title) {
+            this.postId = postId;
+            this.title = title;
+        }
+
+        public static GetList of(final Post post) {
+            return GetList.builder().postId(post.getId()).title(post.getTitle()).build();
+        }
     }
 
     @Getter

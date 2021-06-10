@@ -9,9 +9,9 @@ import org.springframework.data.domain.Sort;
 @Getter
 public final class PageRequest {
     private final int DEFAULT_SIZE = 10;
-    private int page;
-    private String type;
-    private String keyword;
+    private final int page;
+    private final String type;
+    private final String keyword;
 
     public PageRequest(int page, String type, String keyword) {
         this.page = Math.max(page - 1, 0);
