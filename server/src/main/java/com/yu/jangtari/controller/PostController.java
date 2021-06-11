@@ -2,7 +2,6 @@ package com.yu.jangtari.controller;
 
 import com.yu.jangtari.common.PageRequest;
 import com.yu.jangtari.domain.DTO.PostDTO;
-import com.yu.jangtari.domain.Post;
 import com.yu.jangtari.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,7 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.stream.IntStream;
+import javax.validation.Valid;
 
 
 @Controller
@@ -27,79 +26,19 @@ public class PostController {
     }
     @GetMapping("/category/{id}/posts")
     @ResponseStatus(HttpStatus.OK)
-    public Page<PostDTO.GetList> getPostList(@PathVariable(value = "id") Long categoryId, PageRequest pageRequest) {
+    public Page<PostDTO.Get> getPostList(@PathVariable(value = "id") Long categoryId, PageRequest pageRequest) {
         return postService.getPostList(categoryId, pageRequest);
     }
-//    @GetMapping("/category/{id}/posts")
-//    public ResponseEntity<CustomResponse> getPostList(@PathVariable(value = "id") Long categoryId, PageVO pageVO){
-//        try{
-//            PageMakerVO<PostDTO.GetAll> results =  postService.getPostList(categoryId ,pageVO, pageVO.getType(), pageVO.getKeyword());
-//            return new ResponseEntity<>(new CustomResponse<>
-//                    (null, results),
-//                    HttpStatus.OK);
-//        } catch(CustomException e){
-//            return new ResponseEntity<>(new CustomResponse<>
-//                    (new ErrorResponse(e), null),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//    }
-
-//
-//    @PostMapping("/admin/post")
-//    public ResponseEntity<CustomResponse> addPost(@RequestPart("post") String postString,
-//                                                  @RequestPart("images") List<MultipartFile> postImages) throws GeneralSecurityException, IOException {
-//        try{
-//            PostDTO.Add thePost = new ObjectMapper().readValue(postString, PostDTO.Add.class);
-//            postService.addPost(thePost, postImages);
-//            return new ResponseEntity<>(CustomResponse.OK(),
-//                    HttpStatus.CREATED);
-//        } catch (CustomException e){
-//            return new ResponseEntity<>(new CustomResponse<>
-//                    (new ErrorResponse(e), null),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//    }
-//    @PostMapping("/admin/post/nimg")
-//    public ResponseEntity<CustomResponse> addPost2(@RequestPart("post") String postString) throws GeneralSecurityException, IOException {
-//        try{
-//            PostDTO.Add thePost = new ObjectMapper().readValue(postString, PostDTO.Add.class);
-//            postService.addPost(thePost, null);
-//            return new ResponseEntity<>(CustomResponse.OK(),
-//                    HttpStatus.CREATED);
-//        } catch (CustomException e){
-//            return new ResponseEntity<>(new CustomResponse<>
-//                    (new ErrorResponse(e), null),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//    }
-//    @PutMapping("/admin/post")
-//    public ResponseEntity<CustomResponse> updatePost(@RequestPart("post") String postString,
-//                                                  @RequestPart("images") List<MultipartFile> postImages) throws GeneralSecurityException, IOException {
-//        try{
-//            PostDTO.Update thePost = new ObjectMapper().readValue(postString, PostDTO.Update.class);
-//            postService.updatePost(thePost, postImages);
-//            return new ResponseEntity<>(CustomResponse.OK(),
-//                    HttpStatus.CREATED);
-//        } catch (CustomException e){
-//            return new ResponseEntity<>(new CustomResponse<>
-//                    (new ErrorResponse(e), null),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//    }
-//    @PutMapping("/admin/post/nimg")
-//    public ResponseEntity<CustomResponse> updatePost2(@RequestPart("post") String postString) throws GeneralSecurityException, IOException {
-//        try{
-//            PostDTO.Update thePost = new ObjectMapper().readValue(postString, PostDTO.Update.class);
-//            postService.updatePost(thePost, null);
-//            return new ResponseEntity<>(CustomResponse.OK(),
-//                    HttpStatus.CREATED);
-//        } catch (CustomException e){
-//            return new ResponseEntity<>(new CustomResponse<>
-//                    (new ErrorResponse(e), null),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//    }
-//
+    @PostMapping(value = "/admin/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public PostDTO.Get addPost(@Valid final PostDTO.Add postDTO) {
+        return PostDTO.Get.of(postService.addPost(postDTO));
+    }
+    @PostMapping(value = "/admin/post/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public PostDTO.Get updatePost(@PathVariable("id") final Long postId, @Valid final PostDTO.Update postDTO) {
+        return PostDTO.Get.of(postService.updatePost(postId, postDTO));
+    }
 //    @DeleteMapping("/admin/post/{id}")
 //    public ResponseEntity<CustomResponse> deletePost(@PathVariable(value = "id")Long postId){
 //        try{

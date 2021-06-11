@@ -128,6 +128,7 @@ public class PostRepositoryTest extends IntegrationTest {
         makeComment(post, member);
         // when
         Post findPost = postRepository.findById(1L).get();
+        System.out.println(findPost);
         // then
         assertThat(findPost.getPostHashtags().size()).isEqualTo(2);
         assertThat(findPost.getComments().size()).isEqualTo(1);
@@ -144,8 +145,8 @@ public class PostRepositoryTest extends IntegrationTest {
         Post post3 = makePost(category, hashtags, null, 2);
         PageRequest pageRequest = new PageRequest(1, "t", "title2");
         // when
-        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
-        List<PostDTO.GetList> postList = posts.toList();
+        Page<PostDTO.Get> posts = postRepository.getPostList(1L, pageRequest);
+        List<PostDTO.Get> postList = posts.toList();
         // then
         assertThat(posts.getTotalElements()).isEqualTo(2);
         assertThat(postList.get(0).getPostId()).isEqualTo(post2.getId());
@@ -163,7 +164,7 @@ public class PostRepositoryTest extends IntegrationTest {
         makePost(category, hashtags, null, 2);
         PageRequest pageRequest = new PageRequest(1, "c", "tent1");
         // when
-        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
+        Page<PostDTO.Get> posts = postRepository.getPostList(1L, pageRequest);
         // then
         assertThat(posts.getTotalElements()).isEqualTo(1);
     }
@@ -178,7 +179,7 @@ public class PostRepositoryTest extends IntegrationTest {
         makePost(category, hashtags, null, 2);
         PageRequest pageRequest = new PageRequest(1, "h", "aaa");
         // when
-        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
+        Page<PostDTO.Get> posts = postRepository.getPostList(1L, pageRequest);
         // then
         assertThat(posts.getTotalElements()).isEqualTo(3);
     }
@@ -193,7 +194,7 @@ public class PostRepositoryTest extends IntegrationTest {
         makePost(category, hashtags, null, 2);
         PageRequest pageRequest = new PageRequest(1, "h", "cc");
         // when
-        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
+        Page<PostDTO.Get> posts = postRepository.getPostList(1L, pageRequest);
         // then
         assertThat(posts.getTotalElements()).isEqualTo(0);
     }
@@ -208,7 +209,7 @@ public class PostRepositoryTest extends IntegrationTest {
         makePost(category, hashtags, null, 2);
         PageRequest pageRequest = new PageRequest(1, null, null);
         // when
-        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
+        Page<PostDTO.Get> posts = postRepository.getPostList(1L, pageRequest);
         // then
         assertThat(posts.getTotalElements()).isEqualTo(3);
     }
@@ -227,7 +228,7 @@ public class PostRepositoryTest extends IntegrationTest {
 
         PageRequest pageRequest = new PageRequest(1, "t", "title1");
         // when
-        Page<PostDTO.GetList> posts = postRepository.getPostList(1L, pageRequest);
+        Page<PostDTO.Get> posts = postRepository.getPostList(1L, pageRequest);
         // then
         assertThat(posts.getTotalElements()).isEqualTo(2);
     }
@@ -241,7 +242,7 @@ public class PostRepositoryTest extends IntegrationTest {
         Post post = Post.builder().category(category).content("content"+index).template(1).title("title"+index).build();
         post = postRepository.save(post);
         if (hashtags == null && pictures == null) return post;
-//        if (pictures != null) post.addPictures(pictures);
+        if (pictures != null) post.addPictures(pictures);
         List<Hashtag> hashtagList = hashtagRepository.saveAll(hashtags);
         post.initPostHashtags(hashtagList);
         return postRepository.save(post);

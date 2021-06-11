@@ -47,18 +47,18 @@ public class PostDTO {
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class GetList {
+    public static class Get {
         private Long postId;
         private String title;
 
         @Builder
-        public GetList(Long postId, String title) {
+        public Get(Long postId, String title) {
             this.postId = postId;
             this.title = title;
         }
 
-        public static GetList of(final Post post) {
-            return GetList.builder().postId(post.getId()).title(post.getTitle()).build();
+        public static Get of(final Post post) {
+            return Get.builder().postId(post.getId()).title(post.getTitle()).build();
         }
     }
 
@@ -105,8 +105,6 @@ public class PostDTO {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Update{
-        @NotBlank(message = "ID가 빈칸이면 안 됩니다.")
-        private Long postId;
         @NotBlank(message = "제목이 빈칸이면 안 됩니다.")
         private String title;
         @NotBlank(message = "내용이 빈칸이면 안 됩니다.")
@@ -118,8 +116,7 @@ public class PostDTO {
         private List<MultipartFile> addPics = new ArrayList<>();
 
         @Builder
-        public Update(Long postId, String title, String content, int template, List<String> hashtags, List<String> delPics, List<MultipartFile> addPics) {
-            this.postId = postId;
+        public Update(String title, String content, int template, List<String> hashtags, List<String> delPics, List<MultipartFile> addPics) {
             this.title = title;
             this.content = content;
             this.template = template;

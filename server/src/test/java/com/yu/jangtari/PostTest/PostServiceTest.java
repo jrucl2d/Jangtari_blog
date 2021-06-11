@@ -31,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.will;
 import static org.mockito.Mockito.*;
 
 public class PostServiceTest extends ServiceTest {
@@ -221,7 +220,7 @@ public class PostServiceTest extends ServiceTest {
             given(postRepository.findById(any())).willReturn(Optional.of(beforePost));
             given(hashtagRepository.saveAll(any())).willReturn(postDTO.getHashtags());
             // when
-            Post post = postService.updatePost(postDTO);
+            Post post = postService.updatePost(1L, postDTO);
             // then
             assertThat(post.getPostHashtags().size()).isEqualTo(3);
             assertThat(post.getPictures().size()).isEqualTo(2);
@@ -235,7 +234,7 @@ public class PostServiceTest extends ServiceTest {
             given(postRepository.findById(any())).willReturn(Optional.of(beforePost));
             given(hashtagRepository.saveAll(any())).willReturn(Arrays.asList());
             // when
-            Post post = postService.updatePost(postDTO);
+            Post post = postService.updatePost(1L, postDTO);
             // then
             assertThat(post.getPostHashtags().size()).isEqualTo(0);
             assertThat(post.getPictures().size()).isEqualTo(0);
@@ -250,7 +249,7 @@ public class PostServiceTest extends ServiceTest {
             given(hashtagRepository.saveAll(any())).willReturn(postDTO.getHashtags());
             given(googleDriveUtil.filesToURLs(postDTO.getAddPics(), GDFolder.POST)).willReturn(Collections.singletonList("pic3"));
             // when
-            Post post = postService.updatePost(postDTO);
+            Post post = postService.updatePost(1L, postDTO);
             // then
             assertThat(post.getPictures().size()).isEqualTo(2);
             assertThat(post.getPictures().contains(Picture.builder().url("pic1").build())).isFalse();
@@ -260,12 +259,12 @@ public class PostServiceTest extends ServiceTest {
     @Test
     void getPostList_O() {
         // given
-        List<PostDTO.GetList> posts = new ArrayList<>();
-        IntStream.range(0, 10).forEach(i -> posts.add(PostDTO.GetList.of(makePost(false))));
-        Page<PostDTO.GetList> postPage = new PageImpl<>(posts);
+        List<PostDTO.Get> posts = new ArrayList<>();
+        IntStream.range(0, 10).forEach(i -> posts.add(PostDTO.Get.of(makePost(false))));
+        Page<PostDTO.Get> postPage = new PageImpl<>(posts);
         given(postRepository.getPostList(anyLong(), any())).willReturn(postPage);
         // when
-        Page<PostDTO.GetList> resultPostPage = postService.getPostList(1L, new PageRequest(1, "h", "aaa"));
+        Page<PostDTO.Get> resultPostPage = postService.getPostList(1L, new PageRequest(1, "h", "aaa"));
         // then
         assertThat(resultPostPage.getTotalElements()).isEqualTo(10);
     }
@@ -273,7 +272,6 @@ public class PostServiceTest extends ServiceTest {
     private PostDTO.Update makeUpdatePostDTO(boolean withPicture) {
         if (withPicture) {
             return PostDTO.Update.builder()
-                    .postId(1L)
                     .template(2)
                     .content("modified")
                     .title("modified title")
@@ -283,7 +281,6 @@ public class PostServiceTest extends ServiceTest {
                     .build();
         }
         return PostDTO.Update.builder()
-                .postId(1L)
                 .template(2)
                 .content("modified")
                 .title("modified title")

@@ -38,7 +38,7 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PostDTO.GetList> getPostList(Long categoryId, PageRequest pageRequest) {
+    public Page<PostDTO.Get> getPostList(Long categoryId, PageRequest pageRequest) {
         return postRepository.getPostList(categoryId, pageRequest);
     }
 
@@ -74,9 +74,9 @@ public class PostService {
      * hashtag는 모두 삭제하고 추가한다.
      * picture는 google drive에 업로드하는 데 걸리는 오버헤드를 생각해 프론트에서 삭제할 picture와 추가할 picture를 따로 받음
      */
-    public Post updatePost(PostDTO.Update postDTO) {
+    public Post updatePost(Long postId, PostDTO.Update postDTO) {
         // 1. Post 객체 get
-        final Post post = findOne(postDTO.getPostId());
+        final Post post = findOne(postId);
         // 2. hashtag, picture 제외한 내용 update
         post.updateTitleContentTemplate(postDTO);
         // 3. 기존의 hashtag들 실제로 삭제, 새로운 hashtag 추가

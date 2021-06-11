@@ -56,15 +56,15 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
                 .fetch();
     }
     @Override
-    public Page<PostDTO.GetList> getPostList(Long categoryId, PageRequest pageRequest) {
+    public Page<PostDTO.Get> getPostList(Long categoryId, PageRequest pageRequest) {
         final Pageable pageable = pageRequest.of();
         final String type = pageRequest.getType();
         final String keyword = pageRequest.getKeyword();
 
-        JPQLQuery<PostDTO.GetList> query;
+        JPQLQuery<PostDTO.Get> query;
         QPost post = QPost.post;
         // select, from
-        query = jpaQueryFactory.select(Projections.constructor(PostDTO.GetList.class, post.id, post.title)).from(post);
+        query = jpaQueryFactory.select(Projections.constructor(PostDTO.Get.class, post.id, post.title)).from(post);
 
         // where
         BooleanBuilder bb = new BooleanBuilder();
@@ -72,7 +72,7 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         setCommonCondition(post, bb, categoryId);
         query.where(bb);
 
-        final List<PostDTO.GetList> posts = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query).fetch();
+        final List<PostDTO.Get> posts = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query).fetch();
         return new PageImpl<>(posts, pageable, query.fetchCount());
     }
 

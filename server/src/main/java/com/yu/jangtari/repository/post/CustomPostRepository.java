@@ -12,6 +12,6 @@ import java.util.Optional;
 
 public interface CustomPostRepository {
     Optional<Post> getOne(Long postId);
-    Page<PostDTO.GetList> getPostList(Long categoryId, PageRequest pageRequest);
+    Page<PostDTO.Get> getPostList(Long categoryId, PageRequest pageRequest);
     List<Post> getPostListForDelete(@Param(value = "categoryId") Long categoryId);
 }
