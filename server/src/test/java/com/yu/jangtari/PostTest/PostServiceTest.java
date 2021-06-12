@@ -63,6 +63,7 @@ public class PostServiceTest extends ServiceTest {
             Category category = makeCategory();
             Post beforePost = makePost(false);
             List<Hashtag> hashtags = makeHashtags();
+            given(postRepository.save(any())).willReturn(beforePost);
             given(categoryRepository.findById(anyLong())).willReturn(Optional.of(category));
             given(hashtagRepository.saveAll(any())).willReturn(hashtags);
             given(postHashtagRepository.saveAll(any())).willReturn(PostHashtag.hashtagsToPostHashtags(hashtags, beforePost));
@@ -87,6 +88,7 @@ public class PostServiceTest extends ServiceTest {
             List<Hashtag> hashtags = makeHashtags();
             given(categoryRepository.findById(anyLong())).willReturn(Optional.of(category));
             given(hashtagRepository.saveAll(any())).willReturn(hashtags);
+            given(postRepository.save(any())).willReturn(beforePost);
             given(postHashtagRepository.saveAll(any())).willReturn(PostHashtag.hashtagsToPostHashtags(hashtags, beforePost));
             given(pictureRepository.saveAll(any())).willReturn(Picture.stringsToPictures(Arrays.asList("pic1", "pic2"), beforePost));
             given(googleDriveUtil.filesToURLs(postDTO.getPictures(), GDFolder.POST)).willReturn(Arrays.asList("pic1", "pic2"));
