@@ -11,6 +11,8 @@ import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.*;
 import com.yu.jangtari.domain.DTO.PostDTO;
 import com.yu.jangtari.repository.HashtagRepository;
+import com.yu.jangtari.repository.PictureRepository;
+import com.yu.jangtari.repository.PostHashtagRepository;
 import com.yu.jangtari.repository.category.CategoryRepository;
 import com.yu.jangtari.repository.post.PostRepository;
 import com.yu.jangtari.service.PostService;
@@ -45,6 +47,10 @@ public class PostServiceTest extends ServiceTest {
     private HashtagRepository hashtagRepository;
     @Mock
     private GoogleDriveUtil googleDriveUtil;
+    @Mock
+    private PostHashtagRepository postHashtagRepository;
+    @Mock
+    private PictureRepository pictureRepository;
 
     @Nested
     @DisplayName("addPost 테스트")
@@ -53,13 +59,13 @@ public class PostServiceTest extends ServiceTest {
         @DisplayName("addPost picture X, 성공")
         void addPost_without_picture_O() {
             // given
-            PostDTO.Add postDTO = makeAddPostDTO();
+            PostDTO.Add postDTO = makeAddPostDTO(false);
             Category category = makeCategory();
             Post beforePost = makePost(false);
             List<Hashtag> hashtags = makeHashtags();
             given(categoryRepository.findById(anyLong())).willReturn(Optional.of(category));
-            given(postRepository.save(any())).willReturn(beforePost);
             given(hashtagRepository.saveAll(any())).willReturn(hashtags);
+            given(postHashtagRepository.saveAll(any())).willReturn(PostHashtag.hashtagsToPostHashtags(hashtags, beforePost));
 
             // when
             Post post = postService.addPost(postDTO);
@@ -75,13 +81,14 @@ public class PostServiceTest extends ServiceTest {
         @DisplayName("addPost picture O, 성공")
         void addPost_with_picture_O() {
             // given
-            PostDTO.Add postDTO = makeAddPostDTO();
+            PostDTO.Add postDTO = makeAddPostDTO(true);
             Category category = makeCategory();
             Post beforePost = makePost(true);
             List<Hashtag> hashtags = makeHashtags();
             given(categoryRepository.findById(anyLong())).willReturn(Optional.of(category));
-            given(postRepository.save(any())).willReturn(beforePost);
             given(hashtagRepository.saveAll(any())).willReturn(hashtags);
+            given(postHashtagRepository.saveAll(any())).willReturn(PostHashtag.hashtagsToPostHashtags(hashtags, beforePost));
+            given(pictureRepository.saveAll(any())).willReturn(Picture.stringsToPictures(Arrays.asList("pic1", "pic2"), beforePost));
             given(googleDriveUtil.filesToURLs(postDTO.getPictures(), GDFolder.POST)).willReturn(Arrays.asList("pic1", "pic2"));
             // when
             Post post = postService.addPost(postDTO);
@@ -98,7 +105,7 @@ public class PostServiceTest extends ServiceTest {
         @DisplayName("addPost NoSuchCategoryException 발생")
         void addPost_No_Category_X() {
             // given
-            PostDTO.Add postDTO =  makeAddPostDTO();
+            PostDTO.Add postDTO =  makeAddPostDTO(false);
             given(categoryRepository.findById(anyLong())).willThrow(NoSuchCategoryException.class);
             // when, then
             assertThrows(NoSuchCategoryException.class, () -> postService.addPost(postDTO));
@@ -107,7 +114,7 @@ public class PostServiceTest extends ServiceTest {
         @DisplayName("addPost googleDriveUtil에서 GoogleDriveException 발생")
         void addPost_Google_Drive_Exception_X() {
             // given
-            PostDTO.Add postDTO = makeAddPostDTO();
+            PostDTO.Add postDTO = makeAddPostDTO(true);
             Category category = makeCategory();
             given(categoryRepository.findById(anyLong())).willReturn(Optional.of(category));
             given(googleDriveUtil.filesToURLs(postDTO.getPictures(), GDFolder.POST)).willThrow(new GoogleDriveException());
@@ -118,7 +125,7 @@ public class PostServiceTest extends ServiceTest {
         @DisplayName("addPost googleDriveUtil에서 FileTaskException 발생")
         void addPost_File_Task_Exception_X() {
             // given
-            PostDTO.Add postDTO = makeAddPostDTO();
+            PostDTO.Add postDTO = makeAddPostDTO(true);
             Category category = makeCategory();
             given(categoryRepository.findById(anyLong())).willReturn(Optional.of(category));
             given(googleDriveUtil.filesToURLs(postDTO.getPictures(), GDFolder.POST)).willThrow(new FileTaskException());
@@ -229,10 +236,13 @@ public class PostServiceTest extends ServiceTest {
         @DisplayName("updatePost에서 hashtag 없애버림")
         void updatePost2_O() {
             // given
-            PostDTO.Update postDTO = makeUpdatePostDTO(false);
+            PostDTO.Update postDTO = PostDTO.Update.builder()
+                    .template(2)
+                    .content("modified")
+                    .title("modified title")
+                    .build();
             Post beforePost = makePost(false);
             given(postRepository.findById(any())).willReturn(Optional.of(beforePost));
-            given(hashtagRepository.saveAll(any())).willReturn(Arrays.asList());
             // when
             Post post = postService.updatePost(1L, postDTO);
             // then
@@ -277,27 +287,35 @@ public class PostServiceTest extends ServiceTest {
                     .title("modified title")
                     .delPics(Arrays.asList("pic1"))
                     .addPics(Arrays.asList(new MockMultipartFile("pic3", new byte[]{0})))
-                    .hashtags(Arrays.asList("aaa", "bbb", "ccc"))
+                    .hashtags(Arrays.asList("aa", "bb", "cc"))
                     .build();
         }
         return PostDTO.Update.builder()
                 .template(2)
                 .content("modified")
                 .title("modified title")
-                .hashtags(Arrays.asList("aaa", "bbb", "ccc"))
+                .hashtags(Arrays.asList("aa", "bb", "cc"))
                 .build();
     }
-    private PostDTO.Add makeAddPostDTO() {
+    private PostDTO.Add makeAddPostDTO(boolean withPicture) {
+        if (withPicture) return PostDTO.Add.builder()
+                .title("post title")
+                .content("post content")
+                .categoryId(1L)
+                .template(1)
+                .pictures(Arrays.asList(new MockMultipartFile("pic1", new byte[]{0}), new MockMultipartFile("pic2", new byte[]{0})))
+                .hashtags(Arrays.asList("aa", "bb"))
+                .build();
         return PostDTO.Add.builder()
                 .title("post title")
                 .content("post content")
                 .categoryId(1L)
                 .template(1)
-                .hashtags(Arrays.asList("aaa", "bbb", "ccc"))
+                .hashtags(Arrays.asList("aa", "bb"))
                 .build();
     }
     private Post makePost(boolean withPicture) {
-        PostDTO.Add postDTO = makeAddPostDTO();
+        PostDTO.Add postDTO = makeAddPostDTO(true);
         Category category = makeCategory();
         if (withPicture) {
             final Post post = postDTO.toEntity(category);

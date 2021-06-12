@@ -103,6 +103,7 @@ public class PostDTO {
     }
 
     @Getter
+    @ToString
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Update{
         @NotBlank(message = "제목이 빈칸이면 안 됩니다.")

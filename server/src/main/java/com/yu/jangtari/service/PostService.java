@@ -74,6 +74,7 @@ public class PostService {
         post.addPostHashtags(postHashtags);
     }
     private void addPicturesToPostIfExist(final Post post, final List<MultipartFile> pictureFiles) {
+        if (pictureFiles == null) return;
         final List<String> pictureURLs = googleDriveUtil.filesToURLs(pictureFiles, GDFolder.POST);
         final List<Picture> pictures = Picture.stringsToPictures(pictureURLs, post);
         pictureRepository.saveAll(pictures);
