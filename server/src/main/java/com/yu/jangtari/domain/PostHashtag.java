@@ -2,6 +2,8 @@ package com.yu.jangtari.domain;
 
 import lombok.*;
 import javax.persistence.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,5 +33,8 @@ public class PostHashtag extends DateAuditing{
         this.post = post;
         this.hashtag = hashtag;
         this.deleteFlag = DeleteFlag.initDeleteFlag();
+    }
+    public static List<PostHashtag> hashtagsToPostHashtags(List<Hashtag> hashtags, Post post) {
+        return hashtags.stream().map(ht -> PostHashtag.builder().hashtag(ht).post(post).build()).collect(Collectors.toList());
     }
 }

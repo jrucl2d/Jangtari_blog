@@ -159,9 +159,9 @@ public class PostServiceTest extends ServiceTest {
         void deletePost1_O() {
             // given
             Post post = Post.builder().build();
-            post.addPictures(Arrays.asList("picture1", "picture2"));
+            post.addPictures(Picture.stringsToPictures(Arrays.asList("picture1", "picture2"), post));
             post.addComment(Comment.builder().build());
-            post.initPostHashtags(Arrays.asList(new Hashtag("h1"), new Hashtag("h2")));
+            post.addPostHashtags(PostHashtag.hashtagsToPostHashtags(Arrays.asList(new Hashtag("h1"), new Hashtag("h2")), post));
             given(postRepository.getOne(anyLong())).willReturn(Optional.of(post));
             // when
             postService.deletePost(1L);
@@ -176,9 +176,9 @@ public class PostServiceTest extends ServiceTest {
         void deletePost2_O() {
             // given
             Post post = Post.builder().build();
-            post.addPictures(Arrays.asList("picture1", "picture2"));
+            post.addPictures(Picture.stringsToPictures(Arrays.asList("picture1", "picture2"), post));
             post.addComment(Comment.builder().build());
-            post.initPostHashtags(Arrays.asList(new Hashtag("h1"), new Hashtag("h2")));
+            post.addPostHashtags(PostHashtag.hashtagsToPostHashtags(Arrays.asList(new Hashtag("h1"), new Hashtag("h2")), post));
             given(postRepository.getPostListForDelete(anyLong())).willReturn(Arrays.asList(post));
             // when
             postService.deletePostsOfCategory(1L);
@@ -195,7 +195,7 @@ public class PostServiceTest extends ServiceTest {
             Post post1 = makePost(false);
             Post post2 = makePost(true);
             List<Hashtag> hashtags = makeHashtags();
-            post2.initPostHashtags(hashtags);
+            post2.addPostHashtags(PostHashtag.hashtagsToPostHashtags(hashtags, post2));
             post2.addComment(Comment.builder().content("comment1").build());
             post2.addComment(Comment.builder().content("comment").build());
             given(postRepository.getPostListForDelete(anyLong())).willReturn(Arrays.asList(post1, post2));
@@ -218,7 +218,7 @@ public class PostServiceTest extends ServiceTest {
             PostDTO.Update postDTO = makeUpdatePostDTO(false);
             Post beforePost = makePost(true);
             given(postRepository.findById(any())).willReturn(Optional.of(beforePost));
-            given(hashtagRepository.saveAll(any())).willReturn(postDTO.getHashtags());
+            given(hashtagRepository.saveAll(any())).willReturn(postDTO.getHashtagsEntity());
             // when
             Post post = postService.updatePost(1L, postDTO);
             // then
@@ -246,7 +246,7 @@ public class PostServiceTest extends ServiceTest {
             PostDTO.Update postDTO = makeUpdatePostDTO(true);
             Post beforePost = makePost(true);
             given(postRepository.findById(any())).willReturn(Optional.of(beforePost));
-            given(hashtagRepository.saveAll(any())).willReturn(postDTO.getHashtags());
+            given(hashtagRepository.saveAll(any())).willReturn(postDTO.getHashtagsEntity());
             given(googleDriveUtil.filesToURLs(postDTO.getAddPics(), GDFolder.POST)).willReturn(Collections.singletonList("pic3"));
             // when
             Post post = postService.updatePost(1L, postDTO);
@@ -301,7 +301,7 @@ public class PostServiceTest extends ServiceTest {
         Category category = makeCategory();
         if (withPicture) {
             final Post post = postDTO.toEntity(category);
-            post.addPictures(Arrays.asList("pic1", "pic2"));
+            post.addPictures(Picture.stringsToPictures(Arrays.asList("pic1", "pic2"), post));
             return post;
         }
         return postDTO.toEntity(category);

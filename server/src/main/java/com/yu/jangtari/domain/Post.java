@@ -32,17 +32,17 @@ public class Post extends DateAuditing {
     private int template;
 
     @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Picture> pictures = new ArrayList<>();
+    private List<Picture> pictures;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostHashtag> postHashtags = new ArrayList<>();
+    private List<PostHashtag> postHashtags;
 
     @Embedded
     DeleteFlag deleteFlag;
@@ -54,28 +54,25 @@ public class Post extends DateAuditing {
         this.template = template;
         this.category = category;
         this.deleteFlag = DeleteFlag.initDeleteFlag();
+        this.comments = new ArrayList<>();
+        this.pictures = new ArrayList<>();
+        this.postHashtags = new ArrayList<>();
     }
-    public void addPictures(List<String> pictures) {
-        this.pictures.addAll(pictures.stream().map(url -> Picture.builder().post(this).url(url).build()).collect(Collectors.toList()));
+    public void addPictures(List<Picture> pictures) {
+        getPictures().addAll(pictures);
     }
-    public void initPostHashtags(List<Hashtag> hashtags) {
-        this.postHashtags = hashtags.stream().map(hashtag ->
-                PostHashtag.builder()
-                        .post(this)
-                        .hashtag(hashtag)
-                        .build()).collect(Collectors.toList());
+    public void addPostHashtags(List<PostHashtag> postHashtags) {
+        getPostHashtags().addAll(postHashtags);
     }
     public void clearPostHashtags() {
         this.postHashtags.clear();
     }
     public void removePicturesFromUpdateDTO(PostDTO.Update postDTO) {
-        this.pictures.removeAll(postDTO.getDeletePictures());
+        getPictures().removeAll(postDTO.getDeletePictures());
     }
-
     public void addComment(final Comment comment) {
         this.getComments().add(comment);
     }
-
     public void updateTitleContentTemplate(PostDTO.Update postDTO) {
         this.title = postDTO.getTitle();
         this.content = postDTO.getContent();

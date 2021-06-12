@@ -124,7 +124,7 @@ public class PostDTO {
             this.delPics = delPics;
             this.addPics = addPics;
         }
-        public List<Hashtag> getHashtags() {
+        public List<Hashtag> getHashtagsEntity() {
             if (hashtags == null) return Collections.emptyList();
             return hashtags.stream().map(Hashtag::new).collect(Collectors.toList());
         }

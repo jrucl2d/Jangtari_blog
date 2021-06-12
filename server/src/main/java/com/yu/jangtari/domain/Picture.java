@@ -2,6 +2,8 @@ package com.yu.jangtari.domain;
 
 import lombok.*;
 import javax.persistence.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @ToString(exclude = "post")
@@ -27,5 +29,8 @@ public class Picture extends DateAuditing {
         this.url = url;
         this.post = post;
         this.deleteFlag = DeleteFlag.initDeleteFlag();
+    }
+    public static List<Picture> stringsToPictures(List<String> pictureURLs, Post post) {
+        return pictureURLs.stream().map(url -> Picture.builder().url(url).post(post).build()).collect(Collectors.toList());
     }
 }

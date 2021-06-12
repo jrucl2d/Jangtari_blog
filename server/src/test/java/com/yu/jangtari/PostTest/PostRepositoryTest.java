@@ -7,6 +7,7 @@ import com.yu.jangtari.domain.DTO.PostDTO;
 import com.yu.jangtari.repository.CommentRepository;
 import com.yu.jangtari.repository.HashtagRepository;
 import com.yu.jangtari.repository.PictureRepository;
+import com.yu.jangtari.repository.PostHashtagRepository;
 import com.yu.jangtari.repository.category.CategoryRepository;
 import com.yu.jangtari.repository.member.MemberRepository;
 import com.yu.jangtari.repository.post.PostRepository;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,6 +35,8 @@ public class PostRepositoryTest extends IntegrationTest {
     private HashtagRepository hashtagRepository;
     @Autowired
     private CommentRepository commentRepository;
+    @Autowired
+    private PostHashtagRepository postHashtagRepository;
     @Autowired
     private PictureRepository pictureRepository;
 
@@ -55,9 +59,6 @@ public class PostRepositoryTest extends IntegrationTest {
         List<Hashtag> hashtags = Arrays.asList(new Hashtag("aaa"), new Hashtag("bbb"));
         List<String> pictures = Arrays.asList("picture1", "picture2");
         Post post = makePost(category, hashtags, pictures, 1);
-        for (Picture picture : pictureRepository.findAll()) {
-            System.out.println(picture);
-        }
 //        // when
 //        Post findPost = postRepository.getOne(1L).get();
 //        // then
@@ -128,8 +129,7 @@ public class PostRepositoryTest extends IntegrationTest {
         makeComment(post, member);
         // when
         Post findPost = postRepository.findById(1L).get();
-        System.out.println(findPost);
-        // then
+//        // then
         assertThat(findPost.getPostHashtags().size()).isEqualTo(2);
         assertThat(findPost.getComments().size()).isEqualTo(1);
         assertThat(findPost.getPictures().size()).isEqualTo(2);
@@ -239,13 +239,19 @@ public class PostRepositoryTest extends IntegrationTest {
         return comment;
     }
     private Post makePost(Category category, List<Hashtag> hashtags, List<String> pictures, int index) {
-        Post post = Post.builder().category(category).content("content"+index).template(1).title("title"+index).build();
-        post = postRepository.save(post);
+        final Post post = Post.builder().category(category).content("content"+index).template(1).title("title"+index).build();
+        postRepository.save(post);
         if (hashtags == null && pictures == null) return post;
-        if (pictures != null) post.addPictures(pictures);
-        List<Hashtag> hashtagList = hashtagRepository.saveAll(hashtags);
-        post.initPostHashtags(hashtagList);
-        return postRepository.save(post);
+        if (pictures != null) {
+            List<Picture> pictureList = Picture.stringsToPictures(pictures, post);
+            pictureRepository.saveAll(pictureList);
+            post.addPictures(pictureList);
+        }
+        hashtagRepository.saveAll(hashtags);
+        List<PostHashtag> postHashtags = PostHashtag.hashtagsToPostHashtags(hashtags, post);
+        postHashtagRepository.saveAll(postHashtags);
+        post.addPostHashtags(postHashtags);
+        return post;
     }
     private Category makeCategory() {
         Category category = Category.builder().name("category").picture("picture").build();

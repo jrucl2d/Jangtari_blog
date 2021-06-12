@@ -1,10 +1,7 @@
 package com.yu.jangtari.PostTest;
 
-import com.yu.jangtari.domain.Category;
+import com.yu.jangtari.domain.*;
 import com.yu.jangtari.domain.DTO.PostDTO;
-import com.yu.jangtari.domain.Hashtag;
-import com.yu.jangtari.domain.Post;
-import com.yu.jangtari.domain.PostHashtag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -42,7 +39,7 @@ public class PostDomainTest {
 
             // when
             assertThat(post.getPictures().size()).isEqualTo(0);
-            post.addPictures(Arrays.asList("haha", "haha2"));
+            post.addPictures(Picture.stringsToPictures(Arrays.asList("picture1", "picture2"), post));
             // then
             assertThat(post.getPictures().size()).isEqualTo(2);
         }
@@ -54,7 +51,7 @@ public class PostDomainTest {
             List<Hashtag> hashtags = makeHashtags();
             assertThat(post.getPostHashtags().size()).isEqualTo(0);
             // when
-            post.initPostHashtags(hashtags);
+            post.addPostHashtags(PostHashtag.hashtagsToPostHashtags(hashtags, post));
             // then
             assertThat(post.getPostHashtags().size()).isEqualTo(2);
             for (PostHashtag postHashtag : post.getPostHashtags()) {
@@ -83,7 +80,7 @@ public class PostDomainTest {
                 .content("post content")
                 .categoryId(1L)
                 .template(1)
-                .hashtags(Arrays.asList(new String[] {"aaa", "bbb"}))
+                .hashtags(Arrays.asList("aaa", "bbb"))
                 .pictures(Arrays.asList(new MockMultipartFile("mock", new byte[]{0}),
                         new MockMultipartFile("mock2", new byte[]{0}))).build();
     }
