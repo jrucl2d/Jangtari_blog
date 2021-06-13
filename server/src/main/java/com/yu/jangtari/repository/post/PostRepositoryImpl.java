@@ -15,6 +15,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class PostRepositoryImpl extends QuerydslRepositorySupport implements CustomPostRepository {
     private final String TITLE = "t";
@@ -27,23 +28,35 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
-    /**
-     * Post 정보와 함께 Comment, Picture, Hashtag 정보도 같이 리턴해야 함
-     */
+
+    // Post 정보와 함께 Comment, Picture, Hashtag 정보도 같이 리턴해야 함
     @Override
     public Optional<Post> getOne(Long postId) {
         QPost post = QPost.post;
         QComment comment = QComment.comment;
         QPicture picture = QPicture.picture;
         QPostHashtag postHashtag = QPostHashtag.postHashtag;
-        final Post resultPost = jpaQueryFactory.selectFrom(post)
+        final Post tmpPost = jpaQueryFactory.selectFrom(post)
+                .leftJoin(post.comments, comment)
+                .leftJoin(post.pictures, picture)
+                .leftJoin(post.postHashtags, postHashtag)
                 .where(post.id.eq(postId))
-                .leftJoin(post.comments, comment).on(comment.deleteFlag.deleteFlag.isFalse())
-//                .leftJoin(post.pictures, picture).on(picture.deleteFlag.deleteFlag.eq(false))
-//                .leftJoin(post.postHashtags, postHashtag).on(postHashtag.deleteFlag.deleteFlag.eq(false))
                 .fetchOne();
-        if (resultPost == null || resultPost.getDeleteFlag().isDeleteFlag()) return Optional.empty();
-        return Optional.of(resultPost);
+        if (tmpPost == null || tmpPost.getDeleteFlag().isDeleteFlag()) return Optional.empty();
+        return Optional.of(deleteFilteredPost(tmpPost));
+    }
+    private Post deleteFilteredPost(Post beforePost) {
+        final Post resultPost = Post.builder()
+                .title(beforePost.getTitle())
+                .category(beforePost.getCategory())
+                .template(beforePost.getTemplate())
+                .content(beforePost.getContent()).build();
+        beforePost.getComments().forEach(innerComment -> {
+            if (!innerComment.getDeleteFlag().isDeleteFlag()) resultPost.addComment(innerComment);
+        });
+        resultPost.addPictures(beforePost.getPictures().stream().filter(innerPicture -> !innerPicture.getDeleteFlag().isDeleteFlag()).collect(Collectors.toList()));
+        resultPost.addPostHashtags(beforePost.getPostHashtags().stream().filter(innerPostHashtag -> !innerPostHashtag.getDeleteFlag().isDeleteFlag()).collect(Collectors.toList()));
+        return resultPost;
     }
     @Override
     public List<Post> getPostListForDelete(Long categoryId) {

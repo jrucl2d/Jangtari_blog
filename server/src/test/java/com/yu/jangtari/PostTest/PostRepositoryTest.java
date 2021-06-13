@@ -49,7 +49,9 @@ public class PostRepositoryTest extends IntegrationTest {
         // when
         Post findPost = postRepository.getOne(1L).get();
         // then
-        assertThat(post).isEqualTo(findPost);
+        assertThat(post.getTitle()).isEqualTo(findPost.getTitle());
+        assertThat(post.getContent()).isEqualTo(findPost.getContent());
+        assertThat(post.getTemplate()).isEqualTo(findPost.getTemplate());
     }
     @Test
     @DisplayName("getOne hashtag, picture 같이 가져오기 성공")
@@ -63,7 +65,8 @@ public class PostRepositoryTest extends IntegrationTest {
         // when
         Post findPost = postRepository.getOne(1L).get();
         // then
-        assertThat(post).isEqualTo(findPost);
+        assertThat(findPost.getPostHashtags().size()).isEqualTo(2);
+        assertThat(findPost.getPictures().size()).isEqualTo(2);
     }
     @Test
     @DisplayName("getOne 삭제된 comment 안 불러오기")
@@ -80,9 +83,7 @@ public class PostRepositoryTest extends IntegrationTest {
         // when
         Post findPost = postRepository.getOne(1L).get();
         // then
-        assertThat(post).isEqualTo(findPost);
-        System.out.println("호호");
-        System.out.println(findPost);
+        assertThat(findPost.getComments().size()).isEqualTo(1);
     }
     @Test
     @DisplayName("getOne 테스트 실패 - 존재하지 않는 post를 찾을 시 NoSuchElementException")

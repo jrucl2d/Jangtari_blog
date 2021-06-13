@@ -46,6 +46,7 @@ public class PostDTO {
     }
 
     @Getter
+    @ToString
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Get {
         private Long postId;
