@@ -38,9 +38,9 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         QPostHashtag postHashtag = QPostHashtag.postHashtag;
         final Post resultPost = jpaQueryFactory.selectFrom(post)
                 .where(post.id.eq(postId))
-                .leftJoin(post.comments, comment).on(comment.deleteFlag.deleteFlag.eq(false))
-                .leftJoin(post.pictures, picture).on(picture.deleteFlag.deleteFlag.eq(false))
-                .leftJoin(post.postHashtags, postHashtag).on(postHashtag.deleteFlag.deleteFlag.eq(false))
+                .leftJoin(post.comments, comment).on(comment.deleteFlag.deleteFlag.isFalse())
+//                .leftJoin(post.pictures, picture).on(picture.deleteFlag.deleteFlag.eq(false))
+//                .leftJoin(post.postHashtags, postHashtag).on(postHashtag.deleteFlag.deleteFlag.eq(false))
                 .fetchOne();
         if (resultPost == null || resultPost.getDeleteFlag().isDeleteFlag()) return Optional.empty();
         return Optional.of(resultPost);

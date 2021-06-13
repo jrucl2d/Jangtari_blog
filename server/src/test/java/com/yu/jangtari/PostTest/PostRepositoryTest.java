@@ -59,10 +59,11 @@ public class PostRepositoryTest extends IntegrationTest {
         List<Hashtag> hashtags = Arrays.asList(new Hashtag("aaa"), new Hashtag("bbb"));
         List<String> pictures = Arrays.asList("picture1", "picture2");
         Post post = makePost(category, hashtags, pictures, 1);
-//        // when
-//        Post findPost = postRepository.getOne(1L).get();
-//        // then
-//        assertThat(post).isEqualTo(findPost);
+        postRepository.save(post);
+        // when
+        Post findPost = postRepository.getOne(1L).get();
+        // then
+        assertThat(post).isEqualTo(findPost);
     }
     @Test
     @DisplayName("getOne 삭제된 comment 안 불러오기")

@@ -17,7 +17,6 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DeleteFlag {
 
-    @ColumnDefault("0x00")
     private boolean deleteFlag;
 
     // deleteFlag는 무조건 flase인 상태로 초기화되어야 함
