@@ -93,9 +93,9 @@ public class CommentIntegreTest extends IntegrationTest {
         List<Comment> comments = commentService.getCommentsOfPost(1L);
         assertThat(comments.size()).isEqualTo(1);
         assertThat(comments.get(0)).isEqualTo(comment);
-        CommentDTO.Update updateCommentDTO = CommentDTO.Update.builder().commenter("username").content("modified").commentId(1L).build();
+        CommentDTO.Update updateCommentDTO = CommentDTO.Update.builder().commenter("username").content("modified").build();
         // when
-        Comment updatedComment = commentService.updateComment(updateCommentDTO);
+        Comment updatedComment = commentService.updateComment(1L, updateCommentDTO);
         // then
         comments = commentService.getCommentsOfPost(1L);
         assertThat(updatedComment).isEqualTo(comments.get(0));
@@ -110,9 +110,9 @@ public class CommentIntegreTest extends IntegrationTest {
         makePostInCategory(category);
         CommentDTO.Add commentDTO = CommentDTO.Add.builder().postId(1L).content("content").commenter(member.getUsername()).build();
         commentService.addComment(commentDTO);
-        CommentDTO.Update updateCommentDTO = CommentDTO.Update.builder().commenter(wrongMember.getUsername()).content("modified").commentId(1L).build();
+        CommentDTO.Update updateCommentDTO = CommentDTO.Update.builder().commenter(wrongMember.getUsername()).content("modified").build();
         // when, then
-        assertThrows(NoMasterException.class, () -> commentService.updateComment(updateCommentDTO));
+        assertThrows(NoMasterException.class, () -> commentService.updateComment(1L, updateCommentDTO));
     }
     @Test
     @DisplayName("대댓글만 삭제시 첫 댓글은 삭제 안 됨")

@@ -63,13 +63,11 @@ public class CommentDTO {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Update{
-        private Long commentId;
         private String commenter;
         private String content;
 
         @Builder
-        public Update(Long commentId, String commenter, String content) {
-            this.commentId = commentId;
+        public Update(String commenter, String content) {
             this.commenter = commenter;
             this.content = content;
         }

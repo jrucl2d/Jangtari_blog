@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -44,7 +45,7 @@ public class CommentServiceTest extends ServiceTest {
         Member member = makeMember();
         Comment comment = makeComment(post, member);
         CommentDTO.Add commentDTO = CommentDTO.Add.builder().postId(1L).content("content").commenter("commenter").build();
-        given(commentRepository.findCommentsOfPost(any())).willReturn(Arrays.asList(comment));
+        given(commentRepository.findCommentsOfPost(any())).willReturn(Collections.singletonList(comment));
         // when
         commentService.getCommentsOfPost(1L);
         // then
@@ -77,9 +78,9 @@ public class CommentServiceTest extends ServiceTest {
         Comment comment = makeComment(post, member);
         given(commentRepository.findById(anyLong())).willReturn(Optional.of(comment));
         given(memberService.getMemberByName(anyString())).willReturn(member);
-        CommentDTO.Update commentDTO = CommentDTO.Update.builder().commentId(1L).content("newComment").commenter("username").build();
+        CommentDTO.Update commentDTO = CommentDTO.Update.builder().content("newComment").commenter("username").build();
         // when
-        Comment newComment = commentService.updateComment(commentDTO);
+        Comment newComment = commentService.updateComment(1L, commentDTO);
         // then
         assertThat(newComment.getContent()).isEqualTo(commentDTO.getContent());
     }
@@ -93,9 +94,9 @@ public class CommentServiceTest extends ServiceTest {
         Comment comment = makeComment(post, member);
         given(commentRepository.findById(anyLong())).willReturn(Optional.of(comment));
         given(memberService.getMemberByName(anyString())).willReturn(Member.builder().username("no").build());
-        CommentDTO.Update commentDTO = CommentDTO.Update.builder().commentId(1L).content("newComment").commenter("username").build();
+        CommentDTO.Update commentDTO = CommentDTO.Update.builder().content("newComment").commenter("username").build();
         // when, then
-        assertThrows(NoMasterException.class, () -> commentService.updateComment(commentDTO));
+        assertThrows(NoMasterException.class, () -> commentService.updateComment(1L, commentDTO));
     }
 
     @Test

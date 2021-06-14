@@ -46,8 +46,8 @@ public class CommentService {
         parentComment.addChildComment(comment);
     }
 
-    public Comment updateComment(final CommentDTO.Update commentDTO) {
-        Comment comment = getComment(commentDTO.getCommentId());
+    public Comment updateComment(final Long commentId, final CommentDTO.Update commentDTO) {
+        Comment comment = getComment(commentId);
         verifyCommenter(commentDTO.getCommenter(), comment);
         comment.updateComment(commentDTO);
         return comment;
