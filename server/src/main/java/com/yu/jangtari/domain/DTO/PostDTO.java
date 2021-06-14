@@ -38,7 +38,7 @@ public class PostDTO {
                     .postId(post.getId())
                     .title(post.getTitle())
                     .content(post.getContent())
-                    .comments(post.getComments().stream().map(CommentDTO.Get::new).collect(Collectors.toList()))
+                    .comments(post.getComments().stream().map(CommentDTO.Get::of).collect(Collectors.toList()))
                     .pictures(post.getPictures().stream().map(PictureDTO::new).collect(Collectors.toList()))
                     .hashtags(post.getPostHashtags().stream().map(postHashtag -> postHashtag.getHashtag().getContent()).collect(Collectors.toList()))
                     .build();

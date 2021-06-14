@@ -16,12 +16,22 @@ public class CommentDTO {
         private String nickname;
         private Long parentComment;
 
-        public Get(Comment comment) {
-            this.commentId = comment.getId();
-            this.content = comment.getContent();
-            this.username = comment.getMember().getUsername();
-            this.nickname = comment.getMember().getNickname();
-            this.parentComment = comment.getParentComment().getId();
+        @Builder
+        public Get(Long commentId, String content, String username, String nickname, Long parentComment) {
+            this.commentId = commentId;
+            this.content = content;
+            this.username = username;
+            this.nickname = nickname;
+            this.parentComment = parentComment;
+        }
+        public static CommentDTO.Get of(Comment comment) {
+            return Get.builder()
+                    .commentId(comment.getId())
+                    .content(comment.getContent())
+                    .username(comment.getMember().getUsername())
+                    .nickname(comment.getMember().getNickname())
+                    .parentComment(comment.getParentComment().getId())
+                    .build();
         }
     }
 

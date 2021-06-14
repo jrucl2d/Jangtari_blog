@@ -1,37 +1,30 @@
-//package com.yu.jangtari.controller;
-//
-//import com.yu.jangtari.common.ErrorResponse;
-//import com.yu.jangtari.common.CustomException;
-//import com.yu.jangtari.common.CustomResponse;
-//import com.yu.jangtari.domain.DTO.CommentDTO;
-//import com.yu.jangtari.service.CommentService;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.security.Principal;
-//import java.util.List;
-//
-//@RestController
-//public class CommentController {
-//
-//    @Autowired
-//    private CommentService commentService;
-//
-//    @GetMapping("/post/{id}/comments")
-//    public ResponseEntity<CustomResponse> getComments(@PathVariable(value = "id") Long postId){
-//        try{
-//            List<CommentDTO.Get> result =  commentService.getComments(postId);
-//            return new ResponseEntity<>(new CustomResponse(null, result),
-//                    HttpStatus.CREATED);
-//        } catch (CustomException e){
-//            return new ResponseEntity<>(new CustomResponse<>
-//                    (new ErrorResponse(e), null),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//    }
-//
+package com.yu.jangtari.controller;
+
+import com.yu.jangtari.common.ErrorResponse;
+import com.yu.jangtari.domain.DTO.CommentDTO;
+import com.yu.jangtari.service.CommentService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+@RequiredArgsConstructor
+public class CommentController {
+    private final CommentService commentService;
+
+    // 댓글을 추가할 경우 댓글만 다시 불러오기 위한 컨트롤러
+    @GetMapping("/post/{id}/comments")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CommentDTO.Get> getComments(@PathVariable("id") final Long postId) {
+        return commentService.getCommentsOfPost(postId).stream().map(CommentDTO.Get::of).collect(Collectors.toList());
+    }
+
 //    @PostMapping("/user/comment")
 //    public ResponseEntity<CustomResponse> addComment(@RequestBody CommentDTO.Add theComment, Principal principal){
 //        try{
@@ -76,4 +69,4 @@
 //                    HttpStatus.BAD_REQUEST);
 //        }
 //    }
-//}
+}
