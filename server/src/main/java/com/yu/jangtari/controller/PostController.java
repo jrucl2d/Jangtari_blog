@@ -39,16 +39,10 @@ public class PostController {
     public PostDTO.Get updatePost(@PathVariable("id") final Long postId, @Valid final PostDTO.Update postDTO) {
         return PostDTO.Get.of(postService.updatePost(postId, postDTO));
     }
-//    @DeleteMapping("/admin/post/{id}")
-//    public ResponseEntity<CustomResponse> deletePost(@PathVariable(value = "id")Long postId){
-//        try{
-//            postService.deletePost(postId);
-//            return new ResponseEntity<>(CustomResponse.OK(),
-//                    HttpStatus.CREATED);
-//        } catch (CustomException e){
-//            return new ResponseEntity<>(new CustomResponse<>
-//                    (new ErrorResponse(e), null),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//    }
+    @DeleteMapping("/admin/post/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public String deletePost(@PathVariable("id") final Long postId) {
+        postService.deletePost(postId);
+        return "OK";
+    }
 }
