@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -69,10 +68,10 @@ public class CommentService {
     }
 
     /**
-     * 코드 내부의 여러 parallelStream들은 thread pool을 공유하므로 사용에 주의해야 한다.
+     * parallelStream의 경우에는 thread pool을 공유하므로 사용에 주의해야 한다.
      * 참고 : https://multifrontgarden.tistory.com/254
      */
     private void deleteChildcomments(Comment comment) {
-        comment.getChildComments().parallelStream().forEach(childComment -> childComment.getDeleteFlag().softDelete());
+        comment.getChildComments().stream().forEach(childComment -> childComment.getDeleteFlag().softDelete());
     }
 }

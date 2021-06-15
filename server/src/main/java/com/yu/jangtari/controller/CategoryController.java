@@ -18,8 +18,8 @@ public class CategoryController {
 
     @GetMapping("/categories")
     @ResponseStatus(HttpStatus.OK)
-    public List<CategoryDTO.Get> getAllCategory() {
-        return categoryService.getAllCategories().stream().map(category -> CategoryDTO.Get.of(category)).collect(Collectors.toList());
+    public List<CategoryDTO.Get> getAllCategories() {
+        return categoryService.getAllCategories().stream().map(CategoryDTO.Get::of).collect(Collectors.toList());
     }
     @PostMapping(value = "/admin/category", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)

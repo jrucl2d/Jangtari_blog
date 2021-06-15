@@ -4,6 +4,7 @@ import com.yu.jangtari.IntegrationTest;
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.DTO.CategoryDTO;
 import com.yu.jangtari.repository.category.CategoryRepository;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,7 @@ public class CategoryIntegreTest extends IntegrationTest {
                     .andDo(print());
         }
         @Test
-        @DisplayName("category 수정 성공(picture X)")
+        @DisplayName("category 수정 성공 사진은 수정하지 않음")
         void put_O1() throws Exception {
             // given
             CategoryDTO.Add addDTO = makeCategoryDTOwithPicture();
@@ -48,6 +49,46 @@ public class CategoryIntegreTest extends IntegrationTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.name").value("updated"))
                     .andExpect(jsonPath("$.picture").value("url"))
+                    .andDo(print());
+        }
+        @Test
+        @DisplayName("전체 category 가져오기")
+        void getAllCategories() throws Exception {
+            CategoryDTO.Add addDTO = makeCategoryDTOwithoutPicture();
+            categoryRepository.save(addDTO.toEntity(null));
+            categoryRepository.save(addDTO.toEntity("picture"));
+
+            mockMvc.perform(get("/categories"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", Matchers.hasSize(2)))
+                    .andExpect(jsonPath("$.[0].name").value("category"))
+                    .andExpect(jsonPath("$.[1].picture").value("picture"))
+                    .andDo(print());
+        }
+        @Test
+        @DisplayName("전체 category 가져올 때 없으면 빈 배열 리턴")
+        void getAllCategories_1() throws Exception {
+            mockMvc.perform(get("/categories"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", Matchers.hasSize(0)))
+                    .andDo(print());
+        }
+        @Test
+        @DisplayName("category 하나 삭제 성공")
+        void deleteCategory() throws Exception {
+            CategoryDTO.Add addDTO = makeCategoryDTOwithoutPicture();
+            categoryRepository.save(addDTO.toEntity(null));
+            categoryRepository.save(addDTO.toEntity("picture"));
+
+            mockMvc.perform(delete("/admin/category/1"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$").value("OK"))
+                    .andDo(print());
+
+            mockMvc.perform(get("/categories"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", Matchers.hasSize(1)))
+                    .andExpect(jsonPath("$.[0].name").value("category"))
                     .andDo(print());
         }
     }
@@ -72,6 +113,17 @@ public class CategoryIntegreTest extends IntegrationTest {
         @DisplayName("category 수정 실패 - NoSuchCategoryException")
         void put_X2() throws Exception {
             mockMvc.perform(multipart("/admin/category/1").param("name", "aa"))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value("No Such Category"))
+                    .andExpect(jsonPath("$.status").value(404))
+                    .andExpect(jsonPath("$.errors").doesNotExist())
+                    .andExpect(jsonPath("$.code").value("yu007"))
+                    .andDo(print());
+        }
+        @Test
+        @DisplayName("category 삭제 실패 - NoSuchCategoryException")
+        void delete_X2() throws Exception {
+            mockMvc.perform(delete("/admin/category/1"))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.message").value("No Such Category"))
                     .andExpect(jsonPath("$.status").value(404))
