@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class CategoryIntegreTest extends IntegrationTest {
+public class CategoryControllerTest extends IntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

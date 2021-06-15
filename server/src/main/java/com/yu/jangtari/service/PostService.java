@@ -50,7 +50,7 @@ public class PostService {
         final Category category = categoryRepository.findById(postDTO.getCategoryId()).orElseThrow(NoSuchCategoryException::new);
         final Post post = postRepository.save(postDTO.toEntity(category));
         addPicturesToPostIfExist(post, postDTO.getPictures());
-        addHashtagsToPostIfExist(post, postDTO.getHashtagsEntity());
+        addHashtagsToPostIfExist(post, postDTO.takeHashtagsEntity());
         return post;
     }
     /**
