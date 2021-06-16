@@ -8,6 +8,7 @@ import com.yu.jangtari.repository.category.CategoryRepository;
 import com.yu.jangtari.repository.post.PostRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -46,10 +47,6 @@ public class PostControllerTest extends IntegrationTest {
         mockMvc.perform(multipart("/admin/post")
                 .params(map))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.title").value("title"))
-                .andExpect(jsonPath("$.content").value("content"))
-                .andExpect(jsonPath("$.template").value(1))
-                .andExpect(jsonPath("$.categoryId").value(1L))
                 .andDo(print());
     }
 }

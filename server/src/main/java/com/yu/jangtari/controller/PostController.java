@@ -32,8 +32,6 @@ public class PostController {
     @PostMapping(value = "/admin/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public PostDTO.Get addPost(@Valid final PostDTO.Add postDTO) {
-        System.out.println("핳하하하하하하하하");
-        System.out.println(postDTO);
         return PostDTO.Get.of(postService.addPost(postDTO));
     }
     @PostMapping(value = "/admin/post/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

@@ -1,5 +1,6 @@
 package com.yu.jangtari.domain.DTO;
 
+import com.sun.istack.NotNull;
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.Hashtag;
 import com.yu.jangtari.domain.Picture;
@@ -67,13 +68,12 @@ public class PostDTO {
     @ToString
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Add{
-        @NotBlank(message = "카테고리 ID가 빈칸이면 안 됩니다.")
+        @NotNull // Long에는 NotNull 붙일 수 없음
         private Long categoryId;
         @NotBlank(message = "제목이 빈칸이면 안 됩니다.")
         private String title;
         @NotBlank(message = "내용이 빈칸이면 안 됩니다.")
         private String content;
-        @NotBlank(message = "템플릿이 빈칸이면 안 됩니다.")
         private int template;
         private List<String> hashtags = new ArrayList<>();
         private List<MultipartFile> pictures = new ArrayList<>();
