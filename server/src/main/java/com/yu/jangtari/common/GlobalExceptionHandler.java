@@ -33,6 +33,13 @@ public class GlobalExceptionHandler {
         final ErrorResponse errorResponse = buildError(ErrorCode.INVALID_INPUT_VALUE);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+    // DTO의 Long이 null일 때 보통 발생
+    @ExceptionHandler(IllegalArgumentException.class)
+    protected ResponseEntity<ErrorResponse> handleIllegalArgumentException (IllegalArgumentException e) {
+        log.error("Handle illegal argument not valid exception : ", e);
+        final ErrorResponse errorResponse = buildError(ErrorCode.INVALID_INPUT_VALUE);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 
     // 지원하지 않는 HTTP 메소드 호출시 발생
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
