@@ -287,8 +287,8 @@ public class PostServiceTest extends ServiceTest {
                     .template(2)
                     .content("modified")
                     .title("modified title")
-                    .delPics(Arrays.asList("pic1"))
-                    .addPics(Arrays.asList(new MockMultipartFile("pic3", new byte[]{0})))
+                    .delPics(Collections.singletonList("pic1"))
+                    .addPics(Collections.singletonList(new MockMultipartFile("pic3", new byte[]{0})))
                     .hashtags(Arrays.asList("aa", "bb", "cc"))
                     .build();
         }

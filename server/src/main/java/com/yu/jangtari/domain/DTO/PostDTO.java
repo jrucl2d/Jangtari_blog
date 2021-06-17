@@ -111,7 +111,6 @@ public class PostDTO {
         private String title;
         @NotBlank(message = "내용이 빈칸이면 안 됩니다.")
         private String content;
-        @NotBlank(message = "템플릿이 빈칸이면 안 됩니다.")
         private int template;
         private List<String> hashtags = new ArrayList<>();
         private List<String> delPics = new ArrayList<>();
