@@ -95,27 +95,10 @@ public class PostControllerTest extends IntegrationTest {
     @DisplayName("updatePost O, 포스트 수정 성공")
     void updatePost_O() throws Exception {
         // Post Add 과정
-        Category category = Category.builder().name("category").build();
-        categoryRepository.save(category);
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("title", "title");
-        map.add("content", "content");
-        map.add("template", "1");
-        map.add("categoryId", "1");
-        map.add("hashtags", "hashtag1");
-        map.add("hashtags", "hashtag2");
-
-        mockMvc.perform(multipart("/admin/post")
-                .params(map))
-                .andExpect(status().isCreated())
-                .andDo(print());
-        Post savedPost = postRepository.findById(1L).get();
-        savedPost.addPictures(Arrays.asList(Picture.builder().post(savedPost).url("pic1").build(),
-                Picture.builder().post(savedPost).url("pic2").build()));
-        postRepository.save(savedPost);
+        preTask_Post_Add();
 
         // Post Update 과정
-        map = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("title", "mtitle");
         map.add("content", "mcontent");
         map.add("template", "0");
@@ -138,6 +121,41 @@ public class PostControllerTest extends IntegrationTest {
     @DisplayName("deletePost O, 포스트 삭제")
     void deletePost_O() throws Exception {
         // Post Add 과정
+        preTask_Post_Add();
+
+        // Post Delete 과정
+        mockMvc.perform(delete("/admin/post/1"))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        Post deletedPost = postRepository.findById(1L).get();
+        assertThat(deletedPost.getDeleteFlag().isDeleteFlag()).isTrue();
+        deletedPost.getComments().forEach(c -> assertThat(c.getDeleteFlag().isDeleteFlag()).isTrue());
+        deletedPost.getPictures().forEach(p -> assertThat(p.getDeleteFlag().isDeleteFlag()).isTrue());
+        deletedPost.getPostHashtags().forEach(p -> assertThat(p.getDeleteFlag().isDeleteFlag()).isTrue());
+    }
+    @Test
+    @DisplayName("deletePost X, 없는 포스트 삭제하려고 할 때 실")
+    void deletePost_X() throws Exception {
+        // Post Delete 과정
+        mockMvc.perform(delete("/admin/post/1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("No Such Post"))
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.errors").doesNotExist())
+                .andExpect(jsonPath("$.code").value("yu010"))
+                .andDo(print());
+    }
+
+    private PostDTO.Add getPostDTO() {
+        return PostDTO.Add.builder()
+                .title("title")
+                .content("content")
+                .template(1)
+                .categoryId(1L)
+                .build();
+    }
+    private void preTask_Post_Add() throws Exception {
         Category category = Category.builder().name("category").build();
         categoryRepository.save(category);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
@@ -156,21 +174,5 @@ public class PostControllerTest extends IntegrationTest {
         savedPost.addPictures(Arrays.asList(Picture.builder().post(savedPost).url("pic1").build(),
                 Picture.builder().post(savedPost).url("pic2").build()));
         postRepository.save(savedPost);
-
-        // Post Delete 과정
-        mockMvc.perform(delete("/admin/post/1"))
-                .andExpect(status().isOk());
-
-        for (Post post : postRepository.findAll()) {
-            System.out.println(post);
-        }
-    }
-    private PostDTO.Add getPostDTO() {
-        return PostDTO.Add.builder()
-                .title("title")
-                .content("content")
-                .template(1)
-                .categoryId(1L)
-                .build();
     }
 }
