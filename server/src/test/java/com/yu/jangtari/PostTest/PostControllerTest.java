@@ -1,6 +1,5 @@
 package com.yu.jangtari.PostTest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yu.jangtari.IntegrationTest;
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.DTO.PostDTO;
@@ -11,16 +10,15 @@ import com.yu.jangtari.repository.post.PostRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -111,11 +109,11 @@ public class PostControllerTest extends IntegrationTest {
                 .params(map))
                 .andExpect(status().isCreated())
                 .andDo(print());
-
         Post savedPost = postRepository.findById(1L).get();
         savedPost.addPictures(Arrays.asList(Picture.builder().post(savedPost).url("pic1").build(),
                 Picture.builder().post(savedPost).url("pic2").build()));
         postRepository.save(savedPost);
+
         // Post Update 과정
         map = new LinkedMultiValueMap<>();
         map.add("title", "mtitle");
@@ -135,6 +133,37 @@ public class PostControllerTest extends IntegrationTest {
         assertThat(modifiedPost.getPictures().get(0).getUrl()).isEqualTo("pic2");
         assertThat(modifiedPost.getPostHashtags().get(0).getHashtag().getContent()).isEqualTo("hashtag2");
         assertThat(modifiedPost.getPostHashtags().get(1).getHashtag().getContent()).isEqualTo("hashtag3");
+    }
+    @Test
+    @DisplayName("deletePost O, 포스트 삭제")
+    void deletePost_O() throws Exception {
+        // Post Add 과정
+        Category category = Category.builder().name("category").build();
+        categoryRepository.save(category);
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("title", "title");
+        map.add("content", "content");
+        map.add("template", "1");
+        map.add("categoryId", "1");
+        map.add("hashtags", "hashtag1");
+        map.add("hashtags", "hashtag2");
+
+        mockMvc.perform(multipart("/admin/post")
+                .params(map))
+                .andExpect(status().isCreated())
+                .andDo(print());
+        Post savedPost = postRepository.findById(1L).get();
+        savedPost.addPictures(Arrays.asList(Picture.builder().post(savedPost).url("pic1").build(),
+                Picture.builder().post(savedPost).url("pic2").build()));
+        postRepository.save(savedPost);
+
+        // Post Delete 과정
+        mockMvc.perform(delete("/admin/post/1"))
+                .andExpect(status().isOk());
+
+        for (Post post : postRepository.findAll()) {
+            System.out.println(post);
+        }
     }
     private PostDTO.Add getPostDTO() {
         return PostDTO.Add.builder()

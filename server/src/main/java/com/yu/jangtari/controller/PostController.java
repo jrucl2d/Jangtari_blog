@@ -22,7 +22,7 @@ public class PostController {
     @GetMapping("/post/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PostDTO.GetOne getPost(@PathVariable(value = "id") Long postId){
-        return PostDTO.GetOne.of(postService.findOne(postId));
+        return PostDTO.GetOne.of(postService.getOne(postId));
     }
     @GetMapping("/category/{id}/posts")
     @ResponseStatus(HttpStatus.OK)

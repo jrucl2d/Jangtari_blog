@@ -78,4 +78,22 @@ public class Post extends DateAuditing {
         this.content = postDTO.getContent();
         this.template = postDTO.getTemplate();
     }
+    public Post getDeleteFiltered() {
+        final Post resultPost = Post.builder()
+                .title(this.getTitle())
+                .category(this.getCategory())
+                .template(this.getTemplate())
+                .content(this.getContent()).build();
+        this.getComments().forEach(comment -> {
+            if (!comment.getDeleteFlag().isDeleteFlag()) resultPost.addComment(comment);
+        });
+        resultPost.addPictures(this.getPictures().stream().filter(picture -> !picture.getDeleteFlag().isDeleteFlag()).collect(Collectors.toList()));
+        resultPost.addPostHashtags(this.getPostHashtags().stream().filter(postHashtag -> !postHashtag.getDeleteFlag().isDeleteFlag()).collect(Collectors.toList()));
+        resultPost.setId(this.getId());
+        return resultPost;
+    }
+    // getDeleteFiltered를 위한 setter
+    private void setId(Long id) {
+        this.id = id;
+    }
 }

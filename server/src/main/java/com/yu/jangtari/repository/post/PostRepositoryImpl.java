@@ -43,20 +43,7 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
                 .where(post.id.eq(postId))
                 .fetchOne();
         if (tmpPost == null || tmpPost.getDeleteFlag().isDeleteFlag()) return Optional.empty();
-        return Optional.of(deleteFilteredPost(tmpPost));
-    }
-    private Post deleteFilteredPost(Post beforePost) {
-        final Post resultPost = Post.builder()
-                .title(beforePost.getTitle())
-                .category(beforePost.getCategory())
-                .template(beforePost.getTemplate())
-                .content(beforePost.getContent()).build();
-        beforePost.getComments().forEach(innerComment -> {
-            if (!innerComment.getDeleteFlag().isDeleteFlag()) resultPost.addComment(innerComment);
-        });
-        resultPost.addPictures(beforePost.getPictures().stream().filter(innerPicture -> !innerPicture.getDeleteFlag().isDeleteFlag()).collect(Collectors.toList()));
-        resultPost.addPostHashtags(beforePost.getPostHashtags().stream().filter(innerPostHashtag -> !innerPostHashtag.getDeleteFlag().isDeleteFlag()).collect(Collectors.toList()));
-        return resultPost;
+        return Optional.of(tmpPost);
     }
     @Override
     public List<Post> getPostListForDelete(Long categoryId) {

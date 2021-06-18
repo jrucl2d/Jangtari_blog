@@ -35,13 +35,14 @@ public class PostDTO {
             this.hashtags = hashtags;
         }
         public static GetOne of(final Post post) {
+            final Post deletedFiltered = post.getDeleteFiltered();
             return GetOne.builder()
-                    .postId(post.getId())
-                    .title(post.getTitle())
-                    .content(post.getContent())
-                    .comments(post.getComments().stream().map(CommentDTO.Get::of).collect(Collectors.toList()))
-                    .pictures(post.getPictures().stream().map(PictureDTO::new).collect(Collectors.toList()))
-                    .hashtags(post.getPostHashtags().stream().map(postHashtag -> postHashtag.getHashtag().getContent()).collect(Collectors.toList()))
+                    .postId(deletedFiltered.getId())
+                    .title(deletedFiltered.getTitle())
+                    .content(deletedFiltered.getContent())
+                    .comments(deletedFiltered.getComments().stream().map(CommentDTO.Get::of).collect(Collectors.toList()))
+                    .pictures(deletedFiltered.getPictures().stream().map(PictureDTO::new).collect(Collectors.toList()))
+                    .hashtags(deletedFiltered.getPostHashtags().stream().map(postHashtag -> postHashtag.getHashtag().getContent()).collect(Collectors.toList()))
                     .build();
         }
     }
