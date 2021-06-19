@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 public class PostDTO {
     @Getter
+    @ToString
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetOne {
         private Long postId;

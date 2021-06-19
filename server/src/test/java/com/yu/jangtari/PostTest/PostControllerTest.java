@@ -7,6 +7,7 @@ import com.yu.jangtari.domain.Picture;
 import com.yu.jangtari.domain.Post;
 import com.yu.jangtari.repository.category.CategoryRepository;
 import com.yu.jangtari.repository.post.PostRepository;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,7 @@ import org.springframework.util.MultiValueMap;
 import java.util.Arrays;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,6 +31,7 @@ public class PostControllerTest extends IntegrationTest {
     private CategoryRepository categoryRepository;
     @Autowired
     private PostRepository postRepository;
+
 
     @Test
     @DisplayName("addPost O, 포스트 추가 성공")
@@ -146,7 +147,30 @@ public class PostControllerTest extends IntegrationTest {
                 .andExpect(jsonPath("$.code").value("yu010"))
                 .andDo(print());
     }
+    @Test
+    @DisplayName("getPost O, 포스트 가져오기 성공")
+    void getPost_O() throws Exception {
+        preTask_Post_Add();
 
+        mockMvc.perform(get("/post/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("title"))
+                .andExpect(jsonPath("$.content").value("content"))
+                .andExpect(jsonPath("$.pictures").value(Matchers.hasSize(2)))
+                .andExpect(jsonPath("$.hashtags").value(Matchers.hasSize(2)))
+                .andDo(print());
+    }
+    @Test
+    @DisplayName("getPost X, 없는 포스트 가져오기 실패")
+    void getPost_X() throws Exception {
+        mockMvc.perform(get("/post/1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("No Such Post"))
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.errors").doesNotExist())
+                .andExpect(jsonPath("$.code").value("yu010"))
+                .andDo(print());
+    }
     private PostDTO.Add getPostDTO() {
         return PostDTO.Add.builder()
                 .title("title")
