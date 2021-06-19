@@ -9,6 +9,7 @@ import com.yu.jangtari.repository.category.CategoryRepository;
 import com.yu.jangtari.repository.post.PostRepository;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
@@ -171,6 +172,108 @@ public class PostControllerTest extends IntegrationTest {
                 .andExpect(jsonPath("$.code").value("yu010"))
                 .andDo(print());
     }
+    @Nested
+    @DisplayName("getPostList 테스트")
+    class GetPostList {
+        @Test
+        @DisplayName("getPostList O, 내용으로 포스트 목록 가져오기 성공")
+        void getPostList_O() throws Exception {
+            preTask_Post_Add();
+            MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+            map.add("title", "title2");
+            map.add("content", "content2");
+            map.add("template", "0");
+            map.add("categoryId", "1");
+            mockMvc.perform(multipart("/admin/post")
+                    .params(map))
+                    .andExpect(status().isCreated());
+
+            mockMvc.perform(get("/category/1/posts?page=1&type=c&keyword=con"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content").value(Matchers.hasSize(2)))
+                    .andDo(print());
+            mockMvc.perform(get("/category/1/posts?page=1&type=c&keyword=content2"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content").value(Matchers.hasSize(1)))
+                    .andDo(print());
+        }
+        @Test
+        @DisplayName("getPostList O, 제목으로 포스트 목록 가져오기 성공")
+        void getPostList_O1() throws Exception {
+            preTask_Post_Add();
+            MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+            map.add("title", "title2");
+            map.add("content", "content2");
+            map.add("template", "0");
+            map.add("categoryId", "1");
+            mockMvc.perform(multipart("/admin/post")
+                    .params(map))
+                    .andExpect(status().isCreated());
+
+            mockMvc.perform(get("/category/1/posts?page=1&type=t&keyword=tit"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content").value(Matchers.hasSize(2)))
+                    .andDo(print());
+            mockMvc.perform(get("/category/1/posts?page=1&type=t&keyword=title2"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content").value(Matchers.hasSize(1)))
+                    .andDo(print());
+        }
+        @Test
+        @DisplayName("getPostList O, 해시태그로 포스트 목록 가져오기 성공")
+        void getPostList_O2() throws Exception {
+            preTask_Post_Add();
+            MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+            map.add("title", "title2");
+            map.add("content", "content2");
+            map.add("template", "0");
+            map.add("categoryId", "1");
+            map.add("hashtags", "hashtag2"); // 공통된 해시태그
+            map.add("hashtags", "hashtag4");
+            mockMvc.perform(multipart("/admin/post")
+                    .params(map))
+                    .andExpect(status().isCreated());
+
+            mockMvc.perform(get("/category/1/posts?page=1&type=h&keyword=hashtag2"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content").value(Matchers.hasSize(2)))
+                    .andDo(print());
+            mockMvc.perform(get("/category/1/posts?page=1&type=h&keyword=hashtag4"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content").value(Matchers.hasSize(1)))
+                    .andDo(print());
+        }
+        @Test
+        @DisplayName("getPostList O, 다음 페이지 가져오면 빈 목록")
+        void getPostList_O3() throws Exception {
+            preTask_Post_Add();
+            mockMvc.perform(get("/category/1/posts?page=2&type=c&keyword=content"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content").value(Matchers.hasSize(0)))
+                    .andDo(print());
+        }
+        @Test
+        @DisplayName("getPostList O, 0 이하의 페이지 요구하면 첫 번째 페이지")
+        void getPostList_O4() throws Exception {
+            preTask_Post_Add();
+            mockMvc.perform(get("/category/1/posts?page=0&type=c&keyword=content"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content").value(Matchers.hasSize(1)))
+                    .andDo(print());
+        }
+        @Test
+        @DisplayName("getPostList X, 없는 타입으로 검색하면 Search type error 발생")
+        void getPostList_X() throws Exception {
+            preTask_Post_Add();
+            mockMvc.perform(get("/category/1/posts?page=0&type=k&keyword=content"))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value("No Such SearchType"))
+                    .andExpect(jsonPath("$.status").value(404))
+                    .andExpect(jsonPath("$.errors").doesNotExist())
+                    .andExpect(jsonPath("$.code").value("yu013"))
+                    .andDo(print());
+        }
+    }
     private PostDTO.Add getPostDTO() {
         return PostDTO.Add.builder()
                 .title("title")
@@ -192,8 +295,7 @@ public class PostControllerTest extends IntegrationTest {
 
         mockMvc.perform(multipart("/admin/post")
                 .params(map))
-                .andExpect(status().isCreated())
-                .andDo(print());
+                .andExpect(status().isCreated());
         Post savedPost = postRepository.findById(1L).get();
         savedPost.addPictures(Arrays.asList(Picture.builder().post(savedPost).url("pic1").build(),
                 Picture.builder().post(savedPost).url("pic2").build()));

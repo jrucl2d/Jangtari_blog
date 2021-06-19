@@ -5,6 +5,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yu.jangtari.common.PageRequest;
+import com.yu.jangtari.common.SearchType;
 import com.yu.jangtari.domain.*;
 import com.yu.jangtari.domain.DTO.PostDTO;
 import org.springframework.data.domain.Page;
@@ -15,12 +16,8 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class PostRepositoryImpl extends QuerydslRepositorySupport implements CustomPostRepository {
-    private final String TITLE = "t";
-    private final String CONTENT = "c";
-    private final String HASHTAG = "h";
     private final JPAQueryFactory jpaQueryFactory;
 
     public PostRepositoryImpl(JPAQueryFactory jpaQueryFactory){
@@ -55,6 +52,7 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
                 .leftJoin(post.postHashtags)
                 .fetch();
     }
+    // 존재하지 않는 type으로 검색할 시 SearchType enum 내에서 Search Type Error 발생시킴
     @Override
     public Page<PostDTO.Get> getPostList(Long categoryId, PageRequest pageRequest) {
         final Pageable pageable = pageRequest.of();
@@ -77,13 +75,13 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
     }
 
     private void setSearchCondition(QPost post, BooleanBuilder bb, String keyword, String type) {
-        if (type.equals(TITLE)) {
+        if (SearchType.of(type) == SearchType.TITLE) {
             bb.and(post.title.contains(keyword));
         }
-        else if (type.equals(CONTENT)) {
+        if (SearchType.of(type) == SearchType.CONTENT) {
             bb.and(post.content.contains(keyword));
         }
-        else if (type.equals(HASHTAG)) {
+        if (SearchType.of(type) == SearchType.HASHTAG) {
             bb.and(post.postHashtags.any().hashtag.content.eq(keyword));
         }
     }

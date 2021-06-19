@@ -20,6 +20,8 @@ public enum ErrorCode {
     PICTURE_NOT_FOUND(404, "yu008", "No Such Picture"),
     HASHTAG_NOT_FOUND(404, "yu009", "No Such Hashtag"),
     POST_NOT_FOUND(404, "yu010", "No Such Post"),
+    SEARCH_TYPE_ERROR(404, "yu013", "No Such SearchType"),
+
     FILE_ERROR(500, "yu011", "File Task Error"),
     GOOGLE_DRIVE_ERROR(500, "yu012", "Google Dirve Error");
 
