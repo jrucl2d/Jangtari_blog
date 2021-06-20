@@ -110,14 +110,12 @@ public class PostControllerTest extends IntegrationTest {
         mockMvc.perform(multipart("/admin/post/1")
                 .params(map))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("mtitle"))
+                .andExpect(jsonPath("$.content").value("mcontent"))
+                .andExpect(jsonPath("$.pictures.[0].picture").value("pic2"))
+                .andExpect(jsonPath("$.hashtags.[0]").value("hashtag2"))
+                .andExpect(jsonPath("$.hashtags.[1]").value("hashtag3"))
                 .andDo(print());
-        Post modifiedPost = postRepository.findById(1L).get();
-        assertThat(modifiedPost.getTemplate()).isEqualTo(0);
-        assertThat(modifiedPost.getContent()).isEqualTo("mcontent");
-        assertThat(modifiedPost.getPictures().size()).isEqualTo(1);
-        assertThat(modifiedPost.getPictures().get(0).getUrl()).isEqualTo("pic2");
-        assertThat(modifiedPost.getPostHashtags().get(0).getHashtag().getContent()).isEqualTo("hashtag2");
-        assertThat(modifiedPost.getPostHashtags().get(1).getHashtag().getContent()).isEqualTo("hashtag3");
     }
     @Test
     @DisplayName("deletePost O, 포스트 삭제")

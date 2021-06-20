@@ -35,8 +35,8 @@ public class PostController {
     }
     @PostMapping(value = "/admin/post/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public PostDTO.Get updatePost(@PathVariable("id") final Long postId, @Valid final PostDTO.Update postDTO) {
-        return PostDTO.Get.of(postService.updatePost(postId, postDTO));
+    public PostDTO.GetOne updatePost(@PathVariable("id") final Long postId, @Valid final PostDTO.Update postDTO) {
+        return PostDTO.GetOne.of(postService.updatePost(postId, postDTO));
     }
     @DeleteMapping("/admin/post/{id}")
     @ResponseStatus(HttpStatus.OK)

@@ -23,8 +23,8 @@ public class PostDTO {
         private String title;
         private String content;
         private List<CommentDTO.Get> comments = new ArrayList<>();
-        private List<PictureDTO> pictures = new ArrayList<>();
-        private List<String> hashtags = new ArrayList<>();
+        private List<PictureDTO> pictures = new ArrayList<>(); // 후에 사진에 대한 메타 정보가 추가될 것을 고려하여 DTO
+        private List<String> hashtags = new ArrayList<>(); // 단순한 해시태그 문자열만 필요하므로 String
 
         @Builder
         public GetOne(Long postId, String title, String content, List<CommentDTO.Get> comments, List<PictureDTO> pictures, List<String> hashtags) {
