@@ -35,7 +35,7 @@ public class PostService {
     // Comment, PostHashtag, Picture을 join해서 같이 가져옴
     @Transactional(readOnly = true)
     public Post getOne(final Long postId) {
-        return postRepository.getOne(postId).orElseThrow(NoSuchPostException::new);
+        return postRepository.getOne(postId).orElseThrow(NoSuchPostException::new).getDeleteFiltered();
     }
     public Post findOne(final Long postId) {
         return postRepository.findById(postId).orElseThrow(NoSuchPostException::new);
@@ -87,7 +87,7 @@ public class PostService {
 
     // Post에 연관된 Comment, Post-Hashtag, Picture을 softDelete 처리해야 함
     public void deletePost(Long postId) {
-        final Post post = getOne(postId);
+        final Post post = postRepository.getOne(postId).orElseThrow(NoSuchPostException::new);
         deleteRelationOfPost(post);
     }
     public void deletePostsOfCategory(Long categoryId) {

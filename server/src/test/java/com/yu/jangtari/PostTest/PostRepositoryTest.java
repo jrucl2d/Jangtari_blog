@@ -83,7 +83,8 @@ public class PostRepositoryTest extends IntegrationTest {
         // when
         Post findPost = postRepository.getOne(1L).get();
         // then
-        assertThat(findPost.getComments().size()).isEqualTo(1);
+        assertThat(findPost.getComments().get(0).getDeleteFlag().isDeleteFlag()).isFalse();
+        assertThat(findPost.getComments().get(1).getDeleteFlag().isDeleteFlag()).isTrue();
     }
     @Test
     @DisplayName("getOne 테스트 실패 - 존재하지 않는 post를 찾을 시 NoSuchElementException")
