@@ -69,7 +69,7 @@ public class PostDTO {
     @ToString
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Add{
-        @NotNull // Long에는 NotNull 붙일 수 없음
+        @NotNull // Long에는 NotBlank 붙일 수 없음
         private Long categoryId;
         @NotBlank(message = "제목이 빈칸이면 안 됩니다.")
         private String title;

@@ -8,34 +8,36 @@ import javax.validation.constraints.NotBlank;
 public class CommentDTO {
 
     @Getter
-    @NoArgsConstructor(access = AccessLevel.PACKAGE)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Get{
         private Long commentId;
         private String content;
         private String username;
         private String nickname;
-        private Long parentComment;
+        private Long parentCommentId;
 
         @Builder
-        public Get(Long commentId, String content, String username, String nickname, Long parentComment) {
+        public Get(Long commentId, String content, String username, String nickname, Long parentCommentId) {
             this.commentId = commentId;
             this.content = content;
             this.username = username;
             this.nickname = nickname;
-            this.parentComment = parentComment;
+            this.parentCommentId = parentCommentId;
         }
         public static CommentDTO.Get of(Comment comment) {
+            final Long parentId = comment.getParentComment() == null ? null : comment.getParentComment().getId();
             return Get.builder()
                     .commentId(comment.getId())
                     .content(comment.getContent())
                     .username(comment.getMember().getUsername())
                     .nickname(comment.getMember().getNickname())
-                    .parentComment(comment.getParentComment().getId())
+                    .parentCommentId(parentId)
                     .build();
         }
     }
 
     @Getter
+    @ToString
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Add{
         @NotBlank(message = "ID가 빈칸이면 안 됩니다.")
