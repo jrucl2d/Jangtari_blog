@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,12 +22,12 @@ public class CommentController {
     }
     @PostMapping("/user/comment")
     @ResponseStatus(HttpStatus.CREATED)
-    public CommentDTO.Get addComment(@RequestBody final CommentDTO.Add commentDTO) {
+    public CommentDTO.Get addComment(@Valid @RequestBody final CommentDTO.Add commentDTO) {
         return CommentDTO.Get.of(commentService.addComment(commentDTO));
     }
     @PutMapping("/user/comment/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CommentDTO.Get updateComment(@PathVariable("id") final Long commentId, @RequestBody final CommentDTO.Update commentDTO) {
+    public CommentDTO.Get updateComment(@PathVariable("id") final Long commentId, @Valid @RequestBody final CommentDTO.Update commentDTO) {
         return CommentDTO.Get.of(commentService.updateComment(commentId, commentDTO));
     }
     @DeleteMapping("/user/comment/{id}")

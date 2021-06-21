@@ -4,6 +4,7 @@ import com.yu.jangtari.domain.Comment;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 public class CommentDTO {
 
@@ -40,7 +41,7 @@ public class CommentDTO {
     @ToString
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Add{
-        @NotBlank(message = "ID가 빈칸이면 안 됩니다.")
+        @NotNull
         private Long postId;
         @NotBlank(message = "작성자가 빈칸이면 안 됩니다.")
         private String commenter;
