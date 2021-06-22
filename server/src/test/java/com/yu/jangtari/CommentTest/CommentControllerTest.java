@@ -3,12 +3,15 @@ package com.yu.jangtari.CommentTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yu.jangtari.IntegrationTest;
 import com.yu.jangtari.domain.Category;
+import com.yu.jangtari.domain.Comment;
 import com.yu.jangtari.domain.DTO.CommentDTO;
 import com.yu.jangtari.domain.Member;
 import com.yu.jangtari.domain.Post;
+import com.yu.jangtari.repository.CommentRepository;
 import com.yu.jangtari.repository.category.CategoryRepository;
 import com.yu.jangtari.repository.member.MemberRepository;
 import com.yu.jangtari.repository.post.PostRepository;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -30,6 +34,8 @@ public class CommentControllerTest extends IntegrationTest {
     private PostRepository postRepository;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private CommentRepository commentRepository;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -175,11 +181,52 @@ public class CommentControllerTest extends IntegrationTest {
     }
     @Test
     @DisplayName("getComments O, 전체 comment 불러오기 성공")
-    void getComments_O() {
+    void getComments_O() throws Exception {
+        addBeforeTask();
+        mockMvc.perform(get("/post/1/comments"))
+                .andExpect(jsonPath("$").value(Matchers.hasSize(2)))
+                .andExpect(jsonPath("$.[0].content").value("comment"))
+                .andExpect(jsonPath("$.[1].content").value("comment1"))
+                .andDo(print());
+    }
+    @Test
+    @DisplayName("getComments O, 삭제된 comment는 안 불러오기 성공")
+    void getComments_O1() throws Exception {
+        addBeforeTask();
+        Comment comment = commentRepository.findById(1L).get();
+        comment.getDeleteFlag().softDelete();
+        commentRepository.save(comment);
+
+        mockMvc.perform(get("/post/1/comments"))
+                .andExpect(jsonPath("$").value(Matchers.hasSize(1)))
+                .andExpect(jsonPath("$.[0].content").value("comment1"))
+                .andDo(print());
+    }
+    @Test
+    @DisplayName("getComments O, 댓글이 없으면 안 불러오기 성공")
+    void getComments_O2() throws Exception {
+        mockMvc.perform(get("/post/1/comments"))
+                .andExpect(jsonPath("$").value(Matchers.hasSize(0)))
+                .andDo(print());
+    }
+    private void addBeforeTask() throws Exception {
+        Member member = Member.builder().username("user").nickname("nick").password("pass").build();
+        memberRepository.save(member);
         Category category = Category.builder().name("category").build();
-        categoryRepository.save(category);
+        category = categoryRepository.save(category);
         Post post = Post.builder().title("title").content("content").template(1).category(category).build();
         postRepository.save(post);
-
+        CommentDTO.Add commentDTO = CommentDTO.Add.builder().commenter("user").content("comment").postId(1L).build();
+        String content = objectMapper.writeValueAsString(commentDTO);
+        mockMvc.perform(post("/user/comment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andDo(print());
+        commentDTO = CommentDTO.Add.builder().commenter("user").content("comment1").postId(1L).build();
+        content = objectMapper.writeValueAsString(commentDTO);
+        mockMvc.perform(post("/user/comment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andDo(print());
     }
 }
