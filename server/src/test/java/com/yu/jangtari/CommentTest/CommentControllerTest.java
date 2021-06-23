@@ -19,8 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -207,6 +206,63 @@ public class CommentControllerTest extends IntegrationTest {
     void getComments_O2() throws Exception {
         mockMvc.perform(get("/post/1/comments"))
                 .andExpect(jsonPath("$").value(Matchers.hasSize(0)))
+                .andDo(print());
+    }
+    @Test
+    @DisplayName("updateComment O, 댓글 수정 성공")
+    void updateComment_O() throws Exception {
+        addBeforeTask();
+        CommentDTO.Update commentDTO = CommentDTO.Update.builder().content("updated").commenter("user").build();
+        String content = objectMapper.writeValueAsString(commentDTO);
+        mockMvc.perform(put("/user/comment/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andExpect(jsonPath("$.content").value("updated"))
+                .andDo(print());
+    }
+    @Test
+    @DisplayName("updateComment X, 파라미터 맞지 않는 DTO 사용시 Invalid Input Error 발생")
+    void updateComment_X() throws Exception {
+        addBeforeTask();
+        // content 비어있는 경우
+        CommentDTO.Update commentDTO = CommentDTO.Update.builder().commenter("user").build();
+        String content = objectMapper.writeValueAsString(commentDTO);
+        mockMvc.perform(put("/user/comment/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Invalid Input Value"))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors").doesNotExist())
+                .andExpect(jsonPath("$.code").value("yu001"))
+                .andDo(print());
+        // commenter 비어있는 경우
+        commentDTO = CommentDTO.Update.builder().content("updated").build();
+        content = objectMapper.writeValueAsString(commentDTO);
+        mockMvc.perform(put("/user/comment/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Invalid Input Value"))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors").doesNotExist())
+                .andExpect(jsonPath("$.code").value("yu001"))
+                .andDo(print());
+    }
+    @Test
+    @DisplayName("updateComment X, 존재하지 않는 commenter로 보내면 No Such Member Exception")
+    void updateComment_X1() throws Exception {
+        addBeforeTask();
+        CommentDTO.Update commentDTO = CommentDTO.Update.builder().content("updated").commenter("no").build();
+        String content = objectMapper.writeValueAsString(commentDTO);
+        mockMvc.perform(put("/user/comment/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("No Such Member"))
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.errors").doesNotExist())
+                .andExpect(jsonPath("$.code").value("yu005"))
                 .andDo(print());
     }
     private void addBeforeTask() throws Exception {

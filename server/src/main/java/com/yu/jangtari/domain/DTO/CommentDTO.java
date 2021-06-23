@@ -66,7 +66,9 @@ public class CommentDTO {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Update{
+        @NotBlank(message = "작성자가 빈칸이면 안 됩니다.")
         private String commenter;
+        @NotBlank(message = "내용이 빈칸이면 안 됩니다.")
         private String content;
 
         @Builder
