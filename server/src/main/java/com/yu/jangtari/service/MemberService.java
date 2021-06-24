@@ -30,11 +30,15 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final GoogleDriveUtil googleDriveUtil;
 
+    @Transactional(readOnly = true)
+    public Member findOne(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(NoSuchMemberException::new);
+    }
     /**
      * soft delete을 구현하기 위해 service에서 dirty checking을 활용
      */
-    public Member deleteMember(Long id) {
-        Member member = memberRepository.findById(id).orElseThrow(NoSuchMemberException::new);
+    public Member deleteMember(Long memberId) {
+        Member member = findOne(memberId);
         member.getDeleteFlag().softDelete();
         return member;
     }
