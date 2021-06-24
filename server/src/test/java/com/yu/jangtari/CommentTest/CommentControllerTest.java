@@ -19,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -265,6 +268,37 @@ public class CommentControllerTest extends IntegrationTest {
                 .andExpect(jsonPath("$.code").value("yu005"))
                 .andDo(print());
     }
+    @Test
+    @DisplayName("deleteComment O, 댓글 삭제 성공")
+    void deleteComment_O() throws Exception {
+        addBeforeTask();
+
+        mockMvc.perform(delete("/user/comment/1"))
+                .andExpect(jsonPath("$").value("OK"))
+                .andDo(print());
+    }
+    @Test
+    @DisplayName("deleteComment O, 부모 댓글 삭제시 자식 댓글도 삭제")
+    void deleteComment_O1() throws Exception {
+        addBeforeTask();
+
+        CommentDTO.Add commentDTO = CommentDTO.Add.builder().commenter("user").content("comment2").postId(1L).parentCommentId(1L).build();
+        String content = objectMapper.writeValueAsString(commentDTO);
+        mockMvc.perform(post("/user/comment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content));
+
+        mockMvc.perform(delete("/user/comment/1"))
+                .andExpect(jsonPath("$").value("OK"))
+                .andDo(print());
+
+        List<Comment> comments = commentRepository.findAll();
+        assertThat(comments.get(0).getChildComments().get(0)).isEqualTo(comments.get(2));
+        assertThat(comments.get(0).getDeleteFlag().isDeleteFlag()).isTrue();
+        assertThat(comments.get(1).getDeleteFlag().isDeleteFlag()).isFalse();
+        assertThat(comments.get(2).getDeleteFlag().isDeleteFlag()).isTrue();
+    }
+    
     private void addBeforeTask() throws Exception {
         Member member = Member.builder().username("user").nickname("nick").password("pass").build();
         memberRepository.save(member);
