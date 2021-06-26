@@ -1,4 +1,5 @@
 package com.yu.jangtari.domain;
+import com.yu.jangtari.domain.DTO.MemberDTO;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -45,5 +46,14 @@ public class Member extends DateAuditing {
         this.picture = picture;
         this.role = RoleType.USER;
         this.deleteFlag = DeleteFlag.initDeleteFlag();
+    }
+
+    public void updateNickNameAndIntoduce(MemberDTO.Update memberDTO) {
+        this.nickname = memberDTO.getNickname();
+        this.introduce = memberDTO.getIntroduce();
+    }
+
+    public void initPicture(String pictureURL) {
+        this.picture = pictureURL;
     }
 }

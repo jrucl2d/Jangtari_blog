@@ -3,6 +3,7 @@ package com.yu.jangtari.domain.DTO;
 
 import com.yu.jangtari.domain.Member;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 
@@ -50,4 +51,12 @@ public class MemberDTO {
         }
     }
 
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class Update {
+        @NotBlank(message = "닉네임이 빈칸이면 안 됩니다.")
+        private String nickname;
+        private String introduce;
+        private MultipartFile picture;
+    }
 }

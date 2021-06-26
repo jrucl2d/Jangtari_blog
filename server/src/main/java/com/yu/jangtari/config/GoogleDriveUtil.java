@@ -76,7 +76,7 @@ public class GoogleDriveUtil {
      * @return URL의 리스트 / URL
      */
     public List<String> filesToURLs(List<MultipartFile> pictureFiles, GDFolder gdFolder) {
-        if (pictureFiles == null) return null;
+        if (pictureFiles == null || pictureFiles.isEmpty()) return null;
         List<String> pictureURLs;
         try {
             Drive drive = getDrive();

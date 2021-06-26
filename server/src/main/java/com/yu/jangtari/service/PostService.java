@@ -67,14 +67,14 @@ public class PostService {
         return post;
     }
     private void addHashtagsToPostIfExist(final Post post, final List<Hashtag> hashtags) {
-        if (hashtags.isEmpty()) return;
+        if (hashtags == null || hashtags.isEmpty()) return;
         hashtagRepository.saveAll(hashtags);
         final List<PostHashtag> postHashtags = PostHashtag.hashtagsToPostHashtags(hashtags, post);
         postHashtagRepository.saveAll(postHashtags);
         post.addPostHashtags(postHashtags);
     }
     private void addPicturesToPostIfExist(final Post post, final List<MultipartFile> pictureFiles) {
-        if (pictureFiles == null) return;
+        if (pictureFiles == null || pictureFiles.isEmpty()) return;
         final List<String> pictureURLs = googleDriveUtil.filesToURLs(pictureFiles, GDFolder.POST);
         final List<Picture> pictures = Picture.stringsToPictures(pictureURLs, post);
         pictureRepository.saveAll(pictures);
