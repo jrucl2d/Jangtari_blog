@@ -1,6 +1,7 @@
 package com.yu.jangtari.MemberTest;
 
 import com.yu.jangtari.ServiceTest;
+import com.yu.jangtari.common.exception.JangtariDeleteError;
 import com.yu.jangtari.common.exception.NoSuchMemberException;
 import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.DTO.MemberDTO;
@@ -37,7 +38,7 @@ public class MemberServiceTest extends ServiceTest {
     class SuccessTest {
         @Test
         @DisplayName("softDelete 성공")
-        void softDelete_O() {
+        void deleteMember_O() {
             // given
             Member member = makeMember();
             given(memberRepository.save(any())).willReturn(member);
@@ -45,7 +46,7 @@ public class MemberServiceTest extends ServiceTest {
             Member savedMember = memberRepository.save(member);
             assertThat(savedMember.getDeleteFlag().isDeleteFlag()).isFalse();
             // when
-            Member afterDeletedMember = memberService.deleteMember(1L);
+            Member afterDeletedMember = memberService.deleteMember(2L);
             // then
             assertThat(afterDeletedMember.getDeleteFlag().isDeleteFlag()).isTrue();
         }
@@ -84,20 +85,27 @@ public class MemberServiceTest extends ServiceTest {
     @DisplayName("실패 테스트")
     class FailureTest {
         @Test
-        @DisplayName("softDelete 실패 - 해당 Id의 Member 없음")
-        void softDelete_X() {
+        @DisplayName("updateMember X, member가 없으면 실패")
+        void updateMember_X() {
             // given
             given(memberRepository.findById(any())).willReturn(Optional.empty());
             // when, then
-            assertThrows(NoSuchMemberException.class, () -> memberService.deleteMember(1L));
+            assertThrows(NoSuchMemberException.class, () -> memberService.updateMember(MemberDTO.Update.builder().nickname("null").build()));
         }
        @Test
-       @DisplayName("updateMember X, member가 없으면 실패")
-       void updateMember_X() {
-            // given
+       @DisplayName("deleteMember X - 해당 Id의 Member 없음")
+       void deleteMember_X() {
+           // given
            given(memberRepository.findById(any())).willReturn(Optional.empty());
            // when, then
-           assertThrows(NoSuchMemberException.class, () -> memberService.updateMember(MemberDTO.Update.builder().nickname("null").build()));
+           assertThrows(NoSuchMemberException.class, () -> memberService.deleteMember(2L));
+       }
+        @Test
+        @DisplayName("deleteMember X, Id가 1인 Jangtari는 삭제 불가")
+        void deleteMember_X1() {
+            // given, when, then
+            assertThrows(JangtariDeleteError.class, () -> memberService.deleteMember(1L));
+
        }
     }
 

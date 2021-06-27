@@ -1,6 +1,7 @@
 package com.yu.jangtari.service;
 
 import com.yu.jangtari.common.GDFolder;
+import com.yu.jangtari.common.exception.JangtariDeleteError;
 import com.yu.jangtari.common.exception.NoSuchMemberException;
 import com.yu.jangtari.config.GoogleDriveUtil;
 import com.yu.jangtari.domain.DTO.MemberDTO;
@@ -21,14 +22,6 @@ public class MemberService {
     @Transactional(readOnly = true)
     public Member findOne(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(NoSuchMemberException::new);
-    }
-    /**
-     * soft delete을 구현하기 위해 service에서 dirty checking을 활용
-     */
-    public Member deleteMember(Long memberId) {
-        Member member = findOne(memberId);
-        member.getDeleteFlag().softDelete();
-        return member;
     }
 
     @Transactional(readOnly = true)
@@ -51,5 +44,13 @@ public class MemberService {
         if (pictureFile == null) return;
         String pictureURL = googleDriveUtil.fileToURL(pictureFile, GDFolder.JANGTARI);
         member.initPicture(pictureURL);
+    }
+
+    // 1번 유저, Jangtari는 삭제 불가능하다는 요구사항 추가
+    public Member deleteMember(Long memberId) {
+        if (memberId == 1L) throw new JangtariDeleteError();
+        Member member = findOne(memberId);
+        member.getDeleteFlag().softDelete();
+        return member;
     }
 }

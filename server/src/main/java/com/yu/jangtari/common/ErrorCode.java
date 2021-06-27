@@ -21,6 +21,7 @@ public enum ErrorCode {
     HASHTAG_NOT_FOUND(404, "yu009", "No Such Hashtag"),
     POST_NOT_FOUND(404, "yu010", "No Such Post"),
     SEARCH_TYPE_ERROR(404, "yu013", "No Such SearchType"),
+    JANGTARI_DELETE_ERROR(403, "yu014", "Nobody Can Delete Jangtari"),
 
     FILE_ERROR(500, "yu011", "File Task Error"),
     GOOGLE_DRIVE_ERROR(500, "yu012", "Google Dirve Error");
