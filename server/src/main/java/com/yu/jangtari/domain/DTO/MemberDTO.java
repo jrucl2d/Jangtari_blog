@@ -58,5 +58,12 @@ public class MemberDTO {
         private String nickname;
         private String introduce;
         private MultipartFile picture;
+
+        @Builder
+        public Update(String nickname, String introduce, MultipartFile picture) {
+            this.nickname = nickname;
+            this.introduce = introduce;
+            this.picture = picture;
+        }
     }
 }
