@@ -92,14 +92,14 @@ public class MemberServiceTest extends ServiceTest {
             // when, then
             assertThrows(NoSuchMemberException.class, () -> memberService.updateMember(MemberDTO.Update.builder().nickname("null").build()));
         }
-       @Test
-       @DisplayName("deleteMember X - 해당 Id의 Member 없음")
-       void deleteMember_X() {
-           // given
-           given(memberRepository.findById(any())).willReturn(Optional.empty());
-           // when, then
-           assertThrows(NoSuchMemberException.class, () -> memberService.deleteMember(2L));
-       }
+        @Test
+        @DisplayName("deleteMember X - 해당 Id의 Member 없음")
+        void deleteMember_X() {
+            // given
+            given(memberRepository.findById(any())).willReturn(Optional.empty());
+            // when, then
+            assertThrows(NoSuchMemberException.class, () -> memberService.deleteMember(2L));
+        }
         @Test
         @DisplayName("deleteMember X, Id가 1인 Jangtari는 삭제 불가")
         void deleteMember_X1() {

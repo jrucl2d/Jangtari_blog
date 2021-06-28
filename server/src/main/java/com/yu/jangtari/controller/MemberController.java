@@ -9,6 +9,7 @@ import com.yu.jangtari.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Principal;
@@ -38,14 +40,25 @@ public class MemberController {
     @GetMapping("/jangtari")
     @ResponseStatus(value = HttpStatus.OK)
     public MemberDTO.Get findJangtari() {
-        return new MemberDTO.Get(memberService.findOne(1L));
+        return MemberDTO.Get.of(memberService.findOne(1L));
     }
+
     @DeleteMapping("/member/{memberId}")
     @ResponseStatus(value = HttpStatus.OK)
     public String deleteMember(@PathVariable(value = "memberId") Long memberId) {
         memberService.deleteMember(memberId);
         return "OK";
     }
+    @PostMapping(value = "/admin/jangtari", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(value = HttpStatus.OK)
+    public MemberDTO.Get updateJangtari(@Valid final MemberDTO.Update memberDTO) {
+        return MemberDTO.Get.of(memberService.updateMember(memberDTO));
+    }
+//    @PutMapping("/admin/jangtari")
+//    public ResponseEntity<CustomResponse> updateInfo(@RequestPart("jangtari") String jangtariString,
+//                                                     @RequestPart("image") MultipartFile jangtariImage) throws GeneralSecurityException, IOException {
+//        return memberService.jangtariUpdate(jangtariString, jangtariImage);
+//    }
 
 //    @PostMapping("/check")
 //    public ResponseEntity<CustomResponse> check(@RequestBody MemberDTO.Check password, Principal principal){
@@ -67,12 +80,7 @@ public class MemberController {
 //                    HttpStatus.BAD_REQUEST);
 //        }
 //    }
-//    @Transactional
-//    @PutMapping("/admin/jangtari")
-//    public ResponseEntity<CustomResponse> updateInfo(@RequestPart("jangtari") String jangtariString,
-//                                                     @RequestPart("image") MultipartFile jangtariImage) throws GeneralSecurityException, IOException {
-//        return memberService.jangtariUpdate(jangtariString, jangtariImage);
-//    }
+
 //    @Transactional
 //    @PutMapping("/admin/jangtari/nimg")
 //    public ResponseEntity<CustomResponse> updateInfo2(@RequestPart("jangtari") String jangtariString) throws GeneralSecurityException, IOException {

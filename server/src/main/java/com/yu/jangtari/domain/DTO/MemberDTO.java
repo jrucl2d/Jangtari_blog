@@ -17,11 +17,21 @@ public class MemberDTO {
         private String introduce;
         private String picture;
 
-        public Get(Member member) {
-            this.username = member.getUsername();
-            this.nickname = member.getNickname();
-            this.introduce = member.getIntroduce();
-            this.picture = member.getPicture();
+        @Builder
+        public Get(String username, String nickname, String introduce, String picture) {
+            this.username = username;
+            this.nickname = nickname;
+            this.introduce = introduce;
+            this.picture = picture;
+        }
+
+        public static Get of(Member member) {
+            return Get.builder()
+                    .username(member.getUsername())
+                    .nickname(member.getNickname())
+                    .introduce(member.getIntroduce())
+                    .picture(member.getPicture())
+                    .build();
         }
     }
 
