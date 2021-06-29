@@ -54,11 +54,6 @@ public class MemberController {
     public MemberDTO.Get updateJangtari(@Valid final MemberDTO.Update memberDTO) {
         return MemberDTO.Get.of(memberService.updateMember(memberDTO));
     }
-//    @PutMapping("/admin/jangtari")
-//    public ResponseEntity<CustomResponse> updateInfo(@RequestPart("jangtari") String jangtariString,
-//                                                     @RequestPart("image") MultipartFile jangtariImage) throws GeneralSecurityException, IOException {
-//        return memberService.jangtariUpdate(jangtariString, jangtariImage);
-//    }
 
 //    @PostMapping("/check")
 //    public ResponseEntity<CustomResponse> check(@RequestBody MemberDTO.Check password, Principal principal){
@@ -81,11 +76,6 @@ public class MemberController {
 //        }
 //    }
 
-//    @Transactional
-//    @PutMapping("/admin/jangtari/nimg")
-//    public ResponseEntity<CustomResponse> updateInfo2(@RequestPart("jangtari") String jangtariString) throws GeneralSecurityException, IOException {
-//        return memberService.jangtariUpdate(jangtariString, null);
-//    }
 //    // 회원가입
 //    @PostMapping("/join")
 //    public ResponseEntity<CustomResponse> join(@RequestBody MemberDTO.Add member) {
