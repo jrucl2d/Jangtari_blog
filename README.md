@@ -51,6 +51,7 @@
 - [https://webfirewood.tistory.com/115](https://webfirewood.tistory.com/115)
 - [https://velog.io/@dsunni/Spring-Boot-React-JWT로-간단한-로그인-구현하기](https://velog.io/@dsunni/Spring-Boot-React-JWT%EB%A1%9C-%EA%B0%84%EB%8B%A8%ED%95%9C-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0)
 - [https://velog.io/@ehdrms2034/Spring-Boot-Security-JWT-JPAMysql를-이용한-Restful-Login-사용하기-1](https://velog.io/@ehdrms2034/Spring-Boot-Security-JWT-JPAMysql%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-Restful-Login-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-1)
+- [[서버개발캠프] Spring boot + Spring security + Refresh JWT + Redis + JPA 2편](https://velog.io/@tlatldms/Spring-boot-Spring-security-JWT-Redis-mySQL-2%ED%8E%B8)
 
 ### 4.2 Google Drive API 사용
 
