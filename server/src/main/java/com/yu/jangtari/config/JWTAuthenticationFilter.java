@@ -1,11 +1,12 @@
-//package com.yu.jangtari.config;
+package com.yu.jangtari.config;
 
-import com.yu.jangtari.config.RedisUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -13,14 +14,22 @@ import java.io.IOException;
 // OncePerRequestFilter -> 한 요청 당 한 번만 JWT 토큰 검사
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
-//    private final JWTTokenProvider jwtTokenProvider;
     private final RedisUtil redisUtil;
+    private final JWTUtil jwtUtil;
+    private final CookieUtil cookieUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        final Cookie accessCookie = cookieUtil.getCookie(request, CookieUtil.ACCESS_COOKIE_NAME);
 
+        try {
+            if (accessCookie != null) {
+
+            }
+        } catch (ExpiredJwtException e) {
+
+        }
     }
-//    private final CookieUtil cookieUtil;
 
 //    @Override
 //    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {

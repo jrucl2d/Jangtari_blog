@@ -1,7 +1,6 @@
 package com.yu.jangtari.config;
 
 import com.google.api.client.util.Value;
-import com.yu.jangtari.common.exception.InvalidAccessTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -11,18 +10,18 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class JWTUtil {
-    public static final long ACCESS_TOKEN_VALID_TIME = 2 * 60 * 1000L; // Access token 2분
-    public static final long REFRESH_TOKEN_VALID_TIME = 7 * 24 * 60 * 60 * 1000L; // Refresh token 1주일
+    public static final int ACCESS_TOKEN_VALID_TIME = 2 * 60 * 1000; // Access token 2분
+    public static final int REFRESH_TOKEN_VALID_TIME = 7 * 24 * 60 * 60 * 1000; // Refresh token 1주일
     public static final String ACCESS_TOKEN_STRING = "accessstring";
     public static final String REFRESH_TOKEN_STRING = "refreshstring";
     public static final String TOKEN_PREFIX = "Bearer ";
@@ -69,14 +68,6 @@ public class JWTUtil {
     }
     private Jws<Claims> getClaims(String token) {
         return Jwts.parser().setSigningKey(JWT_SECRET_KEY).parseClaimsJws(token);
-    }
-
-    // Request Header에서 token 가져오기
-    public String resolveAccessToken(HttpServletRequest request){
-        return request.getHeader("Authorization"); // "Authorization" : "토큰 값"
-    }
-    public String resolveRefreshToken(HttpServletRequest request){
-        return request.getHeader("RefreshToken"); // "RefreshToken" : "토큰 값"
     }
 
     // 토큰의 유효성, 만료일자 확인
