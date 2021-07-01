@@ -22,9 +22,15 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final Cookie accessCookie = cookieUtil.getCookie(request, CookieUtil.ACCESS_COOKIE_NAME);
 
+        String accessToken = null;
+        String refreshToken = null;
+        String username = null;
+        String redisUsername = null;
         try {
             if (accessCookie != null) {
-
+                // 쿠키에 access token 있다면
+                accessToken = accessCookie.getValue();
+                username = jwtUtil.getUsernameFromJWT(accessToken);
             }
         } catch (ExpiredJwtException e) {
 

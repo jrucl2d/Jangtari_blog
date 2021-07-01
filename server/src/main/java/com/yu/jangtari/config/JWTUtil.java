@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
 
@@ -67,14 +66,13 @@ public class JWTUtil {
         return new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
     }
     private Jws<Claims> getClaims(String token) {
-        return Jwts.parser().setSigningKey(JWT_SECRET_KEY).parseClaimsJws(token);
+        return Jwts.parser().setSigningKey(JWT_SECRET_KEY).parseClaimsJws(token.replace(TOKEN_PREFIX, ""));
     }
 
     // 토큰의 유효성, 만료일자 확인
     public boolean validateToken(final String token) {
         if (!isStartsWithBearer(token)) return false;
-        String extractedToken = token.replace(TOKEN_PREFIX, "");
-        return isNotExpired(extractedToken);
+        return isNotExpired(token);
     }
     private boolean isStartsWithBearer(final String token) {
         return token.startsWith(TOKEN_PREFIX);
