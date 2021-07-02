@@ -21,8 +21,6 @@ import java.util.Date;
 public class JWTUtil {
     public static final int ACCESS_TOKEN_VALID_TIME = 2 * 60 * 1000; // Access token 2분
     public static final int REFRESH_TOKEN_VALID_TIME = 7 * 24 * 60 * 60 * 1000; // Refresh token 1주일
-    public static final String ACCESS_TOKEN_STRING = "accessstring";
-    public static final String REFRESH_TOKEN_STRING = "refreshstring";
     public static final String TOKEN_PREFIX = "Bearer ";
 
     @Value("${spring.jwt.secret}")
@@ -82,7 +80,7 @@ public class JWTUtil {
             final Jws<Claims> claims = getClaims(token);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
-            return false;
+            throw e;
         }
     }
 }

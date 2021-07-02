@@ -2,6 +2,8 @@ package com.yu.jangtari.config;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -22,6 +24,15 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final Cookie accessCookie = cookieUtil.getCookie(request, CookieUtil.ACCESS_COOKIE_NAME);
 
+        if (accessCookie == null) {
+            final Cookie refreshCookie = cookieUtil.getCookie(request, CookieUtil.REFRESH_COOKIE_NAME);
+            if (refreshCookie == null) {
+
+            }
+        }
+        else {
+
+        }
         String accessToken = null;
         String refreshToken = null;
         String username = null;
@@ -31,8 +42,18 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 // 쿠키에 access token 있다면
                 accessToken = accessCookie.getValue();
                 username = jwtUtil.getUsernameFromJWT(accessToken);
+                if (jwtUtil.validateToken(accessToken)) {
+                    Authentication authentication = jwtUtil.getAuthentication(username);
+                    SecurityContextHolder.getContext().setAuthentication(authentication); // SecurityContext에 Authentication 객체를 저장
+                    filterChain.doFilter(request, response);
+                }
             }
         } catch (ExpiredJwtException e) {
+            final Cookie refreshCookie = cookieUtil.getCookie(request, CookieUtil.REFRESH_COOKIE_NAME);
+            if (refreshCookie != null) {
+                refreshToken = refreshCookie.getValue();
+            }
+        } catch (Exception e) {
 
         }
     }
