@@ -1,9 +1,13 @@
 package com.yu.jangtari.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yu.jangtari.domain.Member;
-import lombok.RequiredArgsConstructor;
+import com.yu.jangtari.common.ErrorCode;
+import com.yu.jangtari.common.ErrorResponse;
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.entity.ContentType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -16,20 +20,23 @@ import java.io.IOException;
 
 // /login으로 post 방식의 {username, password} 요청시 동작하는 UsernamePasswordAuthenticationFilter를 설정
 @RequiredArgsConstructor
+@Slf4j
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final CookieUtil cookieUtil;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        UsernamePasswordAuthenticationToken token = null;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            Member member = objectMapper.readValue(request.getInputStream(), Member.class);
-            System.out.println(member);
+            LoginForm loginForm = objectMapper.readValue(request.getInputStream(), LoginForm.class);
+            logger.info("** LOGIN : " + loginForm.getUsername());
+            token = new UsernamePasswordAuthenticationToken(loginForm.getUsername(), loginForm.getPassword());
         } catch (IOException e) {
-
+            log.error("IOException Occurred while login process");
         }
-        return super.attemptAuthentication(request, response);
+        return authenticationManager.authenticate(token); // UserDetailsService의 loadUserByUsername() 실행
     }
 
     @Override
@@ -38,9 +45,21 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         super.successfulAuthentication(request, response, chain, authResult);
     }
 
+    // 토큰 생성, 쿠키에 넣어주는 기능 구현 필요
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        super.unsuccessfulAuthentication(request, response, failed);
+        log.error("Handle LogIn Exception : ", failed);
+        final ErrorCode errorCode = ErrorCode.MEMBER_NOT_FOUND;
+        final ErrorResponse errorResponse = ErrorResponse.builder()
+                                        .status(errorCode.getStatus())
+                                        .code(errorCode.getCode())
+                                        .message(errorCode.getMessage())
+                                        .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        final String responseJson = objectMapper.writeValueAsString(errorResponse);
+        response.setStatus(errorCode.getStatus());
+        response.setContentType(ContentType.APPLICATION_JSON.getMimeType());
+        response.getWriter().write(responseJson);
     }
 
     //    @Override
@@ -92,4 +111,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 //        }
 //        chain.doFilter(request, response);
 //    }
+
+    @Getter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static class LoginForm {
+        private String username;
+        private String password;
+    }
 }
