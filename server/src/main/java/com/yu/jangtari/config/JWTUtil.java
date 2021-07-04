@@ -23,8 +23,8 @@ public class JWTUtil {
     public static final int REFRESH_TOKEN_VALID_TIME = 7 * 24 * 60 * 60 * 1000; // Refresh token 1주일
     public static final String TOKEN_PREFIX = "Bearer ";
 
-    @Value("${spring.jwt.secret}")
-    private String JWT_SECRET_KEY;
+//    @Value("${spring.jwt.secret}")
+    private String JWT_SECRET_KEY = "tmp";
 
     private final UserDetailsService userDetailsService;
 

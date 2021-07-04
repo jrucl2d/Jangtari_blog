@@ -1,5 +1,7 @@
 package com.yu.jangtari.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yu.jangtari.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -12,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-// /login 요청시 동작하는 UsernamePasswordAuthenticationFilter를 설정
+// /login으로 post 방식의 {username, password} 요청시 동작하는 UsernamePasswordAuthenticationFilter를 설정
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
@@ -20,12 +22,19 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Member member = objectMapper.readValue(request.getInputStream(), Member.class);
+            System.out.println(member);
+        } catch (IOException e) {
 
+        }
         return super.attemptAuthentication(request, response);
     }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+        System.out.println("성공");
         super.successfulAuthentication(request, response, chain, authResult);
     }
 
