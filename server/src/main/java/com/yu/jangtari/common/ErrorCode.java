@@ -23,6 +23,7 @@ public enum ErrorCode {
     SEARCH_TYPE_ERROR(404, "yu013", "No Such SearchType"),
     JANGTARI_DELETE_ERROR(403, "yu014", "Nobody Can Delete Jangtari"),
     INVALID_ACCESS_TOKEN(401, "yu015", "Invalid Access Token"),
+    DUPLICATE_USER_ERROR(400, "yu016", "Duplicate User Error"),
 
     FILE_ERROR(500, "yu011", "File Task Error"),
     GOOGLE_DRIVE_ERROR(500, "yu012", "Google Dirve Error");

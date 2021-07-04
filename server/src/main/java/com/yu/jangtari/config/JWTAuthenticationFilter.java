@@ -1,64 +1,40 @@
 package com.yu.jangtari.config;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-// OncePerRequestFilter -> 한 요청 당 한 번만 JWT 토큰 검사
+// /login 요청시 동작하는 UsernamePasswordAuthenticationFilter를 설정
 @RequiredArgsConstructor
-public class JWTAuthenticationFilter extends OncePerRequestFilter {
-    private final RedisUtil redisUtil;
-    private final JWTUtil jwtUtil;
+public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+    private final AuthenticationManager authenticationManager;
     private final CookieUtil cookieUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final Cookie accessCookie = cookieUtil.getCookie(request, CookieUtil.ACCESS_COOKIE_NAME);
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-        if (accessCookie == null) {
-            final Cookie refreshCookie = cookieUtil.getCookie(request, CookieUtil.REFRESH_COOKIE_NAME);
-            if (refreshCookie == null) {
-
-            }
-        }
-        else {
-
-        }
-        String accessToken = null;
-        String refreshToken = null;
-        String username = null;
-        String redisUsername = null;
-        try {
-            if (accessCookie != null) {
-                // 쿠키에 access token 있다면
-                accessToken = accessCookie.getValue();
-                username = jwtUtil.getUsernameFromJWT(accessToken);
-                if (jwtUtil.validateToken(accessToken)) {
-                    Authentication authentication = jwtUtil.getAuthentication(username);
-                    SecurityContextHolder.getContext().setAuthentication(authentication); // SecurityContext에 Authentication 객체를 저장
-                    filterChain.doFilter(request, response);
-                }
-            }
-        } catch (ExpiredJwtException e) {
-            final Cookie refreshCookie = cookieUtil.getCookie(request, CookieUtil.REFRESH_COOKIE_NAME);
-            if (refreshCookie != null) {
-                refreshToken = refreshCookie.getValue();
-            }
-        } catch (Exception e) {
-
-        }
+        return super.attemptAuthentication(request, response);
     }
 
-//    @Override
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+        super.successfulAuthentication(request, response, chain, authResult);
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        super.unsuccessfulAuthentication(request, response, failed);
+    }
+
+    //    @Override
 //    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 //
 //        final Cookie accessCookie = cookieUtil.getCookie(request, jwtTokenProvider.ACCESS_TOKEN_STRING);

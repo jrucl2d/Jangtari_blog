@@ -1,39 +1,17 @@
 package com.yu.jangtari.controller;
 
-import com.yu.jangtari.config.RedisUtil;
 import com.yu.jangtari.domain.DTO.MemberDTO;
-import com.yu.jangtari.domain.Member;
-import com.yu.jangtari.domain.RoleType;
-import com.yu.jangtari.repository.member.MemberRepository;
 import com.yu.jangtari.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.Optional;
-
 
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
 
-//    private final PasswordEncoder passwordEncoder;
-//    private final JWTTokenProvider jwtTokenProvider;
-//    private final RedisUtil redisUtil;
-//    private final CookieUtil cookieUtil;
     private final MemberService memberService;
 
     // About Jangtari
@@ -49,12 +27,19 @@ public class MemberController {
         memberService.deleteMember(memberId);
         return "OK";
     }
+
     @PostMapping(value = "/admin/jangtari", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(value = HttpStatus.OK)
     public MemberDTO.Get updateJangtari(@Valid final MemberDTO.Update memberDTO) {
         return MemberDTO.Get.of(memberService.updateMember(memberDTO));
     }
 
+    @PostMapping("/join")
+    public String join(@RequestBody @Valid final MemberDTO.Add memberDTO) {
+        memberService.join(memberDTO);
+        return "OK";
+    }
+    
 //    @PostMapping("/check")
 //    public ResponseEntity<CustomResponse> check(@RequestBody MemberDTO.Check password, Principal principal){
 //        String username = principal.getName();
@@ -76,32 +61,7 @@ public class MemberController {
 //        }
 //    }
 
-//    // 회원가입
-//    @PostMapping("/join")
-//    public ResponseEntity<CustomResponse> join(@RequestBody MemberDTO.Add member) {
-//        Member newMember = new Member();
-//        if(member.getUsername().substring(0, 5).equals("jang-")){
-//            newMember.setUsername(member.getUsername().substring(5));
-//            newMember.setNickname(member.getNickname());
-//            newMember.setPassword(passwordEncoder.encode(member.getPassword()));
-//            newMember.setRole(RoleType.ADMIN);
-//        } else{
-//            newMember.setUsername(member.getUsername());
-//            newMember.setNickname(member.getNickname());
-//            newMember.setPassword(passwordEncoder.encode(member.getPassword()));
-//            newMember.setRole(RoleType.USER);
-//        }
-//
-//        try {
-//            memberRepository.save(newMember).getId();
-//            return new ResponseEntity<>(CustomResponse.OK(),
-//                    HttpStatus.OK);
-//        } catch (Exception e){
-//            return new ResponseEntity<>(new CustomResponse(
-//                    new ErrorResponse(new CustomException(e.getMessage(), "회원가입 실패")),null),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-//
+
 //    }
 //    @PostMapping("/member")
 //    public ResponseEntity<CustomResponse> memberUpdate(@RequestBody MemberDTO.Add member, HttpServletRequest request, HttpServletResponse response) {
