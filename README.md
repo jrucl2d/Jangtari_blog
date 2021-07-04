@@ -1,5 +1,5 @@
 # Jangtari_blog
-## -- 리팩토링 진행중 --
+## -- Spring Security에 대한 공부가 필요해 리팩토링 잠시 중단 -- 
 
 개인 블로그 프로젝트 <br/>
 주소 : https://www.gamsk.kro.kr (세부사항 설정 중)
