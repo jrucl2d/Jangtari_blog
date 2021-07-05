@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CookieUtil cookieUtil;
+    private final JWTUtil jwtUtil;
     private final MemberRepository memberRepository;
 
     @Override
@@ -22,7 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable() // 폼 로그인이 아니기 때문에 csrf 보안 설정도 필요 없음
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 생성 안 함
                 .and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager(), cookieUtil)) // UsernamePasswordAuthenticationFilter 기반 유저 인증
+                .addFilter(new JWTAuthenticationFilter(authenticationManager(), cookieUtil, jwtUtil)) // UsernamePasswordAuthenticationFilter 기반 유저 인증
                 .addFilter(new JWTAuthorizationFilter(authenticationManager(), memberRepository, cookieUtil)) // BasicAuthenticationFilter 기반 유저 인가
                 .formLogin().disable()
                 .httpBasic().disable() // rest api 서버 구축시 필요 없음. 비 인증시 로그인폼 화면으로 리다이렉트 해주는 기능

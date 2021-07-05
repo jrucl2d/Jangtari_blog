@@ -21,7 +21,6 @@ import java.util.Date;
 public class JWTUtil {
     public static final int ACCESS_TOKEN_VALID_TIME = 2 * 60 * 1000; // Access token 2분
     public static final int REFRESH_TOKEN_VALID_TIME = 7 * 24 * 60 * 60 * 1000; // Refresh token 1주일
-    public static final String TOKEN_PREFIX = "Bearer ";
 
 //    @Value("${spring.jwt.secret}")
     private String JWT_SECRET_KEY = "tmp";
@@ -46,7 +45,7 @@ public class JWTUtil {
         final Claims claims = Jwts.claims(); // JWT payload에 저장되는 정보 claim
         claims.put("username", username); // key-value 쌍으로 저장됨
 
-        return TOKEN_PREFIX + Jwts.builder()
+        return Jwts.builder()
                 .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 발행 시간
                 .setExpiration(new Date(now.getTime() + expireTime)) // 유효 기간
@@ -64,17 +63,14 @@ public class JWTUtil {
         return new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
     }
     private Jws<Claims> getClaims(String token) {
-        return Jwts.parser().setSigningKey(JWT_SECRET_KEY).parseClaimsJws(token.replace(TOKEN_PREFIX, ""));
+        return Jwts.parser().setSigningKey(JWT_SECRET_KEY).parseClaimsJws(token);
     }
 
     // 토큰의 유효성, 만료일자 확인
     public boolean validateToken(final String token) {
-        if (!isStartsWithBearer(token)) return false;
         return isNotExpired(token);
     }
-    private boolean isStartsWithBearer(final String token) {
-        return token.startsWith(TOKEN_PREFIX);
-    }
+
     private boolean isNotExpired(final String token) {
         try {
             final Jws<Claims> claims = getClaims(token);
