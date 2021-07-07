@@ -3,6 +3,7 @@ package com.yu.jangtari.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yu.jangtari.common.ErrorCode;
 import com.yu.jangtari.common.ErrorResponse;
+import com.yu.jangtari.common.GlobalExceptionHandler;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
@@ -33,7 +34,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             LoginForm loginForm = objectMapper.readValue(request.getInputStream(), LoginForm.class);
-            logger.info("** LOGIN ATTEMPT : " + loginForm.getUsername());
+            log.info("** LOGIN ATTEMPT : " + loginForm.getUsername());
             token = new UsernamePasswordAuthenticationToken(loginForm.getUsername(), loginForm.getPassword());
         } catch (IOException e) {
             log.error("IOException Occurred while login process");
@@ -44,7 +45,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         final String username = authResult.getName();
-        logger.info("** LOGIN SUCCESS : " + authResult.getName());
+        log.info("** LOGIN SUCCESS : " + authResult.getName());
 
         final String accessToken = jwtUtil.createAccessToken(username);
         final Cookie accessCookie = cookieUtil.createCookie(true, accessToken);
@@ -56,16 +57,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        logger.info("** LOGIN FAILED : " + failed);
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
+        log.error("** LOGIN FAILED : " + failed);
         final ErrorCode errorCode = ErrorCode.MEMBER_NOT_FOUND;
-        final ErrorResponse errorResponse = ErrorResponse.builder()
-                                        .status(errorCode.getStatus())
-                                        .code(errorCode.getCode())
-                                        .message(errorCode.getMessage())
-                                        .build();
         ObjectMapper objectMapper = new ObjectMapper();
-        final String responseJson = objectMapper.writeValueAsString(errorResponse);
+        final String responseJson = objectMapper.writeValueAsString(GlobalExceptionHandler.buildError(errorCode));
         response.setStatus(errorCode.getStatus());
         response.setContentType(ContentType.APPLICATION_JSON.getMimeType());
         response.getWriter().write(responseJson);

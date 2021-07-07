@@ -1,10 +1,6 @@
 package com.yu.jangtari.config;
 
-import com.google.api.client.util.Value;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -66,17 +62,8 @@ public class JWTUtil {
         return Jwts.parser().setSigningKey(JWT_SECRET_KEY).parseClaimsJws(token);
     }
 
-    // 토큰의 유효성, 만료일자 확인
-    public boolean validateToken(final String token) {
-        return isNotExpired(token);
-    }
-
-    private boolean isNotExpired(final String token) {
-        try {
-            final Jws<Claims> claims = getClaims(token);
-            return !claims.getBody().getExpiration().before(new Date());
-        } catch (Exception e) {
-            throw e;
-        }
+    // 토큰의 유효성, 만료일자 확인 -> getClaims 메소드의 parseClaimsJws(token)에서 validation checking이 이루어짐
+    public void validateToken(final String token) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException {
+        getClaims(token);
     }
 }

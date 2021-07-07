@@ -65,7 +65,7 @@ public class GlobalExceptionHandler {
     }
 
     // 파라미터 검증에 의한 FieldError를 갖지 않는 에러 생성
-    private ErrorResponse buildError(ErrorCode errorCode) {
+    public static ErrorResponse buildError(ErrorCode errorCode) {
         return ErrorResponse.builder()
                 .code(errorCode.getCode())
                 .status(errorCode.getStatus())
