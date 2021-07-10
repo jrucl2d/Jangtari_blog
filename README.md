@@ -43,12 +43,12 @@
 
 - 세션-쿠키 기반의 기존 Spring Security의 로그인 방식이 아닌 JWT 토큰 방식의 로그인을 구현했다.
 - 유효기간이 짧은(2분) Access Token과 유효기간이 긴 Refresh Token을 쿠키에 저장한다.
-[리팩토링 이전]
+- [리팩토링 이전]
 - ~~Access Token의 payload에서 읽어온 username 정보를 바탕으로 인증 객체를 생성해 로그인 처리한다.~~
 - ~~Access Token이 만료되었을 시 Refresh Token으로부터 username을 가져온 뒤 redis 저장소에 [Refresh Token - username]의 key-value 형식으로 저장된 username과 비교하여 검증을 시도한다.~~
 - ~~검증되었다면 새로운 Access Token을 발급해주고 인증 객체를 생성해 로그인 처리한다.~~
 - ~~로그아웃은 쿠키에서 Access Token 쿠키의 유효 기간을 0으로 설정해 삭제하고 redis 저장소에서 refresh token을 키로 갖는 username을 삭제해 로그아웃 처리한다.~~
-[리팩토링 이후]
+- [리팩토링 이후]
 - AuthenticationFilter와 AuthorizationFilter 두 가지로 나눠서 구현한다.
 - 로그인은 AuthenticationFilter에서 진행되며 username과 password를 받아 로그인 처리를 하고 accessToken과 refreshToken을 생성해 쿠키에 담아 리턴한다.
 - 이후 클라이언트가 쿠키를 가진 채로 권한이 필요한 요청을 할 때 AuthorizationFilter가 동작한다. AuthorizationFilter의 동작은 다음과 같다.
