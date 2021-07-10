@@ -1,11 +1,8 @@
 package com.yu.jangtari.config;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yu.jangtari.common.ErrorCode;
-import com.yu.jangtari.common.ErrorResponse;
 import com.yu.jangtari.common.GlobalExceptionHandler;
-import com.yu.jangtari.repository.member.MemberRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
@@ -23,13 +20,11 @@ import java.io.IOException;
 // BasicAuthenticationFilter는 권한 인증이 필요한 경우에만 동작함
 @Slf4j
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
-    private final MemberRepository memberRepository;
     private final CookieUtil cookieUtil;
     private final JWTUtil jwtUtil;
 
-    public JWTAuthorizationFilter(AuthenticationManager authenticationManager, MemberRepository memberRepository, CookieUtil cookieUtil, JWTUtil jwtUtil) {
+    public JWTAuthorizationFilter(AuthenticationManager authenticationManager, CookieUtil cookieUtil, JWTUtil jwtUtil) {
         super(authenticationManager);
-        this.memberRepository = memberRepository;
         this.cookieUtil = cookieUtil;
         this.jwtUtil = jwtUtil;
     }
@@ -38,7 +33,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException {
         final Cookie[] cookies = request.getCookies();
         try {
-            // 1. cookie(token)이 존재하지 않다면 아래 Error catch로 throw
+            // 1. cookie(token)이 존재하지 않다면 아래 Error 리턴
             if (cookies == null || cookies[0] == null) throw new JwtException("NO JWT TOKEN!!");
 
             // 2.1. accessToken이 유효하면 정상 종료
@@ -48,20 +43,28 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         } catch (ExpiredJwtException e) {
             // 2.2. accessToken이 만료된 것이라면 refreshToken check
             final String refreshToken = cookies[1].getValue();
-
-            // 3.1. refreshToken이 유효하면 accessToken 재발급 후 정상 종료
-
-            // 3.2. refreshToken이 만료되었다면 accessToken, refreshToken 재발급 후 정상 종료
-
-            // 3.3. refreshToken에 문제가 있다면 아래 Error catch로 throw
-
+            try {
+                // 3.1. refreshToken이 유효하면 accessToken 재발급 후 정상 종료
+                jwtUtil.validateToken(refreshToken);
+                final Cookie newAccessCookie = recreateAccessCookie(refreshToken);
+                response.addCookie(newAccessCookie);
+                chain.doFilter(request, response);
+            } catch (ExpiredJwtException | ServletException eee) {
+                // 3.2. refreshToken이 만료되었거나 문제가 있다면 Error 리턴, 재 로그인 유도
+                log.error("** AUTHENTICATION FAILED : " + eee);
+                tokenError(response, ErrorCode.INVALID_REFRESH_TOKEN);
+            }
         } catch (Exception ee) {
             log.error("** AUTHENTICATION FAILED : " + ee);
-            tokenError(response);
+            tokenError(response, ErrorCode.INVALID_ACCESS_TOKEN);
         }
     }
-    private void tokenError(HttpServletResponse response) throws IOException {
-        final ErrorCode errorCode = ErrorCode.INVALID_ACCESS_TOKEN;
+    private Cookie recreateAccessCookie(String refreshToken) {
+        final String username = jwtUtil.getUsernameFromJWT(refreshToken);
+        final String accessToken = jwtUtil.createAccessToken(username);
+        return cookieUtil.createCookie(true, accessToken);
+    }
+    private void tokenError(HttpServletResponse response, ErrorCode errorCode) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         final String responseJson = objectMapper.writeValueAsString(GlobalExceptionHandler.buildError(errorCode));
         response.setStatus(errorCode.getStatus());
