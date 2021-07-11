@@ -19,6 +19,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable() // 폼 로그인이 아니기 때문에 csrf 보안 설정도 필요 없음
+                .headers().frameOptions().disable() // h2 console을 위한 설정
+                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 생성 안 함
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), cookieUtil, jwtUtil)) // UsernamePasswordAuthenticationFilter 기반 유저 인증
@@ -26,9 +28,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .httpBasic().disable() // rest api 서버 구축시 필요 없음. 비 인증시 로그인폼 화면으로 리다이렉트 해주는 기능
                 .authorizeRequests() // 다음의 request에 대한 인가 설정
-                    .antMatchers("/amdin/**").hasRole("ADMIN")
+                    .antMatchers("/admin/**").hasRole("ADMIN")
                     .antMatchers("/user/**").hasAnyRole("ADMIN", "USER")
-//                    .anyRequest().permitAll()
+                    .anyRequest().permitAll()
                 ;
     }
 

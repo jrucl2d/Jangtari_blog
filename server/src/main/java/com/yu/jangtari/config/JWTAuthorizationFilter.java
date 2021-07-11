@@ -37,10 +37,12 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException {
         final Cookie[] cookies = request.getCookies();
-        System.out.println("ㅇㅕ기 타요");
         try {
-            // 1. cookie(token)이 존재하지 않다면 아래 Error 리턴
-            if (cookies == null || cookies[0] == null) throw new JwtException("NO JWT TOKEN!!");
+            // 1. cookie(token)이 존재하지 않다면 통과
+            if (cookies == null || cookies[0] == null) {
+                chain.doFilter(request, response);
+                return;
+            }
 
             // 2.1. accessToken이 유효하면 정상 종료
             final String accessToken = cookies[0].getValue();
