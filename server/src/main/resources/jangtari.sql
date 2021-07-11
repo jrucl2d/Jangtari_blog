@@ -1,1 +1,1 @@
-insert into member (MEMBER_ID , CREATED_DATE , UPDATE_DATE , DELETE_FLAG , INTRODUCE , NICKNAME , PASSWORD , PICTURE , ROLE , USERNAME ) values (null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, FALSE, 'introduce', 'nick', '1234', 'picture', 'ADMIN', 'Jang');
+insert into member (MEMBER_ID , CREATED_DATE , UPDATE_DATE , DELETE_FLAG , INTRODUCE , NICKNAME , PASSWORD , PICTURE , ROLE , USERNAME ) values (null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, FALSE, 'introduce', 'nick', '1234', 'picture', 'ADMIN', 'jangtari');

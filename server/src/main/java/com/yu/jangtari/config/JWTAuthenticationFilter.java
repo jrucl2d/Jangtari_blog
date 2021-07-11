@@ -45,11 +45,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         final String username = authResult.getName();
+        final String role = (String) authResult.getAuthorities().toArray()[0];
         log.info("** LOGIN SUCCESS : " + authResult.getName());
-
-        final String accessToken = jwtUtil.createAccessToken(username);
+        final String accessToken = jwtUtil.createAccessToken(username, role);
         final Cookie accessCookie = cookieUtil.createCookie(true, accessToken);
-        final String refreshToken = jwtUtil.createRefreshToken(username);
+        final String refreshToken = jwtUtil.createRefreshToken(username, role);
         final Cookie refreshCookie = cookieUtil.createCookie(false, refreshToken);
 
         response.addCookie(accessCookie);

@@ -8,6 +8,10 @@ import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -16,6 +20,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 
 // BasicAuthenticationFilter는 권한 인증이 필요한 경우에만 동작함
 @Slf4j
@@ -32,6 +37,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException {
         final Cookie[] cookies = request.getCookies();
+        System.out.println("ㅇㅕ기 타요");
         try {
             // 1. cookie(token)이 존재하지 않다면 아래 Error 리턴
             if (cookies == null || cookies[0] == null) throw new JwtException("NO JWT TOKEN!!");
@@ -39,9 +45,14 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             // 2.1. accessToken이 유효하면 정상 종료
             final String accessToken = cookies[0].getValue();
             jwtUtil.validateToken(accessToken);
+            final String username = jwtUtil.getUsernameFromJWT(accessToken);
+            final String roleType = jwtUtil.getRoleFromJWT(accessToken);
+            final Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, Collections.singletonList((GrantedAuthority) () -> "ROLE_" + roleType));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
             // 2.2. accessToken이 만료된 것이라면 refreshToken check
+            assert cookies != null;
             final String refreshToken = cookies[1].getValue();
             try {
                 // 3.1. refreshToken이 유효하면 accessToken 재발급 후 정상 종료
@@ -61,7 +72,8 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     }
     private Cookie recreateAccessCookie(String refreshToken) {
         final String username = jwtUtil.getUsernameFromJWT(refreshToken);
-        final String accessToken = jwtUtil.createAccessToken(username);
+        final String roleType = jwtUtil.getRoleFromJWT(refreshToken);
+        final String accessToken = jwtUtil.createAccessToken(username, roleType);
         return cookieUtil.createCookie(true, accessToken);
     }
     private void tokenError(HttpServletResponse response, ErrorCode errorCode) throws IOException {

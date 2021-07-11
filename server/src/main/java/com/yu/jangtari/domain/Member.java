@@ -53,6 +53,10 @@ public class Member extends DateAuditing {
         this.introduce = memberDTO.getIntroduce();
     }
 
+    public void jangtariAuthority() {
+        this.role = RoleType.ADMIN;
+    }
+
     public void initPicture(String pictureURL) {
         this.picture = pictureURL;
     }

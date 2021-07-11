@@ -1,5 +1,6 @@
 package com.yu.jangtari.config;
 
+import com.yu.jangtari.domain.RoleType;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,16 +31,17 @@ public class JWTUtil {
     }
 
     // JWT 토큰 생성 관련 메소드
-    public String createAccessToken(String username) {
-        return createToken(username, ACCESS_TOKEN_VALID_TIME);
+    public String createAccessToken(String username, String role) {
+        return createToken(username, role, ACCESS_TOKEN_VALID_TIME);
     }
-    public String createRefreshToken(String username) {
-        return createToken(username, REFRESH_TOKEN_VALID_TIME);
+    public String createRefreshToken(String username, String role) {
+        return createToken(username, role, REFRESH_TOKEN_VALID_TIME);
     }
-    private String createToken(final String username, long expireTime) {
+    private String createToken(final String username, final String role, long expireTime) {
         final Date now = new Date();
         final Claims claims = Jwts.claims(); // JWT payload에 저장되는 정보 claim
         claims.put("username", username); // key-value 쌍으로 저장됨
+        claims.put("role", role);
 
         return Jwts.builder()
                 .setClaims(claims) // 정보 저장
@@ -52,6 +54,9 @@ public class JWTUtil {
     // JWT 토큰 parsing 관련 메소드
     public String getUsernameFromJWT(final String token) {
         return getClaims(token).getBody().get("username", String.class);
+    }
+    public String getRoleFromJWT(final String token) {
+        return getClaims(token).getBody().get("role", String.class);
     }
     public Authentication getAuthentication(final String username) {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(username);

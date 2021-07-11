@@ -1,6 +1,5 @@
 package com.yu.jangtari.config;
 
-import com.yu.jangtari.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CookieUtil cookieUtil;
     private final JWTUtil jwtUtil;
-    private final MemberRepository memberRepository;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -28,9 +26,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .httpBasic().disable() // rest api 서버 구축시 필요 없음. 비 인증시 로그인폼 화면으로 리다이렉트 해주는 기능
                 .authorizeRequests() // 다음의 request에 대한 인가 설정
-                    .antMatchers("/amdin/**").hasAnyRole("ADMIN")
+                    .antMatchers("/amdin/**").hasRole("ADMIN")
                     .antMatchers("/user/**").hasAnyRole("ADMIN", "USER")
-                    .anyRequest().permitAll()
+//                    .anyRequest().permitAll()
                 ;
     }
 

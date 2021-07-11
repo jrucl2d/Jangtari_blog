@@ -1,9 +1,13 @@
 package com.yu.jangtari.CategoryTest;
 
 import com.yu.jangtari.IntegrationTest;
+import com.yu.jangtari.config.CookieUtil;
+import com.yu.jangtari.config.JWTUtil;
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.DTO.CategoryDTO;
+import com.yu.jangtari.domain.Member;
 import com.yu.jangtari.repository.category.CategoryRepository;
+import com.yu.jangtari.repository.member.MemberRepository;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -11,6 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.servlet.http.Cookie;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -23,6 +32,12 @@ public class CategoryControllerTest extends IntegrationTest {
     private MockMvc mockMvc;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private CookieUtil cookieUtil;
+    @Autowired
+    private JWTUtil jwtUtil;
+    @Autowired
+    private MemberRepository memberRepository;
 
     @Nested
     @DisplayName("성공 테스트")
@@ -30,8 +45,11 @@ public class CategoryControllerTest extends IntegrationTest {
         @Test
         @DisplayName("category 추가 성공(picture X)")
         void post_O1() throws Exception {
+            String accessToken = jwtUtil.createAccessToken("haha", "USER");
+            Cookie cookie = cookieUtil.createCookie(true, accessToken);
+
             CategoryDTO.Add categoryDTO = makeCategoryDTOwithoutPicture();
-            mockMvc.perform(multipart("/admin/category").param("name", categoryDTO.getName()))
+            mockMvc.perform(multipart("/admin/category").param("name", categoryDTO.getName()).cookie(cookie))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.name").value("category"))
                     .andExpect(jsonPath("$.picture").doesNotExist()) // null 검사
