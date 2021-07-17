@@ -10,7 +10,14 @@ public class CookieUtil {
     public static final String ACCESS_COOKIE_NAME = "accessCookie";
     public static final String REFRESH_COOKIE_NAME = "refreshCookie";
 
-    public Cookie createCookie(boolean isAccess, String value){
+    public Cookie createAccessCookie(String value) {
+        return createCookie(true, value);
+    }
+    public Cookie createRefreshCookie(String value) {
+        return createCookie(false, value);
+    }
+
+    private Cookie createCookie(boolean isAccess, String value){
         final Cookie cookie = new Cookie(isAccess ? ACCESS_COOKIE_NAME : REFRESH_COOKIE_NAME, value);
         cookie.setHttpOnly(true); // httpOnly로 설정
         cookie.setMaxAge(isAccess ? JWTUtil.ACCESS_TOKEN_VALID_TIME : JWTUtil.REFRESH_TOKEN_VALID_TIME);

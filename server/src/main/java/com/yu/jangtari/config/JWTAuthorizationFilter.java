@@ -36,16 +36,17 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException {
-        final Cookie[] cookies = request.getCookies();
+        final Cookie accessCookie = cookieUtil.getCookie(request, CookieUtil.ACCESS_COOKIE_NAME);
+        final Cookie refreshCookie = cookieUtil.getCookie(request, CookieUtil.REFRESH_COOKIE_NAME);
         try {
-            // 1. cookie(token)이 존재하지 않다면 통과
-            if (cookies == null || cookies[0] == null) {
+            // 1. cookie(token)이 존재하지 않다면 통과 -> 에러 리턴
+            if (accessCookie == null) {
                 chain.doFilter(request, response);
                 return;
             }
 
             // 2.1. accessToken이 유효하면 정상 종료
-            final String accessToken = cookies[0].getValue();
+            final String accessToken = accessCookie.getValue();
             jwtUtil.validateToken(accessToken);
             final String username = jwtUtil.getUsernameFromJWT(accessToken);
             final String roleType = jwtUtil.getRoleFromJWT(accessToken);
@@ -54,8 +55,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             chain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
             // 2.2. accessToken이 만료된 것이라면 refreshToken check
-            assert cookies != null;
-            final String refreshToken = cookies[1].getValue();
+            final String refreshToken = refreshCookie.getValue();
             try {
                 // 3.1. refreshToken이 유효하면 accessToken 재발급 후 정상 종료
                 jwtUtil.validateToken(refreshToken);
@@ -76,7 +76,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         final String username = jwtUtil.getUsernameFromJWT(refreshToken);
         final String roleType = jwtUtil.getRoleFromJWT(refreshToken);
         final String accessToken = jwtUtil.createAccessToken(username, roleType);
-        return cookieUtil.createCookie(true, accessToken);
+        return cookieUtil.createAccessCookie(accessToken);
     }
     private void tokenError(HttpServletResponse response, ErrorCode errorCode) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();

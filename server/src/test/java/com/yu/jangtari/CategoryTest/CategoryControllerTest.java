@@ -38,7 +38,7 @@ public class CategoryControllerTest extends IntegrationTest {
         @DisplayName("category 추가 성공(picture X)")
         void post_O1() throws Exception {
             String accessToken = jwtUtil.createAccessToken("jangtari", "ADMIN");
-            Cookie cookie = cookieUtil.createCookie(true, accessToken);
+            Cookie cookie = cookieUtil.createAccessCookie(accessToken);
 
             CategoryDTO.Add categoryDTO = makeCategoryDTOwithoutPicture();
             mockMvc.perform(multipart("/admin/category").param("name", categoryDTO.getName()).cookie(cookie))
@@ -52,7 +52,7 @@ public class CategoryControllerTest extends IntegrationTest {
         void put_O1() throws Exception {
             // given
             String accessToken = jwtUtil.createAccessToken("jangtari", "ADMIN");
-            Cookie cookie = cookieUtil.createCookie(true, accessToken);
+            Cookie cookie = cookieUtil.createAccessCookie(accessToken);
             CategoryDTO.Add addDTO = makeCategoryDTOwithPicture();
             categoryRepository.save(addDTO.toEntity("url"));
 
@@ -89,7 +89,7 @@ public class CategoryControllerTest extends IntegrationTest {
         @DisplayName("category 하나 삭제 성공")
         void deleteCategory() throws Exception {
             String accessToken = jwtUtil.createAccessToken("jangtari", "ADMIN");
-            Cookie cookie = cookieUtil.createCookie(true, accessToken);
+            Cookie cookie = cookieUtil.createAccessCookie(accessToken);
             CategoryDTO.Add addDTO = makeCategoryDTOwithoutPicture();
             categoryRepository.save(addDTO.toEntity(null));
             categoryRepository.save(addDTO.toEntity("picture"));
@@ -117,7 +117,7 @@ public class CategoryControllerTest extends IntegrationTest {
                     .andExpect(status().is4xxClientError())
                     .andDo(print());
             String accessToken = jwtUtil.createAccessToken("jangtari", "USER");
-            Cookie cookie = cookieUtil.createCookie(true, accessToken);
+            Cookie cookie = cookieUtil.createAccessCookie(accessToken);
             mockMvc.perform(multipart("/admin/category").cookie(cookie))
                     .andExpect(status().is4xxClientError())
                     .andDo(print());
@@ -127,7 +127,7 @@ public class CategoryControllerTest extends IntegrationTest {
                     .andExpect(status().is4xxClientError())
                     .andDo(print());
             accessToken = jwtUtil.createAccessToken("jangtari", "USER");
-            cookie = cookieUtil.createCookie(true, accessToken);
+            cookie = cookieUtil.createAccessCookie(accessToken);
             mockMvc.perform(multipart("/admin/category1").cookie(cookie))
                     .andExpect(status().is4xxClientError())
                     .andDo(print());
@@ -137,7 +137,7 @@ public class CategoryControllerTest extends IntegrationTest {
                     .andExpect(status().is4xxClientError())
                     .andDo(print());
             accessToken = jwtUtil.createAccessToken("jangtari", "USER");
-            cookie = cookieUtil.createCookie(true, accessToken);
+            cookie = cookieUtil.createAccessCookie(accessToken);
             mockMvc.perform(delete("/admin/category/1").cookie(cookie))
                     .andExpect(status().is4xxClientError())
                     .andDo(print());
@@ -146,7 +146,7 @@ public class CategoryControllerTest extends IntegrationTest {
         @DisplayName("category 추가 실패 - name X")
         void post_X1() throws Exception {
             String accessToken = jwtUtil.createAccessToken("jangtari", "ADMIN");
-            Cookie cookie = cookieUtil.createCookie(true, accessToken);
+            Cookie cookie = cookieUtil.createAccessCookie(accessToken);
             mockMvc.perform(multipart("/admin/category").param("name", "").cookie(cookie))
                     .andExpect(status().isBadRequest())
                     .andDo(print());
@@ -155,7 +155,7 @@ public class CategoryControllerTest extends IntegrationTest {
         @DisplayName("category 수정 실패 - name X")
         void put_X1() throws Exception {
             String accessToken = jwtUtil.createAccessToken("jangtari", "ADMIN");
-            Cookie cookie = cookieUtil.createCookie(true, accessToken);
+            Cookie cookie = cookieUtil.createAccessCookie(accessToken);
             mockMvc.perform(multipart("/admin/category/1").param("name", "").cookie(cookie))
                     .andExpect(status().isBadRequest())
                     .andDo(print());
@@ -164,7 +164,7 @@ public class CategoryControllerTest extends IntegrationTest {
         @DisplayName("category 수정 실패 - NoSuchCategoryException")
         void put_X2() throws Exception {
             String accessToken = jwtUtil.createAccessToken("jangtari", "ADMIN");
-            Cookie cookie = cookieUtil.createCookie(true, accessToken);
+            Cookie cookie = cookieUtil.createAccessCookie(accessToken);
             mockMvc.perform(multipart("/admin/category/1").param("name", "aa").cookie(cookie))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.message").value("No Such Category"))
@@ -177,7 +177,7 @@ public class CategoryControllerTest extends IntegrationTest {
         @DisplayName("category 삭제 실패 - NoSuchCategoryException")
         void delete_X2() throws Exception {
             String accessToken = jwtUtil.createAccessToken("jangtari", "ADMIN");
-            Cookie cookie = cookieUtil.createCookie(true, accessToken);
+            Cookie cookie = cookieUtil.createAccessCookie(accessToken);
             mockMvc.perform(delete("/admin/category/1").cookie(cookie))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.message").value("No Such Category"))
