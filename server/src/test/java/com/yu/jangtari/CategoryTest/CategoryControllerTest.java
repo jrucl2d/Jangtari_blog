@@ -1,8 +1,8 @@
 package com.yu.jangtari.CategoryTest;
 
 import com.yu.jangtari.IntegrationTest;
-import com.yu.jangtari.config.CookieUtil;
-import com.yu.jangtari.config.JWTUtil;
+import com.yu.jangtari.util.CookieUtil;
+import com.yu.jangtari.util.JWTUtil;
 import com.yu.jangtari.domain.DTO.CategoryDTO;
 import com.yu.jangtari.repository.category.CategoryRepository;
 import org.hamcrest.Matchers;

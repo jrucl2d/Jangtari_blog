@@ -4,7 +4,7 @@ import com.yu.jangtari.common.GDFolder;
 import com.yu.jangtari.common.PageRequest;
 import com.yu.jangtari.common.exception.NoSuchCategoryException;
 import com.yu.jangtari.common.exception.NoSuchPostException;
-import com.yu.jangtari.config.GoogleDriveUtil;
+import com.yu.jangtari.util.GoogleDriveUtil;
 import com.yu.jangtari.domain.*;
 import com.yu.jangtari.repository.HashtagRepository;
 import com.yu.jangtari.repository.PictureRepository;

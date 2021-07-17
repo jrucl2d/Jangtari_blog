@@ -4,7 +4,7 @@ import com.yu.jangtari.ServiceTest;
 import com.yu.jangtari.common.exception.FileTaskException;
 import com.yu.jangtari.common.exception.GoogleDriveException;
 import com.yu.jangtari.common.exception.NoSuchCategoryException;
-import com.yu.jangtari.config.GoogleDriveUtil;
+import com.yu.jangtari.util.GoogleDriveUtil;
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.DTO.CategoryDTO;
 import com.yu.jangtari.repository.category.CategoryRepository;

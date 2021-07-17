@@ -2,7 +2,7 @@ package com.yu.jangtari.service;
 
 import com.yu.jangtari.common.GDFolder;
 import com.yu.jangtari.common.exception.NoSuchCategoryException;
-import com.yu.jangtari.config.GoogleDriveUtil;
+import com.yu.jangtari.util.GoogleDriveUtil;
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.DTO.CategoryDTO;
 import com.yu.jangtari.repository.category.CategoryRepository;

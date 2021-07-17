@@ -1,4 +1,4 @@
-package com.yu.jangtari.config;
+package com.yu.jangtari.util;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;

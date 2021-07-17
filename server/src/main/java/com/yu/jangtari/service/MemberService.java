@@ -4,18 +4,15 @@ import com.yu.jangtari.common.GDFolder;
 import com.yu.jangtari.common.exception.DuplicateUserException;
 import com.yu.jangtari.common.exception.JangtariDeleteError;
 import com.yu.jangtari.common.exception.NoSuchMemberException;
-import com.yu.jangtari.config.GoogleDriveUtil;
+import com.yu.jangtari.util.GoogleDriveUtil;
 import com.yu.jangtari.domain.DTO.MemberDTO;
 import com.yu.jangtari.domain.Member;
 import com.yu.jangtari.repository.member.MemberRepository;
-import javassist.bytecode.DuplicateMemberException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Optional;
 
 @Service
 @Transactional

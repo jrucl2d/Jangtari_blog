@@ -1,4 +1,4 @@
-package com.yu.jangtari.config;
+package com.yu.jangtari.util;
 
 import org.springframework.stereotype.Service;
 
@@ -16,6 +16,12 @@ public class CookieUtil {
     public Cookie createRefreshCookie(String value) {
         return createCookie(false, value);
     }
+//    public Cookie recreateAccessCookie(String refreshToken) {
+//        final String username = jwtUtil.getUsernameFromJWT(refreshToken);
+//        final String roleType = jwtUtil.getRoleFromJWT(refreshToken);
+//        final String accessToken = jwtUtil.createAccessToken(username, roleType);
+//        return createAccessCookie(accessToken);
+//    }
 
     private Cookie createCookie(boolean isAccess, String value){
         final Cookie cookie = new Cookie(isAccess ? ACCESS_COOKIE_NAME : REFRESH_COOKIE_NAME, value);

@@ -1,6 +1,5 @@
-package com.yu.jangtari.config;
+package com.yu.jangtari.util;
 
-import com.yu.jangtari.domain.RoleType;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -68,7 +67,12 @@ public class JWTUtil {
     }
 
     // 토큰의 유효성, 만료일자 확인 -> getClaims 메소드의 parseClaimsJws(token)에서 validation checking이 이루어짐
-    public void validateToken(final String token) throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException {
+    public void validateToken(final String token) throws ExpiredJwtException,
+        UnsupportedJwtException,
+        MalformedJwtException,
+        SignatureException,
+        IllegalArgumentException
+    {
         getClaims(token);
     }
 }

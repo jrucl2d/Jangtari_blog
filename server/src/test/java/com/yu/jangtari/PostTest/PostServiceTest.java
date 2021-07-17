@@ -7,7 +7,7 @@ import com.yu.jangtari.common.exception.FileTaskException;
 import com.yu.jangtari.common.exception.GoogleDriveException;
 import com.yu.jangtari.common.exception.NoSuchCategoryException;
 import com.yu.jangtari.common.exception.NoSuchPostException;
-import com.yu.jangtari.config.GoogleDriveUtil;
+import com.yu.jangtari.util.GoogleDriveUtil;
 import com.yu.jangtari.domain.*;
 import com.yu.jangtari.domain.DTO.PostDTO;
 import com.yu.jangtari.repository.HashtagRepository;
