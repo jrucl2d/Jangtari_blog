@@ -3,8 +3,8 @@ package com.yu.jangtari.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yu.jangtari.common.ErrorCode;
 import com.yu.jangtari.common.GlobalExceptionHandler;
+import com.yu.jangtari.common.JwtToken;
 import com.yu.jangtari.util.CookieUtil;
-import com.yu.jangtari.util.JWTUtil;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.inject.Provider;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -27,7 +28,7 @@ import java.io.IOException;
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final CookieUtil cookieUtil;
-    private final JWTUtil jwtUtil;
+    private final Provider<JwtToken> jwtTokenProvider; // prototype bean
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -48,10 +49,10 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         final String username = authResult.getName();
         final String role = (String) authResult.getAuthorities().toArray()[0];
         log.info("** LOGIN SUCCESS : " + authResult.getName());
-        final String accessToken = jwtUtil.createAccessToken(username, role);
-        final Cookie accessCookie = cookieUtil.createAccessCookie(accessToken);
-        final String refreshToken = jwtUtil.createRefreshToken(username, role);
-        final Cookie refreshCookie = cookieUtil.createRefreshCookie(refreshToken);
+        final JwtToken accessToken = jwtTokenProvider.get().createAccessToken(username, role);
+        final Cookie accessCookie = cookieUtil.createAccessCookie(accessToken.getToken());
+        final JwtToken refreshToken = jwtTokenProvider.get().createRefreshToken(username, role);
+        final Cookie refreshCookie = cookieUtil.createRefreshCookie(refreshToken.getToken());
 
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);

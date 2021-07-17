@@ -1,7 +1,7 @@
 package com.yu.jangtari.config;
 
 import com.yu.jangtari.util.CookieUtil;
-import com.yu.jangtari.util.JWTUtil;
+import com.yu.jangtari.util.JwtAndCookieInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,11 +13,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class CookieUtilTest {
 
     private CookieUtil cookieUtil;
+    private JwtAndCookieInfo jwtAndCookieInfo;
 
     @BeforeEach
     void setUp()
     {
-        cookieUtil = new CookieUtil();
+        jwtAndCookieInfo = new JwtAndCookieInfo();
+        cookieUtil = new CookieUtil(jwtAndCookieInfo);
     }
 
     @Test
@@ -32,7 +34,7 @@ class CookieUtilTest {
 
         // then
         assertEquals(token, accessCookie.getValue());
-        assertEquals(JWTUtil.ACCESS_TOKEN_VALID_TIME, accessCookie.getMaxAge());
+        assertEquals(jwtAndCookieInfo.getACCESS_TOKEN_VALID_TIME(), accessCookie.getMaxAge());
         assertEquals("/", accessCookie.getPath());
         // assertTrue(accessCookie.getSecure());
     }
@@ -49,7 +51,7 @@ class CookieUtilTest {
 
         // then
         assertEquals(token, refreshCookie.getValue());
-        assertEquals(JWTUtil.REFRESH_TOKEN_VALID_TIME, refreshCookie.getMaxAge());
+        assertEquals(jwtAndCookieInfo.getREFRESH_TOKEN_VALID_TIME(), refreshCookie.getMaxAge());
         assertEquals("/", refreshCookie.getPath());
         // assertTrue(accessCookie.getSecure());
     }
@@ -64,7 +66,7 @@ class CookieUtilTest {
         request.setCookies(accessCookie);
 
         // when
-        Cookie gotAccessCookie = cookieUtil.getCookie(request, CookieUtil.ACCESS_COOKIE_NAME);
+        Cookie gotAccessCookie = cookieUtil.getCookie(request, jwtAndCookieInfo.getACCESS_COOKIE_NAME());
 
         // then
         assertEquals(gotAccessCookie, accessCookie);
@@ -80,7 +82,7 @@ class CookieUtilTest {
         request.setCookies(refreshCookie);
 
         // when
-        Cookie gotRefreshCookie = cookieUtil.getCookie(request, CookieUtil.REFRESH_COOKIE_NAME);
+        Cookie gotRefreshCookie = cookieUtil.getCookie(request, jwtAndCookieInfo.getREFRESH_COOKIE_NAME());
 
         // then
         assertEquals(gotRefreshCookie, refreshCookie);
@@ -94,8 +96,8 @@ class CookieUtilTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
 
         // when
-        Cookie accessCookie = cookieUtil.getCookie(request, CookieUtil.ACCESS_COOKIE_NAME);
-        Cookie refreshCookie = cookieUtil.getCookie(request, CookieUtil.REFRESH_COOKIE_NAME);
+        Cookie accessCookie = cookieUtil.getCookie(request, jwtAndCookieInfo.getACCESS_COOKIE_NAME());
+        Cookie refreshCookie = cookieUtil.getCookie(request, jwtAndCookieInfo.getREFRESH_COOKIE_NAME());
 
         // then
         assertNull(accessCookie);

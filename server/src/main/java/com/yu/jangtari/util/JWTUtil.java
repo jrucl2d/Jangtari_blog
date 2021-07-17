@@ -1,32 +1,28 @@
 package com.yu.jangtari.util;
 
 import io.jsonwebtoken.*;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.Base64;
 import java.util.Date;
 
-@Service
-@RequiredArgsConstructor
+@Component
 public class JWTUtil {
-    public static final int ACCESS_TOKEN_VALID_TIME = 2 * 60 * 1000; // Access token 2분
-    public static final int REFRESH_TOKEN_VALID_TIME = 7 * 24 * 60 * 60 * 1000; // Refresh token 1주일
 
-//    @Value("${spring.jwt.secret}")
-    private String JWT_SECRET_KEY = "tmp";
-
+    private final int ACCESS_TOKEN_VALID_TIME;
+    private final int REFRESH_TOKEN_VALID_TIME;
+    private final String JWT_SECRET_KEY;
     private final UserDetailsService userDetailsService;
 
-    // 객체 초기화시에 secretKey를 Base64로 인코딩
-    @PostConstruct
-    protected void init() {
-        JWT_SECRET_KEY = Base64.getEncoder().encodeToString(JWT_SECRET_KEY.getBytes());
+    public JWTUtil(JwtAndCookieInfo jwtAndCookieInfo, UserDetailsService userDetailsService) {
+        this.ACCESS_TOKEN_VALID_TIME = jwtAndCookieInfo.getACCESS_TOKEN_VALID_TIME();
+        this.REFRESH_TOKEN_VALID_TIME = jwtAndCookieInfo.getREFRESH_TOKEN_VALID_TIME();
+        this.JWT_SECRET_KEY = Base64.getEncoder().encodeToString( jwtAndCookieInfo.getJWT_SECRET_KEY().getBytes());
+        this.userDetailsService = userDetailsService;
     }
 
     // JWT 토큰 생성 관련 메소드

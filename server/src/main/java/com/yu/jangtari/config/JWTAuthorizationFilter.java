@@ -3,8 +3,8 @@ package com.yu.jangtari.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yu.jangtari.common.ErrorCode;
 import com.yu.jangtari.common.GlobalExceptionHandler;
+import com.yu.jangtari.common.JwtToken;
 import com.yu.jangtari.util.CookieUtil;
-import com.yu.jangtari.util.JWTUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
@@ -15,6 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
+import javax.inject.Provider;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -27,18 +28,18 @@ import java.util.Collections;
 @Slf4j
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     private final CookieUtil cookieUtil;
-    private final JWTUtil jwtUtil;
+    private final Provider<JwtToken> jwtTokenProvider;
 
-    public JWTAuthorizationFilter(AuthenticationManager authenticationManager, CookieUtil cookieUtil, JWTUtil jwtUtil) {
+    public JWTAuthorizationFilter(AuthenticationManager authenticationManager, CookieUtil cookieUtil, Provider<JwtToken> jwtTokenProvider) {
         super(authenticationManager);
         this.cookieUtil = cookieUtil;
-        this.jwtUtil = jwtUtil;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException {
-        final Cookie accessCookie = cookieUtil.getCookie(request, CookieUtil.ACCESS_COOKIE_NAME);
-        final Cookie refreshCookie = cookieUtil.getCookie(request, CookieUtil.REFRESH_COOKIE_NAME);
+        final Cookie accessCookie = cookieUtil.getCookie(request, cookieUtil.ACCESS_COOKIE_NAME);
+        final Cookie refreshCookie = cookieUtil.getCookie(request, cookieUtil.REFRESH_COOKIE_NAME);
         try {
             // 1. cookie(token)이 존재하지 않다면 통과 -> 에러 리턴
             if (accessCookie == null) {
@@ -47,20 +48,21 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             }
 
             // 2.1. accessToken이 유효하면 정상 종료
-            final String accessToken = accessCookie.getValue();
-            jwtUtil.validateToken(accessToken);
-            final String username = jwtUtil.getUsernameFromJWT(accessToken);
-            final String roleType = jwtUtil.getRoleFromJWT(accessToken);
+            final JwtToken accessToken = jwtTokenProvider.get().getToken(accessCookie.getValue());
+            accessToken.validation();
+            final String username = accessToken.getUsername();
+            final String roleType = accessToken.getRole();
             final Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, Collections.singletonList((GrantedAuthority) () -> "ROLE_" + roleType));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
             // 2.2. accessToken이 만료된 것이라면 refreshToken check
-            final String refreshToken = refreshCookie.getValue();
+            final JwtToken refreshToken = jwtTokenProvider.get().getToken(refreshCookie.getValue());
             try {
                 // 3.1. refreshToken이 유효하면 accessToken 재발급 후 정상 종료
-                jwtUtil.validateToken(refreshToken);
-                final Cookie newAccessCookie = recreateAccessCookie(refreshToken);
+                refreshToken.validation();
+                final JwtToken newAccessToken = refreshToken.createAccessToken();
+                final Cookie newAccessCookie = cookieUtil.createAccessCookie(newAccessToken.getToken());
                 response.addCookie(newAccessCookie);
                 chain.doFilter(request, response);
             } catch (ExpiredJwtException | ServletException eee) {
@@ -73,12 +75,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             tokenError(response, ErrorCode.INVALID_ACCESS_TOKEN);
         }
     }
-    private Cookie recreateAccessCookie(String refreshToken) {
-        final String username = jwtUtil.getUsernameFromJWT(refreshToken);
-        final String roleType = jwtUtil.getRoleFromJWT(refreshToken);
-        final String accessToken = jwtUtil.createAccessToken(username, roleType);
-        return cookieUtil.createAccessCookie(accessToken);
-    }
+
     private void tokenError(HttpServletResponse response, ErrorCode errorCode) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         final String responseJson = objectMapper.writeValueAsString(GlobalExceptionHandler.buildError(errorCode));
