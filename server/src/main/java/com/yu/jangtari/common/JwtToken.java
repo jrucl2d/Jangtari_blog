@@ -1,5 +1,6 @@
 package com.yu.jangtari.common;
 
+import com.yu.jangtari.domain.RoleType;
 import com.yu.jangtari.util.JWTUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -27,24 +28,24 @@ public class JwtToken {
         return this;
     }
 
-    public JwtToken createAccessToken(String username, String role) {
+    public JwtToken createAccessToken(String username, RoleType role) {
         this.token = jwtUtil.createAccessToken(username, role);
         return this;
     }
     // refreshToken으로부터 accessToken 재생성
     public JwtToken createAccessToken() {
         final String username = getUsername();
-        final String role = getRole();
+        final RoleType role = getRole();
         return createAccessToken(username, role);
     }
-    public JwtToken createRefreshToken(String username, String role) {
+    public JwtToken createRefreshToken(String username, RoleType role) {
         this.token = jwtUtil.createRefreshToken(username, role);
         return this;
     }
     public String getUsername() {
         return jwtUtil.getUsernameFromJWT(this.token);
     }
-    public String getRole() {
+    public RoleType getRole() {
         return jwtUtil.getRoleFromJWT(this.token);
     }
 

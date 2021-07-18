@@ -2,7 +2,6 @@ package com.yu.jangtari.config;
 
 import com.yu.jangtari.common.JwtToken;
 import com.yu.jangtari.util.CookieUtil;
-import com.yu.jangtari.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

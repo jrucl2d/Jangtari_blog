@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yu.jangtari.common.ErrorCode;
 import com.yu.jangtari.common.GlobalExceptionHandler;
 import com.yu.jangtari.common.JwtToken;
+import com.yu.jangtari.domain.RoleType;
 import com.yu.jangtari.util.CookieUtil;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -49,9 +50,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         final String username = authResult.getName();
         final String role = (String) authResult.getAuthorities().toArray()[0];
         log.info("** LOGIN SUCCESS : " + authResult.getName());
-        final JwtToken accessToken = jwtTokenProvider.get().createAccessToken(username, role);
+        final JwtToken accessToken = jwtTokenProvider.get().createAccessToken(username, RoleType.of(role));
         final Cookie accessCookie = cookieUtil.createAccessCookie(accessToken.getToken());
-        final JwtToken refreshToken = jwtTokenProvider.get().createRefreshToken(username, role);
+        final JwtToken refreshToken = jwtTokenProvider.get().createRefreshToken(username, RoleType.of(role));
         final Cookie refreshCookie = cookieUtil.createRefreshCookie(refreshToken.getToken());
 
         response.addCookie(accessCookie);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yu.jangtari.common.ErrorCode;
 import com.yu.jangtari.common.GlobalExceptionHandler;
 import com.yu.jangtari.common.JwtToken;
+import com.yu.jangtari.domain.RoleType;
 import com.yu.jangtari.util.CookieUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,6 @@ import org.apache.http.entity.ContentType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -46,13 +46,12 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                 chain.doFilter(request, response);
                 return;
             }
-
             // 2.1. accessToken이 유효하면 정상 종료
             final JwtToken accessToken = jwtTokenProvider.get().getToken(accessCookie.getValue());
             accessToken.validation();
             final String username = accessToken.getUsername();
-            final String roleType = accessToken.getRole();
-            final Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, Collections.singletonList((GrantedAuthority) () -> "ROLE_" + roleType));
+            final RoleType roleType = accessToken.getRole();
+            final Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, Collections.singletonList(() -> "ROLE_" + roleType.name()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
         } catch (ExpiredJwtException e) {

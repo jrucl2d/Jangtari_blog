@@ -1,4 +1,4 @@
-package com.yu.jangtari.config;
+package com.yu.jangtari.UtilTest;
 
 import com.yu.jangtari.util.CookieUtil;
 import com.yu.jangtari.util.JwtAndCookieInfo;
