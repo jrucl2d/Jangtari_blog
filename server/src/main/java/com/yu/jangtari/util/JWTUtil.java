@@ -22,16 +22,16 @@ public class JWTUtil {
 
     // JWT 토큰 생성 관련 메소드
     public String createAccessToken(String username, RoleType roleType) {
-        return createToken(username, roleType.name(), ACCESS_TOKEN_VALID_TIME);
+        return createToken(username, roleType, ACCESS_TOKEN_VALID_TIME);
     }
     public String createRefreshToken(String username, RoleType roleType) {
-        return createToken(username, roleType.name(), REFRESH_TOKEN_VALID_TIME);
+        return createToken(username, roleType, REFRESH_TOKEN_VALID_TIME);
     }
-    private String createToken(final String username, final String role, long expireTime) {
+    private String createToken(final String username, final RoleType role, long expireTime) {
         final Date now = new Date();
         final Claims claims = Jwts.claims(); // JWT payload에 저장되는 정보 claim
         claims.put("username", username); // key-value 쌍으로 저장됨
-        claims.put("role", role);
+        claims.put("role", role.name());
 
         return Jwts.builder()
                 .setClaims(claims) // 정보 저장
