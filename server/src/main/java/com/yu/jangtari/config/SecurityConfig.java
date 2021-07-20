@@ -23,7 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable() // 폼 로그인이 아니기 때문에 csrf 보안 설정도 필요 없음
-                .headers().frameOptions().disable() // h2 console을 위한 설정
+                .csrf().ignoringAntMatchers("/h2/**").and().headers().frameOptions().disable()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 생성 안 함
                 .and()
@@ -35,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/admin/**").hasRole("ADMIN")
                     .antMatchers("/user/**").hasAnyRole("ADMIN", "USER")
                     .anyRequest().permitAll()
-                ;
+        ;
     }
 
     @Bean
