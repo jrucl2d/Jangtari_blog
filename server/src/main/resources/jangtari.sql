@@ -1,1 +1,7 @@
-insert into member (MEMBER_ID , CREATED_DATE , UPDATE_DATE , DELETE_FLAG , INTRODUCE , NICKNAME , PASSWORD , PICTURE , ROLE , USERNAME ) values (null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, FALSE, 'introduce', 'nick', '1234', 'picture', 'ADMIN', 'jangtari');
+# insert into member (MEMBER_ID , CREATED_DATE , UPDATE_DATE , DELETE_FLAG , INTRODUCE , NICKNAME , PASSWORD , PICTURE , ROLE , USERNAME ) values (null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, FALSE, 'introduce', 'nick', '1234', 'picture', 'ADMIN', 'jangtari');
+# insert into category (category_id ,CREATED_DATE ,UPDATE_DATE ,DELETE_FLAG , category_name , category_picture) values (null,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,false,'category1', 'category1_picture');
+# insert into category (category_id ,CREATED_DATE ,UPDATE_DATE ,DELETE_FLAG , category_name , category_picture) values (null,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,false,'category2', 'category2_picture');
+# insert into category (category_id ,CREATED_DATE ,UPDATE_DATE ,DELETE_FLAG , category_name , category_picture) values (null,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,false,'category3', null);
+# insert into category (category_id ,CREATED_DATE ,UPDATE_DATE ,DELETE_FLAG , category_name , category_picture) values (null,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,true,'category3', null);
+# insert into post (post_id, CREATED_DATE ,UPDATE_DATE ,DELETE_FLAG , title, content, template, category_id) values (null ,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP, false, 'title1', 'content1', 0, 1);
+# insert into post (post_id, CREATED_DATE ,UPDATE_DATE ,DELETE_FLAG , title, content, template, category_id) values (null ,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP, false, 'title2', 'content2', 0, 1);

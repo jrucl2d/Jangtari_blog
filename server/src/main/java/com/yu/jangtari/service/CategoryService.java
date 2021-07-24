@@ -31,7 +31,7 @@ public class CategoryService {
     public Category updateCategory(final Long categoryId, final CategoryDTO.Update categoryDTO) {
         final Category category = findOne(categoryId);
         final String pictureURL = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
-        category.updateCategory(categoryDTO, pictureURL);
+        category.updateCategory(categoryDTO);
         return category;
     }
     // Category와 연관된 Post 모두 삭제 처리

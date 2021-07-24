@@ -38,8 +38,9 @@ public class Category extends DateAuditing {
         this.picture = picture;
         this.deleteFlag = DeleteFlag.initDeleteFlag();
     }
-    public void updateCategory(CategoryDTO.Update categoryDTO, String pictureURL) {
+    public void updateCategory(CategoryDTO.Update categoryDTO) {
         this.name = categoryDTO.getName();
+        final String pictureURL = categoryDTO.getPictureURL();
         if (pictureURL != null) this.picture = pictureURL;
     }
 }

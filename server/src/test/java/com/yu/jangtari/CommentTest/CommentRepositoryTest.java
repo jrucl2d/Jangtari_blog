@@ -7,7 +7,7 @@ import com.yu.jangtari.domain.Member;
 import com.yu.jangtari.domain.Post;
 import com.yu.jangtari.repository.CommentRepository;
 import com.yu.jangtari.repository.category.CategoryRepository;
-import com.yu.jangtari.repository.member.MemberRepository;
+import com.yu.jangtari.repository.MemberRepository;
 import com.yu.jangtari.repository.post.PostRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;

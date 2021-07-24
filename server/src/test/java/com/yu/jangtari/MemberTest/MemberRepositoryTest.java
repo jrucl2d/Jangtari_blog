@@ -2,7 +2,7 @@ package com.yu.jangtari.MemberTest;
 
 import com.yu.jangtari.RepositoryTest;
 import com.yu.jangtari.domain.Member;
-import com.yu.jangtari.repository.member.MemberRepository;
+import com.yu.jangtari.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

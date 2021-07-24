@@ -1,4 +1,4 @@
-package com.yu.jangtari.repository.member;
+package com.yu.jangtari.repository;
 
 import com.yu.jangtari.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    public Optional<Member> findByUsername(String username);
+    Optional<Member> findByUsername(String username);
 }

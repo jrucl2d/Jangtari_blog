@@ -15,9 +15,9 @@ public class JWTUtil {
     private final String JWT_SECRET_KEY;
 
     public JWTUtil(JwtAndCookieInfo jwtAndCookieInfo) {
-        this.ACCESS_TOKEN_VALID_TIME = jwtAndCookieInfo.getACCESS_TOKEN_VALID_TIME();
-        this.REFRESH_TOKEN_VALID_TIME = jwtAndCookieInfo.getREFRESH_TOKEN_VALID_TIME();
-        this.JWT_SECRET_KEY = Base64.getEncoder().encodeToString( jwtAndCookieInfo.getJWT_SECRET_KEY().getBytes());
+        this.ACCESS_TOKEN_VALID_TIME = jwtAndCookieInfo.getAccessTokenValidTime();
+        this.REFRESH_TOKEN_VALID_TIME = jwtAndCookieInfo.getRefreshTokenValidTime();
+        this.JWT_SECRET_KEY = Base64.getEncoder().encodeToString( jwtAndCookieInfo.getJwtSecretKey().getBytes());
     }
 
     // JWT 토큰 생성 관련 메소드

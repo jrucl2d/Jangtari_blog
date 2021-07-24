@@ -9,7 +9,7 @@ import com.yu.jangtari.repository.HashtagRepository;
 import com.yu.jangtari.repository.PictureRepository;
 import com.yu.jangtari.repository.PostHashtagRepository;
 import com.yu.jangtari.repository.category.CategoryRepository;
-import com.yu.jangtari.repository.member.MemberRepository;
+import com.yu.jangtari.repository.MemberRepository;
 import com.yu.jangtari.repository.post.PostRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,6 @@ import org.springframework.data.domain.Page;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;

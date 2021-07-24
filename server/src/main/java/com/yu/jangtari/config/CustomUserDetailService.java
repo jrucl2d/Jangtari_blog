@@ -1,7 +1,7 @@
 package com.yu.jangtari.config;
 
 import com.yu.jangtari.common.exception.NoSuchMemberException;
-import com.yu.jangtari.repository.member.MemberRepository;
+import com.yu.jangtari.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

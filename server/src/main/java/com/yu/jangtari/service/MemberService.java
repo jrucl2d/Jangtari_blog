@@ -7,7 +7,7 @@ import com.yu.jangtari.common.exception.NoSuchMemberException;
 import com.yu.jangtari.util.GoogleDriveUtil;
 import com.yu.jangtari.domain.DTO.MemberDTO;
 import com.yu.jangtari.domain.Member;
-import com.yu.jangtari.repository.member.MemberRepository;
+import com.yu.jangtari.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

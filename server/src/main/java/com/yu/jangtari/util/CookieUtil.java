@@ -7,16 +7,16 @@ import javax.servlet.http.HttpServletRequest;
 
 @Component
 public class CookieUtil {
-    public final String ACCESS_COOKIE_NAME;
-    public final String REFRESH_COOKIE_NAME;
-    private final int ACCESS_TOKEN_VALID_TIME;
-    private final int REFRESH_TOKEN_VALID_TIME;
+    public final String accessCookieName;
+    public final String refreshCookieName;
+    private final int accessTokenValidTime;
+    private final int refreshTokenValidTime;
 
     public CookieUtil(JwtAndCookieInfo jwtAndCookieInfo) {
-        ACCESS_COOKIE_NAME = jwtAndCookieInfo.getACCESS_COOKIE_NAME();
-        REFRESH_COOKIE_NAME = jwtAndCookieInfo.getREFRESH_COOKIE_NAME();
-        ACCESS_TOKEN_VALID_TIME = jwtAndCookieInfo.getACCESS_TOKEN_VALID_TIME();
-        REFRESH_TOKEN_VALID_TIME = jwtAndCookieInfo.getREFRESH_TOKEN_VALID_TIME();
+        accessCookieName = jwtAndCookieInfo.getAccessCookieName();
+        refreshCookieName = jwtAndCookieInfo.getRefreshCookieName();
+        accessTokenValidTime = jwtAndCookieInfo.getAccessTokenValidTime();
+        refreshTokenValidTime = jwtAndCookieInfo.getRefreshTokenValidTime();
     }
 
     public Cookie createAccessCookie(String value) {
@@ -27,9 +27,9 @@ public class CookieUtil {
     }
 
     private Cookie createCookie(boolean isAccess, String value){
-        final Cookie cookie = new Cookie(isAccess ? ACCESS_COOKIE_NAME : REFRESH_COOKIE_NAME, value);
+        final Cookie cookie = new Cookie(isAccess ? accessCookieName : refreshCookieName, value);
         cookie.setHttpOnly(true); // httpOnly로 설정
-        cookie.setMaxAge(isAccess ? ACCESS_TOKEN_VALID_TIME : REFRESH_TOKEN_VALID_TIME);
+        cookie.setMaxAge(isAccess ? accessTokenValidTime : refreshTokenValidTime);
 //        cookie.setSecure(true); // https를 적용할 것이므로 secure 설정
         cookie.setPath("/");
         return cookie;

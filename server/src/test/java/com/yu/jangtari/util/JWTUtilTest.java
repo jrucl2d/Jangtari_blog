@@ -1,8 +1,6 @@
-package com.yu.jangtari.UtilTest;
+package com.yu.jangtari.util;
 
 import com.yu.jangtari.domain.RoleType;
-import com.yu.jangtari.util.JWTUtil;
-import com.yu.jangtari.util.JwtAndCookieInfo;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,8 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-public class JWTUtilTest {
 
+class JWTUtilTest {
     private JWTUtil jwtUtil;
 
     @BeforeEach
@@ -83,12 +81,12 @@ public class JWTUtilTest {
 
     private static class TestJwtAndCookieInfo extends JwtAndCookieInfo {
         @Override
-        public int getACCESS_TOKEN_VALID_TIME() {
+        public int getAccessTokenValidTime() {
             return 0;
         }
 
         @Override
-        public int getREFRESH_TOKEN_VALID_TIME() {
+        public int getRefreshTokenValidTime() {
             return 0;
         }
     }

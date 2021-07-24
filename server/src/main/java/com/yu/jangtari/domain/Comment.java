@@ -50,15 +50,13 @@ public class Comment extends DateAuditing{
         this.member = member;
         post.addComment(this);
     }
-    public Comment addChildComment(final Comment comment) {
+    public void addChildComment(final Comment comment) {
         comment.initParentComment(this);
         this.childComments.add(comment);
-        return this;
     }
     private void initParentComment(final Comment comment) {
         this.parentComment = comment;
     }
-
     public void updateComment(CommentDTO.Update commentDTO) {
         this.content = commentDTO.getContent();
     }

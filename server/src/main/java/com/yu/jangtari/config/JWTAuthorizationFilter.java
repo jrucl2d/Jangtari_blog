@@ -38,8 +38,8 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException {
-        final Cookie accessCookie = cookieUtil.getCookie(request, cookieUtil.ACCESS_COOKIE_NAME);
-        final Cookie refreshCookie = cookieUtil.getCookie(request, cookieUtil.REFRESH_COOKIE_NAME);
+        final Cookie accessCookie = cookieUtil.getCookie(request, cookieUtil.accessCookieName);
+        final Cookie refreshCookie = cookieUtil.getCookie(request, cookieUtil.refreshCookieName);
         try {
             // 1. cookie(token)이 존재하지 않다면 통과 -> 에러 리턴
             if (accessCookie == null) {

@@ -1,5 +1,6 @@
 package com.yu.jangtari.domain.DTO;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yu.jangtari.domain.Category;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,10 +36,18 @@ public class CategoryDTO {
         private String name;
         private MultipartFile picture;
 
+        @JsonIgnore
+        private String pictureURL;
+
         @Builder
         public Update(String name, MultipartFile picture) {
             this.name = name;
             this.picture = picture;
+        }
+
+        @JsonIgnore
+        public String getPictureURL() {
+            return this.pictureURL;
         }
     }
 
