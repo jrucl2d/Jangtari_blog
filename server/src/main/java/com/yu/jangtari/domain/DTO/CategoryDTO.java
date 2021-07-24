@@ -7,31 +7,40 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CategoryDTO {
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class Add{
+    public static class Add {
         @NotBlank(message = "이름이 빈칸이면 안 됩니다.")
         private String name;
         private MultipartFile picture;
+
+        @JsonIgnore
+        private String pictureURL;
 
         @Builder
         public Add(String name, MultipartFile picture) {
             this.name = name;
             this.picture = picture;
         }
-        public Category toEntity(String pictureURL) {
+        public Category toEntity() {
             return Category.builder()
                     .name(name)
                     .picture(pictureURL)
                     .build();
         }
+
+        public void setPictureURL(String pictureURL) {
+            this.picture = null;
+            this.pictureURL = pictureURL;
+        }
     }
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @ToString
-    public static class Update{
+    public static class Update {
         @NotBlank(message = "이름이 빈칸이면 안 됩니다.")
         private String name;
         private MultipartFile picture;
@@ -48,6 +57,11 @@ public class CategoryDTO {
         @JsonIgnore
         public String getPictureURL() {
             return this.pictureURL;
+        }
+
+        public void setPictureURL(String pictureURL) {
+            this.picture = null;
+            this.pictureURL = pictureURL;
         }
     }
 

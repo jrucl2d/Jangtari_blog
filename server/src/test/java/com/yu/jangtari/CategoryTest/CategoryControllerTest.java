@@ -55,7 +55,7 @@ public class CategoryControllerTest extends IntegrationTest {
             String accessToken = jwtUtil.createAccessToken("jangtari", RoleType.ADMIN);
             Cookie cookie = cookieUtil.createAccessCookie(accessToken);
             CategoryDTO.Add addDTO = makeCategoryDTOwithPicture();
-            categoryRepository.save(addDTO.toEntity("url"));
+            categoryRepository.save(addDTO.toEntity());
 
             CategoryDTO.Update categoryDTO = makeUpdateCategoryDTOwithoutPicture();
             mockMvc.perform(multipart("/admin/category/1").param("name", categoryDTO.getName()).cookie(cookie))
@@ -68,8 +68,8 @@ public class CategoryControllerTest extends IntegrationTest {
         @DisplayName("전체 category 가져오기")
         void getAllCategories() throws Exception {
             CategoryDTO.Add addDTO = makeCategoryDTOwithoutPicture();
-            categoryRepository.save(addDTO.toEntity(null));
-            categoryRepository.save(addDTO.toEntity("picture"));
+            categoryRepository.save(addDTO.toEntity());
+            categoryRepository.save(addDTO.toEntity());
 
             mockMvc.perform(get("/categories"))
                     .andExpect(status().isOk())
@@ -92,8 +92,8 @@ public class CategoryControllerTest extends IntegrationTest {
             String accessToken = jwtUtil.createAccessToken("jangtari", RoleType.ADMIN);
             Cookie cookie = cookieUtil.createAccessCookie(accessToken);
             CategoryDTO.Add addDTO = makeCategoryDTOwithoutPicture();
-            categoryRepository.save(addDTO.toEntity(null));
-            categoryRepository.save(addDTO.toEntity("picture"));
+            categoryRepository.save(addDTO.toEntity());
+            categoryRepository.save(addDTO.toEntity());
 
             mockMvc.perform(delete("/admin/category/1").cookie(cookie))
                     .andExpect(status().isOk())

@@ -17,8 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
-    private final GoogleDriveUtil googleDriveUtil;
     private final PostService postService;
+    private final GoogleDriveUtil googleDriveUtil;
 
     @Transactional(readOnly = true)
     public List<Category> getAllCategories(){
@@ -26,11 +26,13 @@ public class CategoryService {
     }
     public Category addCategory(final CategoryDTO.Add categoryDTO) {
         final String pictureURL = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
-        return categoryRepository.save(categoryDTO.toEntity(pictureURL));
+        categoryDTO.setPictureURL(pictureURL);
+        return categoryRepository.save(categoryDTO.toEntity());
     }
     public Category updateCategory(final Long categoryId, final CategoryDTO.Update categoryDTO) {
         final Category category = findOne(categoryId);
         final String pictureURL = googleDriveUtil.fileToURL(categoryDTO.getPicture(), GDFolder.CATEGORY);
+        categoryDTO.setPictureURL(pictureURL);
         category.updateCategory(categoryDTO);
         return category;
     }

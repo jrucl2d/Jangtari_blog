@@ -45,7 +45,7 @@ public class CategoryServiceTest extends ServiceTest {
         void addCategory_without_picture_O() {
             // given
             CategoryDTO.Add categoryDTO = makeCategoryDTOwithoutPicture();
-            Category category = categoryDTO.toEntity(null);
+            Category category = categoryDTO.toEntity();
             given(categoryRepository.save(any())).willReturn(category);
             // when
             Category savedCategory = categoryService.addCategory(categoryDTO);
@@ -59,7 +59,7 @@ public class CategoryServiceTest extends ServiceTest {
         void addCategory_with_picture_O() {
             // given
             CategoryDTO.Add categoryDTO = makeCategoryDTOwithPicture();
-            Category category = categoryDTO.toEntity("pic1");
+            Category category = categoryDTO.toEntity();
             given(googleDriveUtil.fileToURL(any(), any())).willReturn("pic1");
             given(categoryRepository.save(any())).willReturn(category);
             // when
@@ -74,7 +74,7 @@ public class CategoryServiceTest extends ServiceTest {
         void getAllCategories_O() {
             // given
             CategoryDTO.Add categoryDTO = makeCategoryDTOwithoutPicture();
-            Category category = categoryDTO.toEntity("pic1");
+            Category category = categoryDTO.toEntity();
             given(categoryRepository.save(any())).willReturn(category);
             given(categoryRepository.getAllCategories()).willReturn(Arrays.asList(category, category, category));
             // when
@@ -90,7 +90,7 @@ public class CategoryServiceTest extends ServiceTest {
         void updateCategory_with_picture_O() {
             // given
             CategoryDTO.Add categoryDTO = makeCategoryDTOwithPicture();
-            Category category = categoryDTO.toEntity("pic1");
+            Category category = categoryDTO.toEntity();
             given(googleDriveUtil.fileToURL(any(), any())).willReturn("pic1");
             given(categoryRepository.save(any())).willReturn(category);
             Category savedCategory = categoryService.addCategory(categoryDTO);
@@ -108,7 +108,7 @@ public class CategoryServiceTest extends ServiceTest {
         void updateCategory_without_picture_O() {
             // given
             CategoryDTO.Add categoryDTO = makeCategoryDTOwithPicture();
-            Category category = categoryDTO.toEntity("pic1");
+            Category category = categoryDTO.toEntity();
             given(googleDriveUtil.fileToURL(any(), any())).willReturn("pic1");
             given(categoryRepository.save(any())).willReturn(category);
             Category savedCategory = categoryService.addCategory(categoryDTO);
@@ -127,7 +127,7 @@ public class CategoryServiceTest extends ServiceTest {
         void deleteCategory_O() {
             // given
             CategoryDTO.Add categoryDTO = makeCategoryDTOwithoutPicture();
-            Category category = categoryDTO.toEntity(null);
+            Category category = categoryDTO.toEntity();
             given(categoryRepository.save(any())).willReturn(category);
             Category savedCategory = categoryService.addCategory(categoryDTO);
             given(categoryRepository.findById(anyLong())).willReturn(Optional.of(savedCategory));
