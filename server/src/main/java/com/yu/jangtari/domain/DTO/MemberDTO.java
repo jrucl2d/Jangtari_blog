@@ -1,6 +1,7 @@
 package com.yu.jangtari.domain.DTO;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yu.jangtari.domain.Member;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -68,12 +69,24 @@ public class MemberDTO {
         private String nickname;
         private String introduce;
         private MultipartFile picture;
+        @JsonIgnore
+        private String pictureURL;
 
         @Builder
         public Update(String nickname, String introduce, MultipartFile picture) {
             this.nickname = nickname;
             this.introduce = introduce;
             this.picture = picture;
+        }
+
+        @JsonIgnore
+        public String getPictureURL() {
+            return this.pictureURL;
+        }
+
+        public void setPictureURL(String pictureURL) {
+            this.picture = null;
+            this.pictureURL = pictureURL;
         }
     }
 }

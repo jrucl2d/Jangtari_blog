@@ -160,10 +160,10 @@ public class CommentIntegreTest extends IntegrationTest {
     }
     private Member memberRegister() {
         MemberDTO.Add memberDTO = MemberDTO.Add.builder().username("username").nickname("nickname").password("password").build();
-        return memberService.addMember(memberDTO);
+        return memberService.join(memberDTO);
     }
     private Member member2Register() {
         MemberDTO.Add memberDTO = MemberDTO.Add.builder().username("username2").nickname("nickname2").password("password2").build();
-        return memberService.addMember(memberDTO);
+        return memberService.join(memberDTO);
     }
 }

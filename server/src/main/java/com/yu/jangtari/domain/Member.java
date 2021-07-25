@@ -1,10 +1,21 @@
 package com.yu.jangtari.domain;
 import com.yu.jangtari.domain.DTO.MemberDTO;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import javax.persistence.*;
-import java.sql.Timestamp;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Getter
 @ToString
@@ -48,16 +59,10 @@ public class Member extends DateAuditing {
         this.deleteFlag = DeleteFlag.initDeleteFlag();
     }
 
-    public void updateNickNameAndIntoduce(MemberDTO.Update memberDTO) {
+    public void updateMember(MemberDTO.Update memberDTO) {
         this.nickname = memberDTO.getNickname();
         this.introduce = memberDTO.getIntroduce();
-    }
-
-    public void jangtariAuthority() {
-        this.role = RoleType.ADMIN;
-    }
-
-    public void initPicture(String pictureURL) {
-        this.picture = pictureURL;
+        final String pictureURL = memberDTO.getPictureURL();
+        if (pictureURL != null) this.picture = pictureURL;
     }
 }
