@@ -67,13 +67,13 @@ public class Post extends DateAuditing {
     public void clearPostHashtags() {
         this.postHashtags.clear();
     }
-    public void removePicturesFromUpdateDTO(PostDTO.Update postDTO) {
+    public void removePictures(PostDTO.Update postDTO) {
         getPictures().removeAll(postDTO.getDeletePictures());
     }
     public void addComment(final Comment comment) {
         this.getComments().add(comment);
     }
-    public void updateTitleContentTemplate(PostDTO.Update postDTO) {
+    public void updatePost(PostDTO.Update postDTO) {
         this.title = postDTO.getTitle();
         this.content = postDTO.getContent();
         this.template = postDTO.getTemplate();

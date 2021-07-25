@@ -86,7 +86,6 @@ public class PostDTO {
             this.content = content;
             this.hashtags = hashtags;
             this.template = template;
-            this.hashtags = hashtags;
             this.pictures = pictures;
         }
 
@@ -126,7 +125,7 @@ public class PostDTO {
             this.delPics = delPics;
             this.addPics = addPics;
         }
-        public List<Hashtag> getHashtagsEntity() {
+        public List<Hashtag> getHashtagsEntities() {
             if (hashtags == null) return Collections.emptyList();
             return hashtags.stream().map(Hashtag::new).collect(Collectors.toList());
         }

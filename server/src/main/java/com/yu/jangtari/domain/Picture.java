@@ -30,6 +30,8 @@ public class Picture extends DateAuditing {
         this.post = post;
         this.deleteFlag = DeleteFlag.initDeleteFlag();
     }
+
+    // TODO : 여기 삭제 필요
     public static List<Picture> stringsToPictures(List<String> pictureURLs, Post post) {
         return pictureURLs.stream().map(url -> Picture.builder().url(url).post(post).build()).collect(Collectors.toList());
     }

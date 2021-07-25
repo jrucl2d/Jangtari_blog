@@ -34,6 +34,8 @@ public class PostHashtag extends DateAuditing{
         this.hashtag = hashtag;
         this.deleteFlag = DeleteFlag.initDeleteFlag();
     }
+
+    // TODO : 삭제 필요
     public static List<PostHashtag> hashtagsToPostHashtags(List<Hashtag> hashtags, Post post) {
         return hashtags.stream().map(ht -> PostHashtag.builder().hashtag(ht).post(post).build()).collect(Collectors.toList());
     }

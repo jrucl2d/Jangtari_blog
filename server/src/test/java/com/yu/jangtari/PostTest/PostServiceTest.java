@@ -227,7 +227,7 @@ public class PostServiceTest extends ServiceTest {
             PostDTO.Update postDTO = makeUpdatePostDTO(false);
             Post beforePost = makePost(true);
             given(postRepository.findById(any())).willReturn(Optional.of(beforePost));
-            given(hashtagRepository.saveAll(any())).willReturn(postDTO.getHashtagsEntity());
+            given(hashtagRepository.saveAll(any())).willReturn(postDTO.getHashtagsEntities());
             // when
             Post post = postService.updatePost(1L, postDTO);
             // then
@@ -258,7 +258,7 @@ public class PostServiceTest extends ServiceTest {
             PostDTO.Update postDTO = makeUpdatePostDTO(true);
             Post beforePost = makePost(true);
             given(postRepository.findById(any())).willReturn(Optional.of(beforePost));
-            given(hashtagRepository.saveAll(any())).willReturn(postDTO.getHashtagsEntity());
+            given(hashtagRepository.saveAll(any())).willReturn(postDTO.getHashtagsEntities());
             given(googleDriveUtil.filesToURLs(postDTO.getAddPics(), GDFolder.POST)).willReturn(Collections.singletonList("pic3"));
             // when
             Post post = postService.updatePost(1L, postDTO);

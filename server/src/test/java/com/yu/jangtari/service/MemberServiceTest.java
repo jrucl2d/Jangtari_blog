@@ -41,11 +41,11 @@ class MemberServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        member = Member.builder().
-            username("username").
-            nickname("nickname").
-            introduce("introduce").
-            password("password").picture("picture").build();
+        member = Member.builder()
+            .username("username")
+            .nickname("nickname")
+            .introduce("introduce")
+            .password("password").picture("picture").build();
     }
 
     @Test

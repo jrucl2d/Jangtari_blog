@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -58,30 +59,30 @@ public class PostService {
      * hashtag는 모두 삭제하고 추가한다.
      * picture는 google drive에 업로드하는 데 걸리는 오버헤드를 생각해 프론트에서 삭제할 picture와 추가할 picture를 따로 받음
      */
-    public Post updatePost(Long postId, PostDTO.Update postDTO) {
+    public Post updatePost(final Long postId, final PostDTO.Update postDTO) {
         final Post post = findOne(postId);
-        post.updateTitleContentTemplate(postDTO);
+        post.updatePost(postDTO);
         updatePicturesOfPostIfExist(post, postDTO);
         post.clearPostHashtags();
-        addHashtagsToPostIfExist(post, postDTO.getHashtagsEntity());
+        addHashtagsToPostIfExist(post, postDTO.getHashtagsEntities());
         return post;
     }
     private void addHashtagsToPostIfExist(final Post post, final List<Hashtag> hashtags) {
         if (hashtags == null || hashtags.isEmpty()) return;
         hashtagRepository.saveAll(hashtags);
-        final List<PostHashtag> postHashtags = PostHashtag.hashtagsToPostHashtags(hashtags, post);
+        final List<PostHashtag> postHashtags = hashtags.stream().map(ht -> PostHashtag.builder().hashtag(ht).post(post).build()).collect(Collectors.toList());
         postHashtagRepository.saveAll(postHashtags);
         post.addPostHashtags(postHashtags);
     }
     private void addPicturesToPostIfExist(final Post post, final List<MultipartFile> pictureFiles) {
         if (pictureFiles == null || pictureFiles.isEmpty()) return;
         final List<String> pictureURLs = googleDriveUtil.filesToURLs(pictureFiles, GDFolder.POST);
-        final List<Picture> pictures = Picture.stringsToPictures(pictureURLs, post);
+        final List<Picture> pictures = pictureURLs.stream().map(url -> Picture.builder().url(url).post(post).build()).collect(Collectors.toList());
         pictureRepository.saveAll(pictures);
         post.addPictures(pictures);
     }
     private void updatePicturesOfPostIfExist(final Post post, final PostDTO.Update postDTO) {
-        post.removePicturesFromUpdateDTO(postDTO);
+        post.removePictures(postDTO);
         addPicturesToPostIfExist(post, postDTO.getAddPics());
     }
 
