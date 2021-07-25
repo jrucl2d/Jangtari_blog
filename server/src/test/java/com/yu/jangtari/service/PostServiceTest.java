@@ -1,6 +1,7 @@
 package com.yu.jangtari.service;
 
 import com.yu.jangtari.ServiceTest;
+import com.yu.jangtari.common.exception.NoSuchPostException;
 import com.yu.jangtari.domain.Category;
 import com.yu.jangtari.domain.DTO.PostDTO;
 import com.yu.jangtari.domain.Hashtag;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -49,10 +51,24 @@ class PostServiceTest extends ServiceTest {
     private GoogleDriveUtil googleDriveUtil;
 
     private Category category;
+    private Post originalPost;
 
     @BeforeEach
     void setUp() {
         category = Category.builder().name("category").build();
+        originalPost = Post.builder().title("title").content("content").category(category).template(0).build();
+        originalPost.addPostHashtags(Arrays.asList(PostHashtag.builder()
+                .post(originalPost)
+                .hashtag(new Hashtag("hash1"))
+                .build(),
+            PostHashtag.builder()
+                .post(originalPost)
+                .hashtag(new Hashtag("hash2"))
+                .build()));
+        originalPost.addPictures(Arrays.asList(
+            Picture.builder().post(originalPost).url("pic1").build(),
+            Picture.builder().post(originalPost).url("pic2").build()
+        ));
     }
 
     // TODO : Repository 테스트 완료 후에 작성
@@ -114,6 +130,7 @@ class PostServiceTest extends ServiceTest {
     }
 
     @Test
+    @DisplayName("hashtag와 picture를 포함해서 post 정보 모두 업데이트 성공")
     void updatePost() {
         // given
         PostDTO.Update postDTO = PostDTO.Update
@@ -126,20 +143,6 @@ class PostServiceTest extends ServiceTest {
             .delPics(Arrays.asList("pic1", "pic2"))
             .hashtags(Arrays.asList("hash2", "hash3"))
             .build();
-
-        Post originalPost = Post.builder().title("title").content("content").category(category).template(0).build();
-        originalPost.addPostHashtags(Arrays.asList(PostHashtag.builder()
-            .post(originalPost)
-            .hashtag(new Hashtag("hash1"))
-            .build(),
-            PostHashtag.builder()
-                .post(originalPost)
-                .hashtag(new Hashtag("hash2"))
-                .build()));
-        originalPost.addPictures(Arrays.asList(
-            Picture.builder().post(originalPost).url("pic1").build(),
-            Picture.builder().post(originalPost).url("pic2").build()
-        ));
 
         List<Picture> mockPictures = new ArrayList<>();
         List<Hashtag> mockHashtags = new ArrayList<>();
@@ -167,15 +170,19 @@ class PostServiceTest extends ServiceTest {
         assertEquals("hash3", updatedPost.getPostHashtags().get(1).getHashtag().getContent());
     }
 
+    // TODO : Repository 테스트 완료 후에 작성
     @Test
+    @DisplayName("없는 postId로 삭제하려고 하면 NoSuchPostException 발생")
     void deletePost() {
         // given
+        given(postRepository.getOne(anyLong())).willReturn(Optional.empty());
 
         // when
-
         // then
+        assertThrows(NoSuchPostException.class, () -> postService.deletePost(1L));
     }
 
+    // TODO : Repository 테스트 완료 후에 작성
     @Test
     void deletePostsOfCategory() {
         // given
