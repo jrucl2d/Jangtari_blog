@@ -1,5 +1,6 @@
 package com.yu.jangtari.util;
 
+import com.yu.jangtari.common.exception.InvalidTokenException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -83,18 +84,15 @@ class CookieUtilTest {
     }
 
     @Test
-    @DisplayName("없는 쿠키를 가져오려고 하면 null이 리턴됨")
+    @DisplayName("없는 쿠키를 가져오려고 하면 InvalidTokenException 발생함")
     void getCookie_X()
     {
         // given
         MockHttpServletRequest request = new MockHttpServletRequest();
 
         // when
-        Cookie accessCookie = cookieUtil.getAccessCookie(request);
-        Cookie refreshCookie = cookieUtil.getRefreshCookie(request);
-
         // then
-        assertNull(accessCookie);
-        assertNull(refreshCookie);
+        assertThrows(InvalidTokenException.class, () -> cookieUtil.getAccessCookie(request));
+        assertThrows(InvalidTokenException.class, () -> cookieUtil.getRefreshCookie(request));
     }
 }

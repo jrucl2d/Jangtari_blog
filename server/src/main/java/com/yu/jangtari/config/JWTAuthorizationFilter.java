@@ -64,14 +64,14 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 //            }
         } catch (Exception ee) {
             log.error("** AUTHENTICATION FAILED : " + ee);
-            tokenError(response, ErrorCode.INVALID_ACCESS_TOKEN);
+            tokenError(response);
         }
     }
 
-    private void tokenError(HttpServletResponse response, ErrorCode errorCode) throws IOException {
+    private void tokenError(HttpServletResponse response) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        final String responseJson = objectMapper.writeValueAsString(GlobalExceptionHandler.buildError(errorCode));
-        response.setStatus(errorCode.getStatus());
+        final String responseJson = objectMapper.writeValueAsString(GlobalExceptionHandler.buildError(ErrorCode.INVALID_TOKEN_ERROR));
+        response.setStatus(ErrorCode.INVALID_TOKEN_ERROR.getStatus());
         response.setContentType(ContentType.APPLICATION_JSON.getMimeType());
         response.getWriter().write(responseJson);
     }

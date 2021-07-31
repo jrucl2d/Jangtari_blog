@@ -1,5 +1,6 @@
 package com.yu.jangtari.util;
 
+import com.yu.jangtari.common.exception.InvalidTokenException;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
@@ -37,13 +38,14 @@ public class CookieUtil {
         return getCookie(req, REFRESH_COOKIE_NAME);
     }
 
-    private Cookie getCookie(HttpServletRequest req, String cookieName){
+    private Cookie getCookie(HttpServletRequest req, String cookieName) throws InvalidTokenException
+    {
         final Cookie[] cookies = req.getCookies();
-        if(cookies == null) return null;
+        if(cookies == null) throw new InvalidTokenException();
         for(Cookie cookie : cookies){
             if(cookie.getName().equals(cookieName))
                 return cookie;
         }
-        return null;
+        throw new InvalidTokenException();
     }
 }

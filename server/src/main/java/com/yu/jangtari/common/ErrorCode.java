@@ -2,7 +2,6 @@ package com.yu.jangtari.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -22,9 +21,9 @@ public enum ErrorCode {
     POST_NOT_FOUND(404, "yu010", "No Such Post"),
     SEARCH_TYPE_ERROR(404, "yu013", "No Such SearchType"),
     JANGTARI_DELETE_ERROR(403, "yu014", "Nobody Can Delete Jangtari"),
-    INVALID_ACCESS_TOKEN(401, "yu015", "Invalid Access Token"),
-    INVALID_REFRESH_TOKEN(401, "yu016", "Invalid Refresh Token"),
+    INVALID_TOKEN_ERROR(401, "yu015", "Invalid Token"),
     DUPLICATE_USER_ERROR(400, "yu017", "Duplicate User Error"),
+
 
     FILE_ERROR(500, "yu011", "File Task Error"),
     GOOGLE_DRIVE_ERROR(500, "yu012", "Google Dirve Error");
