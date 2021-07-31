@@ -49,11 +49,7 @@ public class MemberService {
 
     public Member join(MemberDTO.Add memberDTO) {
         checkUserDuplicate(memberDTO.getUsername());
-        final Member member = Member.builder()
-                .username(memberDTO.getUsername())
-                .nickname(memberDTO.getNickname())
-                .password(passwordEncoder.encode(memberDTO.getPassword()))
-                .build();
+        final Member member = memberDTO.toEntity(passwordEncoder.encode(memberDTO.getPassword()));
         return memberRepository.save(member);
     }
     private void checkUserDuplicate(final String username) {

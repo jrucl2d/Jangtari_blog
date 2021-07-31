@@ -53,11 +53,11 @@ public class MemberDTO {
             this.password = password;
         }
 
-        public Member toEntity() {
+        public Member toEntity(String encodedPassword) {
             return Member.builder()
                     .username(username)
                     .nickname(nickname)
-                    .password(password)
+                    .password(encodedPassword)
                     .build();
         }
     }

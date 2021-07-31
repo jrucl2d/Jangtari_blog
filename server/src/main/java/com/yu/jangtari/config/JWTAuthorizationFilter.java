@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,11 +23,13 @@ import java.io.IOException;
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     private final CookieUtil cookieUtil;
     private final JWTUtil jwtUtil;
+    private final SkipPathRequestMatcher skipPathRequestMatcher;
 
-    public JWTAuthorizationFilter(AuthenticationManager authenticationManager, CookieUtil cookieUtil, JWTUtil jwtUtil) {
+    public JWTAuthorizationFilter(AuthenticationManager authenticationManager, CookieUtil cookieUtil, JWTUtil jwtUtil, SkipPathRequestMatcher skipPathRequestMatcher) {
         super(authenticationManager);
         this.cookieUtil = cookieUtil;
         this.jwtUtil = jwtUtil;
+        this.skipPathRequestMatcher = skipPathRequestMatcher;
     }
 
     @Override
@@ -74,5 +77,10 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         response.setStatus(ErrorCode.INVALID_TOKEN_ERROR.getStatus());
         response.setContentType(ContentType.APPLICATION_JSON.getMimeType());
         response.getWriter().write(responseJson);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return skipPathRequestMatcher.matches(request);
     }
 }

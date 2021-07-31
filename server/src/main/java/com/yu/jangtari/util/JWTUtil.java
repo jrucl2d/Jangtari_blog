@@ -1,5 +1,6 @@
 package com.yu.jangtari.util;
 
+import com.yu.jangtari.domain.Member;
 import com.yu.jangtari.domain.RoleType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -79,5 +80,9 @@ public class JWTUtil {
     public static class JwtInfo {
         private final String username;
         private final RoleType roleType;
+
+        public static JwtInfo getInstance(Member member) {
+            return new JwtInfo(member.getUsername(), member.getRole());
+        }
     }
 }

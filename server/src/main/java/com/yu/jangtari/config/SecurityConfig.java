@@ -11,29 +11,59 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * openPaths를 제외하고는 모두 401 Unauthorized 리턴
+ */
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CookieUtil cookieUtil;
     private final JWTUtil jwtUtil;
+    private final List<String> openPaths = Arrays.asList(
+        "/v2/api-docs",
+        "/swagger-resources",
+        "/swagger-resources/**",
+        "/configuration/ui",
+        "/configuration/security",
+        "/swagger-ui.html",
+        "/webjars/**",
+        "/v3/api-docs/**",
+        "/swagger-ui/**",
+        "/h2/**",
+        "/login",
+        "/join"
+    );
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable() // 폼 로그인이 아니기 때문에 csrf 보안 설정도 필요 없음
-                .csrf().ignoringAntMatchers("/h2/**").and().headers().frameOptions().disable()
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 생성 안 함
-                .and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager(), cookieUtil, jwtUtil)) // UsernamePasswordAuthenticationFilter 기반 유저 인증
-                .addFilter(new JWTAuthorizationFilter(authenticationManager(), cookieUtil, jwtUtil)) // BasicAuthenticationFilter 기반 유저 인가
-                .formLogin().disable()
-                .httpBasic().disable() // rest api 서버 구축시 필요 없음. 비 인증시 로그인폼 화면으로 리다이렉트 해주는 기능
-                .authorizeRequests() // 다음의 request에 대한 인가 설정
-                    .antMatchers("/admin/**").hasRole("ADMIN")
-                    .antMatchers("/user/**").hasAnyRole("ADMIN", "USER")
-                    .anyRequest().permitAll()
+            .formLogin().disable()
+            .httpBasic().disable() // rest api 서버 구축시 필요 없음. 비 인증시 로그인폼 화면으로 리다이렉트 해주는 기능
+            .csrf().disable() // 폼 로그인이 아니기 때문에 csrf 보안 설정도 필요 없음
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 생성 안 함
+            .and()
+            .authorizeRequests()
+            .antMatchers(openPaths.toArray(new String[0]))
+            .permitAll()
+            .antMatchers("/admin/**").hasRole("ADMIN")
+            .antMatchers("/user/**").hasAnyRole("ADMIN", "USER")
+            .anyRequest().authenticated()
+            .and()
+            .addFilter(jwtAuthenticationFilter()) // UsernamePasswordAuthenticationFilter 기반 유저 인증
+            .addFilterAfter(jwtAuthorizationFilter(), JWTAuthenticationFilter.class) // BasicAuthenticationFilter 기반 유저 인가
         ;
+    }
+
+    private JWTAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+        JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter(authenticationManager(), cookieUtil, jwtUtil);
+        jwtAuthenticationFilter.setFilterProcessesUrl("/login");
+        return jwtAuthenticationFilter;
+    }
+    private JWTAuthorizationFilter jwtAuthorizationFilter() throws Exception {
+        return new JWTAuthorizationFilter(authenticationManager(), cookieUtil, jwtUtil, new SkipPathRequestMatcher(openPaths));
     }
 
     @Bean
