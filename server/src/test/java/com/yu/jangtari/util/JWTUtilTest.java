@@ -15,79 +15,88 @@ class JWTUtilTest {
     @BeforeEach
     void setUp()
     {
-        JwtAndCookieInfo jwtAndCookieInfo = new JwtAndCookieInfo();
-        jwtUtil = new JWTUtil(jwtAndCookieInfo);
+        jwtUtil = new JWTUtil();
     }
 
     @Test
-    @DisplayName("access token을 정상적으로 생성")
+    @DisplayName("access token이 정상적으로 생성되고 parsing 됨")
     void createAccessToken()
     {
         // given
         String username = "jangtari";
-        String token = jwtUtil.createAccessToken(username, RoleType.USER);
+        JWTUtil.JwtInfo jwtInfo = new JWTUtil.JwtInfo(username, RoleType.USER);
+        String token = jwtUtil.createAccessToken(jwtInfo);
 
         // when
-        String getUsername = jwtUtil.getUsernameFromJWT(token);
-        RoleType roleType = jwtUtil.getRoleFromJWT(token);
+        JWTUtil.JwtInfo gotJwtInfo = jwtUtil.parseJwt(token);
 
         // then
-        assertEquals(username, getUsername);
-        assertEquals(RoleType.USER, roleType);
+        assertEquals(username, gotJwtInfo.getUsername());
+        assertEquals(RoleType.USER, gotJwtInfo.getRoleType());
     }
+
     @Test
-    @DisplayName("refresh token을 정상적으로 생성")
+    @DisplayName("refresh token이 정상적으로 생성되고 parsing됨")
     void createRefreshToken()
     {
         // given
         String username = "jangtari";
-        String token = jwtUtil.createRefreshToken(username, RoleType.ADMIN);
+        JWTUtil.JwtInfo jwtInfo = new JWTUtil.JwtInfo(username, RoleType.ADMIN);
+        String token = jwtUtil.createRefreshToken(jwtInfo);
 
         // when
-        String getUsername = jwtUtil.getUsernameFromJWT(token);
-        RoleType roleType = jwtUtil.getRoleFromJWT(token);
+        JWTUtil.JwtInfo gotJwtInfo = jwtUtil.parseJwt(token);
 
         // then
-        assertEquals(username, getUsername);
-        assertEquals(RoleType.ADMIN, roleType);
+        assertEquals(username, gotJwtInfo.getUsername());
+        assertEquals(RoleType.ADMIN, gotJwtInfo.getRoleType());
     }
+
     @Test
-    @DisplayName("만료된 토큰 validate 할 시 ExpiredJwtException 발생")
-    void validateToken()
+    @DisplayName("accessToken이 만료된 경우 refreshToken으로부터 새로운 accessToken을 재생성")
+    void recreateAccessToken()
     {
         // given
-        JwtAndCookieInfo jwtAndCookieInfo = new TestJwtAndCookieInfo();
-        JWTUtil jwtUtil = new JWTUtil(jwtAndCookieInfo);
+        String username = "jangtari";
+        JWTUtil.JwtInfo jwtInfo = new JWTUtil.JwtInfo(username, RoleType.ADMIN);
+        String refreshToken = jwtUtil.createRefreshToken(jwtInfo);
 
         // when
-        String accessToken = jwtUtil.createAccessToken("jangtari", RoleType.USER);
-        String refreshToken = jwtUtil.createAccessToken("jangtari", RoleType.USER);
+        String newAccessToken = jwtUtil.recreateAccessToken(refreshToken);
+        JWTUtil.JwtInfo gotJwtInfo = jwtUtil.parseJwt(newAccessToken);
 
         // then
-        assertThrows(ExpiredJwtException.class, () -> jwtUtil.validateToken(accessToken));
-        assertThrows(ExpiredJwtException.class, () -> jwtUtil.validateToken(refreshToken));
+        assertEquals(username, gotJwtInfo.getUsername());
+        assertEquals(RoleType.ADMIN, gotJwtInfo.getRoleType());
     }
+
     @Test
-    @DisplayName("이상한 토큰 validate 할 시 MalformedJwtException 발생")
-    void validateToken1()
+    @DisplayName("만료된 토큰 parsing 할 시 ExpiredJwtException 발생")
+    void parseJwt_X()
+    {
+        // given
+        JWTUtil jwtUtil = new JWTUtil();
+        String username = "jangtari";
+        JWTUtil.JwtInfo jwtInfo = new JWTUtil.JwtInfo(username, RoleType.USER);
+
+        // when
+        String accessToken = jwtUtil.createToken(jwtInfo, 10);
+        String refreshToken = jwtUtil.createToken(jwtInfo, 10);
+
+        // then
+        assertThrows(ExpiredJwtException.class, () -> jwtUtil.parseJwt(accessToken));
+        assertThrows(ExpiredJwtException.class, () -> jwtUtil.parseJwt(refreshToken));
+    }
+
+    @Test
+    @DisplayName("이상한 토큰 parsing 할 시 MalformedJwtException 발생")
+    void parseJwt_X1()
     {
         // given
         String wrongToken = "wlkgjwelkgjwelkgjwelgjwelkgjwe";
 
         // when
         // then
-        assertThrows(MalformedJwtException.class, () -> jwtUtil.validateToken(wrongToken));
-    }
-
-    private static class TestJwtAndCookieInfo extends JwtAndCookieInfo {
-        @Override
-        public int getAccessTokenValidTime() {
-            return 0;
-        }
-
-        @Override
-        public int getRefreshTokenValidTime() {
-            return 0;
-        }
+        assertThrows(MalformedJwtException.class, () -> jwtUtil.parseJwt(wrongToken));
     }
 }

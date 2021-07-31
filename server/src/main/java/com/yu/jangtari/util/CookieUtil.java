@@ -7,35 +7,37 @@ import javax.servlet.http.HttpServletRequest;
 
 @Component
 public class CookieUtil {
-    public final String accessCookieName;
-    public final String refreshCookieName;
-    private final int accessTokenValidTime;
-    private final int refreshTokenValidTime;
+    private static final String ACCESS_COOKIE_NAME = "accessCookie";
+    private static final String REFRESH_COOKIE_NAME = "refreshCookie";
 
-    public CookieUtil(JwtAndCookieInfo jwtAndCookieInfo) {
-        accessCookieName = jwtAndCookieInfo.getAccessCookieName();
-        refreshCookieName = jwtAndCookieInfo.getRefreshCookieName();
-        accessTokenValidTime = jwtAndCookieInfo.getAccessTokenValidTime();
-        refreshTokenValidTime = jwtAndCookieInfo.getRefreshTokenValidTime();
-    }
+    private static final int ACCESS_TOKEN_VALID_TIME = 2 * 60 * 1000; // Access token 2분
+    private static final int REFRESH_TOKEN_VALID_TIME = 7 * 24 * 60 * 60 * 1000; // Refresh token 1주일
 
     public Cookie createAccessCookie(String value) {
-        return createCookie(true, value);
+        return createCookie(value, ACCESS_COOKIE_NAME, ACCESS_TOKEN_VALID_TIME);
     }
     public Cookie createRefreshCookie(String value) {
-        return createCookie(false, value);
+        return createCookie(value, REFRESH_COOKIE_NAME, REFRESH_TOKEN_VALID_TIME);
     }
 
-    private Cookie createCookie(boolean isAccess, String value){
-        final Cookie cookie = new Cookie(isAccess ? accessCookieName : refreshCookieName, value);
+    private Cookie createCookie(String value, String cookieName, int expireTime){
+        Cookie cookie = new Cookie(cookieName, value);
         cookie.setHttpOnly(true); // httpOnly로 설정
-        cookie.setMaxAge(isAccess ? accessTokenValidTime : refreshTokenValidTime);
+        cookie.setMaxAge(expireTime);
 //        cookie.setSecure(true); // https를 적용할 것이므로 secure 설정
         cookie.setPath("/");
         return cookie;
     }
 
-    public Cookie getCookie(HttpServletRequest req, String cookieName){
+    public Cookie getAccessCookie(HttpServletRequest req) {
+        return getCookie(req, ACCESS_COOKIE_NAME);
+    }
+
+    public Cookie getRefreshCookie(HttpServletRequest req) {
+        return getCookie(req, REFRESH_COOKIE_NAME);
+    }
+
+    private Cookie getCookie(HttpServletRequest req, String cookieName){
         final Cookie[] cookies = req.getCookies();
         if(cookies == null) return null;
         for(Cookie cookie : cookies){

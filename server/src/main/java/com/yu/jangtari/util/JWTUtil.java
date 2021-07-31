@@ -1,66 +1,83 @@
 package com.yu.jangtari.util;
 
 import com.yu.jangtari.domain.RoleType;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 
-import java.util.Base64;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JWTUtil {
+    private static final String USERNAME_KEY = "username";
+    private static final String ROLE_KEY = "role";
+    private static final int ACCESS_TOKEN_VALID_TIME = 2 * 60 * 1000; // Access token 2분
+    private static final int REFRESH_TOKEN_VALID_TIME = 7 * 24 * 60 * 60 * 1000; // Refresh token 1주일
+    private static final String JWT_SECRET = "tmp";
+    private final Key tokenKey;
 
-    private final int ACCESS_TOKEN_VALID_TIME;
-    private final int REFRESH_TOKEN_VALID_TIME;
-    private final String JWT_SECRET_KEY;
-
-    public JWTUtil(JwtAndCookieInfo jwtAndCookieInfo) {
-        this.ACCESS_TOKEN_VALID_TIME = jwtAndCookieInfo.getAccessTokenValidTime();
-        this.REFRESH_TOKEN_VALID_TIME = jwtAndCookieInfo.getRefreshTokenValidTime();
-        this.JWT_SECRET_KEY = Base64.getEncoder().encodeToString( jwtAndCookieInfo.getJwtSecretKey().getBytes());
+    public JWTUtil() {
+        this.tokenKey = new SecretKeySpec(JWT_SECRET.getBytes(StandardCharsets.UTF_8), SignatureAlgorithm.HS256.getJcaName());
     }
 
     // JWT 토큰 생성 관련 메소드
-    public String createAccessToken(String username, RoleType roleType) {
-        return createToken(username, roleType, ACCESS_TOKEN_VALID_TIME);
+    public String createAccessToken(JwtInfo jwtInfo) {
+        return createToken(jwtInfo, ACCESS_TOKEN_VALID_TIME);
     }
-    public String createRefreshToken(String username, RoleType roleType) {
-        return createToken(username, roleType, REFRESH_TOKEN_VALID_TIME);
+    public String createRefreshToken(JwtInfo jwtInfo) {
+        return createToken(jwtInfo, REFRESH_TOKEN_VALID_TIME);
     }
-    private String createToken(final String username, final RoleType role, long expireTime) {
-        final Date now = new Date();
-        final Claims claims = Jwts.claims(); // JWT payload에 저장되는 정보 claim
-        claims.put("username", username); // key-value 쌍으로 저장됨
-        claims.put("role", role.name());
-
+    // accessToken이 만료되었을 경우 refreshToken으로 accessToken을 재생성
+    public String recreateAccessToken(String refreshToken) {
+        JwtInfo jwtInfo = parseJwt(refreshToken);
+        return createAccessToken(jwtInfo);
+    }
+    public String createToken(JwtInfo jwtInfo, long expireTime) {
+        Date now = new Date();
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(USERNAME_KEY, jwtInfo.getUsername());
+        claims.put(ROLE_KEY, jwtInfo.getRoleType().name());
         return Jwts.builder()
-                .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 발행 시간
+                .addClaims(claims)
                 .setExpiration(new Date(now.getTime() + expireTime)) // 유효 기간
-                .signWith(SignatureAlgorithm.HS256, JWT_SECRET_KEY) // 암호화 알고리즘
+                .signWith(SignatureAlgorithm.HS256, tokenKey) // 암호화 알고리즘
                 .compact();
     }
 
     // JWT 토큰 parsing 관련 메소드
-    public String getUsernameFromJWT(final String token) {
-        return getClaims(token).getBody().get("username", String.class);
-    }
-    public RoleType getRoleFromJWT(final String token) {
-        final String role = getClaims(token).getBody().get("role", String.class);
-        return RoleType.of(role);
-    }
-
-    private Jws<Claims> getClaims(String token) {
-        return Jwts.parser().setSigningKey(JWT_SECRET_KEY).parseClaimsJws(token);
-    }
-
-    // 토큰의 유효성, 만료일자 확인 -> getClaims 메소드의 parseClaimsJws(token)에서 validation checking이 이루어짐
-    public void validateToken(final String token) throws ExpiredJwtException,
+    public JwtInfo parseJwt(String token) throws ExpiredJwtException,
         UnsupportedJwtException,
         MalformedJwtException,
         SignatureException,
         IllegalArgumentException
     {
-        getClaims(token);
+        Claims claims = getClaims(token);
+        String username = claims.get(USERNAME_KEY, String.class);
+        String role = claims.get(ROLE_KEY, String.class);
+        return new JwtInfo(username, RoleType.of(role));
+    }
+
+    private Claims getClaims(String token) {
+        return Jwts.parser().setSigningKey(tokenKey).parseClaimsJws(token).getBody();
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class JwtInfo {
+        private final String username;
+        private final RoleType roleType;
     }
 }

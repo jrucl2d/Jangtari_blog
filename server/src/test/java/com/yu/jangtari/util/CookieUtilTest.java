@@ -11,13 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CookieUtilTest {
     private CookieUtil cookieUtil;
-    private JwtAndCookieInfo jwtAndCookieInfo;
 
     @BeforeEach
     void setUp()
     {
-        jwtAndCookieInfo = new JwtAndCookieInfo();
-        cookieUtil = new CookieUtil(jwtAndCookieInfo);
+        cookieUtil = new CookieUtil();
     }
 
     @Test
@@ -32,7 +30,6 @@ class CookieUtilTest {
 
         // then
         assertEquals(token, accessCookie.getValue());
-        assertEquals(jwtAndCookieInfo.getAccessTokenValidTime(), accessCookie.getMaxAge());
         assertEquals("/", accessCookie.getPath());
         // assertTrue(accessCookie.getSecure());
     }
@@ -49,7 +46,6 @@ class CookieUtilTest {
 
         // then
         assertEquals(token, refreshCookie.getValue());
-        assertEquals(jwtAndCookieInfo.getRefreshTokenValidTime(), refreshCookie.getMaxAge());
         assertEquals("/", refreshCookie.getPath());
         // assertTrue(accessCookie.getSecure());
     }
@@ -64,7 +60,7 @@ class CookieUtilTest {
         request.setCookies(accessCookie);
 
         // when
-        Cookie gotAccessCookie = cookieUtil.getCookie(request, jwtAndCookieInfo.getAccessCookieName());
+        Cookie gotAccessCookie = cookieUtil.getAccessCookie(request);
 
         // then
         assertEquals(gotAccessCookie, accessCookie);
@@ -80,7 +76,7 @@ class CookieUtilTest {
         request.setCookies(refreshCookie);
 
         // when
-        Cookie gotRefreshCookie = cookieUtil.getCookie(request, jwtAndCookieInfo.getRefreshCookieName());
+        Cookie gotRefreshCookie = cookieUtil.getRefreshCookie(request);
 
         // then
         assertEquals(gotRefreshCookie, refreshCookie);
@@ -94,8 +90,8 @@ class CookieUtilTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
 
         // when
-        Cookie accessCookie = cookieUtil.getCookie(request, jwtAndCookieInfo.getAccessCookieName());
-        Cookie refreshCookie = cookieUtil.getCookie(request, jwtAndCookieInfo.getRefreshCookieName());
+        Cookie accessCookie = cookieUtil.getAccessCookie(request);
+        Cookie refreshCookie = cookieUtil.getRefreshCookie(request);
 
         // then
         assertNull(accessCookie);

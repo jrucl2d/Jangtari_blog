@@ -3,10 +3,14 @@ package com.yu.jangtari.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yu.jangtari.common.ErrorCode;
 import com.yu.jangtari.common.GlobalExceptionHandler;
-import com.yu.jangtari.common.JwtToken;
-import com.yu.jangtari.domain.RoleType;
 import com.yu.jangtari.util.CookieUtil;
-import lombok.*;
+import com.yu.jangtari.util.JWTUtil;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,10 +19,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import javax.inject.Provider;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -29,7 +31,7 @@ import java.io.IOException;
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final CookieUtil cookieUtil;
-    private final Provider<JwtToken> jwtTokenProvider; // prototype bean
+    private final JWTUtil jwtUtil; // prototype bean
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -47,16 +49,16 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        final String username = authResult.getName();
-        final String role = (String) authResult.getAuthorities().toArray()[0];
-        log.info("** LOGIN SUCCESS : " + authResult.getName());
-        final JwtToken accessToken = jwtTokenProvider.get().createAccessToken(username, RoleType.of(role));
-        final Cookie accessCookie = cookieUtil.createAccessCookie(accessToken.getToken());
-        final JwtToken refreshToken = jwtTokenProvider.get().createRefreshToken(username, RoleType.of(role));
-        final Cookie refreshCookie = cookieUtil.createRefreshCookie(refreshToken.getToken());
-
-        response.addCookie(accessCookie);
-        response.addCookie(refreshCookie);
+//        final String username = authResult.get();
+//        final String role = (String) authResult.getAuthorities().toArray()[0];
+//        log.info("** LOGIN SUCCESS : " + authResult.getName());
+//        final JwtToken accessToken = jwtTokenProvider.get().createAccessToken(username, RoleType.of(role));
+//        final Cookie accessCookie = cookieUtil.createAccessCookie(accessToken.getToken());
+//        final JwtToken refreshToken = jwtTokenProvider.get().createRefreshToken(username, RoleType.of(role));
+//        final Cookie refreshCookie = cookieUtil.createRefreshCookie(refreshToken.getToken());
+//
+//        response.addCookie(accessCookie);
+//        response.addCookie(refreshCookie);
     }
 
     @Override
