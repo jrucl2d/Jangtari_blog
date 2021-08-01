@@ -3,10 +3,21 @@ package com.yu.jangtari.controller;
 import com.yu.jangtari.IntegrationTest;
 import com.yu.jangtari.common.ErrorCode;
 import com.yu.jangtari.domain.DTO.MemberDTO;
+import com.yu.jangtari.domain.RoleType;
+import com.yu.jangtari.util.CookieUtil;
+import com.yu.jangtari.util.JWTUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import javax.servlet.http.Cookie;
+import java.util.Collections;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
@@ -15,6 +26,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class MemberControllerTest extends IntegrationTest
 {
+    @Autowired
+    private JWTUtil jwtUtil;
+    @Autowired
+    private CookieUtil cookieUtil;
+
     @Test
     @DisplayName("회원가입이 정상적으로 실행된다.")
     void join() throws Exception
@@ -33,7 +49,7 @@ class MemberControllerTest extends IntegrationTest
         mockMvc.perform(post("/join")
             .contentType(MediaType.APPLICATION_JSON)
             .content(content))
-            .andExpect(status().isOk())
+            .andExpect(status().isCreated())
             .andExpect(jsonPath("$").value("OK"))
             .andDo(print());
     }
@@ -159,5 +175,41 @@ class MemberControllerTest extends IntegrationTest
         public String getPassword() {
             return password;
         }
+    }
+
+
+    @Test
+    @DisplayName("정상적으로 로그아웃 수행")
+    void logout() throws Exception
+    {
+        // given
+        Authentication authentication = new UsernamePasswordAuthenticationToken("jangtari", null, Collections.singletonList(() -> "ROLE_USER"));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        Cookie accessCookie = cookieUtil.createAccessCookie(jwtUtil.createAccessToken(new JWTUtil.JwtInfo("jangtari", RoleType.USER)));
+        Cookie refreshCookie = cookieUtil.createRefreshCookie(jwtUtil.createRefreshToken(new JWTUtil.JwtInfo("jangtari", RoleType.USER)));
+
+        // when
+
+        // then
+        mockMvc.perform(post("/logout").cookie(accessCookie, refreshCookie))
+            .andExpect(status().isOk())
+            .andExpect(cookie().maxAge("accessCookie", 0))
+            .andExpect(cookie().maxAge("refreshCookie", 0))
+            .andDo(print());
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
+    }
+
+    @Test
+    @DisplayName("쿠키가 없는 상태에서 로그아웃 하려고 하면 InvalidTokenException 발생")
+    void logout_X() throws Exception
+    {
+        // given
+        // when
+        // then
+        mockMvc.perform(post("/logout"))
+            .andExpect(status().is4xxClientError())
+            .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_TOKEN_ERROR.getMessage()))
+            .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_TOKEN_ERROR.getCode()))
+            .andDo(print());
     }
 }

@@ -23,6 +23,7 @@ public enum ErrorCode {
     JANGTARI_DELETE_ERROR(403, "yu014", "Nobody Can Delete Jangtari"),
     INVALID_TOKEN_ERROR(401, "yu015", "Invalid Token"),
     DUPLICATE_USER_ERROR(400, "yu017", "Duplicate User Error"),
+    RE_LOGIN_ERROR(401, "yu018", "Need to reLogin"),
 
 
     FILE_ERROR(500, "yu011", "File Task Error"),

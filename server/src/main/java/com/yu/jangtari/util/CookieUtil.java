@@ -20,6 +20,11 @@ public class CookieUtil {
     public Cookie createRefreshCookie(String value) {
         return createCookie(value, REFRESH_COOKIE_NAME, REFRESH_TOKEN_VALID_TIME);
     }
+    public Cookie getLogoutCookie(Cookie cookie) {
+        cookie.setMaxAge(0); // expirationTime을 0으로
+        cookie.setPath("/"); // 모든 경로에서 삭제
+        return cookie;
+    }
 
     private Cookie createCookie(String value, String cookieName, int expireTime){
         Cookie cookie = new Cookie(cookieName, value);

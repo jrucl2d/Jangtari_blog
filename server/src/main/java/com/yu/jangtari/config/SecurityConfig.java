@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         "/swagger-ui/**",
         "/h2/**",
         "/login",
+        "/logout",
         "/join"
     );
 
@@ -52,6 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/user/**").hasAnyRole("ADMIN", "USER")
             .anyRequest().authenticated()
             .and()
+            .addFilterBefore(jwtLogoutFilter(), LogoutFilter.class)
             .addFilter(jwtAuthenticationFilter()) // UsernamePasswordAuthenticationFilter 기반 유저 인증
             .addFilterAfter(jwtAuthorizationFilter(), JWTAuthenticationFilter.class) // BasicAuthenticationFilter 기반 유저 인가
         ;
@@ -64,6 +67,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
     private JWTAuthorizationFilter jwtAuthorizationFilter() throws Exception {
         return new JWTAuthorizationFilter(authenticationManager(), cookieUtil, jwtUtil, new SkipPathRequestMatcher(openPaths));
+    }
+    private JwtLogoutFilter jwtLogoutFilter() {
+        return new JwtLogoutFilter((request, response, authentication) -> { }, new JwtLogoutHandler(cookieUtil));
     }
 
     @Bean
