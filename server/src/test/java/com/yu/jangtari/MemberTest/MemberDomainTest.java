@@ -1,7 +1,7 @@
 package com.yu.jangtari.MemberTest;
 
-import com.yu.jangtari.domain.Member;
-import com.yu.jangtari.domain.RoleType;
+import com.yu.jangtari.api.member.domain.Member;
+import com.yu.jangtari.api.member.domain.RoleType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

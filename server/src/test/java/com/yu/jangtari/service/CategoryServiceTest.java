@@ -1,10 +1,12 @@
 package com.yu.jangtari.service;
 
 import com.yu.jangtari.ServiceTest;
+import com.yu.jangtari.api.category.service.CategoryService;
 import com.yu.jangtari.common.exception.NoSuchCategoryException;
-import com.yu.jangtari.domain.Category;
-import com.yu.jangtari.domain.DTO.CategoryDTO;
-import com.yu.jangtari.repository.category.CategoryRepository;
+import com.yu.jangtari.api.category.domain.Category;
+import com.yu.jangtari.api.category.dto.CategoryDTO;
+import com.yu.jangtari.api.category.repository.CategoryRepository;
+import com.yu.jangtari.api.post.service.PostService;
 import com.yu.jangtari.util.GoogleDriveUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

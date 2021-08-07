@@ -1,12 +1,12 @@
 package com.yu.jangtari.PostTest;
 
 import com.yu.jangtari.IntegrationTest;
-import com.yu.jangtari.domain.Category;
-import com.yu.jangtari.domain.DTO.PostDTO;
-import com.yu.jangtari.domain.Picture;
-import com.yu.jangtari.domain.Post;
-import com.yu.jangtari.repository.category.CategoryRepository;
-import com.yu.jangtari.repository.post.PostRepository;
+import com.yu.jangtari.api.category.domain.Category;
+import com.yu.jangtari.api.post.dto.PostDTO;
+import com.yu.jangtari.api.picture.domain.Picture;
+import com.yu.jangtari.api.post.domain.Post;
+import com.yu.jangtari.api.category.repository.CategoryRepository;
+import com.yu.jangtari.api.post.repository.post.PostRepository;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

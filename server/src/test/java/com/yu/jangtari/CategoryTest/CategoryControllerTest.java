@@ -1,11 +1,11 @@
 //package com.yu.jangtari.CategoryTest;
 //
 //import com.yu.jangtari.IntegrationTest;
-//import com.yu.jangtari.domain.RoleType;
+//import com.yu.jangtari.api.member.domain.RoleType;
 //import com.yu.jangtari.util.CookieUtil;
 //import com.yu.jangtari.util.JWTUtil;
-//import com.yu.jangtari.domain.DTO.CategoryDTO;
-//import com.yu.jangtari.repository.category.CategoryRepository;
+//import com.yu.jangtari.api.category.dto.CategoryDTO;
+//import com.yu.jangtari.api.category.repository.CategoryRepository;
 //import org.hamcrest.Matchers;
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Nested;

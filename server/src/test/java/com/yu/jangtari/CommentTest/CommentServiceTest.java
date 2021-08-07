@@ -2,20 +2,19 @@ package com.yu.jangtari.CommentTest;
 
 import com.yu.jangtari.ServiceTest;
 import com.yu.jangtari.common.exception.NoMasterException;
-import com.yu.jangtari.domain.Comment;
-import com.yu.jangtari.domain.DTO.CommentDTO;
-import com.yu.jangtari.domain.Member;
-import com.yu.jangtari.domain.Post;
-import com.yu.jangtari.repository.CommentRepository;
-import com.yu.jangtari.service.CommentService;
-import com.yu.jangtari.service.MemberService;
-import com.yu.jangtari.service.PostService;
+import com.yu.jangtari.api.comment.domain.Comment;
+import com.yu.jangtari.api.comment.dto.CommentDTO;
+import com.yu.jangtari.api.member.domain.Member;
+import com.yu.jangtari.api.post.domain.Post;
+import com.yu.jangtari.api.comment.repository.CommentRepository;
+import com.yu.jangtari.api.comment.service.CommentService;
+import com.yu.jangtari.api.member.service.MemberService;
+import com.yu.jangtari.api.post.service.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 

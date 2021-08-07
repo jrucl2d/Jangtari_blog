@@ -1,6 +1,8 @@
 package com.yu.jangtari.CommentTest;
 
-import com.yu.jangtari.domain.*;
+import com.yu.jangtari.api.comment.domain.Comment;
+import com.yu.jangtari.api.member.domain.Member;
+import com.yu.jangtari.api.post.domain.Post;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

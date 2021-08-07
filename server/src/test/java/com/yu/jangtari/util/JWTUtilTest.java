@@ -1,6 +1,6 @@
 package com.yu.jangtari.util;
 
-import com.yu.jangtari.domain.RoleType;
+import com.yu.jangtari.api.member.domain.RoleType;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import org.junit.jupiter.api.BeforeEach;

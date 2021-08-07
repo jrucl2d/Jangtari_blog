@@ -1,14 +1,14 @@
 package com.yu.jangtari.CommentTest;
 
 import com.yu.jangtari.RepositoryTest;
-import com.yu.jangtari.domain.Category;
-import com.yu.jangtari.domain.Comment;
-import com.yu.jangtari.domain.Member;
-import com.yu.jangtari.domain.Post;
-import com.yu.jangtari.repository.CommentRepository;
-import com.yu.jangtari.repository.category.CategoryRepository;
-import com.yu.jangtari.repository.MemberRepository;
-import com.yu.jangtari.repository.post.PostRepository;
+import com.yu.jangtari.api.category.domain.Category;
+import com.yu.jangtari.api.comment.domain.Comment;
+import com.yu.jangtari.api.member.domain.Member;
+import com.yu.jangtari.api.post.domain.Post;
+import com.yu.jangtari.api.comment.repository.CommentRepository;
+import com.yu.jangtari.api.category.repository.CategoryRepository;
+import com.yu.jangtari.api.member.repository.MemberRepository;
+import com.yu.jangtari.api.post.repository.post.PostRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

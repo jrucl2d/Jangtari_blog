@@ -1,8 +1,8 @@
 package com.yu.jangtari.CategoryTest;
 
 import com.yu.jangtari.IntegrationTest;
-import com.yu.jangtari.domain.Category;
-import com.yu.jangtari.repository.category.CategoryRepository;
+import com.yu.jangtari.api.category.domain.Category;
+import com.yu.jangtari.api.category.repository.CategoryRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

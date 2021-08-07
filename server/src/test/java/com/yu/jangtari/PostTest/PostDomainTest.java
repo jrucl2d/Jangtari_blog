@@ -1,7 +1,11 @@
 package com.yu.jangtari.PostTest;
 
-import com.yu.jangtari.domain.*;
-import com.yu.jangtari.domain.DTO.PostDTO;
+import com.yu.jangtari.api.category.domain.Category;
+import com.yu.jangtari.api.picture.domain.Picture;
+import com.yu.jangtari.api.post.domain.Hashtag;
+import com.yu.jangtari.api.post.domain.PostHashtag;
+import com.yu.jangtari.api.post.dto.PostDTO;
+import com.yu.jangtari.api.post.domain.Post;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

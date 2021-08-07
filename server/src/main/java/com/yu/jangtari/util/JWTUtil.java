@@ -1,7 +1,7 @@
 package com.yu.jangtari.util;
 
-import com.yu.jangtari.domain.Member;
-import com.yu.jangtari.domain.RoleType;
+import com.yu.jangtari.api.member.domain.Member;
+import com.yu.jangtari.api.member.domain.RoleType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
