@@ -1,20 +1,20 @@
 package com.yu.jangtari.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public enum ErrorCode {
 
     INVALID_INPUT_VALUE("yu1000", "잘못된 입력값입니다."),
-    ACCESS_DENIED("yu1001", "접근 권한이 없습니다."),
-    INTERNAL_SERVER_ERROR("yu1002", "서버 내부 오류가 발생했습니다."),
+    INTERNAL_SERVER_ERROR("yu1001", "서버 내부 오류가 발생했습니다."),
 
     // =================================================================================================================
     // security, JWt 관련 에러 20XX
     // =================================================================================================================
     LOGIN_ERROR("yu2000", "아이디 혹은 비밀번호가 맞지 않습니다."),
+    ACCESS_DENIED("yu2001", "접근 권한이 없습니다."),
+    UNAUTHORIZED_ERROR("yu2002", "인증되지 않은 요청입니다."),
+
 
     MEMBER_NOT_FOUND("yu005", "No Such Member"),
     COMMENT_NOT_FOUND("yu006", "No Such Comment"),

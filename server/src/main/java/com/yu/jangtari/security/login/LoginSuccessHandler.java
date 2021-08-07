@@ -2,6 +2,7 @@ package com.yu.jangtari.security.login;
 
 import com.yu.jangtari.api.member.domain.Member;
 import com.yu.jangtari.security.CustomUserDetail;
+import com.yu.jangtari.security.jwt.JwtInfo;
 import com.yu.jangtari.util.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         Member member = customUserDetail.getMember();
         log.info("** 로그인 성공 : " + member.getUsername());
 
-        cookieUtil.createCookies(member).forEach(response::addCookie);
+        cookieUtil.createCookies(JwtInfo.of(member)).forEach(response::addCookie);
     }
 }

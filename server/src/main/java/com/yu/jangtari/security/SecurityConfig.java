@@ -10,7 +10,6 @@ import com.yu.jangtari.security.logout.CustomLogoutHandler;
 import com.yu.jangtari.security.logout.CustomLogoutSuccessHandler;
 import com.yu.jangtari.util.CookieUtil;
 import com.yu.jangtari.util.JwtUtil;
-import com.yu.jangtari.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,9 +28,11 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CookieUtil cookieUtil;
     private final JwtUtil jwtUtil;
-    private final ResponseUtil responseUtil;
 
     private final List<String> openPaths = Arrays.asList(
         "/v2/api-docs",
@@ -71,6 +72,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(logoutFilter(), org.springframework.security.web.authentication.logout.LogoutFilter.class)
                 .addFilter(logInFilter()) // UsernamePasswordAuthenticationFilter 기반 유저 인증
                 .addFilterAfter(jwtAuthenticationFilter(), LoginFilter.class) // BasicAuthenticationFilter 기반 유저 인가
+            .exceptionHandling()
+                .authenticationEntryPoint(customAuthenticationEntryPoint)
+                .accessDeniedHandler(customAccessDeniedHandler)
         ;
     }
 

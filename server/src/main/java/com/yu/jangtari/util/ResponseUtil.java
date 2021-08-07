@@ -1,21 +1,25 @@
 package com.yu.jangtari.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yu.jangtari.api.member.domain.Member;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
+import org.apache.http.entity.ContentType;
+import org.springframework.http.HttpStatus;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-@Component
-@RequiredArgsConstructor
-public class ResponseUtil
-{
-    private final ObjectMapper objectMapper;
-    private final CookieUtil cookieUtil;
+@UtilityClass
+public class ResponseUtil {
 
-    public void loginSuccess(HttpServletResponse response, Member member) {
-
+    public void doResponse(HttpServletResponse response
+        , Object responseBody
+        , HttpStatus status) throws IOException
+    {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String content = objectMapper.writeValueAsString(responseBody);
+        response.setContentType(ContentType.APPLICATION_JSON.getMimeType());
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(status.value());
+        response.getWriter().write(content);
     }
 }

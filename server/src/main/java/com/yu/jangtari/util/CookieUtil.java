@@ -1,6 +1,10 @@
 package com.yu.jangtari.util;
 
-import com.yu.jangtari.api.member.domain.Member;
+import com.yu.jangtari.security.jwt.JwtInfo;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -8,68 +12,80 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class CookieUtil {
-    private final JwtUtil jwtUtil;
-
     private static final String ACCESS_COOKIE_NAME = "accessCookie";
     private static final String REFRESH_COOKIE_NAME = "refreshCookie";
 
-    private static final int ACCESS_TOKEN_VALID_TIME = 2 * 60 * 1000; // Access token 2분
-    private static final int REFRESH_TOKEN_VALID_TIME = 7 * 24 * 60 * 60 * 1000; // Refresh token 1주일
+    private static final int ACCESS_TOKEN_VALID_TIME = 2 * 60; // Access token 2분
+    private static final int REFRESH_TOKEN_VALID_TIME = 7 * 24 * 60 * 60; // Refresh token 1주일
 
-    public List<Cookie> createCookies(Member member) {
-        return Arrays.asList(createAccessCookie(member), createRefreshCookie(member));
+    // =================================================================================================================
+    // cookie 생성 관련 메소드
+    // =================================================================================================================
+    public List<Cookie> createCookies(JwtInfo jwtInfo) {
+        return Arrays.asList(createAccessCookie(jwtInfo), createRefreshCookie(jwtInfo));
     }
-    public Cookie createAccessCookie(Member member) {
-        return createCookie(member, ACCESS_COOKIE_NAME, ACCESS_TOKEN_VALID_TIME);
+    public Cookie createAccessCookie(JwtInfo jwtInfo) {
+        return createCookie(jwtInfo, ACCESS_COOKIE_NAME, ACCESS_TOKEN_VALID_TIME);
     }
-    public Cookie createRefreshCookie(Member member) {
-        return createCookie(member, REFRESH_COOKIE_NAME, REFRESH_TOKEN_VALID_TIME);
+    public Cookie createRefreshCookie(JwtInfo jwtInfo) {
+        return createCookie(jwtInfo, REFRESH_COOKIE_NAME, REFRESH_TOKEN_VALID_TIME);
     }
-    public List<Cookie> getLogoutCookies() {
-        List<Cookie> cookies = Arrays.asList(
-            new Cookie(ACCESS_COOKIE_NAME, null),
-            new Cookie(ACCESS_COOKIE_NAME, null)
-        );
-        return cookies.stream().map(cookie -> {
-            cookie.setMaxAge(0);
-            cookie.setPath("/");
-            return cookie;
-        }).collect(Collectors.toList());
-    }
-
-    private Cookie createCookie(Member member, String cookieName, int expireTime) {
-        JwtUtil.JwtInfo jwtInfo = JwtUtil.JwtInfo.of(member);
-        String token = jwtUtil.createAccessToken(jwtInfo);
+    private Cookie createCookie(JwtInfo jwtInfo, String cookieName, int expireTime) {
+        String token = JwtUtil.createToken(jwtInfo, expireTime);
         Cookie cookie = new Cookie(cookieName, token);
-        cookie.setHttpOnly(true); // httpOnly로 설정
+        cookie.setHttpOnly(true); // httpOnly 설정
         cookie.setMaxAge(expireTime);
-//        cookie.setSecure(true); // https를 적용할 것이므로 secure 설정
+//        cookie.setSecure(true); // https 적용할 것이므로 secure 설정
+        cookie.setPath("/");
+        return cookie;
+    }
+    // 로그아웃을 위한 cookie 생성
+    public List<Cookie> getLogoutCookies() {
+        return Arrays.asList(
+            logoutCookie(ACCESS_COOKIE_NAME),
+            logoutCookie(REFRESH_COOKIE_NAME)
+        );
+    }
+    private Cookie logoutCookie(String name) {
+        Cookie cookie = new Cookie(name, null);
+        cookie.setMaxAge(0);
         cookie.setPath("/");
         return cookie;
     }
 
-    public String getAccessTokenFromCookie(HttpServletRequest req) {
-        Cookie cookie = getCookie(req, ACCESS_COOKIE_NAME);
-        return cookie.getValue();
+    // =================================================================================================================
+    // cookie, jwt parsing 관련 메소드
+    // =================================================================================================================
+    public JwtInfo parseTokenOfAccessCookie(HttpServletRequest request) {
+        return parseTokenOfCookie(request, ACCESS_COOKIE_NAME);
     }
 
-    public String getRefreshTokenFromCookie(HttpServletRequest req) {
-        Cookie cookie = getCookie(req, REFRESH_COOKIE_NAME);
-        return cookie.getValue();
-    }
+    public JwtInfo parseTokenOfRefreshCookie(HttpServletRequest request) {
+        return parseTokenOfCookie(request, REFRESH_COOKIE_NAME);
 
-    private Cookie getCookie(HttpServletRequest req, String cookieName) throws IllegalArgumentException {
-        Cookie[] cookies = req.getCookies();
-        if(cookies == null) throw new IllegalArgumentException();
-        for(Cookie cookie : cookies){
-            if(cookie.getName().equals(cookieName))
-                return cookie;
-        }
-        throw new IllegalArgumentException();
+    }
+    private JwtInfo parseTokenOfCookie(HttpServletRequest request, String cookieName) throws
+        ExpiredJwtException
+        , UnsupportedJwtException
+        , MalformedJwtException
+        , SignatureException
+        , IllegalArgumentException
+    {
+        Cookie cookie = getCookie(request, cookieName);
+        if (cookie == null) throw new IllegalArgumentException();
+        String token = cookie.getValue();
+        if (token == null) throw new IllegalArgumentException();
+        return JwtUtil.parseJwt(token);
+    }
+    private Cookie getCookie(HttpServletRequest request, String cookieName) {
+        Cookie[] cookies = request.getCookies();
+        return Arrays.stream(cookies)
+            .filter(cookie -> cookie.getName().equals(cookieName))
+            .findFirst()
+            .orElse(null);
     }
 }

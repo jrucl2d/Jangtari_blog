@@ -4,6 +4,7 @@ import com.yu.jangtari.IntegrationTest;
 import com.yu.jangtari.exception.ErrorCode;
 import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.api.member.domain.RoleType;
+import com.yu.jangtari.security.jwt.JwtInfo;
 import com.yu.jangtari.util.CookieUtil;
 import com.yu.jangtari.util.JwtUtil;
 import org.junit.jupiter.api.DisplayName;
@@ -185,8 +186,8 @@ class MemberControllerTest extends IntegrationTest
         // given
         Authentication authentication = new UsernamePasswordAuthenticationToken("jangtari", null, Collections.singletonList(() -> "ROLE_USER"));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        Cookie accessCookie = cookieUtil.createAccessCookie(jwtUtil.createAccessToken(new JwtUtil.JwtInfo("jangtari", RoleType.USER)));
-        Cookie refreshCookie = cookieUtil.createRefreshCookie(jwtUtil.createRefreshToken(new JwtUtil.JwtInfo("jangtari", RoleType.USER)));
+        Cookie accessCookie = cookieUtil.createAccessCookie(jwtUtil.createAccessToken(new JwtInfo("jangtari", RoleType.USER)));
+        Cookie refreshCookie = cookieUtil.createRefreshCookie(jwtUtil.createRefreshToken(new JwtInfo("jangtari", RoleType.USER)));
 
         // when
 

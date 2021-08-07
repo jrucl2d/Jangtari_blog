@@ -3,6 +3,7 @@ package com.yu.jangtari.config;
 import com.yu.jangtari.IntegrationTest;
 import com.yu.jangtari.exception.ErrorCode;
 import com.yu.jangtari.api.member.domain.RoleType;
+import com.yu.jangtari.security.jwt.JwtInfo;
 import com.yu.jangtari.util.CookieUtil;
 import com.yu.jangtari.util.JwtUtil;
 import org.junit.jupiter.api.DisplayName;
@@ -29,8 +30,8 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
     void authWithAccessToken() throws Exception
     {
         // given
-        Cookie accessCookie = cookieUtil.createAccessCookie(jwtUtil.createAccessToken(new JwtUtil.JwtInfo("jangtari", RoleType.USER)));
-        Cookie refreshCookie = cookieUtil.createRefreshCookie(jwtUtil.createRefreshToken(new JwtUtil.JwtInfo("jangtari", RoleType.USER)));
+        Cookie accessCookie = cookieUtil.createAccessCookie(jwtUtil.createAccessToken(new JwtInfo("jangtari", RoleType.USER)));
+        Cookie refreshCookie = cookieUtil.createRefreshCookie(jwtUtil.createRefreshToken(new JwtInfo("jangtari", RoleType.USER)));
 
         // when
         // then
@@ -48,8 +49,8 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
     void authWithAccessToken1() throws Exception
     {
         // given
-        Cookie accessCookie = cookieUtil.createAccessCookie(jwtUtil.createToken(new JwtUtil.JwtInfo("jangtari", RoleType.USER), 10));
-        Cookie refreshCookie = cookieUtil.createRefreshCookie(jwtUtil.createRefreshToken(new JwtUtil.JwtInfo("jangtari", RoleType.USER)));
+        Cookie accessCookie = cookieUtil.createAccessCookie(jwtUtil.createToken(new JwtInfo("jangtari", RoleType.USER), 10));
+        Cookie refreshCookie = cookieUtil.createRefreshCookie(jwtUtil.createRefreshToken(new JwtInfo("jangtari", RoleType.USER)));
 
         // when
         // then
@@ -81,8 +82,8 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
     void authWithAccessToken_X1() throws Exception
     {
         // given
-        Cookie accessCookie = cookieUtil.createAccessCookie(jwtUtil.createAccessToken(new JwtUtil.JwtInfo("jangtari", RoleType.USER)));
-        Cookie refreshCookie = cookieUtil.createRefreshCookie(jwtUtil.createRefreshToken(new JwtUtil.JwtInfo("jangtari", RoleType.USER)));
+        Cookie accessCookie = cookieUtil.createAccessCookie(jwtUtil.createAccessToken(new JwtInfo("jangtari", RoleType.USER)));
+        Cookie refreshCookie = cookieUtil.createRefreshCookie(jwtUtil.createRefreshToken(new JwtInfo("jangtari", RoleType.USER)));
 
         // when
         // then
@@ -98,7 +99,7 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
     {
         // given
         Cookie accessCookie = cookieUtil.createAccessCookie("noway");
-        Cookie refreshCookie = cookieUtil.createRefreshCookie(jwtUtil.createRefreshToken(new JwtUtil.JwtInfo("jangtari", RoleType.USER)));
+        Cookie refreshCookie = cookieUtil.createRefreshCookie(jwtUtil.createRefreshToken(new JwtInfo("jangtari", RoleType.USER)));
 
         // when
         // then
@@ -115,7 +116,7 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
     void authWithAccessToken_X3() throws Exception
     {
         // given
-        Cookie accessCookie = cookieUtil.createAccessCookie(jwtUtil.createToken(new JwtUtil.JwtInfo("jangtari", RoleType.USER), 10));
+        Cookie accessCookie = cookieUtil.createAccessCookie(jwtUtil.createToken(new JwtInfo("jangtari", RoleType.USER), 10));
         Cookie refreshCookie = cookieUtil.createRefreshCookie("noway");
 
         // when
@@ -133,8 +134,8 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
     void authWithAccessToken_X4() throws Exception
     {
         // given
-        Cookie accessCookie = cookieUtil.createAccessCookie(jwtUtil.createToken(new JwtUtil.JwtInfo("jangtari", RoleType.USER), 10));
-        Cookie refreshCookie = cookieUtil.createRefreshCookie(jwtUtil.createToken(new JwtUtil.JwtInfo("jangtari", RoleType.USER), 10));
+        Cookie accessCookie = cookieUtil.createAccessCookie(jwtUtil.createToken(new JwtInfo("jangtari", RoleType.USER), 10));
+        Cookie refreshCookie = cookieUtil.createRefreshCookie(jwtUtil.createToken(new JwtInfo("jangtari", RoleType.USER), 10));
 
         // when
         // then
