@@ -8,7 +8,21 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 
-public class MemberDTO {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class MemberDto
+{
+
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class LogInForm {
+        private String username;
+        private String password;
+
+        public LogInForm(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+    }
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)

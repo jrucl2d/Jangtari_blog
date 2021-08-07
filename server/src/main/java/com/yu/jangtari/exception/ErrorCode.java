@@ -6,35 +6,36 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
-    // Common
-    INVALID_INPUT_VALUE(400, "yu001", "Invalid Input Value"),
-    ACCESS_DENIED(403, "yu002", "Access Denied"),
-    INTERNAL_SERVER_ERROR(500, "yu003", "Internal Server Error"),
-    METHOD_NOT_SUPPORTED(405, "yu004", "HTTP Method Not Supported"),
 
-    // Custom
-    MEMBER_NOT_FOUND(404, "yu005", "No Such Member"),
-    COMMENT_NOT_FOUND(404, "yu006", "No Such Comment"),
-    CATEGORY_NOT_FOUND(404, "yu007", "No Such Category"),
-    PICTURE_NOT_FOUND(404, "yu008", "No Such Picture"),
-    HASHTAG_NOT_FOUND(404, "yu009", "No Such Hashtag"),
-    POST_NOT_FOUND(404, "yu010", "No Such Post"),
-    SEARCH_TYPE_ERROR(404, "yu013", "No Such SearchType"),
-    JANGTARI_DELETE_ERROR(403, "yu014", "Nobody Can Delete Jangtari"),
-    INVALID_TOKEN_ERROR(401, "yu015", "Invalid Token"),
-    DUPLICATE_USER_ERROR(400, "yu017", "Duplicate User Error"),
-    RE_LOGIN_ERROR(401, "yu018", "Need to reLogin"),
+    INVALID_INPUT_VALUE("yu1000", "잘못된 입력값입니다."),
+    ACCESS_DENIED("yu1001", "접근 권한이 없습니다."),
+    INTERNAL_SERVER_ERROR("yu1002", "서버 내부 오류가 발생했습니다."),
+
+    // =================================================================================================================
+    // security, JWt 관련 에러 20XX
+    // =================================================================================================================
+    LOGIN_ERROR("yu2000", "아이디 혹은 비밀번호가 맞지 않습니다."),
+
+    MEMBER_NOT_FOUND("yu005", "No Such Member"),
+    COMMENT_NOT_FOUND("yu006", "No Such Comment"),
+    CATEGORY_NOT_FOUND("yu007", "No Such Category"),
+    PICTURE_NOT_FOUND("yu008", "No Such Picture"),
+    HASHTAG_NOT_FOUND("yu009", "No Such Hashtag"),
+    POST_NOT_FOUND("yu010", "No Such Post"),
+    SEARCH_TYPE_ERROR("yu013", "No Such SearchType"),
+    JANGTARI_DELETE_ERROR("yu014", "Nobody Can Delete Jangtari"),
+    INVALID_TOKEN_ERROR("yu015", "Invalid Token"),
+    DUPLICATE_USER_ERROR("yu017", "Duplicate User Error"),
+    RE_LOGIN_ERROR("yu018", "Need to reLogin"),
 
 
-    FILE_ERROR(500, "yu011", "File Task Error"),
-    GOOGLE_DRIVE_ERROR(500, "yu012", "Google Dirve Error");
+    FILE_ERROR("yu011", "File Task Error"),
+    GOOGLE_DRIVE_ERROR("yu012", "Google Dirve Error");
 
     private final String code;
     private final String message;
-    private final int status;
 
-    ErrorCode(final int status, final String code, final String message) {
-        this.status = status;
+    ErrorCode(String code, String message) {
         this.code = code;
         this.message = message;
     }

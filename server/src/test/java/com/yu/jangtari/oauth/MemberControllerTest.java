@@ -2,10 +2,10 @@ package com.yu.jangtari.oauth;
 
 import com.yu.jangtari.IntegrationTest;
 import com.yu.jangtari.exception.ErrorCode;
-import com.yu.jangtari.api.member.dto.MemberDTO;
+import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.api.member.domain.RoleType;
 import com.yu.jangtari.util.CookieUtil;
-import com.yu.jangtari.util.JWTUtil;
+import com.yu.jangtari.util.JwtUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class MemberControllerTest extends IntegrationTest
 {
     @Autowired
-    private JWTUtil jwtUtil;
+    private JwtUtil jwtUtil;
     @Autowired
     private CookieUtil cookieUtil;
 
@@ -36,7 +36,7 @@ class MemberControllerTest extends IntegrationTest
     void join() throws Exception
     {
         // given
-        MemberDTO.Add dto = MemberDTO.Add.builder()
+        MemberDto.Add dto = MemberDto.Add.builder()
             .username("jangtari")
             .nickname("jangtari")
             .password("1234")
@@ -59,7 +59,7 @@ class MemberControllerTest extends IntegrationTest
     void join_X() throws Exception
     {
         // given
-        MemberDTO.Add dto = MemberDTO.Add.builder()
+        MemberDto.Add dto = MemberDto.Add.builder()
             .username("jangtari")
             .nickname("jangtari")
             .password("1234")
@@ -87,7 +87,7 @@ class MemberControllerTest extends IntegrationTest
     void login() throws Exception
     {
         // given
-        MemberDTO.Add dto = MemberDTO.Add.builder()
+        MemberDto.Add dto = MemberDto.Add.builder()
             .username("jangtari")
             .nickname("jangtari")
             .password("1234")
@@ -137,7 +137,7 @@ class MemberControllerTest extends IntegrationTest
     void login_X1() throws Exception
     {
         // given
-        MemberDTO.Add dto = MemberDTO.Add.builder()
+        MemberDto.Add dto = MemberDto.Add.builder()
             .username("jangtari")
             .nickname("jangtari")
             .password("1234")
@@ -185,8 +185,8 @@ class MemberControllerTest extends IntegrationTest
         // given
         Authentication authentication = new UsernamePasswordAuthenticationToken("jangtari", null, Collections.singletonList(() -> "ROLE_USER"));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        Cookie accessCookie = cookieUtil.createAccessCookie(jwtUtil.createAccessToken(new JWTUtil.JwtInfo("jangtari", RoleType.USER)));
-        Cookie refreshCookie = cookieUtil.createRefreshCookie(jwtUtil.createRefreshToken(new JWTUtil.JwtInfo("jangtari", RoleType.USER)));
+        Cookie accessCookie = cookieUtil.createAccessCookie(jwtUtil.createAccessToken(new JwtUtil.JwtInfo("jangtari", RoleType.USER)));
+        Cookie refreshCookie = cookieUtil.createRefreshCookie(jwtUtil.createRefreshToken(new JwtUtil.JwtInfo("jangtari", RoleType.USER)));
 
         // when
 

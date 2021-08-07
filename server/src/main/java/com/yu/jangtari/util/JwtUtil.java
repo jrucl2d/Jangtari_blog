@@ -21,7 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class JWTUtil {
+public class JwtUtil
+{
     private static final String USERNAME_KEY = "username";
     private static final String ROLE_KEY = "role";
     private static final int ACCESS_TOKEN_VALID_TIME = 2 * 60 * 1000; // Access token 2분
@@ -29,7 +30,7 @@ public class JWTUtil {
     private static final String JWT_SECRET = "tmp";
     private final Key tokenKey;
 
-    public JWTUtil() {
+    public JwtUtil() {
         this.tokenKey = new SecretKeySpec(JWT_SECRET.getBytes(StandardCharsets.UTF_8), SignatureAlgorithm.HS256.getJcaName());
     }
 
@@ -40,6 +41,7 @@ public class JWTUtil {
     public String createRefreshToken(JwtInfo jwtInfo) {
         return createToken(jwtInfo, REFRESH_TOKEN_VALID_TIME);
     }
+
     // accessToken이 만료되었을 경우 refreshToken으로 accessToken을 재생성
     public String recreateAccessToken(String refreshToken) {
         JwtInfo jwtInfo = parseJwt(refreshToken);
@@ -75,13 +77,13 @@ public class JWTUtil {
         return Jwts.parser().setSigningKey(tokenKey).parseClaimsJws(token).getBody();
     }
 
-    @AllArgsConstructor
     @Getter
+    @AllArgsConstructor
     public static class JwtInfo {
         private final String username;
         private final RoleType roleType;
 
-        public static JwtInfo getInstance(Member member) {
+        public static JwtInfo of(Member member) {
             return new JwtInfo(member.getUsername(), member.getRole());
         }
     }

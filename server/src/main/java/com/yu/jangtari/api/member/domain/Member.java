@@ -1,5 +1,5 @@
 package com.yu.jangtari.api.member.domain;
-import com.yu.jangtari.api.member.dto.MemberDTO;
+import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.common.DateAuditing;
 import com.yu.jangtari.common.DeleteFlag;
 import lombok.AccessLevel;
@@ -62,7 +62,7 @@ public class Member extends DateAuditing
         this.deleteFlag = DeleteFlag.initDeleteFlag();
     }
 
-    public void updateMember(MemberDTO.Update memberDTO) {
+    public void updateMember(MemberDto.Update memberDTO) {
         this.nickname = memberDTO.getNickname();
         this.introduce = memberDTO.getIntroduce();
         final String pictureURL = memberDTO.getPictureURL();

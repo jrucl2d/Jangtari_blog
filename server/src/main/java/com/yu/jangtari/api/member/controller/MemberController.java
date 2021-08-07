@@ -1,6 +1,6 @@
 package com.yu.jangtari.api.member.controller;
 
-import com.yu.jangtari.api.member.dto.MemberDTO;
+import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.api.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,9 +18,9 @@ public class MemberController
     // About Jangtari
     @GetMapping("/jangtari")
     @ResponseStatus(value = HttpStatus.OK)
-    public MemberDTO.Get findJangtari()
+    public MemberDto.Get findJangtari()
     {
-        return MemberDTO.Get.of(memberService.findOne(1L));
+        return MemberDto.Get.of(memberService.findOne(1L));
     }
 
     @DeleteMapping("/member/{memberId}")
@@ -33,14 +33,14 @@ public class MemberController
 
     @PostMapping(value = "/admin/jangtari", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(value = HttpStatus.OK)
-    public MemberDTO.Get updateJangtari(@Valid final MemberDTO.Update memberDTO)
+    public MemberDto.Get updateJangtari(@Valid final MemberDto.Update memberDTO)
     {
-        return MemberDTO.Get.of(memberService.updateMember(memberDTO));
+        return MemberDto.Get.of(memberService.updateMember(memberDTO));
     }
 
     @PostMapping("/join")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public String join(@RequestBody @Valid final MemberDTO.Add memberDTO)
+    public String join(@RequestBody @Valid final MemberDto.Add memberDTO)
     {
         memberService.join(memberDTO);
         return "OK";

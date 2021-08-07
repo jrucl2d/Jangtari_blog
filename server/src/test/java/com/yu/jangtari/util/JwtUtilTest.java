@@ -9,13 +9,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class JWTUtilTest {
-    private JWTUtil jwtUtil;
+class JwtUtilTest
+{
+    private JwtUtil jwtUtil;
 
     @BeforeEach
     void setUp()
     {
-        jwtUtil = new JWTUtil();
+        jwtUtil = new JwtUtil();
     }
 
     @Test
@@ -24,11 +25,11 @@ class JWTUtilTest {
     {
         // given
         String username = "jangtari";
-        JWTUtil.JwtInfo jwtInfo = new JWTUtil.JwtInfo(username, RoleType.USER);
+        JwtUtil.JwtInfo jwtInfo = new JwtUtil.JwtInfo(username, RoleType.USER);
         String token = jwtUtil.createAccessToken(jwtInfo);
 
         // when
-        JWTUtil.JwtInfo gotJwtInfo = jwtUtil.parseJwt(token);
+        JwtUtil.JwtInfo gotJwtInfo = jwtUtil.parseJwt(token);
 
         // then
         assertEquals(username, gotJwtInfo.getUsername());
@@ -41,11 +42,11 @@ class JWTUtilTest {
     {
         // given
         String username = "jangtari";
-        JWTUtil.JwtInfo jwtInfo = new JWTUtil.JwtInfo(username, RoleType.ADMIN);
+        JwtUtil.JwtInfo jwtInfo = new JwtUtil.JwtInfo(username, RoleType.ADMIN);
         String token = jwtUtil.createRefreshToken(jwtInfo);
 
         // when
-        JWTUtil.JwtInfo gotJwtInfo = jwtUtil.parseJwt(token);
+        JwtUtil.JwtInfo gotJwtInfo = jwtUtil.parseJwt(token);
 
         // then
         assertEquals(username, gotJwtInfo.getUsername());
@@ -58,12 +59,12 @@ class JWTUtilTest {
     {
         // given
         String username = "jangtari";
-        JWTUtil.JwtInfo jwtInfo = new JWTUtil.JwtInfo(username, RoleType.ADMIN);
+        JwtUtil.JwtInfo jwtInfo = new JwtUtil.JwtInfo(username, RoleType.ADMIN);
         String refreshToken = jwtUtil.createRefreshToken(jwtInfo);
 
         // when
         String newAccessToken = jwtUtil.recreateAccessToken(refreshToken);
-        JWTUtil.JwtInfo gotJwtInfo = jwtUtil.parseJwt(newAccessToken);
+        JwtUtil.JwtInfo gotJwtInfo = jwtUtil.parseJwt(newAccessToken);
 
         // then
         assertEquals(username, gotJwtInfo.getUsername());
@@ -75,9 +76,9 @@ class JWTUtilTest {
     void parseJwt_X()
     {
         // given
-        JWTUtil jwtUtil = new JWTUtil();
+        JwtUtil jwtUtil = new JwtUtil();
         String username = "jangtari";
-        JWTUtil.JwtInfo jwtInfo = new JWTUtil.JwtInfo(username, RoleType.USER);
+        JwtUtil.JwtInfo jwtInfo = new JwtUtil.JwtInfo(username, RoleType.USER);
 
         // when
         String accessToken = jwtUtil.createToken(jwtInfo, 10);

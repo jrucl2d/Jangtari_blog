@@ -4,7 +4,7 @@ import com.yu.jangtari.ServiceTest;
 import com.yu.jangtari.common.exception.DuplicateUserException;
 import com.yu.jangtari.common.exception.JangtariDeleteError;
 import com.yu.jangtari.common.exception.NoSuchMemberException;
-import com.yu.jangtari.api.member.dto.MemberDTO;
+import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.api.member.domain.Member;
 import com.yu.jangtari.api.member.service.MemberService;
 import com.yu.jangtari.api.member.repository.MemberRepository;
@@ -65,7 +65,7 @@ class MemberServiceTest extends ServiceTest {
     void updateMember()
     {
         // given
-        MemberDTO.Update memDTO = MemberDTO.Update.builder().nickname("newNick").introduce("newIntro").build();
+        MemberDto.Update memDTO = MemberDto.Update.builder().nickname("newNick").introduce("newIntro").build();
         given(memberRepository.findById(anyLong())).willReturn(Optional.of(member));
         given(googleDriveUtil.fileToURL(any(), any())).willReturn(null);
 
@@ -83,7 +83,7 @@ class MemberServiceTest extends ServiceTest {
     void updateMember1()
     {
         // given
-        MemberDTO.Update memDTO = MemberDTO.Update.builder().nickname("newNick").introduce("newIntro").build();
+        MemberDto.Update memDTO = MemberDto.Update.builder().nickname("newNick").introduce("newIntro").build();
         given(memberRepository.findById(anyLong())).willReturn(Optional.of(member));
         given(googleDriveUtil.fileToURL(any(), any())).willReturn("newPic");
 
@@ -125,7 +125,7 @@ class MemberServiceTest extends ServiceTest {
     void join()
     {
         // given
-        MemberDTO.Add memDTO = MemberDTO.Add.builder().username("username").nickname("nickname").password("password").build();
+        MemberDto.Add memDTO = MemberDto.Add.builder().username("username").nickname("nickname").password("password").build();
         given(memberRepository.findByUsername(anyString())).willReturn(Optional.empty());
         given(passwordEncoder.encode(anyString())).willReturn("encoded");
         given(memberRepository.save(any())).willReturn(member);
@@ -144,7 +144,7 @@ class MemberServiceTest extends ServiceTest {
     void join_X()
     {
         // given
-        MemberDTO.Add memDTO = MemberDTO.Add.builder().username("username").nickname("nickname").password("password").build();
+        MemberDto.Add memDTO = MemberDto.Add.builder().username("username").nickname("nickname").password("password").build();
         given(memberRepository.findByUsername(anyString())).willReturn(Optional.of(member));
 
         // when

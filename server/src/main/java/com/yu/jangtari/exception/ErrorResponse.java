@@ -4,9 +4,11 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.validation.FieldError;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author yuseonggeun
@@ -17,29 +19,48 @@ import java.util.List;
 public class ErrorResponse {
 
     private String message;
-    private int status;
-    private List<FieldError> errors = new ArrayList<>();
     private String code;
+    private List<FieldErrorForm> errors;
 
-    @Builder
-    public ErrorResponse(String message, String code, int status, List<FieldError> errors) {
+    public ErrorResponse(ErrorCode errorCode) {
+        this.message = errorCode.getMessage();
+        this.code = errorCode.getCode();
+        this.errors = new ArrayList<>();
+    }
+
+    public ErrorResponse(List<FieldError> fieldErrors)
+    {
+        this(ErrorCode.INVALID_INPUT_VALUE);
+        this.errors = fieldErrors.stream()
+            .map(FieldErrorForm::of)
+            .collect(Collectors.toList());
+    }
+
+    public ErrorResponse(ErrorCode errorCode, String message)
+    {
+        this(errorCode);
         this.message = message;
-        this.code = code;
-        this.status = status;
-        this.errors = errors;
     }
 
     @Getter
-    public static class FieldError {
+    public static class FieldErrorForm {
         private final String field;
-        private final String value;
-        private final String reason;
+        private final String message;
+        private final Object value;
+
+        public static FieldErrorForm of(FieldError fieldError) {
+            return FieldErrorForm.builder()
+                .field(fieldError.getField())
+                .message(fieldError.getDefaultMessage())
+                .value(fieldError.getCode())
+                .build();
+        }
 
         @Builder
-        public FieldError(String field, String value, String reason) {
+        private FieldErrorForm(String field, String message, Object value) {
             this.field = field;
+            this.message = message;
             this.value = value;
-            this.reason = reason;
         }
     }
 

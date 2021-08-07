@@ -4,7 +4,7 @@ import com.yu.jangtari.common.GDFolder;
 import com.yu.jangtari.common.exception.DuplicateUserException;
 import com.yu.jangtari.common.exception.JangtariDeleteError;
 import com.yu.jangtari.common.exception.NoSuchMemberException;
-import com.yu.jangtari.api.member.dto.MemberDTO;
+import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.api.member.domain.Member;
 import com.yu.jangtari.api.member.repository.MemberRepository;
 import com.yu.jangtari.util.GoogleDriveUtil;
@@ -31,7 +31,7 @@ public class MemberService {
         return memberRepository.findByUsername(username).orElseThrow(NoSuchMemberException::new);
     }
 
-    public Member updateMember(MemberDTO.Update memberDTO) {
+    public Member updateMember(MemberDto.Update memberDTO) {
         final Member member = findOne(1L);
         final String pictureURL = googleDriveUtil.fileToURL(memberDTO.getPicture(), GDFolder.JANGTARI);
         memberDTO.setPictureURL(pictureURL);
@@ -47,7 +47,7 @@ public class MemberService {
         return member;
     }
 
-    public Member join(MemberDTO.Add memberDTO) {
+    public Member join(MemberDto.Add memberDTO) {
         checkUserDuplicate(memberDTO.getUsername());
         final Member member = memberDTO.toEntity(passwordEncoder.encode(memberDTO.getPassword()));
         return memberRepository.save(member);
