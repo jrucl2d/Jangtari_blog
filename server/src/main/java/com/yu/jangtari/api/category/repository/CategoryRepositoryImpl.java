@@ -2,7 +2,7 @@ package com.yu.jangtari.api.category.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yu.jangtari.api.category.domain.Category;
-import com.yu.jangtari.domain.QCategory;
+import com.yu.jangtari.api.category.domain.QCategory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import java.util.List;

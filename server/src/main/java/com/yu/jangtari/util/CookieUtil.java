@@ -38,7 +38,7 @@ public class CookieUtil {
         String token = JwtUtil.createToken(jwtInfo, expireTime);
         Cookie cookie = new Cookie(cookieName, token);
         cookie.setHttpOnly(true); // httpOnly 설정
-        cookie.setMaxAge(expireTime);
+        cookie.setMaxAge(Integer.MAX_VALUE);
 //        cookie.setSecure(true); // https 적용할 것이므로 secure 설정
         cookie.setPath("/");
         return cookie;
@@ -75,17 +75,16 @@ public class CookieUtil {
         , SignatureException
         , IllegalArgumentException
     {
-        Cookie cookie = getCookie(request, cookieName);
-        if (cookie == null) throw new IllegalArgumentException();
-        String token = cookie.getValue();
-        if (token == null) throw new IllegalArgumentException();
+        String token = getCookieValue(request, cookieName);
         return JwtUtil.parseJwt(token);
     }
-    private Cookie getCookie(HttpServletRequest request, String cookieName) {
+    private String getCookieValue(HttpServletRequest request, String cookieName) {
         Cookie[] cookies = request.getCookies();
+        if (cookies == null) throw new IllegalArgumentException();
         return Arrays.stream(cookies)
             .filter(cookie -> cookie.getName().equals(cookieName))
             .findFirst()
+            .map(Cookie::getValue)
             .orElse(null);
     }
 }

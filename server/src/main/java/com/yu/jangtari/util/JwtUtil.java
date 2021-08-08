@@ -18,8 +18,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @UtilityClass
-public class JwtUtil
-{
+public class JwtUtil {
     private final String USERNAME_KEY = "username";
     private final String ROLE_KEY = "role";
     private final String JWT_SECRET = "tmp";
@@ -42,6 +41,7 @@ public class JwtUtil
         SignatureException,
         IllegalArgumentException
     {
+        if (token == null) throw new IllegalArgumentException();
         Claims claims = getClaims(token);
         String username = claims.get(USERNAME_KEY, String.class);
         String role = claims.get(ROLE_KEY, String.class);
