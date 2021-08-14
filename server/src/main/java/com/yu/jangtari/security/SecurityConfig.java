@@ -1,5 +1,6 @@
 package com.yu.jangtari.security;
 
+import com.yu.jangtari.api.member.repository.JwtTokenRepository;
 import com.yu.jangtari.security.jwt.JwtAuthenticationFilter;
 import com.yu.jangtari.security.jwt.SkipPathRequestMatcher;
 import com.yu.jangtari.security.login.LoginFailureHandler;
@@ -8,7 +9,6 @@ import com.yu.jangtari.security.login.LoginSuccessHandler;
 import com.yu.jangtari.security.logout.CustomLogoutFilter;
 import com.yu.jangtari.security.logout.CustomLogoutHandler;
 import com.yu.jangtari.security.logout.CustomLogoutSuccessHandler;
-import com.yu.jangtari.util.CookieUtil;
 import com.yu.jangtari.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-    private final CookieUtil cookieUtil;
+    private final JwtTokenRepository jwtTokenRepository;
     private final JwtUtil jwtUtil;
 
     private final List<String> openPaths = Arrays.asList(
@@ -81,15 +81,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private LoginFilter logInFilter() throws Exception {
         LoginFilter logInFilter = new LoginFilter(authenticationManager());
         logInFilter.setFilterProcessesUrl("/login");
-        logInFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler(cookieUtil));
+        logInFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler(jwtUtil, jwtTokenRepository));
         logInFilter.setAuthenticationFailureHandler(new LoginFailureHandler());
         return logInFilter;
     }
     private JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        return new JwtAuthenticationFilter(authenticationManager(), cookieUtil, jwtUtil, new SkipPathRequestMatcher(openPaths));
+        return new JwtAuthenticationFilter(authenticationManager(), jwtUtil, new SkipPathRequestMatcher(openPaths));
     }
     private CustomLogoutFilter logoutFilter() {
-        CustomLogoutFilter customLogoutFilter = new CustomLogoutFilter(new CustomLogoutSuccessHandler(), new CustomLogoutHandler(cookieUtil));
+        CustomLogoutFilter customLogoutFilter = new CustomLogoutFilter(new CustomLogoutSuccessHandler(), new CustomLogoutHandler(jwtUtil));
         customLogoutFilter.setFilterProcessesUrl("/logout");
         return customLogoutFilter;
     }

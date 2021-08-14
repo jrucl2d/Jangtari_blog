@@ -15,7 +15,6 @@ public class MemberController
 
     private final MemberService memberService;
 
-    // About Jangtari
     @GetMapping("/jangtari")
     @ResponseStatus(value = HttpStatus.OK)
     public MemberDto.Get findJangtari()

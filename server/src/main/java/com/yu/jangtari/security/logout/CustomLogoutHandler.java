@@ -1,6 +1,6 @@
 package com.yu.jangtari.security.logout;
 
-import com.yu.jangtari.util.CookieUtil;
+import com.yu.jangtari.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -17,13 +17,13 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class CustomLogoutHandler implements LogoutHandler
 {
-    private final CookieUtil cookieUtil;
+    private final JwtUtil jwtUtil;
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
     {
         log.info("** 로그아웃 진행");
         SecurityContextHolder.getContext().setAuthentication(null);
-        cookieUtil.getLogoutCookies().forEach(response::addCookie);
+//        cookieUtil.getLogoutCookies().forEach(response::addCookie);
     }
 }
