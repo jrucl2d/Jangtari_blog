@@ -1,6 +1,6 @@
 package com.yu.jangtari.security;
 
-import com.yu.jangtari.api.member.repository.JwtTokenRepository;
+import com.yu.jangtari.api.member.repository.RefreshTokenRepository;
 import com.yu.jangtari.security.jwt.JwtAuthenticationFilter;
 import com.yu.jangtari.security.jwt.SkipPathRequestMatcher;
 import com.yu.jangtari.security.login.LoginFailureHandler;
@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-    private final JwtTokenRepository jwtTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
 
     private final List<String> openPaths = Arrays.asList(
@@ -81,15 +81,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private LoginFilter logInFilter() throws Exception {
         LoginFilter logInFilter = new LoginFilter(authenticationManager());
         logInFilter.setFilterProcessesUrl("/login");
-        logInFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler(jwtUtil, jwtTokenRepository));
+        logInFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler(jwtUtil, refreshTokenRepository));
         logInFilter.setAuthenticationFailureHandler(new LoginFailureHandler());
         return logInFilter;
     }
     private JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        return new JwtAuthenticationFilter(authenticationManager(), jwtUtil, new SkipPathRequestMatcher(openPaths));
+        return new JwtAuthenticationFilter(authenticationManager(), jwtUtil, new SkipPathRequestMatcher(openPaths), refreshTokenRepository);
     }
     private CustomLogoutFilter logoutFilter() {
-        CustomLogoutFilter customLogoutFilter = new CustomLogoutFilter(new CustomLogoutSuccessHandler(), new CustomLogoutHandler(jwtUtil));
+        CustomLogoutFilter customLogoutFilter = new CustomLogoutFilter(new CustomLogoutSuccessHandler(), new CustomLogoutHandler(refreshTokenRepository));
         customLogoutFilter.setFilterProcessesUrl("/logout");
         return customLogoutFilter;
     }

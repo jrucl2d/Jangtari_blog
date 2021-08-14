@@ -1,17 +1,18 @@
 package com.yu.jangtari.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.experimental.UtilityClass;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.http.entity.ContentType;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@UtilityClass
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ResponseUtil {
 
-    public void doResponse(HttpServletResponse response
+    public static void doResponse(HttpServletResponse response
         , Object responseBody
         , HttpStatus status) throws IOException
     {

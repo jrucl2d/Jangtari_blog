@@ -1,8 +1,9 @@
 package com.yu.jangtari.util;
 
-import com.yu.jangtari.api.member.domain.RoleType;
+import com.yu.jangtari.exception.AuthException;
 import com.yu.jangtari.security.jwt.JwtInfo;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 @Component
 public class JwtUtil {
+    public static final String REFRESHTOKEN = "RefreshToken";
     private static final String USERNAME_KEY = "username";
     private static final String ROLE_KEY = "role";
     private static final String REFRESH_KEY = "refresh";
@@ -53,20 +55,28 @@ public class JwtUtil {
     }
 
     // JWT 토큰 parsing 관련 메소드
-    public JwtInfo parseAccessToken(String token) {
+    public JwtInfo decodeAccessToken(String token) {
         if (token == null) throw new IllegalArgumentException();
         Claims claims = getClaims(token);
-        String username = claims.get(USERNAME_KEY, String.class);
-        String role = claims.get(ROLE_KEY, String.class);
-        return new JwtInfo(username, RoleType.of(role));
+        return JwtInfo.of(claims);
     }
-    public String parseRefreshToken(String token) {
+
+    public JwtInfo decodeRefreshToken(String token) {
         if (token == null) throw new IllegalArgumentException();
         Claims claims = getClaims(token);
-        return claims.get(REFRESH_KEY, String.class);
+        String accessToken = claims.get(REFRESH_KEY, String.class);
+        Claims accessClaims;
+        try {
+            accessClaims = getClaims(accessToken);
+        } catch(ExpiredJwtException e) {
+            accessClaims = e.getClaims();
+        } catch (Exception e) {
+            throw new AuthException("RefreshToken 안의 AccessToken 에러");
+        }
+        return JwtInfo.of(accessClaims);
     }
 
     private Claims getClaims(String token) {
-        return Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token.replace(TOKEN_PREFIX, "")).getBody();
     }
 }

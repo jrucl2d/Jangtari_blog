@@ -16,18 +16,19 @@ import javax.persistence.Table;
  */
 @Entity
 @Getter
-@Table(name = "jwt_token")
-@EqualsAndHashCode(of = {"username", "jwtHash"})
+@Table(name = "refresh_token")
+@EqualsAndHashCode(of = {"username", "refreshToken"})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class JwtToken {
+public class RefreshToken
+{
     @Id
     String username;
     @Column(nullable = false)
-    String jwtHash;
+    String refreshToken;
 
     @Builder
-    private JwtToken(String username, String jwtHash) {
+    private RefreshToken(String username, String refreshToken) {
         this.username = username;
-        this.jwtHash = jwtHash;
+        this.refreshToken = refreshToken;
     }
 }

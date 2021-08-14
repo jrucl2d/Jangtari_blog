@@ -1,14 +1,16 @@
 package com.yu.jangtari.security.login;
 
-import com.yu.jangtari.api.member.domain.JwtToken;
 import com.yu.jangtari.api.member.domain.Member;
-import com.yu.jangtari.api.member.repository.JwtTokenRepository;
+import com.yu.jangtari.api.member.domain.RefreshToken;
+import com.yu.jangtari.api.member.repository.RefreshTokenRepository;
 import com.yu.jangtari.security.CustomUserDetail;
 import com.yu.jangtari.security.jwt.JwtInfo;
 import com.yu.jangtari.util.JwtUtil;
+import com.yu.jangtari.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +24,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtUtil jwtUtil;
-    private final JwtTokenRepository jwtTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     @Transactional
@@ -35,13 +37,16 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         Member member = customUserDetail.getMember();
         log.info("** 로그인 성공 : " + member.getUsername());
 
-        String token = jwtUtil.createAccessToken(JwtInfo.of(member));
-        String jwtHash = jwtUtil.createRefreshToken(token);
-        jwtTokenRepository.save(
-            JwtToken.builder()
-                .jwtHash(token)
+        String accessToken = jwtUtil.createAccessToken(JwtInfo.of(member));
+        String refreshToken = jwtUtil.createRefreshToken(accessToken);
+        refreshTokenRepository.save(
+            RefreshToken.builder()
+                .refreshToken(refreshToken)
                 .username(member.getUsername())
                 .build());
-        response.setHeader(HttpHeaders.AUTHORIZATION, token);
+
+        response.setHeader(HttpHeaders.AUTHORIZATION, accessToken);
+        response.setHeader(JwtUtil.REFRESHTOKEN, refreshToken);
+        ResponseUtil.doResponse(response, "로그인 성공", HttpStatus.OK);
     }
 }
