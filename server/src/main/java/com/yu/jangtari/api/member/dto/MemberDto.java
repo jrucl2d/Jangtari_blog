@@ -4,6 +4,7 @@ package com.yu.jangtari.api.member.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yu.jangtari.api.member.domain.Member;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
@@ -67,11 +68,11 @@ public class MemberDto
             this.password = password;
         }
 
-        public Member toEntity(String encodedPassword) {
+        public Member toEntity(PasswordEncoder passwordEncoder) {
             return Member.builder()
-                    .username(username)
-                    .nickname(nickname)
-                    .password(encodedPassword)
+                    .username(this.username)
+                    .nickname(this.nickname)
+                    .password(passwordEncoder.encode(this.password))
                     .build();
         }
     }

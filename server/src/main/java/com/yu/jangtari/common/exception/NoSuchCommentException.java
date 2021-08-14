@@ -8,6 +8,7 @@ import lombok.Getter;
 public class NoSuchCommentException extends BusinessException
 {
     public NoSuchCommentException() {
+        super("tmp");
         this.errorCode = ErrorCode.COMMENT_NOT_FOUND; // error code add needed
     }
 }

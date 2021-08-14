@@ -6,6 +6,7 @@ import com.yu.jangtari.exception.ErrorCode;
 public class NoMasterException extends BusinessException
 {
     public NoMasterException() {
+        super("tmp");
         this.errorCode = ErrorCode.ACCESS_DENIED;
     }
 }

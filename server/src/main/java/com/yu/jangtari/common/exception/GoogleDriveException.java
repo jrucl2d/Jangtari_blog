@@ -8,6 +8,7 @@ import lombok.Getter;
 public class GoogleDriveException extends BusinessException
 {
     public GoogleDriveException() {
+        super("tmp");
         this.errorCode = ErrorCode.GOOGLE_DRIVE_ERROR;
     }
 }

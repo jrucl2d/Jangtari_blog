@@ -1,13 +1,13 @@
 package com.yu.jangtari.service;
 
 import com.yu.jangtari.ServiceTest;
-import com.yu.jangtari.common.exception.DuplicateUserException;
 import com.yu.jangtari.common.exception.JangtariDeleteError;
 import com.yu.jangtari.common.exception.NoSuchMemberException;
 import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.api.member.domain.Member;
 import com.yu.jangtari.api.member.service.MemberService;
 import com.yu.jangtari.api.member.repository.MemberRepository;
+import com.yu.jangtari.exception.BusinessException;
 import com.yu.jangtari.util.GoogleDriveUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -140,7 +140,7 @@ class MemberServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("이미 가입된 username으로 회원가입 하려하면 DuplicateUserException 발생")
+    @DisplayName("이미 가입된 username으로 회원가입 하려하면 BusinessException 발생")
     void join_X()
     {
         // given
@@ -149,7 +149,7 @@ class MemberServiceTest extends ServiceTest {
 
         // when
         // then
-        assertThrows(DuplicateUserException.class, () -> memberService.join(memDTO));
+        assertThrows(BusinessException.class, () -> memberService.join(memDTO));
 
     }
 }

@@ -8,4 +8,5 @@ public class CustomLogoutFilter extends LogoutFilter {
     public CustomLogoutFilter(LogoutSuccessHandler logoutSuccessHandler, LogoutHandler... handlers) {
         super(logoutSuccessHandler, handlers);
     }
+
 }

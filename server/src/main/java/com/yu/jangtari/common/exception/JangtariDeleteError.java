@@ -6,6 +6,7 @@ import com.yu.jangtari.exception.ErrorCode;
 public class JangtariDeleteError extends BusinessException
 {
     public JangtariDeleteError() {
+        super("tmp");
         this.errorCode = ErrorCode.JANGTARI_DELETE_ERROR;
     }
 }

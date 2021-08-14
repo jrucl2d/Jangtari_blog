@@ -8,6 +8,7 @@ import lombok.Getter;
 public class FileTaskException extends BusinessException
 {
     public FileTaskException() {
+        super("tmp");
         this.errorCode = ErrorCode.FILE_ERROR;
     }
 }
