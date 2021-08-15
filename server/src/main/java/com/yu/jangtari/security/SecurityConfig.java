@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -69,7 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                     .authenticated()
             .and()
-                .addFilterBefore(logoutFilter(), LoginFilter.class)
+                .addFilterBefore(logoutFilter(), LogoutFilter.class)
                 .addFilter(logInFilter()) // UsernamePasswordAuthenticationFilter 기반 유저 인증
                 .addFilterAfter(jwtAuthenticationFilter(), LoginFilter.class) // BasicAuthenticationFilter 기반 유저 인가
             .exceptionHandling()

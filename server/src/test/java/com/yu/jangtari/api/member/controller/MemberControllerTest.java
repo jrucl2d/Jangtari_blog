@@ -1,15 +1,24 @@
 package com.yu.jangtari.api.member.controller;
 
 import com.yu.jangtari.IntegrationTest;
+import com.yu.jangtari.api.member.domain.RoleType;
 import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.api.member.repository.RefreshTokenRepository;
 import com.yu.jangtari.exception.ErrorCode;
+import com.yu.jangtari.security.jwt.JwtInfo;
 import com.yu.jangtari.util.JwtUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.Collections;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -154,37 +163,37 @@ class MemberControllerTest extends IntegrationTest {
             .andDo(print());
     }
 
-//    @Test
-//    @DisplayName("정상적으로 로그아웃 수행")
-//    void logout() throws Exception
-//    {
-//        // given
-//        Authentication authentication = new UsernamePasswordAuthenticationToken("jangtari", null, Collections.singletonList(() -> "ROLE_USER"));
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        JwtInfo jwtInfo = new JwtInfo("jangtari", RoleType.USER);
-//        String accessToken = jwtUtil.createAccessToken(jwtInfo);
-//
-//        // when
-//        // then
-//        mockMvc.perform(post("/logout")
-//            .header(HttpHeaders.AUTHORIZATION, accessToken))
-//            .andExpect(status().isOk())
-//            .andDo(print());
-//        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
-//        assertThat(refreshTokenRepository.findById("jangtari")).isNotPresent();
-//    }
+    @Test
+    @DisplayName("정상적으로 로그아웃 수행")
+    void logout() throws Exception
+    {
+        // given
+        Authentication authentication = new UsernamePasswordAuthenticationToken("jangtari", null, Collections.singletonList(() -> "ROLE_USER"));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        JwtInfo jwtInfo = new JwtInfo("jangtari", RoleType.USER);
+        String accessToken = jwtUtil.createAccessToken(jwtInfo);
 
-//    @Test
-//    @DisplayName("토큰이 없는 상태에서 로그아웃 하려고 하면 InvalidTokenException 발생")
-//    void logout_X() throws Exception
-//    {
-//        // given
-//        // when
-//        // then
-//        mockMvc.perform(post("/logout"))
-//            .andExpect(status().is4xxClientError())
-//            .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_TOKEN_ERROR.getMessage()))
-//            .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_TOKEN_ERROR.getCode()))
-//            .andDo(print());
-//    }
+        // when
+        // then
+        mockMvc.perform(post("/logout")
+            .header(HttpHeaders.AUTHORIZATION, accessToken))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").value("로그아웃 성공"))
+            .andDo(print());
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
+        assertThat(refreshTokenRepository.findById("jangtari")).isNotPresent();
+    }
+
+    @Test
+    @DisplayName("토큰이 없는 상태에서 로그아웃 하려고 해도 로그아웃 성공")
+    void logout_X() throws Exception
+    {
+        // given
+        // when
+        // then
+        mockMvc.perform(post("/logout"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").value("로그인 성공"))
+            .andDo(print());
+    }
 }

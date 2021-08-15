@@ -23,7 +23,8 @@ public class CustomLogoutHandler implements LogoutHandler {
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         log.info("** 로그아웃 진행");
         String username = (String) authentication.getPrincipal();
-        refreshTokenRepository.delete(RefreshToken.builder().username(username).build());
         SecurityContextHolder.getContext().setAuthentication(null);
+        if (username == null) return;
+        refreshTokenRepository.delete(RefreshToken.builder().username(username).build());
     }
 }
