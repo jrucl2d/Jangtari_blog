@@ -12,7 +12,7 @@ public enum ErrorCode {
     // security, JWt 관련 에러 20XX
     // =================================================================================================================
     LOGIN_ERROR("yu2000", "아이디 혹은 비밀번호가 맞지 않습니다."),
-    ACCESS_DENIED("yu2001", "접근 권한이 없습니다."),
+    ACCESS_DENIED_ERROR("yu2001", "접근 권한이 없습니다."),
     UNAUTHORIZED_ERROR("yu2002", "인증되지 않은 요청입니다."),
     JWT_TIMEOUT_ERROR("yu2003", "토큰이 만료되었습니다."),
     JWT_VALIDATION_ERROR("yu2004", "올바르지 않은 토큰입니다."),

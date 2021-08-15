@@ -46,11 +46,10 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String refreshToken = request.getHeader(JwtUtil.REFRESHTOKEN);
         if (refreshToken == null) {
-            refreshTokenTask(request, response, chain);
-        } else {
             accessTokenTask(request, response, chain);
+        } else {
+            refreshTokenTask(request, response, chain);
         }
-        chain.doFilter(request, response);
     }
 
     private void accessTokenTask(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
@@ -59,10 +58,12 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             JwtInfo jwtInfo = jwtUtil.decodeAccessToken(accessToken);
             setAuthentication(jwtInfo);
         } catch (ExpiredJwtException e) {
+            log.error("JwtAuthenticationFilter 에러 발생 : ", e);
             failureTask(response, new AuthException("access token 만료되었습니다.", ErrorCode.JWT_TIMEOUT_ERROR));
             return;
         } catch (Exception e) {
-            failureTask(response, new AuthException("access token parsing 중에 에러가 발생했습니다.", ErrorCode.JWT_VALIDATION_ERROR));
+            log.error("JwtAuthenticationFilter 에러 발생 : ", e);
+            failureTask(response, new AuthException("access token decoding 중에 에러가 발생했습니다.", ErrorCode.JWT_VALIDATION_ERROR));
             return;
         }
         chain.doFilter(request, response);
@@ -75,24 +76,28 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             String username = jwtInfo.getUsername();
 
             RefreshToken savedToken = refreshTokenRepository.findById(username).orElseThrow(() -> new IllegalArgumentException("refresh token 존재하지 않습니다."));
-            if (refreshToken.equals(savedToken.getRefreshToken())) throw new IllegalArgumentException("refresh token 올바르지 않습니다.");
+            if (!refreshToken.equals(savedToken.getRefreshToken())) throw new IllegalArgumentException("db에 저장된 refreshToken과 다릅니다.");
 
+            String newAccessToken = jwtUtil.createAccessToken(jwtInfo);
+            response.setHeader(HttpHeaders.AUTHORIZATION, newAccessToken);
             setAuthentication(jwtInfo);
         } catch (ExpiredJwtException e) {
+            log.error("JwtAuthenticationFilter 에러 발생 : ", e);
             failureTask(response, new AuthException("refresh token 만료되었습니다.", ErrorCode.JWT_TIMEOUT_ERROR));
             return;
         } catch (AuthException e) {
+            log.error("JwtAuthenticationFilter 에러 발생 : ", e);
             failureTask(response, new AuthException("refresh token 안의 access token parsing 중에 에러가 발생했습니다.", ErrorCode.JWT_VALIDATION_ERROR));
             return;
         } catch (Exception e) {
-            failureTask(response, new AuthException("refresh token parsing 중에 에러가 발생했습니다.", ErrorCode.JWT_VALIDATION_ERROR));
+            log.error("JwtAuthenticationFilter 에러 발생 : ", e);
+            failureTask(response, new AuthException("refresh token decoding 중에 에러가 발생했습니다.", ErrorCode.JWT_VALIDATION_ERROR));
             return;
         }
         chain.doFilter(request, response);
     }
 
     private void failureTask(HttpServletResponse response, AuthException e) throws IOException {
-        log.error("JwtAuthenticationFilter 에러 발생 : " + e.getMessage());
         ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode());
         ResponseUtil.doResponse(response, errorResponse, HttpStatus.UNAUTHORIZED);
     }

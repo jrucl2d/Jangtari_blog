@@ -7,6 +7,6 @@ public class NoMasterException extends BusinessException
 {
     public NoMasterException() {
         super("tmp");
-        this.errorCode = ErrorCode.ACCESS_DENIED;
+        this.errorCode = ErrorCode.ACCESS_DENIED_ERROR;
     }
 }
