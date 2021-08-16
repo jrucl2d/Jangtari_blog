@@ -4,7 +4,7 @@ import com.yu.jangtari.ServiceTest;
 import com.yu.jangtari.api.member.domain.Member;
 import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.api.member.repository.MemberRepository;
-import com.yu.jangtari.common.exception.JangtariDeleteError;
+import com.yu.jangtari.api.member.repository.RefreshTokenRepository;
 import com.yu.jangtari.exception.BusinessException;
 import com.yu.jangtari.exception.ErrorCode;
 import com.yu.jangtari.util.GoogleDriveUtil;
@@ -13,6 +13,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -25,6 +28,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -38,12 +43,22 @@ class MemberServiceTest extends ServiceTest
     private GoogleDriveUtil googleDriveUtil;
     @Mock
     private PasswordEncoder passwordEncoder;
+    @Mock
+    private RefreshTokenRepository refreshTokenRepository;
 
-    private Member member;
+    private Member admin;
+    private Member user;
 
     @BeforeEach
     void setUp() {
-        member = Member.builder()
+        admin = Member.builder()
+            .id(1L)
+            .username("username")
+            .nickname("nickname")
+            .introduce("introduce")
+            .password("password").picture("picture").build();
+        user = Member.builder()
+            .id(2L)
             .username("username")
             .nickname("nickname")
             .introduce("introduce")
@@ -59,7 +74,7 @@ class MemberServiceTest extends ServiceTest
 
         // then
         BusinessException e = assertThrows(BusinessException.class, () -> memberService.getMemberByName("jang"));
-        assertThat(e.getErrorCode()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
+        assertThat(e.getErrorCode()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND_ERROR);
     }
 
     @Test
@@ -68,7 +83,7 @@ class MemberServiceTest extends ServiceTest
     {
         // given
         MemberDto.Update memDTO = MemberDto.Update.builder().nickname("newNick").introduce("newIntro").build();
-        given(memberRepository.findById(anyLong())).willReturn(Optional.of(member));
+        given(memberRepository.findById(anyLong())).willReturn(Optional.of(admin));
         given(googleDriveUtil.fileToURL(any(), any())).willReturn("newPic");
 
         // when
@@ -87,7 +102,8 @@ class MemberServiceTest extends ServiceTest
         // given
         // when
         // then
-        assertThrows(JangtariDeleteError.class, () -> memberService.deleteMember(1L));
+        BusinessException e = assertThrows(BusinessException.class, () -> memberService.deleteMember(1L));
+        assertThat(e.getErrorCode()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND_ERROR);
     }
 
     @Test
@@ -95,10 +111,10 @@ class MemberServiceTest extends ServiceTest
     void deleteMember()
     {
         // given
-        given(memberRepository.findById(anyLong())).willReturn(Optional.of(member));
+        given(memberRepository.findById(anyLong())).willReturn(Optional.of(user));
 
         // when
-        Member deletedMember = memberService.deleteMember(2L);
+        Member deletedMember = memberService.deleteMember(user.getId());
 
         // then
         assertTrue(deletedMember.getDeleteFlag().isDeleted());
@@ -110,15 +126,13 @@ class MemberServiceTest extends ServiceTest
     {
         // given
         MemberDto.Add memDTO = MemberDto.Add.builder().username("username").nickname("nickname").password("password").build();
-        given(memberRepository.findByUsername(anyString())).willReturn(Optional.empty());
         given(passwordEncoder.encode(anyString())).willReturn("encoded");
-        given(memberRepository.save(any())).willReturn(member);
+        given(memberRepository.save(any())).willReturn(admin);
 
         // when
         memberService.join(memDTO);
 
         // then
-        verify(memberRepository, times(1)).findByUsername(anyString());
         verify(memberRepository, times(1)).save(any());
         verify(passwordEncoder, times(1)).encode(anyString());
     }
@@ -129,11 +143,27 @@ class MemberServiceTest extends ServiceTest
     {
         // given
         MemberDto.Add memDTO = MemberDto.Add.builder().username("username").nickname("nickname").password("password").build();
-        given(memberRepository.findByUsername(anyString())).willReturn(Optional.of(member));
+        willThrow(new DataIntegrityViolationException("중복")).given(memberRepository).save(any());
 
         // when
         // then
-        assertThrows(BusinessException.class, () -> memberService.join(memDTO));
+        BusinessException e = assertThrows(BusinessException.class, () -> memberService.join(memDTO));
+        assertThat(e.getErrorCode()).isEqualTo(ErrorCode.DUPLICATED_MEMBER_ERROR);
+    }
 
+    @Test
+    @DisplayName("정상적으로 로그아웃 가능")
+    void logout_O()
+    {
+        // given
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("user", null, null));
+        doNothing().when(refreshTokenRepository).delete(any());
+
+        // when
+        memberService.logout();
+
+        // then
+        verify(refreshTokenRepository, times(1)).delete(any());
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
     }
 }

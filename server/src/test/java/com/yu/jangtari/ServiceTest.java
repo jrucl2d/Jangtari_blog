@@ -8,5 +8,5 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith(MockitoExtension.class)
 @Transactional
 @ActiveProfiles("test")
-public class ServiceTest {
+public abstract class ServiceTest {
 }

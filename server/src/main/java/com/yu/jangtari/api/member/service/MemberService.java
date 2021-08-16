@@ -28,14 +28,17 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public Member findOne(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        return memberRepository.findById(memberId).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND_ERROR));
     }
 
     @Transactional(readOnly = true)
     public Member getMemberByName(String username) {
-        return memberRepository.findByUsername(username).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        return memberRepository.findByUsername(username).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND_ERROR));
     }
 
+    /**
+     * Jangtari만 정보 수정 가능
+     */
     @Transactional
     public Member updateMember(MemberDto.Update memberDTO) {
         Member member = findOne(1L);

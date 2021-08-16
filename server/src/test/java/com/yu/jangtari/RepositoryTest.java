@@ -17,5 +17,5 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @DataJpaTest
 @Import(QuerydslConfig.class)
 @ActiveProfiles("test")
-public class RepositoryTest {
+public abstract class RepositoryTest {
 }

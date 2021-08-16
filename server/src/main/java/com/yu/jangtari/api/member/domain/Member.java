@@ -54,7 +54,8 @@ public class Member extends DateAuditing
     DeleteFlag deleteFlag;
 
     @Builder
-    public Member(String username, String nickname, String password, String introduce, String picture) {
+    public Member(Long id, String username, String nickname, String password, String introduce, String picture) {
+        this.id = id;
         this.username = username;
         this.nickname = nickname;
         this.password = password;
