@@ -27,7 +27,7 @@ public class MemberController
     public String deleteMember(@PathVariable(value = "memberId") Long memberId)
     {
         memberService.deleteMember(memberId);
-        return "OK";
+        return "회원 삭제 성공";
     }
 
     @PostMapping(value = "/admin/jangtari", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -42,6 +42,14 @@ public class MemberController
     public String join(@RequestBody @Valid final MemberDto.Add memberDTO)
     {
         memberService.join(memberDTO);
-        return "OK";
+        return "회원가입 성공";
+    }
+
+    @GetMapping("/user/logout")
+    @ResponseStatus(value = HttpStatus.OK)
+    public String logout()
+    {
+        memberService.logout();
+        return "로그아웃 성공";
     }
 }

@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -50,7 +51,7 @@ class MemberControllerTest extends IntegrationTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(content))
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$").value("OK"))
+            .andExpect(jsonPath("$").value("회원가입 성공"))
             .andDo(print());
     }
 
@@ -77,8 +78,8 @@ class MemberControllerTest extends IntegrationTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(content))
             .andExpect(status().is5xxServerError())
-            .andExpect(jsonPath("$.message").value("이미 존재하는 아이디입니다."))
-            .andExpect(jsonPath("$.code").value(ErrorCode.JOIN_ERROR.getCode()))
+            .andExpect(jsonPath("$.message").value(ErrorCode.DUPLICATED_MEMBER_ERROR.getMessage()))
+            .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATED_MEMBER_ERROR.getCode()))
             .andDo(print());
     }
 
@@ -175,7 +176,7 @@ class MemberControllerTest extends IntegrationTest {
 
         // when
         // then
-        mockMvc.perform(post("/logout")
+        mockMvc.perform(get("/user/logout")
             .header(HttpHeaders.AUTHORIZATION, accessToken))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").value("로그아웃 성공"))
@@ -185,15 +186,16 @@ class MemberControllerTest extends IntegrationTest {
     }
 
     @Test
-    @DisplayName("토큰이 없는 상태에서 로그아웃 하려고 해도 로그아웃 성공")
+    @DisplayName("토큰이 없는 상태에서 로그아웃 하려고 하면 401 권한 없음")
     void logout_X() throws Exception
     {
         // given
         // when
         // then
-        mockMvc.perform(post("/logout"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$").value("로그인 성공"))
+        mockMvc.perform(get("/user/logout"))
+            .andExpect(status().isUnauthorized())
+            .andExpect(jsonPath("$.message").value(ErrorCode.JWT_VALIDATION_ERROR.getMessage()))
+            .andExpect(jsonPath("$.code").value(ErrorCode.JWT_VALIDATION_ERROR.getCode()))
             .andDo(print());
     }
 }

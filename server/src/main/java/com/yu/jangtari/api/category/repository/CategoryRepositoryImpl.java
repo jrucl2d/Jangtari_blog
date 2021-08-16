@@ -3,6 +3,7 @@ package com.yu.jangtari.api.category.repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yu.jangtari.api.category.domain.Category;
 import com.yu.jangtari.api.category.domain.QCategory;
+import com.yu.jangtari.common.QDeleteFlag;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
     public List<Category> getAllCategories() {
         QCategory category = QCategory.category;
         return jpaQueryFactory.selectFrom(category)
-                .where(category.deleteFlag.deleteFlag.isFalse())
+                .where(QDeleteFlag.deleteFlag.isDeleted)
                 .orderBy(category.createdDate.asc())
                 .fetch();
     }

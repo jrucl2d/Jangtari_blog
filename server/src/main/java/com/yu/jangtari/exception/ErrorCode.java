@@ -23,6 +23,7 @@ public enum ErrorCode {
     JOIN_ERROR("yu3001", "회원가입 중 오류가 발생했습니다."),
     MEMBER_NOT_FOUND("yu3002", "회원 정보가 존재하지 않습니다."),
     ADMIN_DELETE_ERROR("yu3003", "ADMIN 회원은 삭제가 불가능힙니다."),
+    DUPLICATED_MEMBER_ERROR("yu3004", "이미 존재하는 회원입니다."),
 
 
     COMMENT_NOT_FOUND("yu006", "No Such Comment"),
