@@ -123,7 +123,7 @@ class CategoryServiceTest extends ServiceTest {
 
         // then
         verify(postService, times(1)).deletePostsOfCategory(anyLong());
-        assertTrue(category.getDeleteFlag().isDeleteFlag());
+        assertTrue(category.getDeleteFlag().isDeleted());
     }
 
     @Test

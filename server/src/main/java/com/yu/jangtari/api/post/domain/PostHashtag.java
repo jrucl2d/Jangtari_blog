@@ -35,7 +35,11 @@ public class PostHashtag extends DateAuditing
     public PostHashtag(Post post, Hashtag hashtag) {
         this.post = post;
         this.hashtag = hashtag;
-        this.deleteFlag = DeleteFlag.initDeleteFlag();
+        this.deleteFlag = new DeleteFlag();
+    }
+
+    public void softDelete() {
+        this.deleteFlag.softDelete();
     }
 
     // TODO : 삭제 필요

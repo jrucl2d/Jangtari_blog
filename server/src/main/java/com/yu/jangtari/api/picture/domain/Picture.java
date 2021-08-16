@@ -32,7 +32,11 @@ public class Picture extends DateAuditing
     public Picture(String url, Post post) {
         this.url = url;
         this.post = post;
-        this.deleteFlag = DeleteFlag.initDeleteFlag();
+        this.deleteFlag = new DeleteFlag();
+    }
+
+    public void softDelete() {
+        this.deleteFlag.softDelete();
     }
 
     // TODO : 여기 삭제 필요

@@ -43,7 +43,7 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
                 .leftJoin(post.postHashtags, postHashtag)
                 .where(post.id.eq(postId))
                 .fetchOne();
-        if (tmpPost == null || tmpPost.getDeleteFlag().isDeleteFlag()) return Optional.empty();
+        if (tmpPost == null || tmpPost.getDeleteFlag().isDeleted()) return Optional.empty();
         return Optional.of(tmpPost);
     }
     @Override

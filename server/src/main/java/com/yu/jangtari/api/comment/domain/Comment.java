@@ -48,8 +48,13 @@ public class Comment extends DateAuditing
     @Builder
     public Comment(String content) {
         this.content = content;
-        this.deleteFlag = DeleteFlag.initDeleteFlag();
+        this.deleteFlag = new DeleteFlag();
     }
+
+    public void softDelete() {
+        this.deleteFlag.softDelete();
+    }
+
     public void initPostAndMember(final Post post, final Member member) {
         this.post = post;
         this.member = member;

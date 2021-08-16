@@ -2,6 +2,8 @@ package com.yu.jangtari.api.member.domain;
 import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.common.DateAuditing;
 import com.yu.jangtari.common.DeleteFlag;
+import com.yu.jangtari.exception.BusinessException;
+import com.yu.jangtari.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -59,7 +61,7 @@ public class Member extends DateAuditing
         this.introduce = introduce;
         this.picture = picture;
         this.role = RoleType.USER;
-        this.deleteFlag = DeleteFlag.initDeleteFlag();
+        this.deleteFlag = new DeleteFlag();
     }
 
     public void updateMember(MemberDto.Update memberDTO) {
@@ -67,5 +69,10 @@ public class Member extends DateAuditing
         this.introduce = memberDTO.getIntroduce();
         final String pictureURL = memberDTO.getPictureURL();
         if (pictureURL != null) this.picture = pictureURL;
+    }
+
+    public void delete() {
+        if (this.id == 1L) throw new BusinessException(ErrorCode.ADMIN_DELETE_ERROR);
+        this.deleteFlag.softDelete();
     }
 }

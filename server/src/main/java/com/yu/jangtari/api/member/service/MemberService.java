@@ -3,9 +3,6 @@ package com.yu.jangtari.api.member.service;
 import com.yu.jangtari.api.member.domain.Member;
 import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.api.member.repository.MemberRepository;
-import com.yu.jangtari.common.GDFolder;
-import com.yu.jangtari.common.exception.JangtariDeleteError;
-import com.yu.jangtari.common.exception.NoSuchMemberException;
 import com.yu.jangtari.exception.BusinessException;
 import com.yu.jangtari.exception.ErrorCode;
 import com.yu.jangtari.util.GoogleDriveUtil;
@@ -24,37 +21,28 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public Member findOne(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(NoSuchMemberException::new);
+        return memberRepository.findById(memberId).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
     public Member getMemberByName(String username) {
-        return memberRepository.findByUsername(username).orElseThrow(NoSuchMemberException::new);
+        return memberRepository.findByUsername(username).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
     public Member updateMember(MemberDto.Update memberDTO) {
         Member member = findOne(1L);
-        String pictureURL = googleDriveUtil.fileToURL(memberDTO.getPicture(), GDFolder.JANGTARI);
-        memberDTO.setPictureURL(pictureURL);
-        member.updateMember(memberDTO);
+        member.updateMember(memberDTO.toURLContaining(googleDriveUtil));
         return member;
     }
 
-    // 1번 유저, Jangtari는 삭제 불가능하다는 요구사항 추가
     public Member deleteMember(Long memberId) {
-        if (memberId == 1L) throw new JangtariDeleteError();
         Member member = findOne(memberId);
-        member.getDeleteFlag().softDelete();
+        member.delete();
         return member;
     }
 
-    public Member join(MemberDto.Add memberDTO) {
-        checkUserDuplicate(memberDTO.getUsername());
+    public void join(MemberDto.Add memberDTO) {
         Member member = memberDTO.toEntity(passwordEncoder);
-        return memberRepository.save(member);
-    }
-    private void checkUserDuplicate(String username) {
-        if (memberRepository.findByUsername(username).isPresent())
-            throw new BusinessException("이미 존재하는 아이디입니다.", ErrorCode.JOIN_ERROR);
+        memberRepository.save(member);
     }
 }

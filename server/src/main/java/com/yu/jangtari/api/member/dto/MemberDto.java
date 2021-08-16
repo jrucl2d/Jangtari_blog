@@ -3,6 +3,8 @@ package com.yu.jangtari.api.member.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yu.jangtari.api.member.domain.Member;
+import com.yu.jangtari.common.GDFolder;
+import com.yu.jangtari.util.GoogleDriveUtil;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
@@ -88,10 +90,11 @@ public class MemberDto
         private String pictureURL;
 
         @Builder
-        public Update(String nickname, String introduce, MultipartFile picture) {
+        public Update(String nickname, String introduce, MultipartFile picture, String pictureURL) {
             this.nickname = nickname;
             this.introduce = introduce;
             this.picture = picture;
+            this.pictureURL = pictureURL;
         }
 
         @JsonIgnore
@@ -99,9 +102,13 @@ public class MemberDto
             return this.pictureURL;
         }
 
-        public void setPictureURL(String pictureURL) {
-            this.picture = null;
-            this.pictureURL = pictureURL;
+        public Update toURLContaining(GoogleDriveUtil googleDriveUtil) {
+            String returnedURL = googleDriveUtil.fileToURL(this.picture, GDFolder.JANGTARI);
+            return Update.builder()
+                .nickname(this.nickname)
+                .introduce(this.introduce)
+                .pictureURL(returnedURL)
+                .build();
         }
     }
 }

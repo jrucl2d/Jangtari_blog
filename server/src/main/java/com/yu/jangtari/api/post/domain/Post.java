@@ -59,11 +59,16 @@ public class Post extends DateAuditing
         this.content = content;
         this.template = template;
         this.category = category;
-        this.deleteFlag = DeleteFlag.initDeleteFlag();
+        this.deleteFlag = new DeleteFlag();
         this.comments = new ArrayList<>();
         this.pictures = new ArrayList<>();
         this.postHashtags = new ArrayList<>();
     }
+
+    public void softDelete() {
+        this.deleteFlag.softDelete();
+    }
+
     public void addPictures(List<Picture> pictures) {
         getPictures().addAll(pictures);
     }
@@ -91,10 +96,10 @@ public class Post extends DateAuditing
                 .template(this.getTemplate())
                 .content(this.getContent()).build();
         this.getComments().forEach(comment -> {
-            if (!comment.getDeleteFlag().isDeleteFlag()) resultPost.addComment(comment);
+            if (!comment.getDeleteFlag().isDeleted()) resultPost.addComment(comment);
         });
-        resultPost.addPictures(this.getPictures().stream().filter(picture -> !picture.getDeleteFlag().isDeleteFlag()).collect(Collectors.toList()));
-        resultPost.addPostHashtags(this.getPostHashtags().stream().filter(postHashtag -> !postHashtag.getDeleteFlag().isDeleteFlag()).collect(Collectors.toList()));
+        resultPost.addPictures(this.getPictures().stream().filter(picture -> !picture.getDeleteFlag().isDeleted()).collect(Collectors.toList()));
+        resultPost.addPostHashtags(this.getPostHashtags().stream().filter(postHashtag -> !postHashtag.getDeleteFlag().isDeleted()).collect(Collectors.toList()));
         resultPost.setId(this.getId());
         return resultPost;
     }

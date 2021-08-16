@@ -8,19 +8,15 @@ import javax.persistence.Embeddable;
 @Getter
 @Embeddable
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of="deleteFlag")
+@EqualsAndHashCode(of="isDeleted")
 public class DeleteFlag {
-    private boolean deleteFlag;
+    private boolean isDeleted;
 
-    public DeleteFlag(boolean deleteFlag) {
-        this.deleteFlag = deleteFlag;
+    public DeleteFlag() {
+        this.isDeleted = false;
     }
-    // deleteflag는 최초에 false 상태로 초기화
-    public static DeleteFlag initDeleteFlag() {
-        return new DeleteFlag(false);
-    }
+
     public void softDelete() {
-        this.deleteFlag = true;
+        this.isDeleted = true;
     }
 }

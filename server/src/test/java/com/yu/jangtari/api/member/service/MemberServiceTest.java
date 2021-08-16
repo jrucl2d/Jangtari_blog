@@ -1,13 +1,12 @@
-package com.yu.jangtari.service;
+package com.yu.jangtari.api.member.service;
 
 import com.yu.jangtari.ServiceTest;
-import com.yu.jangtari.common.exception.JangtariDeleteError;
-import com.yu.jangtari.common.exception.NoSuchMemberException;
-import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.api.member.domain.Member;
-import com.yu.jangtari.api.member.service.MemberService;
+import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.api.member.repository.MemberRepository;
+import com.yu.jangtari.common.exception.JangtariDeleteError;
 import com.yu.jangtari.exception.BusinessException;
+import com.yu.jangtari.exception.ErrorCode;
 import com.yu.jangtari.util.GoogleDriveUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,7 +28,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-class MemberServiceTest extends ServiceTest {
+class MemberServiceTest extends ServiceTest
+{
     @InjectMocks
     private MemberService memberService;
     @Mock
@@ -57,29 +58,12 @@ class MemberServiceTest extends ServiceTest {
         given(memberRepository.findByUsername(any())).willReturn(Optional.empty());
 
         // then
-        assertThrows(NoSuchMemberException.class, () -> memberService.getMemberByName("jang"));
+        BusinessException e = assertThrows(BusinessException.class, () -> memberService.getMemberByName("jang"));
+        assertThat(e.getErrorCode()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
     }
 
     @Test
-    @DisplayName("사진 제외하고 member의 nickname, introduce 업데이트")
-    void updateMember()
-    {
-        // given
-        MemberDto.Update memDTO = MemberDto.Update.builder().nickname("newNick").introduce("newIntro").build();
-        given(memberRepository.findById(anyLong())).willReturn(Optional.of(member));
-        given(googleDriveUtil.fileToURL(any(), any())).willReturn(null);
-
-        // when
-        Member updatedMember = memberService.updateMember(memDTO);
-
-        // then
-        assertEquals("newNick", updatedMember.getNickname());
-        assertEquals("newIntro", updatedMember.getIntroduce());
-        assertEquals("picture", updatedMember.getPicture());
-    }
-
-    @Test
-    @DisplayName("사진 포함하여 member의 정보 업데이트")
+    @DisplayName("member의 정보 업데이트가 정상적으로 진행됨")
     void updateMember1()
     {
         // given
@@ -117,7 +101,7 @@ class MemberServiceTest extends ServiceTest {
         Member deletedMember = memberService.deleteMember(2L);
 
         // then
-        assertTrue(deletedMember.getDeleteFlag().isDeleteFlag());
+        assertTrue(deletedMember.getDeleteFlag().isDeleted());
     }
 
     @Test
