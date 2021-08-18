@@ -28,10 +28,9 @@
 - SpringBoot
 - Spring Data JPA
 - QueryDsl
-- Spring Security : JWT 로그인 구현, 토큰은 쿠키에 저장
+- Spring Security : JWT 로그인 구현
 - Google Drive API : 이미지 저장소로 사용
 - Mysql
-- Redis : JWT 로그인 관련
 
 ## 3. DB 설계
 
@@ -42,21 +41,7 @@
 ### 4.1 로그인(JWT 로그인)
 
 - 세션-쿠키 기반의 기존 Spring Security의 로그인 방식이 아닌 JWT 토큰 방식의 로그인을 구현했다.
-- 유효기간이 짧은(2분) Access Token과 유효기간이 긴 Refresh Token을 쿠키에 저장한다.
-- [리팩토링 이전]
-- ~~Access Token의 payload에서 읽어온 username 정보를 바탕으로 인증 객체를 생성해 로그인 처리한다.~~
-- ~~Access Token이 만료되었을 시 Refresh Token으로부터 username을 가져온 뒤 redis 저장소에 [Refresh Token - username]의 key-value 형식으로 저장된 username과 비교하여 검증을 시도한다.~~
-- ~~검증되었다면 새로운 Access Token을 발급해주고 인증 객체를 생성해 로그인 처리한다.~~
-- ~~로그아웃은 쿠키에서 Access Token 쿠키의 유효 기간을 0으로 설정해 삭제하고 redis 저장소에서 refresh token을 키로 갖는 username을 삭제해 로그아웃 처리한다.~~
-- [리팩토링 이후]
-- AuthenticationFilter와 AuthorizationFilter 두 가지로 나눠서 구현한다.
-- 로그인은 AuthenticationFilter에서 진행되며 username과 password를 받아 로그인 처리를 하고 accessToken과 refreshToken을 생성해 쿠키에 담아 리턴한다.
-- 이후 클라이언트가 쿠키를 가진 채로 권한이 필요한 요청을 할 때 AuthorizationFilter가 동작한다. AuthorizationFilter의 동작은 다음과 같다.
-1. 쿠키가 아예 존재하지 않으면 에러를 리턴하게 된다.
-2. accessToken이 존재하면 바로 인증에 성공하고 없다면 refreshToken을 확인한다.
-3. refreshToken에 문제가 없다면 바로 accessToken을 재생성 후 쿠키에 담아 리턴하며 인증에 성공한다.
-4. refreshToekn에 문제가 있거나 만료되었다면 에러를 리턴하며 재 로그인을 유도하게 된다.
-- 기존의 방식에서 redis의 사용을 제거했다. JWT 토큰을 사용하면 토큰을 통해 사용자를 검증할 수 있음에도 불구하고 reids에 사용자 정보를 추가적으로 저장했다가 불러와서 또 검증하는 것은 불필요한 행위라고 판단했다.
+- 유효기간이 짧은(30분) Access Token과 유효기간이 긴(2주) Refresh Token을 사용한다.
 - [참고 문헌]
 - [https://webfirewood.tistory.com/115](https://webfirewood.tistory.com/115)
 - [https://velog.io/@dsunni/Spring-Boot-React-JWT로-간단한-로그인-구현하기](https://velog.io/@dsunni/Spring-Boot-React-JWT%EB%A1%9C-%EA%B0%84%EB%8B%A8%ED%95%9C-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0)
