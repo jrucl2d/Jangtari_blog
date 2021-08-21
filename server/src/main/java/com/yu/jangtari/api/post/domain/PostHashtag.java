@@ -51,9 +51,9 @@ public class PostHashtag extends DateAuditing
         this.deleteFlag = new DeleteFlag();
     }
 
-    public static PostHashtag of(String hashtag, Post post) {
+    public static PostHashtag of(Hashtag hashtag, Post post) {
         return PostHashtag.builder()
-            .hashtag(new Hashtag(hashtag))
+            .hashtag(hashtag)
             .post(post)
             .build();
     }

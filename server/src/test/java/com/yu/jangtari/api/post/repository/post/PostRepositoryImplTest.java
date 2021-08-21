@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Arrays;
 
 class PostRepositoryImplTest extends IntegrationTest {
 
@@ -48,6 +49,7 @@ class PostRepositoryImplTest extends IntegrationTest {
         // then
         postService.addPost(PostDto.Add.builder().content("content").categoryId(1L)
             .pictures(PictureFileUtil.createList("pic1", "pic2"))
+            .hashtags(Arrays.asList("hashtag1", "hashtag2"))
             .title("title").build());
         entityManager.flush();
     }

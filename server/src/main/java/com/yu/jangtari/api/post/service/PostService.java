@@ -53,7 +53,7 @@ public class PostService {
 
     public Post addPost(PostDto.Add postDto) {
         try {
-            return postRepository.save(Post.of(postDto.toUrlDto(googleDriveUtil)));
+            return postRepository.save(Post.of(postDto.toUrlDto(googleDriveUtil), hashtagRepository));
         } catch (DataIntegrityViolationException e) {
             throw new BusinessException(ErrorCode.CATEGORY_NOT_FOUND_ERROR);
         }

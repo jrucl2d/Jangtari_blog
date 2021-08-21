@@ -1,14 +1,17 @@
 package com.yu.jangtari.api.post.domain;
 
 import com.yu.jangtari.common.DateAuditing;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Getter
-@ToString(exclude = "postHashtags")
 @Entity
 @Table(name = "hashtag")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,9 +21,6 @@ public class Hashtag extends DateAuditing
     @Id
     @Column(name = "hashtag")
     private String content;
-
-    @OneToMany(mappedBy = "hashtag")
-    private List<PostHashtag> postHashtags = new ArrayList<>();
 
     public Hashtag(String content) {
         this.content = content;

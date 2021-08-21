@@ -4,6 +4,7 @@ import com.yu.jangtari.api.category.domain.Category;
 import com.yu.jangtari.api.comment.domain.Comment;
 import com.yu.jangtari.api.picture.domain.Picture;
 import com.yu.jangtari.api.post.dto.PostDto;
+import com.yu.jangtari.api.post.repository.hashtag.HashtagRepository;
 import com.yu.jangtari.common.DateAuditing;
 import com.yu.jangtari.common.DeleteFlag;
 import lombok.AccessLevel;
@@ -64,7 +65,7 @@ public class Post extends DateAuditing
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostHashtag> postHashtags = new ArrayList<>();
 
     @Embedded
@@ -82,7 +83,7 @@ public class Post extends DateAuditing
         this.postHashtags = new ArrayList<>();
     }
 
-    public static Post of(PostDto.Add dto) {
+    public static Post of(PostDto.Add dto, HashtagRepository hashtagRepository) {
         Post post = Post.builder()
             .category(Category.builder().id(dto.getCategoryId()).build())
             .title(dto.getTitle())
@@ -98,7 +99,7 @@ public class Post extends DateAuditing
         post.postHashtags.addAll(
             dto.getHashtags()
                 .stream()
-                .map(hashtag -> PostHashtag.of(hashtag, post))
+                .map(hashtagStr -> PostHashtag.of(hashtagRepository.save(new Hashtag(hashtagStr)), post))
                 .collect(Collectors.toList())
         );
         return post;
