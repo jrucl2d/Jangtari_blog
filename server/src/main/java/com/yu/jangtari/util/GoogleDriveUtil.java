@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Profile("local")
-public class GoogleDriveUtil implements GoogleDriveUtilTemplate {
+public class GoogleDriveUtil {
     // redirect URL을 적용해야 함
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 

@@ -6,7 +6,7 @@ import com.yu.jangtari.api.category.dto.CategoryDto;
 import com.yu.jangtari.api.category.repository.CategoryRepository;
 import com.yu.jangtari.exception.BusinessException;
 import com.yu.jangtari.exception.ErrorCode;
-import com.yu.jangtari.testHelper.MultipartUtil;
+import com.yu.jangtari.testHelper.PictureFileUtil;
 import com.yu.jangtari.util.GoogleDriveUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -53,7 +53,7 @@ class CategoryServiceTest extends ServiceTest {
         // given
         CategoryDto.Add categoryDto = CategoryDto.Add.builder()
             .name("category name")
-            .picture(MultipartUtil.createOne("category"))
+            .picture(PictureFileUtil.createOne("category"))
             .build();
         given(googleDriveUtil.fileToURL(any(), any())).willReturn("category");
 
@@ -72,7 +72,7 @@ class CategoryServiceTest extends ServiceTest {
         // given
         CategoryDto.Update categoryDto = CategoryDto.Update.builder()
             .name("new category name")
-            .picture(MultipartUtil.createOne("category"))
+            .picture(PictureFileUtil.createOne("category"))
             .build();
         given(googleDriveUtil.fileToURL(any(), any())).willReturn("category");
         given(categoryRepository.findById(anyLong())).willReturn(Optional.of(category));
@@ -91,7 +91,7 @@ class CategoryServiceTest extends ServiceTest {
         // given
         CategoryDto.Update categoryDto = CategoryDto.Update.builder()
             .name("new category name")
-            .picture(MultipartUtil.createOne("category"))
+            .picture(PictureFileUtil.createOne("category"))
             .build();
         given(categoryRepository.findById(anyLong())).willReturn(Optional.empty());
 

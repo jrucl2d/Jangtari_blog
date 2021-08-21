@@ -55,17 +55,17 @@ public class Post extends DateAuditing
     private int template;
 
     @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Picture> pictures;
+    private List<Picture> pictures = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostHashtag> postHashtags;
+    @OneToMany(mappedBy = "post")
+    private List<PostHashtag> postHashtags = new ArrayList<>();
 
     @Embedded
     DeleteFlag deleteFlag;

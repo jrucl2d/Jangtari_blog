@@ -1,6 +1,5 @@
 package com.yu.jangtari.api.post.service;
 
-import com.yu.jangtari.api.category.service.CategoryService;
 import com.yu.jangtari.api.picture.domain.Picture;
 import com.yu.jangtari.api.picture.repository.PictureRepository;
 import com.yu.jangtari.api.post.domain.Hashtag;
@@ -21,7 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,8 +27,6 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class PostService {
-
-    private final CategoryService categoryService;
     private final PostRepository postRepository;
     private final HashtagRepository hashtagRepository;
     private final PostHashtagRepository postHashtagRepository;
