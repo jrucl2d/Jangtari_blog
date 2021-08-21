@@ -2,13 +2,20 @@ package com.yu.jangtari.api.category.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yu.jangtari.api.category.domain.Category;
-import lombok.*;
+import com.yu.jangtari.common.GDFolder;
+import com.yu.jangtari.util.GoogleDriveUtil;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CategoryDTO {
+public class CategoryDto
+{
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,16 +32,13 @@ public class CategoryDTO {
             this.name = name;
             this.picture = picture;
         }
-        public Category toEntity() {
+
+        public Category toEntity(GoogleDriveUtil googleDriveUtil) {
+            String returnedUrl = googleDriveUtil.fileToURL(this.getPicture(), GDFolder.CATEGORY);
             return Category.builder()
                     .name(name)
-                    .picture(pictureURL)
+                    .picture(returnedUrl)
                     .build();
-        }
-
-        public void setPictureURL(String pictureURL) {
-            this.picture = null;
-            this.pictureURL = pictureURL;
         }
     }
     @Getter
@@ -49,9 +53,10 @@ public class CategoryDTO {
         private String pictureURL;
 
         @Builder
-        public Update(String name, MultipartFile picture) {
+        public Update(String name, MultipartFile picture, String pictureURL) {
             this.name = name;
             this.picture = picture;
+            this.pictureURL = pictureURL;
         }
 
         @JsonIgnore
@@ -59,9 +64,13 @@ public class CategoryDTO {
             return this.pictureURL;
         }
 
-        public void setPictureURL(String pictureURL) {
-            this.picture = null;
-            this.pictureURL = pictureURL;
+        public Update toUrlDto(GoogleDriveUtil googleDriveUtil) {
+            String returnedUrl = googleDriveUtil.fileToURL(this.getPicture(), GDFolder.CATEGORY);
+            return Update.builder()
+                .name(this.name)
+                .picture(null)
+                .pictureURL(returnedUrl)
+                .build();
         }
     }
 
@@ -78,7 +87,7 @@ public class CategoryDTO {
             this.name = name;
             this.picture = picture;
         }
-        public static CategoryDTO.Get of(Category category) {
+        public static CategoryDto.Get of(Category category) {
             return Get.builder().id(category.getId()).name(category.getName()).picture(category.getPicture()).build();
         }
     }

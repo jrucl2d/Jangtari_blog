@@ -1,6 +1,6 @@
 package com.yu.jangtari.api.category.domain;
 
-import com.yu.jangtari.api.category.dto.CategoryDTO;
+import com.yu.jangtari.api.category.dto.CategoryDto;
 import com.yu.jangtari.common.DateAuditing;
 import com.yu.jangtari.common.DeleteFlag;
 import com.yu.jangtari.api.post.domain.Post;
@@ -45,11 +45,14 @@ public class Category extends DateAuditing
 
     public void softDelete() {
         this.deleteFlag.softDelete();
+        this.posts.forEach(Post::softDelete);
     }
 
-    public void updateCategory(CategoryDTO.Update categoryDTO) {
-        this.name = categoryDTO.getName();
-        final String pictureURL = categoryDTO.getPictureURL();
-        if (pictureURL != null) this.picture = pictureURL;
+    public Category updateCategory(CategoryDto.Update categoryDTO) {
+        String pictureUrl = categoryDTO.getPictureURL() == null ? this.picture : categoryDTO.getPictureURL();
+        return Category.builder()
+            .name(categoryDTO.getName())
+            .picture(pictureUrl)
+            .build();
     }
 }

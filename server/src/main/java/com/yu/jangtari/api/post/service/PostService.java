@@ -3,12 +3,13 @@ package com.yu.jangtari.api.post.service;
 import com.yu.jangtari.api.category.domain.Category;
 import com.yu.jangtari.common.GDFolder;
 import com.yu.jangtari.common.PageRequest;
-import com.yu.jangtari.common.exception.NoSuchCategoryException;
 import com.yu.jangtari.common.exception.NoSuchPostException;
 import com.yu.jangtari.api.picture.domain.Picture;
 import com.yu.jangtari.api.post.domain.Hashtag;
 import com.yu.jangtari.api.post.domain.Post;
 import com.yu.jangtari.api.post.domain.PostHashtag;
+import com.yu.jangtari.exception.BusinessException;
+import com.yu.jangtari.exception.ErrorCode;
 import com.yu.jangtari.util.GoogleDriveUtil;
 import com.yu.jangtari.api.post.repository.hashtag.HashtagRepository;
 import com.yu.jangtari.api.picture.repository.PictureRepository;
@@ -52,7 +53,7 @@ public class PostService {
     }
 
     public Post addPost(PostDTO.Add postDTO) {
-        final Category category = categoryRepository.findById(postDTO.getCategoryId()).orElseThrow(NoSuchCategoryException::new);
+        final Category category = categoryRepository.findById(postDTO.getCategoryId()).orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND_ERROR));
         final Post post = postRepository.save(postDTO.toEntity(category));
         addPicturesToPostIfExist(post, postDTO.getPictures());
         addHashtagsToPostIfExist(post, postDTO.takeHashtagsEntity());
