@@ -2,10 +2,23 @@ package com.yu.jangtari.api.post.domain;
 
 import com.yu.jangtari.common.DateAuditing;
 import com.yu.jangtari.common.DeleteFlag;
-import lombok.*;
-import javax.persistence.*;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -32,18 +45,20 @@ public class PostHashtag extends DateAuditing
     private DeleteFlag deleteFlag;
 
     @Builder
-    public PostHashtag(Post post, Hashtag hashtag) {
+    private PostHashtag(Post post, Hashtag hashtag) {
         this.post = post;
         this.hashtag = hashtag;
         this.deleteFlag = new DeleteFlag();
     }
 
-    public void softDelete() {
-        this.deleteFlag.softDelete();
+    public static PostHashtag of(String hashtag, Post post) {
+        return PostHashtag.builder()
+            .hashtag(new Hashtag(hashtag))
+            .post(post)
+            .build();
     }
 
-    // TODO : 삭제 필요
-    public static List<PostHashtag> hashtagsToPostHashtags(List<Hashtag> hashtags, Post post) {
-        return hashtags.stream().map(ht -> PostHashtag.builder().hashtag(ht).post(post).build()).collect(Collectors.toList());
+    public void softDelete() {
+        this.deleteFlag.softDelete();
     }
 }

@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface CustomCategoryRepository {
     List<Category> getAllCategories();
-    Optional<Category> getCategoryForDelete(Long categoryId);
+    Optional<Category> findCategoryForDelete(Long categoryId);
 }

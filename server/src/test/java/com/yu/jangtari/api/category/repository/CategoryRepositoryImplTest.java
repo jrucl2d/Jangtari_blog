@@ -17,6 +17,6 @@ class CategoryRepositoryImplTest extends IntegrationTest {
         // given
         // when
         // then
-        categoryRepository.getCategoryForDelete(1L);
+        categoryRepository.findCategoryForDelete(1L);
     }
 }

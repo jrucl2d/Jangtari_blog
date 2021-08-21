@@ -3,32 +3,43 @@ package com.yu.jangtari.api.picture.repository.post;
 import com.yu.jangtari.IntegrationTest;
 import com.yu.jangtari.api.category.domain.Category;
 import com.yu.jangtari.api.category.repository.CategoryRepository;
-import org.junit.jupiter.api.BeforeEach;
+import com.yu.jangtari.api.post.dto.PostDto;
+import com.yu.jangtari.api.post.repository.post.PostRepository;
+import com.yu.jangtari.api.post.service.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class PostRepositoryImplTest extends IntegrationTest {
 
-    @Autowired private CategoryRepository categoryRepository;
+    @Autowired
+    private PostRepository postRepository;
 
-    private Category category;
+    @Autowired
+    private PostService postService;
 
-    @BeforeEach
-    void setUp() {
-        category = Category.builder().name("category").build();
-        categoryRepository.save(category);
-    }
+    @Autowired
+    private CategoryRepository categoryRepository;
 
-    // TODO : Post 손쉽게 Insert하는 Service 코드 테스트 완료 후에 작성 필요
     @Test
-    @DisplayName("Post 정보와 함께 Comment, Picture, Hashtag도 가져오는지 확인")
-    void getOne()
+    @DisplayName("findJoining 실행시 sql 잘 작동하는지 확인")
+    void findJoining()
     {
         // given
+        // when
+        // then
+        postRepository.findJoining(1L);
+    }
+
+    @Test
+    void name()
+    {
+        // given
+        categoryRepository.save(Category.builder().name("name").picture("picture").build());
 
         // when
 
         // then
+        postService.addPost(PostDto.Add.builder().content("content").categoryId(1L).title("title").build());
     }
 }

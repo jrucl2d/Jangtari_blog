@@ -19,7 +19,7 @@ public class MemberController
     @ResponseStatus(value = HttpStatus.OK)
     public MemberDto.Get findJangtari()
     {
-        return MemberDto.Get.of(memberService.findOne(1L));
+        return MemberDto.Get.of(memberService.getOne(1L));
     }
 
     @DeleteMapping("/member/{memberId}")

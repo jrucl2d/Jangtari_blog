@@ -27,7 +27,7 @@ public class MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional(readOnly = true)
-    public Member findOne(Long memberId) {
+    public Member getOne(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND_ERROR));
     }
 
@@ -41,14 +41,14 @@ public class MemberService {
      */
     @Transactional
     public Member updateMember(MemberDto.Update memberDTO) {
-        Member member = findOne(1L);
+        Member member = getOne(1L);
         member.updateMember(memberDTO.toURLContaining(googleDriveUtil));
         return member;
     }
 
     @Transactional
     public Member deleteMember(Long memberId) {
-        Member member = findOne(memberId);
+        Member member = getOne(memberId);
         member.delete();
         return member;
     }

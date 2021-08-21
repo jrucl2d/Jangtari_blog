@@ -29,24 +29,24 @@ public class CategoryService {
     }
 
     public Category updateCategory(Long categoryId, CategoryDto.Update categoryDto) {
-        Category category = findOne(categoryId);
+        Category category = getOne(categoryId);
         return category.updateCategory(categoryDto.toUrlDto(googleDriveUtil));
     }
 
     @Transactional(readOnly = true)
-    public Category findOne(Long categoryId) {
+    public Category getOne(Long categoryId) {
         return categoryRepository.findById(categoryId)
             .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND_ERROR));
     }
 
     public void deleteCategory(Long categoryId) {
-        Category category = findOneForDelete(categoryId);
+        Category category = getOneForDelete(categoryId);
         category.softDelete();
     }
 
     @Transactional(readOnly = true)
-    public Category findOneForDelete(Long categoryId) {
-        return categoryRepository.getCategoryForDelete(categoryId)
+    public Category getOneForDelete(Long categoryId) {
+        return categoryRepository.findCategoryForDelete(categoryId)
             .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND_ERROR));
     }
 }

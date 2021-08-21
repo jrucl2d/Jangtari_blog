@@ -1,12 +1,23 @@
 package com.yu.jangtari.api.picture.domain;
 
+import com.yu.jangtari.api.post.domain.Post;
 import com.yu.jangtari.common.DateAuditing;
 import com.yu.jangtari.common.DeleteFlag;
-import com.yu.jangtari.api.post.domain.Post;
-import lombok.*;
-import javax.persistence.*;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Getter
 @ToString(exclude = "post")
@@ -29,18 +40,20 @@ public class Picture extends DateAuditing
     private DeleteFlag deleteFlag;
 
     @Builder
-    public Picture(String url, Post post) {
+    private Picture(String url, Post post) {
         this.url = url;
         this.post = post;
         this.deleteFlag = new DeleteFlag();
     }
 
-    public void softDelete() {
-        this.deleteFlag.softDelete();
+    public static Picture of(String url, Post post) {
+        return Picture.builder()
+            .url(url)
+            .post(post)
+            .build();
     }
 
-    // TODO : 여기 삭제 필요
-    public static List<Picture> stringsToPictures(List<String> pictureURLs, Post post) {
-        return pictureURLs.stream().map(url -> Picture.builder().url(url).post(post).build()).collect(Collectors.toList());
+    public void softDelete() {
+        this.deleteFlag.softDelete();
     }
 }

@@ -14,6 +14,7 @@ import com.google.api.services.drive.DriveScopes;
 import com.yu.jangtari.common.GDFolder;
 import com.yu.jangtari.common.exception.FileTaskException;
 import com.yu.jangtari.common.exception.GoogleDriveException;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +29,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-public class GoogleDriveUtil {
+@Profile("local")
+public class GoogleDriveUtil implements GoogleDriveUtilTemplate {
     // redirect URL을 적용해야 함
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
@@ -68,7 +70,7 @@ public class GoogleDriveUtil {
      * @return URL의 리스트 / URL
      */
     public List<String> filesToURLs(List<MultipartFile> pictureFiles, GDFolder gdFolder) {
-        if (pictureFiles == null || pictureFiles.isEmpty()) return null;
+        if (pictureFiles == null || pictureFiles.isEmpty()) return Collections.emptyList();
         List<String> pictureURLs;
         try {
             Drive drive = getDrive();

@@ -24,9 +24,6 @@ public class CategoryDto
         private String name;
         private MultipartFile picture;
 
-        @JsonIgnore
-        private String pictureURL;
-
         @Builder
         public Add(String name, MultipartFile picture) {
             this.name = name;

@@ -1,21 +1,28 @@
 package com.yu.jangtari.api.post.dto;
 
-import com.sun.istack.NotNull;
-import com.yu.jangtari.api.category.domain.Category;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yu.jangtari.api.comment.dto.CommentDTO;
-import com.yu.jangtari.api.post.domain.Hashtag;
 import com.yu.jangtari.api.picture.domain.Picture;
+import com.yu.jangtari.api.post.domain.Hashtag;
 import com.yu.jangtari.api.post.domain.Post;
-import lombok.*;
+import com.yu.jangtari.common.GDFolder;
+import com.yu.jangtari.util.GoogleDriveUtil;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PostDTO {
+public class PostDto
+{
     @Getter
     @ToString
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -70,7 +77,7 @@ public class PostDTO {
     @ToString
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Add{
-        @NotNull // Long에는 NotBlank 붙일 수 없음
+        @NotNull(message = "categoryId는 null 이면 안 됩니다.")
         private Long categoryId;
         @NotBlank(message = "제목이 빈칸이면 안 됩니다.")
         private String title;
@@ -80,27 +87,38 @@ public class PostDTO {
         private List<String> hashtags = new ArrayList<>();
         private List<MultipartFile> pictures = new ArrayList<>();
 
+        @JsonIgnore
+        private List<String> pictureUrls = new ArrayList<>();
+
         @Builder
-        public Add(Long categoryId, String title, String content, int template, List<String> hashtags, List<MultipartFile> pictures) {
+        public Add(
+            Long categoryId
+            , String title
+            , String content
+            , int template
+            , List<String> hashtags
+            , List<MultipartFile> pictures
+            , List<String> pictureUrls) {
             this.categoryId = categoryId;
             this.title = title;
             this.content = content;
-            this.hashtags = hashtags;
             this.template = template;
             this.pictures = pictures;
+            this.pictureUrls = pictureUrls;
+            if (hashtags == null) this.hashtags = new ArrayList<>();
+            else this.hashtags = hashtags;
         }
 
-        public Post toEntity(final Category category) {
-            return Post.builder()
-                    .category(category)
-                    .title(title)
-                    .content(content)
-                    .template(template)
-                    .build();
-        }
-        public List<Hashtag> takeHashtagsEntity() {
-            if (hashtags == null) return Collections.emptyList(); // return EmptyList
-            return hashtags.stream().map(Hashtag::new).collect(Collectors.toList());
+        public Add toUrlDto(GoogleDriveUtil googleDriveUtil) {
+            List<String> retUrls = googleDriveUtil.filesToURLs(this.getPictures(), GDFolder.CATEGORY);
+            return Add.builder()
+                .categoryId(this.categoryId)
+                .title(this.title)
+                .content(this.content)
+                .template(this.template)
+                .pictureUrls(retUrls)
+                .hashtags(this.hashtags)
+                .build();
         }
     }
 

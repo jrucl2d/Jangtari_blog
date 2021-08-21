@@ -1,17 +1,14 @@
 package com.yu.jangtari.api.post.repository.post;
 
-import com.yu.jangtari.common.PageRequest;
 import com.yu.jangtari.api.post.domain.Post;
-import com.yu.jangtari.api.post.dto.PostDTO;
+import com.yu.jangtari.api.post.dto.PostDto;
+import com.yu.jangtari.common.PageRequest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 
 
 public interface CustomPostRepository {
-    Optional<Post> getOne(Long postId);
-    Page<PostDTO.Get> getPostList(Long categoryId, PageRequest pageRequest);
-    List<Post> getPostListForDelete(@Param(value = "categoryId") Long categoryId);
+    Optional<Post> findJoining(Long postId);
+    Page<PostDto.Get> findPostList(Long categoryId, PageRequest pageRequest);
 }

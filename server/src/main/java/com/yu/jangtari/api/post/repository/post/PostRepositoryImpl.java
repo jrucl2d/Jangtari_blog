@@ -9,7 +9,7 @@ import com.yu.jangtari.api.picture.domain.QPicture;
 import com.yu.jangtari.api.post.domain.Post;
 import com.yu.jangtari.api.post.domain.QPost;
 import com.yu.jangtari.api.post.domain.QPostHashtag;
-import com.yu.jangtari.api.post.dto.PostDTO;
+import com.yu.jangtari.api.post.dto.PostDto;
 import com.yu.jangtari.common.PageRequest;
 import com.yu.jangtari.common.QDeleteFlag;
 import com.yu.jangtari.common.SearchType;
@@ -30,44 +30,33 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
-
     // Post 정보와 함께 Comment, Picture, Hashtag 정보도 같이 리턴해야 함
     @Override
-    public Optional<Post> getOne(Long postId) {
+    public Optional<Post> findJoining(Long postId) {
         QPost post = QPost.post;
         QComment comment = QComment.comment;
         QPicture picture = QPicture.picture;
         QPostHashtag postHashtag = QPostHashtag.postHashtag;
-        final Post tmpPost = jpaQueryFactory.selectFrom(post)
-                .leftJoin(post.comments, comment)
-                .leftJoin(post.pictures, picture)
-                .leftJoin(post.postHashtags, postHashtag)
-                .where(post.id.eq(postId))
+        Post tmpPost = jpaQueryFactory.selectFrom(post)
+                .leftJoin(post.comments, comment).on(comment.deleteFlag.isDeleted.isFalse())
+                .leftJoin(post.pictures, picture).on(picture.deleteFlag.isDeleted.isFalse())
+                .leftJoin(post.postHashtags, postHashtag).on(postHashtag.deleteFlag.isDeleted.isFalse())
+                .where(post.id.eq(postId).and(post.deleteFlag.isDeleted.isFalse()))
                 .fetchOne();
-        if (tmpPost == null || tmpPost.getDeleteFlag().isDeleted()) return Optional.empty();
-        return Optional.of(tmpPost);
+        return Optional.ofNullable(tmpPost);
     }
-    @Override
-    public List<Post> getPostListForDelete(Long categoryId) {
-        QPost post = QPost.post;
-        return jpaQueryFactory.selectFrom(post)
-                .where(post.category.id.eq(categoryId))
-                .leftJoin(post.comments)
-                .leftJoin(post.pictures)
-                .leftJoin(post.postHashtags)
-                .fetch();
-    }
+
     // 존재하지 않는 type으로 검색할 시 SearchType enum 내에서 Search Type Error 발생시킴
     @Override
-    public Page<PostDTO.Get> getPostList(Long categoryId, PageRequest pageRequest) {
+    public Page<PostDto.Get> findPostList(Long categoryId, PageRequest pageRequest) {
         final Pageable pageable = pageRequest.of();
         final String type = pageRequest.getType();
         final String keyword = pageRequest.getKeyword();
 
-        JPQLQuery<PostDTO.Get> query;
+        JPQLQuery<PostDto.Get> query;
         QPost post = QPost.post;
         // select, from
-        query = jpaQueryFactory.select(Projections.constructor(PostDTO.Get.class, post.id, post.title)).from(post);
+        query = jpaQueryFactory.select(Projections.constructor(PostDto.Get.class, post.id, post.title)).from(post);
 
         // where
         BooleanBuilder bb = new BooleanBuilder();
@@ -75,7 +64,7 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         setCommonCondition(post, bb, categoryId);
         query.where(bb);
 
-        final List<PostDTO.Get> posts = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query).fetch();
+        final List<PostDto.Get> posts = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query).fetch();
         return new PageImpl<>(posts, pageable, query.fetchCount());
     }
 

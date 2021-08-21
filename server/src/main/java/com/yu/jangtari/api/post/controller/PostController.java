@@ -1,7 +1,7 @@
 package com.yu.jangtari.api.post.controller;
 
 import com.yu.jangtari.common.PageRequest;
-import com.yu.jangtari.api.post.dto.PostDTO;
+import com.yu.jangtari.api.post.dto.PostDto;
 import com.yu.jangtari.api.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,23 +20,23 @@ public class PostController {
 
     @GetMapping("/post/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public PostDTO.GetOne getPost(@PathVariable(value = "id") Long postId){
-        return PostDTO.GetOne.of(postService.getOne(postId));
+    public PostDto.GetOne getPost(@PathVariable(value = "id") Long postId){
+        return PostDto.GetOne.of(postService.getOneJoining(postId));
     }
     @GetMapping("/category/{id}/posts")
     @ResponseStatus(HttpStatus.OK)
-    public Page<PostDTO.Get> getPostList(@PathVariable(value = "id") Long categoryId, PageRequest pageRequest) {
+    public Page<PostDto.Get> getPostList(@PathVariable(value = "id") Long categoryId, PageRequest pageRequest) {
         return postService.getPostList(categoryId, pageRequest);
     }
     @PostMapping(value = "/admin/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public PostDTO.Get addPost(@Valid final PostDTO.Add postDTO) {
-        return PostDTO.Get.of(postService.addPost(postDTO));
+    public PostDto.Get addPost(@Valid final PostDto.Add postDTO) {
+        return PostDto.Get.of(postService.addPost(postDTO));
     }
     @PostMapping(value = "/admin/post/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public PostDTO.GetOne updatePost(@PathVariable("id") final Long postId, @Valid final PostDTO.Update postDTO) {
-        return PostDTO.GetOne.of(postService.updatePost(postId, postDTO));
+    public PostDto.GetOne updatePost(@PathVariable("id") final Long postId, @Valid final PostDto.Update postDTO) {
+        return PostDto.GetOne.of(postService.updatePost(postId, postDTO));
     }
     @DeleteMapping("/admin/post/{id}")
     @ResponseStatus(HttpStatus.OK)

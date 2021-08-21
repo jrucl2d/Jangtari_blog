@@ -35,7 +35,7 @@ public class CommentService {
 
     public Comment addComment(final CommentDTO.Add commentDTO) {
         final Comment comment = commentDTO.toEntity();
-        final Post post = postService.findOne(commentDTO.getPostId());
+        final Post post = postService.getOne(commentDTO.getPostId());
         final Member member = memberService.getMemberByName(commentDTO.getCommenter());
         comment.initPostAndMember(post, member);
         addParentIfExists(comment, commentDTO.getParentCommentId());

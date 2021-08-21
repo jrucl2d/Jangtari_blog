@@ -30,10 +30,15 @@ public enum ErrorCode {
     // =================================================================================================================
     CATEGORY_NOT_FOUND_ERROR("yu4000", "해당 카테고리가 존재하지 않습니다."),
 
+    // =================================================================================================================
+    // 게시글 관련 에러 50XX
+    // =================================================================================================================
+    POST_NOT_FOUND_ERROR("yu5000", "해당 게시글이 존재하지 않습니다."),
+
+
     COMMENT_NOT_FOUND("yu006", "No Such Comment"),
     PICTURE_NOT_FOUND("yu008", "No Such Picture"),
     HASHTAG_NOT_FOUND("yu009", "No Such Hashtag"),
-    POST_NOT_FOUND("yu010", "No Such Post"),
     SEARCH_TYPE_ERROR("yu013", "No Such SearchType"),
     JANGTARI_DELETE_ERROR("yu014", "Nobody Can Delete Jangtari"),
     INVALID_TOKEN_ERROR("yu015", "Invalid Token"),

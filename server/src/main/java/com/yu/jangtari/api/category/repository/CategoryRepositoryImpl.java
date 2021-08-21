@@ -30,7 +30,7 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
     }
 
     @Override
-    public Optional<Category> getCategoryForDelete(Long categoryId) {
+    public Optional<Category> findCategoryForDelete(Long categoryId) {
         QCategory category = QCategory.category;
         QPost post = QPost.post;
 

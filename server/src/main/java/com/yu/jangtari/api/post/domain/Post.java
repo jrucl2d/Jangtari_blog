@@ -2,13 +2,30 @@ package com.yu.jangtari.api.post.domain;
 
 import com.yu.jangtari.api.category.domain.Category;
 import com.yu.jangtari.api.comment.domain.Comment;
-import com.yu.jangtari.api.post.dto.PostDTO;
+import com.yu.jangtari.api.picture.domain.Picture;
+import com.yu.jangtari.api.post.dto.PostDto;
 import com.yu.jangtari.common.DateAuditing;
 import com.yu.jangtari.common.DeleteFlag;
-import com.yu.jangtari.api.picture.domain.Picture;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,7 +71,7 @@ public class Post extends DateAuditing
     DeleteFlag deleteFlag;
 
     @Builder
-    public Post(String title, String content, int template, Category category) {
+    private Post(String title, String content, int template, Category category) {
         this.title = title;
         this.content = content;
         this.template = template;
@@ -63,6 +80,28 @@ public class Post extends DateAuditing
         this.comments = new ArrayList<>();
         this.pictures = new ArrayList<>();
         this.postHashtags = new ArrayList<>();
+    }
+
+    public static Post of(PostDto.Add dto) {
+        Post post = Post.builder()
+            .category(Category.builder().id(dto.getCategoryId()).build())
+            .title(dto.getTitle())
+            .content(dto.getContent())
+            .template(dto.getTemplate())
+            .build();
+        post.pictures.addAll(
+            dto.getPictureUrls()
+                .stream()
+                .map(url -> Picture.of(url, post))
+                .collect(Collectors.toList())
+        );
+        post.postHashtags.addAll(
+            dto.getHashtags()
+                .stream()
+                .map(hashtag -> PostHashtag.of(hashtag, post))
+                .collect(Collectors.toList())
+        );
+        return post;
     }
 
     public void softDelete() {
@@ -81,33 +120,15 @@ public class Post extends DateAuditing
     public void clearPostHashtags() {
         this.postHashtags.clear();
     }
-    public void removePictures(PostDTO.Update postDTO) {
+    public void removePictures(PostDto.Update postDTO) {
         getPictures().removeAll(postDTO.getDeletePictures());
     }
     public void addComment(final Comment comment) {
         this.getComments().add(comment);
     }
-    public void updatePost(PostDTO.Update postDTO) {
+    public void updatePost(PostDto.Update postDTO) {
         this.title = postDTO.getTitle();
         this.content = postDTO.getContent();
         this.template = postDTO.getTemplate();
-    }
-    public Post getDeleteFiltered() {
-        final Post resultPost = Post.builder()
-                .title(this.getTitle())
-                .category(this.getCategory())
-                .template(this.getTemplate())
-                .content(this.getContent()).build();
-        this.getComments().forEach(comment -> {
-            if (!comment.getDeleteFlag().isDeleted()) resultPost.addComment(comment);
-        });
-        resultPost.addPictures(this.getPictures().stream().filter(picture -> !picture.getDeleteFlag().isDeleted()).collect(Collectors.toList()));
-        resultPost.addPostHashtags(this.getPostHashtags().stream().filter(postHashtag -> !postHashtag.getDeleteFlag().isDeleted()).collect(Collectors.toList()));
-        resultPost.setId(this.getId());
-        return resultPost;
-    }
-    // getDeleteFiltered를 위한 setter
-    private void setId(Long id) {
-        this.id = id;
     }
 }
