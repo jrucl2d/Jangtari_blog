@@ -10,5 +10,5 @@ import java.util.Optional;
 
 public interface CustomPostRepository {
     Optional<Post> findJoining(Long postId);
-    Page<PostDto.Get> findPostList(Long categoryId, PageRequest pageRequest);
+    Page<PostDto.ListGetElement> findPostList(Long categoryId, PageRequest pageRequest);
 }

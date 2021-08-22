@@ -5,7 +5,7 @@
 //import com.yu.jangtari.api.category.domain.Category;
 //import com.yu.jangtari.api.post.dto.PostDto;
 //import com.yu.jangtari.api.post.domain.Hashtag;
-//import com.yu.jangtari.api.picture.domain.Picture;
+//import com.yu.jangtari.api.post.domain.Picture;
 //import com.yu.jangtari.api.post.domain.Post;
 //import com.yu.jangtari.api.post.domain.PostHashtag;
 //import com.yu.jangtari.api.post.service.PostService;

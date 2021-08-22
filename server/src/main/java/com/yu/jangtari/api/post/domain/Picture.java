@@ -1,6 +1,5 @@
-package com.yu.jangtari.api.picture.domain;
+package com.yu.jangtari.api.post.domain;
 
-import com.yu.jangtari.api.post.domain.Post;
 import com.yu.jangtari.common.DateAuditing;
 import com.yu.jangtari.common.DeleteFlag;
 import lombok.AccessLevel;

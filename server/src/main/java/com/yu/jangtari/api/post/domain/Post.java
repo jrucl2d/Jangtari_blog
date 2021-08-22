@@ -2,7 +2,6 @@ package com.yu.jangtari.api.post.domain;
 
 import com.yu.jangtari.api.category.domain.Category;
 import com.yu.jangtari.api.comment.domain.Comment;
-import com.yu.jangtari.api.picture.domain.Picture;
 import com.yu.jangtari.api.post.dto.PostDto;
 import com.yu.jangtari.api.post.repository.hashtag.HashtagRepository;
 import com.yu.jangtari.common.DateAuditing;
@@ -72,7 +71,8 @@ public class Post extends DateAuditing
     DeleteFlag deleteFlag;
 
     @Builder
-    private Post(String title, String content, int template, Category category) {
+    private Post(Long id, String title, String content, int template, Category category) {
+        this.id = id;
         this.title = title;
         this.content = content;
         this.template = template;
@@ -123,7 +123,7 @@ public class Post extends DateAuditing
     }
 
     public void addComment(Comment comment) {
-        this.getComments().add(comment);
+        this.comments.add(comment);
     }
 
 }

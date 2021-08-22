@@ -25,13 +25,13 @@ public class PostController {
     }
     @GetMapping("/category/{id}/posts")
     @ResponseStatus(HttpStatus.OK)
-    public Page<PostDto.Get> getPostList(@PathVariable(value = "id") Long categoryId, PageRequest pageRequest) {
+    public Page<PostDto.ListGetElement> getPostList(@PathVariable(value = "id") Long categoryId, PageRequest pageRequest) {
         return postService.getPostList(categoryId, pageRequest);
     }
     @PostMapping(value = "/admin/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public PostDto.Get addPost(@Valid final PostDto.Add postDTO) {
-        return PostDto.Get.of(postService.addPost(postDTO));
+    public PostDto.ListGetElement addPost(@Valid final PostDto.Add postDTO) {
+        return PostDto.ListGetElement.of(postService.addPost(postDTO));
     }
     @PostMapping(value = "/admin/post/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.OK)

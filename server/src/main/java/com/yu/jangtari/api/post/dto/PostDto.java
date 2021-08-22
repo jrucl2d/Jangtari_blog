@@ -28,11 +28,11 @@ public class PostDto
         private String title;
         private String content;
         private List<CommentDTO.Get> comments = new ArrayList<>();
-        private List<PictureDTO> pictures = new ArrayList<>(); // 후에 사진에 대한 메타 정보가 추가될 것을 고려하여 DTO
+        private List<PictureDto> pictures = new ArrayList<>(); // 후에 사진에 대한 메타 정보가 추가될 것을 고려하여 DTO
         private List<String> hashtags = new ArrayList<>(); // 단순한 해시태그 문자열만 필요하므로 String
 
         @Builder
-        public GetOne(Long postId, String title, String content, List<CommentDTO.Get> comments, List<PictureDTO> pictures, List<String> hashtags) {
+        private GetOne(Long postId, String title, String content, List<CommentDTO.Get> comments, List<PictureDto> pictures, List<String> hashtags) {
             this.postId = postId;
             this.title = title;
             this.content = content;
@@ -46,7 +46,7 @@ public class PostDto
                     .title(post.getTitle())
                     .content(post.getContent())
                     .comments(post.getComments().stream().map(CommentDTO.Get::of).collect(Collectors.toList()))
-                    .pictures(post.getPictures().stream().map(PictureDTO::new).collect(Collectors.toList()))
+                    .pictures(post.getPictures().stream().map(PictureDto::new).collect(Collectors.toList()))
                     .hashtags(post.getPostHashtags().stream().map(postHashtag -> postHashtag.getHashtag().getContent()).collect(Collectors.toList()))
                     .build();
         }
@@ -55,18 +55,18 @@ public class PostDto
     @Getter
     @ToString
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class Get {
+    public static class ListGetElement {
         private Long postId;
         private String title;
 
         @Builder
-        public Get(Long postId, String title) {
+        private ListGetElement(Long postId, String title) {
             this.postId = postId;
             this.title = title;
         }
 
-        public static Get of(Post post) {
-            return Get.builder().postId(post.getId()).title(post.getTitle()).build();
+        public static ListGetElement of(Post post) {
+            return ListGetElement.builder().postId(post.getId()).title(post.getTitle()).build();
         }
     }
 
@@ -88,7 +88,7 @@ public class PostDto
         private List<String> pictureUrls = new ArrayList<>();
 
         @Builder
-        public Add(
+        private Add(
             Long categoryId
             , String title
             , String content
@@ -138,7 +138,7 @@ public class PostDto
         private List<String> addPicUrls = new ArrayList<>();
 
         @Builder
-        public Update(String title
+        private Update(String title
             , String content
             , int template
             , List<String> hashtags

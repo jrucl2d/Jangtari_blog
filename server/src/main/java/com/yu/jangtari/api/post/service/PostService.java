@@ -36,7 +36,7 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PostDto.Get> getPostList(Long categoryId, PageRequest pageRequest) {
+    public Page<PostDto.ListGetElement> getPostList(Long categoryId, PageRequest pageRequest) {
         return postRepository.findPostList(categoryId, pageRequest);
     }
 

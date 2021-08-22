@@ -45,7 +45,8 @@ public class PostHashtag extends DateAuditing
     private DeleteFlag deleteFlag;
 
     @Builder
-    private PostHashtag(Post post, Hashtag hashtag) {
+    private PostHashtag(Long id, Post post, Hashtag hashtag) {
+        this.id = id;
         this.post = post;
         this.hashtag = hashtag;
         this.deleteFlag = new DeleteFlag();
