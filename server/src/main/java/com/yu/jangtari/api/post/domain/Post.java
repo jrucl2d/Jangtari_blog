@@ -90,12 +90,7 @@ public class Post extends DateAuditing
             .content(dto.getContent())
             .template(dto.getTemplate())
             .build();
-        post.pictures.addAll(
-            dto.getPictureUrls()
-                .stream()
-                .map(url -> Picture.of(url, post))
-                .collect(Collectors.toList())
-        );
+        post.pictures.addAll(Picture.getPictureEntities(dto.getPictureUrls(), post));
         post.postHashtags.addAll(
             dto.getHashtags()
                 .stream()
@@ -105,6 +100,21 @@ public class Post extends DateAuditing
         return post;
     }
 
+    public void updatePost(PostDto.Update dto, HashtagRepository hashtagRepository) {
+        this.postHashtags.clear();
+        this.postHashtags.addAll(
+            dto.getHashtags()
+                .stream()
+                .map(hashtagStr -> PostHashtag.of(hashtagRepository.save(new Hashtag(hashtagStr)), this))
+                .collect(Collectors.toList())
+        );
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
+        this.template = dto.getTemplate();
+        this.pictures.removeAll(Picture.getPictureEntities(dto.getDelPics(), this));
+        this.pictures.addAll(Picture.getPictureEntities(dto.getAddPicUrls(), this));
+    }
+
     public void softDelete() {
         this.deleteFlag.softDelete();
         this.comments.forEach(Comment::softDelete);
@@ -112,24 +122,8 @@ public class Post extends DateAuditing
         this.postHashtags.forEach(PostHashtag::softDelete);
     }
 
-    public void addPictures(List<Picture> pictures) {
-        getPictures().addAll(pictures);
-    }
-    public void addPostHashtags(List<PostHashtag> postHashtags) {
-        getPostHashtags().addAll(postHashtags);
-    }
-    public void clearPostHashtags() {
-        this.postHashtags.clear();
-    }
-    public void removePictures(PostDto.Update postDTO) {
-        getPictures().removeAll(postDTO.getDeletePictures());
-    }
-    public void addComment(final Comment comment) {
+    public void addComment(Comment comment) {
         this.getComments().add(comment);
     }
-    public void updatePost(PostDto.Update postDTO) {
-        this.title = postDTO.getTitle();
-        this.content = postDTO.getContent();
-        this.template = postDTO.getTemplate();
-    }
+
 }

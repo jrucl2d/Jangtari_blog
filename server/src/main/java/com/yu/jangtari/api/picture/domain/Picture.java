@@ -18,6 +18,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @ToString(exclude = "post")
@@ -46,11 +48,11 @@ public class Picture extends DateAuditing
         this.deleteFlag = new DeleteFlag();
     }
 
-    public static Picture of(String url, Post post) {
-        return Picture.builder()
-            .url(url)
-            .post(post)
-            .build();
+    public static List<Picture> getPictureEntities(List<String> urls, Post post) {
+        return urls
+            .stream()
+            .map(url -> Picture.builder().url(url).post(post).build())
+            .collect(Collectors.toList());
     }
 
     public void softDelete() {

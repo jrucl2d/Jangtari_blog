@@ -1,6 +1,5 @@
 package com.yu.jangtari.api.post.domain;
 
-import com.yu.jangtari.common.DateAuditing;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,8 +14,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "hashtag")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of="content", callSuper = false)
-public class Hashtag extends DateAuditing
+@EqualsAndHashCode(of="content")
+public class Hashtag
 {
     @Id
     @Column(name = "hashtag")
@@ -24,5 +23,11 @@ public class Hashtag extends DateAuditing
 
     public Hashtag(String content) {
         this.content = content;
+    }
+
+    @Override
+    public String toString()
+    {
+        return content;
     }
 }

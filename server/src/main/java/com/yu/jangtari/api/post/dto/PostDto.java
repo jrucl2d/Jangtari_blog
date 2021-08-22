@@ -2,8 +2,6 @@ package com.yu.jangtari.api.post.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yu.jangtari.api.comment.dto.CommentDTO;
-import com.yu.jangtari.api.picture.domain.Picture;
-import com.yu.jangtari.api.post.domain.Hashtag;
 import com.yu.jangtari.api.post.domain.Post;
 import com.yu.jangtari.common.GDFolder;
 import com.yu.jangtari.util.GoogleDriveUtil;
@@ -17,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +40,7 @@ public class PostDto
             this.pictures = pictures;
             this.hashtags = hashtags;
         }
-        public static GetOne of(final Post post) {
+        public static GetOne of(Post post) {
             return GetOne.builder()
                     .postId(post.getId())
                     .title(post.getTitle())
@@ -68,7 +65,7 @@ public class PostDto
             this.title = title;
         }
 
-        public static Get of(final Post post) {
+        public static Get of(Post post) {
             return Get.builder().postId(post.getId()).title(post.getTitle()).build();
         }
     }
@@ -103,14 +100,16 @@ public class PostDto
             this.title = title;
             this.content = content;
             this.template = template;
-            this.pictures = pictures;
-            this.pictureUrls = pictureUrls;
+            if (pictures == null) this.pictures = new ArrayList<>();
+            else this.pictures = pictures;
+            if (pictureUrls == null) this.pictureUrls = new ArrayList<>();
+            else this.pictureUrls = pictureUrls;
             if (hashtags == null) this.hashtags = new ArrayList<>();
             else this.hashtags = hashtags;
         }
 
         public Add toUrlDto(GoogleDriveUtil googleDriveUtil) {
-            List<String> retUrls = googleDriveUtil.filesToURLs(this.getPictures(), GDFolder.CATEGORY);
+            List<String> retUrls = googleDriveUtil.filesToURLs(this.pictures, GDFolder.POST);
             return Add.builder()
                 .categoryId(this.categoryId)
                 .title(this.title)
@@ -135,22 +134,40 @@ public class PostDto
         private List<String> delPics = new ArrayList<>();
         private List<MultipartFile> addPics = new ArrayList<>();
 
+        @JsonIgnore
+        private List<String> addPicUrls = new ArrayList<>();
+
         @Builder
-        public Update(String title, String content, int template, List<String> hashtags, List<String> delPics, List<MultipartFile> addPics) {
+        public Update(String title
+            , String content
+            , int template
+            , List<String> hashtags
+            , List<String> delPics
+            , List<MultipartFile> addPics
+            , List<String> addPicUrls) {
             this.title = title;
             this.content = content;
             this.template = template;
-            this.hashtags = hashtags;
-            this.delPics = delPics;
-            this.addPics = addPics;
+            if (hashtags == null) this.hashtags = new ArrayList<>();
+            else this.hashtags = hashtags;
+            if (delPics == null) this.delPics = new ArrayList<>();
+            else this.delPics = delPics;
+            if (addPics == null) this.addPics = new ArrayList<>();
+            else this.addPics = addPics;
+            if (addPicUrls == null) this.addPicUrls = new ArrayList<>();
+            else this.addPicUrls = addPicUrls;
         }
-        public List<Hashtag> getHashtagsEntities() {
-            if (hashtags == null) return Collections.emptyList();
-            return hashtags.stream().map(Hashtag::new).collect(Collectors.toList());
-        }
-        public List<Picture> getDeletePictures() {
-            if (delPics == null) return Collections.emptyList();
-            return delPics.stream().map(delPic -> Picture.builder().url(delPic).build()).collect(Collectors.toList());
+
+        public Update toUrlDto(GoogleDriveUtil googleDriveUtil) {
+            List<String> retUrls = googleDriveUtil.filesToURLs(this.addPics, GDFolder.POST);
+            return Update.builder()
+                .title(this.title)
+                .content(this.content)
+                .template(this.template)
+                .hashtags(this.hashtags)
+                .delPics(this.delPics)
+                .addPicUrls(retUrls)
+                .build();
         }
     }
 }
