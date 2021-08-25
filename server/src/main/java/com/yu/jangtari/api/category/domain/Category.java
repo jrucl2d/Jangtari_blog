@@ -37,11 +37,12 @@ public class Category extends DateAuditing
     private DeleteFlag deleteFlag;
 
     @Builder
-    private Category(Long id, String name, String picture) {
+    private Category(Long id, String name, String picture, List<Post> posts) {
         this.id = id;
         this.name = name;
         this.picture = picture;
         this.deleteFlag = new DeleteFlag();
+        this.posts = posts;
     }
 
     public void softDelete() {

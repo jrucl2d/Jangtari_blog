@@ -85,7 +85,9 @@ public class Post extends DateAuditing
 
     public static Post of(PostDto.Add dto, HashtagRepository hashtagRepository) {
         Post post = Post.builder()
-            .category(Category.builder().id(dto.getCategoryId()).build())
+            .category(Category.builder()
+                .id(dto.getCategoryId())
+                .build())
             .title(dto.getTitle())
             .content(dto.getContent())
             .template(dto.getTemplate())
@@ -97,6 +99,7 @@ public class Post extends DateAuditing
                 .map(hashtagStr -> PostHashtag.of(hashtagRepository.save(new Hashtag(hashtagStr)), post))
                 .collect(Collectors.toList())
         );
+
         return post;
     }
 
