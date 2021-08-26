@@ -9,6 +9,7 @@ import com.yu.jangtari.util.GoogleDriveUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,13 +25,13 @@ public class CategoryService {
         return categoryRepository.getAllCategories();
     }
 
-    public Category addCategory(CategoryDto.Add categoryDto) {
-        return categoryRepository.save(categoryDto.toEntity(googleDriveUtil));
+    public Category addCategory(CategoryDto.Add categoryDto, MultipartFile picture) {
+        return categoryRepository.save(categoryDto.toEntity(googleDriveUtil, picture));
     }
 
-    public Category updateCategory(Long categoryId, CategoryDto.Update categoryDto) {
-        Category category = getOne(categoryId);
-        return category.updateCategory(categoryDto.toUrlDto(googleDriveUtil));
+    public Category updateCategory(CategoryDto.Update categoryDto, MultipartFile picture) {
+        Category category = getOne(categoryDto.getCategoryId());
+        return category.updateCategory(categoryDto.toUrlDto(googleDriveUtil, picture));
     }
 
     @Transactional(readOnly = true)

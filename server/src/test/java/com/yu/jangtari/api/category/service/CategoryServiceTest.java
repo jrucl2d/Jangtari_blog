@@ -61,12 +61,11 @@ class CategoryServiceTest extends ServiceTest {
         // given
         CategoryDto.Add categoryDto = CategoryDto.Add.builder()
             .name("category name")
-            .picture(PictureFileUtil.createOne("category"))
             .build();
         given(googleDriveUtil.fileToURL(any(), any())).willReturn("category");
 
         // when
-        categoryService.addCategory(categoryDto);
+        categoryService.addCategory(categoryDto, PictureFileUtil.createOne("category"));
 
         // then
         verify(googleDriveUtil, times(1)).fileToURL(any(), any());
@@ -74,22 +73,21 @@ class CategoryServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("category 정보를 수정하며 새로운 사진의 경우 url을 변경함")
+    @DisplayName("category 정보를 수정, 사진의 경우 url로 변환")
     void updateCategory()
     {
         // given
         CategoryDto.Update categoryDto = CategoryDto.Update.builder()
+            .categoryId(1L)
             .name("new category name")
-            .picture(PictureFileUtil.createOne("category"))
             .build();
-        given(googleDriveUtil.fileToURL(any(), any())).willReturn("category");
         given(categoryRepository.findById(anyLong())).willReturn(Optional.of(category));
 
         // when
-        categoryService.updateCategory(1L, categoryDto);
+        categoryService.updateCategory(categoryDto, PictureFileUtil.createOne("picture"));
 
         // then
-        verify(googleDriveUtil, times(1)).fileToURL(any(), any());
+        verify(categoryRepository, times(1)).findById(anyLong());
     }
 
     @Test
@@ -98,15 +96,15 @@ class CategoryServiceTest extends ServiceTest {
     {
         // given
         CategoryDto.Update categoryDto = CategoryDto.Update.builder()
+            .categoryId(1L)
             .name("new category name")
-            .picture(PictureFileUtil.createOne("category"))
             .build();
         given(categoryRepository.findById(anyLong())).willReturn(Optional.empty());
 
         // when
         // then
         BusinessException e = assertThrows(BusinessException.class,
-            () -> categoryService.updateCategory(1L, categoryDto));
+            () -> categoryService.updateCategory(categoryDto, PictureFileUtil.createOne("name")));
         assertThat(e.getErrorCode()).isEqualTo(ErrorCode.CATEGORY_NOT_FOUND_ERROR);
     }
 

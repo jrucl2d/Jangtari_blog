@@ -12,6 +12,7 @@ import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CategoryDto
@@ -22,16 +23,14 @@ public class CategoryDto
     public static class Add {
         @NotBlank(message = "이름이 빈칸이면 안 됩니다.")
         private String name;
-        private MultipartFile picture;
 
         @Builder
-        public Add(String name, MultipartFile picture) {
+        public Add(String name) {
             this.name = name;
-            this.picture = picture;
         }
 
-        public Category toEntity(GoogleDriveUtil googleDriveUtil) {
-            String returnedUrl = googleDriveUtil.fileToURL(this.getPicture(), GDFolder.CATEGORY);
+        public Category toEntity(GoogleDriveUtil googleDriveUtil, MultipartFile picture) {
+            String returnedUrl = googleDriveUtil.fileToURL(picture, GDFolder.CATEGORY);
             return Category.builder()
                     .name(name)
                     .picture(returnedUrl)
@@ -42,31 +41,32 @@ public class CategoryDto
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @ToString
     public static class Update {
+        @NotNull
+        private Long categoryId;
+
         @NotBlank(message = "이름이 빈칸이면 안 됩니다.")
         private String name;
-        private MultipartFile picture;
 
         @JsonIgnore
-        private String pictureURL;
+        private String pictureUrl;
 
         @Builder
-        public Update(String name, MultipartFile picture, String pictureURL) {
+        public Update(Long categoryId, String name, String pictureUrl) {
+            this.categoryId = categoryId;
             this.name = name;
-            this.picture = picture;
-            this.pictureURL = pictureURL;
+            this.pictureUrl = pictureUrl;
         }
 
         @JsonIgnore
-        public String getPictureURL() {
-            return this.pictureURL;
+        public String getPictureUrl() {
+            return this.pictureUrl;
         }
 
-        public Update toUrlDto(GoogleDriveUtil googleDriveUtil) {
-            String returnedUrl = googleDriveUtil.fileToURL(this.getPicture(), GDFolder.CATEGORY);
+        public Update toUrlDto(GoogleDriveUtil googleDriveUtil, MultipartFile picture) {
+            String returnedUrl = googleDriveUtil.fileToURL(picture, GDFolder.CATEGORY);
             return Update.builder()
                 .name(this.name)
-                .picture(null)
-                .pictureURL(returnedUrl)
+                .pictureUrl(returnedUrl)
                 .build();
         }
     }

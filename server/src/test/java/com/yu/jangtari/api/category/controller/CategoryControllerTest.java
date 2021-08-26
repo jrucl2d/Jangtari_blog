@@ -3,7 +3,6 @@ package com.yu.jangtari.api.category.controller;
 import com.yu.jangtari.IntegrationTest;
 import com.yu.jangtari.api.member.domain.RoleType;
 import com.yu.jangtari.security.jwt.JwtInfo;
-import com.yu.jangtari.testHelper.PictureFileUtil;
 import com.yu.jangtari.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +36,6 @@ class CategoryControllerTest extends IntegrationTest {
         // when
         // then
         mockMvc.perform(multipart("/admin/category")
-                .file("picture", PictureFileUtil.createOne("picture1").getBytes())
                 .header(HttpHeaders.AUTHORIZATION, accessToken)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .params(params))
