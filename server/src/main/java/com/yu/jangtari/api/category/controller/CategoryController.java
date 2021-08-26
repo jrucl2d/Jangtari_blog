@@ -22,13 +22,13 @@ public class CategoryController {
         return categoryService.getAllCategories().stream().map(CategoryDto.Get::of).collect(Collectors.toList());
     }
     @PostMapping(value = "/admin/category", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public CategoryDto.Get addCategory(@Valid CategoryDto.Add categoryDTO) {
         return CategoryDto.Get.of(categoryService.addCategory(categoryDTO));
     }
     @PostMapping(value = "/admin/category/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public CategoryDto.Get updateCategory(@PathVariable("id") final Long categoryId, @Valid final CategoryDto.Update categoryDTO) {
+    public CategoryDto.Get updateCategory(@PathVariable("id") Long categoryId, @Valid CategoryDto.Update categoryDTO) {
         return CategoryDto.Get.of(categoryService.updateCategory(categoryId, categoryDTO));
     }
     @DeleteMapping("/admin/category/{id}")

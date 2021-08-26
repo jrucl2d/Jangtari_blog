@@ -1,130 +1,32 @@
 package com.yu.jangtari.util;
 
-import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.FileContent;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.store.FileDataStoreFactory;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.DriveScopes;
 import com.yu.jangtari.common.GDFolder;
-import com.yu.jangtari.common.exception.FileTaskException;
-import com.yu.jangtari.common.exception.GoogleDriveException;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
-import java.security.GeneralSecurityException;
-import java.text.SimpleDateFormat;
+import java.io.IOException;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Profile("test")
 @Service
-@Profile("local")
 public class GoogleDriveUtil {
-    // redirect URL을 적용해야 함
-    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-
-    private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
-
-    // category, jangtari, post
-    private final String[] folders = {"1NzhQFXNOqY3dNYIHq0Rpf6AKZH-xHWVR", "14CKUxuVzBqPz8RDwvLvUxaOJLI1Z62XK", "1G7FMqlteOguD-St7TOIO_P6czMDD46lS"};
-    private final String fileRef = "https://drive.google.com/uc?export=download&id=";
-
-    private final ClassPathResource gdSecretKeys = new ClassPathResource("/jangtari.json");
-    private static final String token = "credentials";
-    private static final String appname = "jangtaritest";
-    private GoogleAuthorizationCodeFlow flow;
-
-    public GoogleAuthorizationCodeFlow getFlow(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
-        // Load client secrets.
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(gdSecretKeys.getInputStream()));
-
-        // Build flow and trigger user authorization request.
-        return new GoogleAuthorizationCodeFlow.Builder(
-                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(token)))
-                .setAccessType("offline")
-                .build();
+    public GoogleAuthorizationCodeFlow getFlow(NetHttpTransport httpTransport) throws IOException {
+        // not used
+        return null;
     }
 
-    private Credential getCredentials(final NetHttpTransport httpTransport) throws IOException {
-        flow = getFlow(httpTransport);
-        return flow.loadCredential("user");
-    }
-
-    /**
-     * Google Drive API를 사용해 파일을 구글 드라이브에 저장하고 저장한 URL을 리턴해주는 메소드
-     * 사진 파일이 없으면(null) null을 리턴
-     * @param pictureFiles 사진 파일
-     * @param gdFolder     카테고리/포스트/사람 사진
-     * @return URL의 리스트 / URL
-     */
     public List<String> filesToURLs(List<MultipartFile> pictureFiles, GDFolder gdFolder) {
         if (pictureFiles == null || pictureFiles.isEmpty()) return Collections.emptyList();
-        List<String> pictureURLs;
-        try {
-            Drive drive = getDrive();
-            pictureURLs = pictureFiles.parallelStream().map(pictureFile -> getURL(pictureFile, gdFolder, drive)).collect(Collectors.toList());
-        } catch (GeneralSecurityException e) {
-            throw new GoogleDriveException();
-        } catch (IOException e) {
-            throw new FileTaskException();
-        }
-        return pictureURLs;
+        return pictureFiles.stream().map(MultipartFile::getName).collect(Collectors.toList());
     }
 
     public String fileToURL(MultipartFile pictureFile, GDFolder gdFolder) {
         if (pictureFile == null) return null;
-        try {
-            Drive drive = getDrive();
-            return getURL(pictureFile, gdFolder, drive);
-        } catch (GeneralSecurityException e) {
-            throw new GoogleDriveException();
-        } catch (IOException e) {
-            throw new FileTaskException();
-        }
-    }
-
-    private String getURL(MultipartFile pictureFile, GDFolder gdFolder, Drive drive) {
-        final com.google.api.services.drive.model.File file = new com.google.api.services.drive.model.File();
-        file.setName(getPictureName(pictureFile.getName()));
-        file.setParents(Collections.singletonList(folders[gdFolder.getNumber()]));
-        final File tempFile;
-        try {
-            tempFile = new File(Objects.requireNonNull(pictureFile.getOriginalFilename()));
-        } catch (NullPointerException e) {
-            throw new FileTaskException();
-        }
-
-        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
-            fos.write(pictureFile.getBytes());
-            final FileContent content = new FileContent("image/jpeg", tempFile);
-            final com.google.api.services.drive.model.File uploadedFile = drive.files().create(file, content).setFields("id").execute();
-            return fileRef + uploadedFile.getId();
-        } catch (IOException | NullPointerException e) {
-            throw new FileTaskException(); // 임시 파일 작업 중 발생한 IOException
-        }
-    }
-
-
-    private Drive getDrive() throws GeneralSecurityException, IOException {
-        final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        return new Drive.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport)).setApplicationName(appname).build();
-    }
-
-    private String getPictureName(final String pictureName) {
-        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
-        String dateString = format.format(new Date());
-        return dateString + "_" + pictureName + ".jpg";
+        return pictureFile.getName();
     }
 }
