@@ -88,4 +88,16 @@ class CategoryControllerTest extends IntegrationTest {
             .andExpect(jsonPath("$.message").value(ErrorCode.CATEGORY_NOT_FOUND_ERROR.getMessage()))
             .andDo(print());
     }
+
+    // TODO : post 넣는 service 테스트 후 진행
+    @Test
+    @DisplayName("category 삭제하면 연관된 post 등 전부 삭제 처리")
+    void deleteCategory()
+    {
+        // given
+
+        // when
+
+        // then
+    }
 }

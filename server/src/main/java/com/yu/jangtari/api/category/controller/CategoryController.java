@@ -50,8 +50,7 @@ public class CategoryController {
 
     @DeleteMapping("/admin/category/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public String deleteCategory(@PathVariable(value = "id") Long categoryId){
+    public void deleteCategory(@PathVariable(value = "id") Long categoryId){
         categoryService.deleteCategory(categoryId);
-        return "OK";
     }
 }
