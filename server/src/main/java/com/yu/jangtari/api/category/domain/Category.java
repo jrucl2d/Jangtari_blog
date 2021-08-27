@@ -53,6 +53,7 @@ public class Category extends DateAuditing
     public Category updateCategory(CategoryDto.Update categoryDTO) {
         String pictureUrl = categoryDTO.getPictureUrl() == null ? this.picture : categoryDTO.getPictureUrl();
         return Category.builder()
+            .id(categoryDTO.getCategoryId())
             .name(categoryDTO.getName())
             .picture(pictureUrl)
             .build();

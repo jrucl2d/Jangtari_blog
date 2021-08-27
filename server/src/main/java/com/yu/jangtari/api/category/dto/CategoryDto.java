@@ -65,6 +65,7 @@ public class CategoryDto
         public Update toUrlDto(GoogleDriveUtil googleDriveUtil, MultipartFile picture) {
             String returnedUrl = googleDriveUtil.fileToURL(picture, GDFolder.CATEGORY);
             return Update.builder()
+                .categoryId(this.categoryId)
                 .name(this.name)
                 .pictureUrl(returnedUrl)
                 .build();
