@@ -4,6 +4,7 @@ import com.yu.jangtari.IntegrationTest;
 import com.yu.jangtari.api.category.domain.Category;
 import com.yu.jangtari.api.category.repository.CategoryRepository;
 import com.yu.jangtari.api.member.domain.RoleType;
+import com.yu.jangtari.exception.ErrorCode;
 import com.yu.jangtari.security.jwt.JwtInfo;
 import com.yu.jangtari.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,6 +69,23 @@ class CategoryControllerTest extends IntegrationTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.categoryId").value(category.getId()))
             .andExpect(jsonPath("$.name").value("newCategory"))
+            .andDo(print());
+    }
+
+    @Test
+    @DisplayName("없는 category 수정할 수 없다.")
+    void updateCategory_x() throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("categoryId", "1000000");
+        params.add("name", "newCategory");
+
+        mockMvc.perform(put("/admin/category")
+                .header(HttpHeaders.AUTHORIZATION, accessToken)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .params(params))
+            .andExpect(status().is5xxServerError())
+            .andExpect(jsonPath("$.code").value(ErrorCode.CATEGORY_NOT_FOUND_ERROR.getCode()))
+            .andExpect(jsonPath("$.message").value(ErrorCode.CATEGORY_NOT_FOUND_ERROR.getMessage()))
             .andDo(print());
     }
 }
