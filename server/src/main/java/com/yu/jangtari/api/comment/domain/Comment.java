@@ -1,6 +1,6 @@
 package com.yu.jangtari.api.comment.domain;
 
-import com.yu.jangtari.api.comment.dto.CommentDTO;
+import com.yu.jangtari.api.comment.dto.CommentDto;
 import com.yu.jangtari.common.DateAuditing;
 import com.yu.jangtari.common.DeleteFlag;
 import com.yu.jangtari.api.member.domain.Member;
@@ -67,7 +67,7 @@ public class Comment extends DateAuditing
     private void initParentComment(final Comment comment) {
         this.parentComment = comment;
     }
-    public void updateComment(CommentDTO.Update commentDTO) {
+    public void updateComment(CommentDto.Update commentDTO) {
         this.content = commentDTO.getContent();
     }
 }

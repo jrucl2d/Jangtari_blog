@@ -1,14 +1,15 @@
 package com.yu.jangtari.api.comment.service;
 
-import com.yu.jangtari.common.exception.NoMasterException;
-import com.yu.jangtari.common.exception.NoSuchCommentException;
 import com.yu.jangtari.api.comment.domain.Comment;
-import com.yu.jangtari.api.comment.dto.CommentDTO;
-import com.yu.jangtari.api.member.domain.Member;
-import com.yu.jangtari.api.post.domain.Post;
-import com.yu.jangtari.api.member.service.MemberService;
-import com.yu.jangtari.api.post.service.PostService;
+import com.yu.jangtari.api.comment.dto.CommentDto;
 import com.yu.jangtari.api.comment.repository.CommentRepository;
+import com.yu.jangtari.api.member.domain.Member;
+import com.yu.jangtari.api.member.service.MemberService;
+import com.yu.jangtari.api.post.domain.Post;
+import com.yu.jangtari.api.post.service.PostService;
+import com.yu.jangtari.common.exception.NoMasterException;
+import com.yu.jangtari.exception.BusinessException;
+import com.yu.jangtari.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,16 +25,17 @@ public class CommentService {
     private final MemberService memberService;
 
     @Transactional(readOnly = true)
-    public List<Comment> getCommentsOfPost(final Long postId) {
+    public List<Comment> getCommentsOfPost(Long postId) {
         return commentRepository.findCommentsOfPost(postId);
     }
 
     @Transactional(readOnly = true)
-    public Comment getComment(final Long commentId) {
-        return commentRepository.findById(commentId).orElseThrow(NoSuchCommentException::new);
+    public Comment getComment(Long commentId) {
+        return commentRepository.findById(commentId)
+            .orElseThrow(() -> new BusinessException(ErrorCode.COMMENT_NOT_FOUND_ERROR));
     }
 
-    public Comment addComment(final CommentDTO.Add commentDTO) {
+    public Comment addComment(CommentDto.Add commentDTO) {
         final Comment comment = commentDTO.toEntity();
         final Post post = postService.getOne(commentDTO.getPostId());
         final Member member = memberService.getMemberByName(commentDTO.getCommenter());
@@ -41,13 +43,13 @@ public class CommentService {
         addParentIfExists(comment, commentDTO.getParentCommentId());
         return commentRepository.save(comment);
     }
-    private void addParentIfExists(final Comment comment, final Long parentId) {
+    private void addParentIfExists(Comment comment, Long parentId) {
         if (parentId == null) return;
         final Comment parentComment = getComment(parentId);
         parentComment.addChildComment(comment);
     }
 
-    public Comment updateComment(final Long commentId, final CommentDTO.Update commentDTO) {
+    public Comment updateComment(Long commentId, CommentDto.Update commentDTO) {
         Comment comment = getComment(commentId);
         verifyCommenter(commentDTO.getCommenter(), comment);
         comment.updateComment(commentDTO);
@@ -65,7 +67,7 @@ public class CommentService {
     // 대댓글까지 모두 삭제, dirty checking을 사용
     public void deleteComment(Long commentId) {
         Comment comment = getComment(commentId);
-        deleteChildcomments(comment);
+        deleteChildComments(comment);
         comment.getDeleteFlag().softDelete();
     }
 
@@ -73,7 +75,7 @@ public class CommentService {
      * parallelStream의 경우에는 thread pool을 공유하므로 사용에 주의해야 한다.
      * 참고 : https://multifrontgarden.tistory.com/254
      */
-    private void deleteChildcomments(Comment comment) {
+    private void deleteChildComments(Comment comment) {
         comment.getChildComments().forEach(childComment -> childComment.getDeleteFlag().softDelete());
     }
 }

@@ -1,7 +1,7 @@
 package com.yu.jangtari.api.post.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.yu.jangtari.api.comment.dto.CommentDTO;
+import com.yu.jangtari.api.comment.dto.CommentDto;
 import com.yu.jangtari.api.post.domain.Post;
 import com.yu.jangtari.common.GDFolder;
 import com.yu.jangtari.util.GoogleDriveUtil;
@@ -27,12 +27,12 @@ public class PostDto
         private Long postId;
         private String title;
         private String content;
-        private List<CommentDTO.Get> comments = new ArrayList<>();
+        private List<CommentDto.Get> comments = new ArrayList<>();
         private List<PictureDto> pictures = new ArrayList<>(); // 후에 사진에 대한 메타 정보가 추가될 것을 고려하여 DTO
         private List<String> hashtags = new ArrayList<>(); // 단순한 해시태그 문자열만 필요하므로 String
 
         @Builder
-        private GetOne(Long postId, String title, String content, List<CommentDTO.Get> comments, List<PictureDto> pictures, List<String> hashtags) {
+        private GetOne(Long postId, String title, String content, List<CommentDto.Get> comments, List<PictureDto> pictures, List<String> hashtags) {
             this.postId = postId;
             this.title = title;
             this.content = content;
@@ -45,7 +45,7 @@ public class PostDto
                     .postId(post.getId())
                     .title(post.getTitle())
                     .content(post.getContent())
-                    .comments(post.getComments().stream().map(CommentDTO.Get::of).collect(Collectors.toList()))
+                    .comments(post.getComments().stream().map(CommentDto.Get::toList).collect(Collectors.toList()))
                     .pictures(post.getPictures().stream().map(PictureDto::new).collect(Collectors.toList()))
                     .hashtags(post.getPostHashtags().stream().map(postHashtag -> postHashtag.getHashtag().getContent()).collect(Collectors.toList()))
                     .build();

@@ -5,9 +5,12 @@ import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class CommentDTO {
-
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class CommentDto
+{
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Get{
@@ -18,22 +21,29 @@ public class CommentDTO {
         private Long parentCommentId;
 
         @Builder
-        public Get(Long commentId, String content, String username, String nickname, Long parentCommentId) {
+        private Get(Long commentId, String content, String username, String nickname, Long parentCommentId) {
             this.commentId = commentId;
             this.content = content;
             this.username = username;
             this.nickname = nickname;
             this.parentCommentId = parentCommentId;
         }
-        public static CommentDTO.Get of(Comment comment) {
-            final Long parentId = comment.getParentComment() == null ? null : comment.getParentComment().getId();
+
+        public static List<Get> toList(List<Comment> comments) {
+            return comments.stream()
+                .map(Get::of)
+                .collect(Collectors.toList());
+        }
+
+        public static Get of(Comment comment) {
+            Long parentId = comment.getParentComment() == null ? null : comment.getParentComment().getId();
             return Get.builder()
-                    .commentId(comment.getId())
-                    .content(comment.getContent())
-                    .username(comment.getMember().getUsername())
-                    .nickname(comment.getMember().getNickname())
-                    .parentCommentId(parentId)
-                    .build();
+                .commentId(comment.getId())
+                .content(comment.getContent())
+                .username(comment.getMember().getUsername())
+                .nickname(comment.getMember().getNickname())
+                .parentCommentId(parentId)
+                .build();
         }
     }
 
@@ -41,16 +51,17 @@ public class CommentDTO {
     @ToString
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Add{
-        @NotNull
+        @NotNull(message = "postId가 비어있으면 안 됩니다.")
         private Long postId;
         @NotBlank(message = "작성자가 빈칸이면 안 됩니다.")
         private String commenter;
         @NotBlank(message = "내용이 빈칸이면 안 됩니다.")
         private String content;
+
         private Long parentCommentId;
 
         @Builder
-        public Add(Long postId, String commenter, String content, Long parentCommentId) {
+        private Add(Long postId, String commenter, String content, Long parentCommentId) {
             this.postId = postId;
             this.commenter = commenter;
             this.content = content;
