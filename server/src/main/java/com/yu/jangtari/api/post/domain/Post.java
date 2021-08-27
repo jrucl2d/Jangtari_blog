@@ -8,7 +8,6 @@ import com.yu.jangtari.common.DateAuditing;
 import com.yu.jangtari.common.DeleteFlag;
 import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -28,6 +27,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Getter
@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "post")
-@EqualsAndHashCode(of="id", callSuper = false)
 public class Post extends DateAuditing
 {
 
@@ -99,7 +98,6 @@ public class Post extends DateAuditing
                 .map(hashtagStr -> PostHashtag.of(hashtagRepository.save(new Hashtag(hashtagStr)), post))
                 .collect(Collectors.toList())
         );
-
         return post;
     }
 
@@ -129,4 +127,26 @@ public class Post extends DateAuditing
         this.comments.add(comment);
     }
 
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Post post = (Post) o;
+        return template == post.template
+            && id.equals(post.id)
+            && Objects.equals(title, post.title)
+            && Objects.equals(content, post.content)
+            && Objects.equals(comments, post.comments)
+            && Objects.equals(pictures, post.pictures)
+            && Objects.equals(category, post.category)
+            && Objects.equals(postHashtags, post.postHashtags)
+            && Objects.equals(deleteFlag, post.deleteFlag);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(id, title, content, template, comments, pictures, category, postHashtags, deleteFlag);
+    }
 }

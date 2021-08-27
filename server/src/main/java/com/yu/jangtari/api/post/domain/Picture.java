@@ -4,7 +4,6 @@ import com.yu.jangtari.common.DateAuditing;
 import com.yu.jangtari.common.DeleteFlag;
 import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -18,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Getter
@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "picture")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of="url", callSuper = false)
 public class Picture extends DateAuditing
 {
 
@@ -56,5 +55,22 @@ public class Picture extends DateAuditing
 
     public void softDelete() {
         this.deleteFlag.softDelete();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Picture picture = (Picture) o;
+        return url.equals(picture.url)
+            && Objects.equals(post, picture.post)
+            && Objects.equals(deleteFlag, picture.deleteFlag);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(url, post, deleteFlag);
     }
 }

@@ -4,7 +4,6 @@ import com.yu.jangtari.common.DateAuditing;
 import com.yu.jangtari.common.DeleteFlag;
 import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -19,13 +18,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @ToString(exclude = {"post"})
 @Table(name="post_hashtag")
-@EqualsAndHashCode(of="id", callSuper = false)
 public class PostHashtag extends DateAuditing
 {
     @Id
@@ -61,5 +60,23 @@ public class PostHashtag extends DateAuditing
 
     public void softDelete() {
         this.deleteFlag.softDelete();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PostHashtag that = (PostHashtag) o;
+        return id.equals(that.id)
+            && Objects.equals(post, that.post)
+            && Objects.equals(hashtag, that.hashtag)
+            && Objects.equals(deleteFlag, that.deleteFlag);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(id, post, hashtag, deleteFlag);
     }
 }

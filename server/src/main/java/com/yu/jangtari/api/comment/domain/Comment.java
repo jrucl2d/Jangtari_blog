@@ -10,13 +10,13 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @ToString(exclude = {"post", "parentComment"})
 @Entity
 @Table(name = "comment")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of="id", callSuper = false)
 public class Comment extends DateAuditing
 {
     @Id
@@ -46,7 +46,8 @@ public class Comment extends DateAuditing
     private DeleteFlag deleteFlag;
 
     @Builder
-    public Comment(String content) {
+    private Comment(Long id, String content) {
+        this.id = id;
         this.content = content;
         this.deleteFlag = new DeleteFlag();
     }
@@ -69,5 +70,26 @@ public class Comment extends DateAuditing
     }
     public void updateComment(CommentDto.Update commentDTO) {
         this.content = commentDTO.getContent();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Comment comment = (Comment) o;
+        return id.equals(comment.id)
+            && Objects.equals(content, comment.content)
+            && Objects.equals(member, comment.member)
+            && Objects.equals(parentComment, comment.parentComment)
+            && Objects.equals(childComments, comment.childComments)
+            && Objects.equals(post, comment.post)
+            && Objects.equals(deleteFlag, comment.deleteFlag);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(id, content, member, parentComment, childComments, post, deleteFlag);
     }
 }

@@ -6,7 +6,6 @@ import com.yu.jangtari.exception.BusinessException;
 import com.yu.jangtari.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -20,13 +19,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Getter
 @ToString
 @Entity
 @Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of={"id", "username"}, callSuper = false) // 상속받은 객체에서 발생하는 에러 문구 제거
 public class Member extends DateAuditing
 {
     @Id
@@ -75,5 +74,27 @@ public class Member extends DateAuditing
     public void delete() {
         if (this.id == 1L) throw new BusinessException(ErrorCode.ADMIN_DELETE_ERROR);
         this.deleteFlag.softDelete();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Member member = (Member) o;
+        return id.equals(member.id)
+            && username.equals(member.username)
+            && Objects.equals(nickname, member.nickname)
+            && Objects.equals(password, member.password)
+            && Objects.equals(introduce, member.introduce)
+            && Objects.equals(picture, member.picture)
+            && role == member.role
+            && Objects.equals(deleteFlag, member.deleteFlag);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(id, username, nickname, password, introduce, picture, role, deleteFlag);
     }
 }

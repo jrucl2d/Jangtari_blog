@@ -9,16 +9,15 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
 @ToString
 @Table(name = "category") // 클래스명 바뀔 경우의 영향 최소화
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of="id", callSuper = false)
 public class Category extends DateAuditing
 {
-
     @Id
     @Column(name = "category_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,5 +56,24 @@ public class Category extends DateAuditing
             .name(categoryDTO.getName())
             .picture(pictureUrl)
             .build();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Category category = (Category) o;
+        return id.equals(category.id)
+            && Objects.equals(name, category.name)
+            && Objects.equals(picture, category.picture)
+            && Objects.equals(posts, category.posts)
+            && Objects.equals(deleteFlag, category.deleteFlag);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(id, name, picture, posts, deleteFlag);
     }
 }
