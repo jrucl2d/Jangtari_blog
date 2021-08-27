@@ -28,7 +28,7 @@ class AuthUtilTest {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // when
-        String userId = AuthUtil.getUserId();
+        String userId = AuthUtil.getMemberId();
 
         // then
         assertThat(userId).isEqualTo(jwtInfo.getUsername());

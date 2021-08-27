@@ -1,6 +1,7 @@
 package com.yu.jangtari.api.comment.dto;
 
 import com.yu.jangtari.api.comment.domain.Comment;
+import com.yu.jangtari.api.post.domain.Post;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -54,25 +55,24 @@ public class CommentDto
         @NotNull(message = "postId가 비어있으면 안 됩니다.")
         private Long postId;
 
-        // TODO : AuthUtil 생성한 뒤 commenter 필요 없음
-        @NotBlank(message = "작성자가 빈칸이면 안 됩니다.")
-        private String commenter;
         @NotBlank(message = "내용이 빈칸이면 안 됩니다.")
         private String content;
 
         private Long parentCommentId;
 
         @Builder
-        private Add(Long postId, String commenter, String content, Long parentCommentId) {
+        private Add(Long postId, String content, Long parentCommentId) {
             this.postId = postId;
-            this.commenter = commenter;
             this.content = content;
             this.parentCommentId = parentCommentId;
         }
 
+        // TODO : member id 문제 해결한 후 여기 member 추가하는 부분 추가
         public Comment toEntity() {
             return Comment.builder()
                     .content(content)
+                    .post(Post.builder().id(postId).build())
+                    .parentComment(Comment.builder().id(parentCommentId).build())
                     .build();
         }
     }

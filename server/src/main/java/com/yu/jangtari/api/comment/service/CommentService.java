@@ -3,13 +3,11 @@ package com.yu.jangtari.api.comment.service;
 import com.yu.jangtari.api.comment.domain.Comment;
 import com.yu.jangtari.api.comment.dto.CommentDto;
 import com.yu.jangtari.api.comment.repository.CommentRepository;
-import com.yu.jangtari.api.member.domain.Member;
 import com.yu.jangtari.api.member.service.MemberService;
-import com.yu.jangtari.api.post.domain.Post;
 import com.yu.jangtari.api.post.service.PostService;
-import com.yu.jangtari.common.exception.NoMasterException;
 import com.yu.jangtari.exception.BusinessException;
 import com.yu.jangtari.exception.ErrorCode;
+import com.yu.jangtari.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,32 +34,15 @@ public class CommentService {
     }
 
     public Comment addComment(CommentDto.Add commentDTO) {
-        Comment comment = commentDTO.toEntity();
-        Post post = postService.getOne(commentDTO.getPostId());
-        Member member = memberService.getMemberByName(commentDTO.getCommenter());
-        comment.initPostAndMember(post, member);
-        addParentIfExists(comment, commentDTO.getParentCommentId());
-        return commentRepository.save(comment);
-    }
-    private void addParentIfExists(Comment comment, Long parentId) {
-        if (parentId == null) return;
-        Comment parentComment = getComment(parentId);
-        parentComment.addChildComment(comment);
+        return commentRepository.save(commentDTO.toEntity());
     }
 
+    // TODO : commentId와 memberId로 가져오는 방식으로 레포지토리 메소드 추가
     public Comment updateComment(Long commentId, CommentDto.Update commentDTO) {
+        String memberId = AuthUtil.getMemberId();
         Comment comment = getComment(commentId);
-        verifyCommenter(commentDTO.getCommenter(), comment);
         comment.updateComment(commentDTO);
         return comment;
-    }
-
-    // TODO : AuthUtil 생성한 뒤 여기 삭제
-    private void verifyCommenter(String username, Comment comment) {
-        Member member = memberService.getMemberByName(username);
-        if (!comment.getMember().equals(member)) {
-            throw new NoMasterException();
-        }
     }
 
     public void deleteComment(Long commentId) {

@@ -10,7 +10,7 @@ public class AuthUtil {
         throw new IllegalStateException("Utility Class");
     }
 
-    public static String getUserId() {
+    public static String getMemberId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || (!authentication.isAuthenticated()))

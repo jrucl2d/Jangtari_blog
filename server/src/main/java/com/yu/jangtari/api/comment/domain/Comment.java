@@ -46,9 +46,12 @@ public class Comment extends DateAuditing
     private DeleteFlag deleteFlag;
 
     @Builder
-    private Comment(Long id, String content) {
+    private Comment(Long id, String content, Post post, Member member, Comment parentComment) {
         this.id = id;
         this.content = content;
+        this.post = post;
+        this.member = member;
+        this.parentComment = parentComment;
         this.deleteFlag = new DeleteFlag();
     }
 
