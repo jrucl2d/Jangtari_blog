@@ -45,7 +45,7 @@ public class PostDto
                     .postId(post.getId())
                     .title(post.getTitle())
                     .content(post.getContent())
-                    .comments(post.getComments().stream().map(CommentDto.Get::toList).collect(Collectors.toList()))
+                    .comments(post.getComments().stream().map(CommentDto.Get::of).collect(Collectors.toList()))
                     .pictures(post.getPictures().stream().map(PictureDto::new).collect(Collectors.toList()))
                     .hashtags(post.getPostHashtags().stream().map(postHashtag -> postHashtag.getHashtag().getContent()).collect(Collectors.toList()))
                     .build();

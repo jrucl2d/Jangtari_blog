@@ -36,16 +36,16 @@ public class CommentService {
     }
 
     public Comment addComment(CommentDto.Add commentDTO) {
-        final Comment comment = commentDTO.toEntity();
-        final Post post = postService.getOne(commentDTO.getPostId());
-        final Member member = memberService.getMemberByName(commentDTO.getCommenter());
+        Comment comment = commentDTO.toEntity();
+        Post post = postService.getOne(commentDTO.getPostId());
+        Member member = memberService.getMemberByName(commentDTO.getCommenter());
         comment.initPostAndMember(post, member);
         addParentIfExists(comment, commentDTO.getParentCommentId());
         return commentRepository.save(comment);
     }
     private void addParentIfExists(Comment comment, Long parentId) {
         if (parentId == null) return;
-        final Comment parentComment = getComment(parentId);
+        Comment parentComment = getComment(parentId);
         parentComment.addChildComment(comment);
     }
 
@@ -56,26 +56,17 @@ public class CommentService {
         return comment;
     }
 
-    // Member 엔티티에 equals, hashCode가 id와 username을 기반으로 구현되어 있다.
-    private void verifyCommenter(final String username, final Comment comment) {
+    // TODO : AuthUtil 생성한 뒤 여기 삭제
+    private void verifyCommenter(String username, Comment comment) {
         Member member = memberService.getMemberByName(username);
         if (!comment.getMember().equals(member)) {
             throw new NoMasterException();
         }
     }
 
-    // 대댓글까지 모두 삭제, dirty checking을 사용
     public void deleteComment(Long commentId) {
         Comment comment = getComment(commentId);
-        deleteChildComments(comment);
-        comment.getDeleteFlag().softDelete();
-    }
-
-    /**
-     * parallelStream의 경우에는 thread pool을 공유하므로 사용에 주의해야 한다.
-     * 참고 : https://multifrontgarden.tistory.com/254
-     */
-    private void deleteChildComments(Comment comment) {
-        comment.getChildComments().forEach(childComment -> childComment.getDeleteFlag().softDelete());
+        comment.getChildComments().forEach(Comment::softDelete);
+        comment.softDelete();
     }
 }

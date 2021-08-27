@@ -53,6 +53,8 @@ public class CommentDto
     public static class Add{
         @NotNull(message = "postId가 비어있으면 안 됩니다.")
         private Long postId;
+
+        // TODO : AuthUtil 생성한 뒤 commenter 필요 없음
         @NotBlank(message = "작성자가 빈칸이면 안 됩니다.")
         private String commenter;
         @NotBlank(message = "내용이 빈칸이면 안 됩니다.")
