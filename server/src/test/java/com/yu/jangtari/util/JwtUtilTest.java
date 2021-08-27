@@ -15,13 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JwtUtilTest
 {
-    private static JwtUtil jwtUtil;
     private static JwtInfo jwtInfo;
 
     @BeforeAll
     static void beforeAll() {
-        jwtUtil = new JwtUtil();
-        jwtInfo = new JwtInfo("username", RoleType.ADMIN);
+        jwtInfo = new JwtInfo(1L, "username", RoleType.ADMIN);
     }
 
     @Nested
@@ -33,7 +31,7 @@ class JwtUtilTest
         {
             // given
             // when
-            String token = jwtUtil.createAccessToken(jwtInfo);
+            String token = JwtUtil.createAccessToken(jwtInfo);
 
             // then
             assertNotNull(token);
@@ -44,10 +42,10 @@ class JwtUtilTest
         void decodeAccessToken()
         {
             // given
-            String token = jwtUtil.createAccessToken(jwtInfo);
+            String token = JwtUtil.createAccessToken(jwtInfo);
 
             // when
-            JwtInfo decodedInfo = jwtUtil.decodeAccessToken(token);
+            JwtInfo decodedInfo = JwtUtil.decodeAccessToken(token);
 
             // then
             assertThat(decodedInfo).isEqualTo(jwtInfo);
@@ -62,7 +60,7 @@ class JwtUtilTest
 
             // when
             // then
-            assertThrows(IllegalArgumentException.class, () -> jwtUtil.decodeAccessToken(token));
+            assertThrows(IllegalArgumentException.class, () -> JwtUtil.decodeAccessToken(token));
         }
 
         @Test
@@ -71,12 +69,12 @@ class JwtUtilTest
         {
             // given
             String invalidAuthToken = "invalidToken";
-            String expiredToken = jwtUtil.createAccessToken(jwtInfo, 0);
+            String expiredToken = JwtUtil.createAccessToken(jwtInfo, 0);
 
             // when
             // then
-            assertThrows(MalformedJwtException.class, () -> jwtUtil.decodeAccessToken(invalidAuthToken));
-            assertThrows(ExpiredJwtException.class, () -> jwtUtil.decodeAccessToken(expiredToken));
+            assertThrows(MalformedJwtException.class, () -> JwtUtil.decodeAccessToken(invalidAuthToken));
+            assertThrows(ExpiredJwtException.class, () -> JwtUtil.decodeAccessToken(expiredToken));
         }
     }
 
@@ -92,7 +90,7 @@ class JwtUtilTest
             String accessToken = "accessToken";
 
             // when
-            String refreshToken = jwtUtil.createRefreshToken(accessToken);
+            String refreshToken = JwtUtil.createRefreshToken(accessToken);
 
             // then
             assertNotNull(refreshToken);
@@ -103,11 +101,11 @@ class JwtUtilTest
         void decodeRefreshToken()
         {
             // given
-            String accessToken = jwtUtil.createAccessToken(jwtInfo, 0);
-            String refreshToken = jwtUtil.createRefreshToken(accessToken);
+            String accessToken = JwtUtil.createAccessToken(jwtInfo, 0);
+            String refreshToken = JwtUtil.createRefreshToken(accessToken);
 
             // when
-            JwtInfo decodedInfo = jwtUtil.decodeRefreshToken(refreshToken);
+            JwtInfo decodedInfo = JwtUtil.decodeRefreshToken(refreshToken);
 
             // then
             assertThat(decodedInfo).isEqualTo(jwtInfo);
@@ -122,7 +120,7 @@ class JwtUtilTest
 
             // when
             // then
-            assertThrows(IllegalArgumentException.class, () -> jwtUtil.decodeRefreshToken(token));
+            assertThrows(IllegalArgumentException.class, () -> JwtUtil.decodeRefreshToken(token));
         }
 
         @Test
@@ -131,12 +129,12 @@ class JwtUtilTest
         {
             // given
             String invalidAuthToken = "invalidToken";
-            String expiredToken = jwtUtil.createRefreshToken(invalidAuthToken, 0);
+            String expiredToken = JwtUtil.createRefreshToken(invalidAuthToken, 0);
 
             // when
             // then
-            assertThrows(MalformedJwtException.class, () -> jwtUtil.decodeRefreshToken(invalidAuthToken));
-            assertThrows(ExpiredJwtException.class, () -> jwtUtil.decodeRefreshToken(expiredToken));
+            assertThrows(MalformedJwtException.class, () -> JwtUtil.decodeRefreshToken(invalidAuthToken));
+            assertThrows(ExpiredJwtException.class, () -> JwtUtil.decodeRefreshToken(expiredToken));
         }
     }
 }

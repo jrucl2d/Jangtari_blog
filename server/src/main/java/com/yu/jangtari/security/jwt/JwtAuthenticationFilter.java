@@ -27,24 +27,22 @@ import java.util.Collections;
 
 @Slf4j
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
-    private final JwtUtil jwtUtil;
     private final SkipPathRequestMatcher skipPathRequestMatcher;
     private final RefreshTokenRepository refreshTokenRepository;
 
     public JwtAuthenticationFilter(
         AuthenticationManager authenticationManager
-        , JwtUtil jwtUtil, SkipPathRequestMatcher skipPathRequestMatcher
+        , SkipPathRequestMatcher skipPathRequestMatcher
         , RefreshTokenRepository refreshTokenRepository) {
 
         super(authenticationManager);
-        this.jwtUtil = jwtUtil;
         this.skipPathRequestMatcher = skipPathRequestMatcher;
         this.refreshTokenRepository = refreshTokenRepository;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String refreshToken = request.getHeader(JwtUtil.REFRESHTOKEN);
+        String refreshToken = request.getHeader(JwtUtil.REFRESH_TOKEN);
         if (refreshToken == null) {
             accessTokenTask(request, response, chain);
         } else {
@@ -55,7 +53,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     private void accessTokenTask(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         try {
             String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-            JwtInfo jwtInfo = jwtUtil.decodeAccessToken(accessToken);
+            JwtInfo jwtInfo = JwtUtil.decodeAccessToken(accessToken);
             setAuthentication(jwtInfo);
         } catch (ExpiredJwtException e) {
             log.error("JwtAuthenticationFilter 에러 발생 : ", e);
@@ -71,14 +69,14 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
     private void refreshTokenTask(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         try {
-            String refreshToken = request.getHeader(JwtUtil.REFRESHTOKEN);
-            JwtInfo jwtInfo = jwtUtil.decodeRefreshToken(refreshToken);
+            String refreshToken = request.getHeader(JwtUtil.REFRESH_TOKEN);
+            JwtInfo jwtInfo = JwtUtil.decodeRefreshToken(refreshToken);
             String username = jwtInfo.getUsername();
 
             RefreshToken savedToken = refreshTokenRepository.findById(username).orElseThrow(() -> new IllegalArgumentException("refresh token 존재하지 않습니다."));
             if (!refreshToken.equals(savedToken.getRefreshToken())) throw new IllegalArgumentException("db에 저장된 refreshToken과 다릅니다.");
 
-            String newAccessToken = jwtUtil.createAccessToken(jwtInfo);
+            String newAccessToken = JwtUtil.createAccessToken(jwtInfo);
             response.setHeader(HttpHeaders.AUTHORIZATION, newAccessToken);
             setAuthentication(jwtInfo);
         } catch (ExpiredJwtException e) {
@@ -103,7 +101,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     }
 
     private void setAuthentication(JwtInfo jwtInfo) {
-        Authentication authentication = new UsernamePasswordAuthenticationToken(jwtInfo.getUsername()
+        Authentication authentication = new UsernamePasswordAuthenticationToken(jwtInfo
             , null
             , Collections.singletonList(new SimpleGrantedAuthority(jwtInfo.getAuthority())));
         SecurityContextHolder.getContext().setAuthentication(authentication);

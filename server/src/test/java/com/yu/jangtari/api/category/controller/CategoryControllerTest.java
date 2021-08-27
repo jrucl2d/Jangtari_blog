@@ -31,8 +31,7 @@ class CategoryControllerTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        JwtUtil jwtUtil = new JwtUtil();
-        accessToken = jwtUtil.createAccessToken(new JwtInfo("admin", RoleType.ADMIN));
+        accessToken = JwtUtil.createAccessToken(new JwtInfo(1L, "admin", RoleType.ADMIN));
     }
 
     @Test

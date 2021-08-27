@@ -19,12 +19,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class JwtAuthenticationFilterTest extends IntegrationTest {
     @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
-    private static final JwtInfo jwtInfo = new JwtInfo("username", RoleType.USER);
+    private static final JwtInfo jwtInfo = new JwtInfo(1L, "username", RoleType.USER);
 
     @Test
     @DisplayName("아무런 토큰 없이 권한 필요하지 않은 path 요청하면 401 UnAuthorized 에러")
@@ -63,8 +60,8 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
         void refreshTokenInAuthorizationHeader() throws Exception
         {
             // given
-            String accessToken = jwtUtil.createAccessToken(jwtInfo);
-            String refreshToken = jwtUtil.createRefreshToken(accessToken);
+            String accessToken = JwtUtil.createAccessToken(jwtInfo);
+            String refreshToken = JwtUtil.createRefreshToken(accessToken);
 
             // when
             // then
@@ -81,16 +78,16 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
         void accessTokenFilterPassSuccess() throws Exception
         {
             // given
-            String token = jwtUtil.createAccessToken(jwtInfo);
+            String token = JwtUtil.createAccessToken(jwtInfo);
 
             // when
-            String expected = jwtInfo.getUsername() + jwtInfo.getAuthority();
-
             // then
             mockMvc.perform(get("/user/test")
                 .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").value(expected))
+                .andExpect(jsonPath("$.memberId").value(jwtInfo.getMemberId()))
+                .andExpect(jsonPath("$.username").value(jwtInfo.getUsername()))
+                .andExpect(jsonPath("$.roleType").value(jwtInfo.getRoleType().name()))
                 .andDo(print());
         }
 
@@ -99,7 +96,7 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
         void accessDenied() throws Exception
         {
             // given
-            String token = jwtUtil.createAccessToken(jwtInfo);
+            String token = JwtUtil.createAccessToken(jwtInfo);
             // when
             // then
             mockMvc.perform(get("/admin/test")
@@ -115,7 +112,7 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
         void accessTokenExpired() throws Exception
         {
             // given
-            String token = jwtUtil.createAccessToken(jwtInfo, 0);
+            String token = JwtUtil.createAccessToken(jwtInfo, 0);
 
             // when
             // then
@@ -142,7 +139,7 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
             // when
             // then
             mockMvc.perform(get("/user/test")
-                .header(JwtUtil.REFRESHTOKEN, refreshToken))
+                .header(JwtUtil.REFRESH_TOKEN, refreshToken))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value(ErrorCode.JWT_VALIDATION_ERROR.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.JWT_VALIDATION_ERROR.getMessage()))
@@ -154,12 +151,12 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
         void accessTokenInRefreshTokenUnAuthorized() throws Exception
         {
             // given
-            String refreshToken = jwtUtil.createRefreshToken("wlgkjwelgkjweglkwejg.wlekgjwelkg.lwkjeglk");
+            String refreshToken = JwtUtil.createRefreshToken("wlgkjwelgkjweglkwejg.wlekgjwelkg.lwkjeglk");
 
             // when
             // then
             mockMvc.perform(get("/api/partner/test")
-                .header(JwtUtil.REFRESHTOKEN, refreshToken))
+                .header(JwtUtil.REFRESH_TOKEN, refreshToken))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value(ErrorCode.JWT_VALIDATION_ERROR.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.JWT_VALIDATION_ERROR.getMessage()))
@@ -171,12 +168,12 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
         void refreshTokenExpired() throws Exception
         {
             // given
-            String token = jwtUtil.createRefreshToken("access token", 0);
+            String token = JwtUtil.createRefreshToken("access token", 0);
 
             // when
             // then
             mockMvc.perform(get("/api/partner/test")
-                .header(JwtUtil.REFRESHTOKEN, token))
+                .header(JwtUtil.REFRESH_TOKEN, token))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value(ErrorCode.JWT_TIMEOUT_ERROR.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.JWT_TIMEOUT_ERROR.getMessage()))
@@ -188,8 +185,8 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
         void recreateAccessToken() throws Exception
         {
             // given
-            String expiredAccessToken = jwtUtil.createAccessToken(jwtInfo, 0);
-            String refreshToken = jwtUtil.createRefreshToken(expiredAccessToken, 10);
+            String expiredAccessToken = JwtUtil.createAccessToken(jwtInfo, 0);
+            String refreshToken = JwtUtil.createRefreshToken(expiredAccessToken, 10);
             refreshTokenRepository.save(
                 com.yu.jangtari.api.member.domain.RefreshToken.builder()
                     .username(jwtInfo.getUsername())
@@ -197,13 +194,13 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
                     .build());
 
             // when
-            String expected = jwtInfo.getUsername() + jwtInfo.getAuthority();
-
             // then
             mockMvc.perform(get("/user/test")
-                .header(JwtUtil.REFRESHTOKEN, refreshToken))
+                .header(JwtUtil.REFRESH_TOKEN, refreshToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").value(expected))
+                .andExpect(jsonPath("$.memberId").value(jwtInfo.getMemberId()))
+                .andExpect(jsonPath("$.username").value(jwtInfo.getUsername()))
+                .andExpect(jsonPath("$.roleType").value(jwtInfo.getRoleType().name()))
                 .andExpect(header().exists(HttpHeaders.AUTHORIZATION)) // 재발급 받은 accessToken
                 .andDo(print());
         }
@@ -213,8 +210,8 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
         void recreateAccessTokenFailed() throws Exception
         {
             // given
-            String expiredAccessToken = jwtUtil.createAccessToken(jwtInfo, 0);
-            String refreshToken = jwtUtil.createRefreshToken(expiredAccessToken, 10);
+            String expiredAccessToken = JwtUtil.createAccessToken(jwtInfo, 0);
+            String refreshToken = JwtUtil.createRefreshToken(expiredAccessToken, 10);
             refreshTokenRepository.save(
                 com.yu.jangtari.api.member.domain.RefreshToken.builder()
                     .username(jwtInfo.getUsername())
@@ -224,7 +221,7 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
             // when
             // then
             mockMvc.perform(get("/api/partner/test")
-                .header(JwtUtil.REFRESHTOKEN, refreshToken))
+                .header(JwtUtil.REFRESH_TOKEN, refreshToken))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value(ErrorCode.JWT_VALIDATION_ERROR.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.JWT_VALIDATION_ERROR.getMessage()))
@@ -238,13 +235,13 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
         {
             // given
             refreshTokenRepository.deleteAll();
-            String expiredAccessToken = jwtUtil.createAccessToken(jwtInfo, 0);
-            String refreshToken = jwtUtil.createRefreshToken(expiredAccessToken, 10);
+            String expiredAccessToken = JwtUtil.createAccessToken(jwtInfo, 0);
+            String refreshToken = JwtUtil.createRefreshToken(expiredAccessToken, 10);
 
             // when
             // then
             mockMvc.perform(get("/api/partner/test")
-                .header(JwtUtil.REFRESHTOKEN, refreshToken))
+                .header(JwtUtil.REFRESH_TOKEN, refreshToken))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value(ErrorCode.JWT_VALIDATION_ERROR.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.JWT_VALIDATION_ERROR.getMessage()))

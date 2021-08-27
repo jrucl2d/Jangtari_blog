@@ -1,7 +1,7 @@
 package com.yu.jangtari.testHelper;
 
+import com.yu.jangtari.security.jwt.JwtInfo;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,23 +9,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
     @GetMapping("/admin/test")
-    public String adminTest() {
+    public JwtInfo adminTest() {
         return getReturnValue();
     }
 
     @GetMapping("/user/test")
-    public String userTest() {
+    public JwtInfo userTest() {
         return getReturnValue();
     }
 
-    private String getReturnValue() {
+    private JwtInfo getReturnValue() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userId = String.valueOf(authentication.getPrincipal());
-        String role = authentication.getAuthorities()
-            .stream()
-            .map(GrantedAuthority::getAuthority)
-            .findFirst()
-            .orElse(null);
-        return userId + role;
+        return (JwtInfo) authentication.getPrincipal();
     }
 }

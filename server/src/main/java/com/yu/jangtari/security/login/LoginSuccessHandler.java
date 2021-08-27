@@ -23,7 +23,6 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
-    private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
@@ -37,8 +36,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         Member member = customUserDetail.getMember();
         log.info("** 로그인 성공 : " + member.getUsername());
 
-        String accessToken = jwtUtil.createAccessToken(JwtInfo.of(member));
-        String refreshToken = jwtUtil.createRefreshToken(accessToken);
+        String accessToken = JwtUtil.createAccessToken(JwtInfo.of(member));
+        String refreshToken = JwtUtil.createRefreshToken(accessToken);
         refreshTokenRepository.save(
             RefreshToken.builder()
                 .refreshToken(refreshToken)
@@ -46,7 +45,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
                 .build());
 
         response.setHeader(HttpHeaders.AUTHORIZATION, accessToken);
-        response.setHeader(JwtUtil.REFRESHTOKEN, refreshToken);
+        response.setHeader(JwtUtil.REFRESH_TOKEN, refreshToken);
         ResponseUtil.doResponse(response, "로그인 성공", HttpStatus.OK);
     }
 }

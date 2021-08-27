@@ -39,7 +39,7 @@ public class CommentService {
 
     // TODO : commentId와 memberId로 가져오는 방식으로 레포지토리 메소드 추가
     public Comment updateComment(Long commentId, CommentDto.Update commentDTO) {
-        String memberId = AuthUtil.getMemberId();
+        Long memberId = AuthUtil.getMemberId();
         Comment comment = getComment(commentId);
         comment.updateComment(commentDTO);
         return comment;

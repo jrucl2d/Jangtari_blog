@@ -6,7 +6,6 @@ import com.yu.jangtari.security.jwt.SkipPathRequestMatcher;
 import com.yu.jangtari.security.login.LoginFailureHandler;
 import com.yu.jangtari.security.login.LoginFilter;
 import com.yu.jangtari.security.login.LoginSuccessHandler;
-import com.yu.jangtari.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,7 +28,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final JwtUtil jwtUtil;
 
     private final List<String> openPaths = Arrays.asList(
         "/v2/api-docs",
@@ -77,12 +75,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private LoginFilter logInFilter() throws Exception {
         LoginFilter logInFilter = new LoginFilter(authenticationManager());
         logInFilter.setFilterProcessesUrl("/login");
-        logInFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler(jwtUtil, refreshTokenRepository));
+        logInFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler(refreshTokenRepository));
         logInFilter.setAuthenticationFailureHandler(new LoginFailureHandler());
         return logInFilter;
     }
     private JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        return new JwtAuthenticationFilter(authenticationManager(), jwtUtil, new SkipPathRequestMatcher(openPaths), refreshTokenRepository);
+        return new JwtAuthenticationFilter(authenticationManager(), new SkipPathRequestMatcher(openPaths), refreshTokenRepository);
     }
 
     @Bean

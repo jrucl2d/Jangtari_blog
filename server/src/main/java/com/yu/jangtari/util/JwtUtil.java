@@ -6,17 +6,16 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
 public class JwtUtil {
-    public static final String REFRESHTOKEN = "RefreshToken";
+    public static final String REFRESH_TOKEN = "RefreshToken";
     private static final String USERNAME_KEY = "username";
+    private static final String USERID_KEY = "memberId";
     private static final String ROLE_KEY = "role";
     private static final String REFRESH_KEY = "refresh";
     private static final String JWT_SECRET = "secret";
@@ -24,28 +23,33 @@ public class JwtUtil {
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 2 * 60L;
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 7 * 24 * 60 * 60L;
 
-    public String createAccessToken(JwtInfo jwtInfo) {
+    private JwtUtil() {
+        throw new IllegalStateException("Utility Class");
+    }
+
+    public static String createAccessToken(JwtInfo jwtInfo) {
         return createAccessToken(jwtInfo, ACCESS_TOKEN_EXPIRE_TIME);
     }
 
-    public String createAccessToken(JwtInfo jwtInfo, long expireTime) {
+    public static String createAccessToken(JwtInfo jwtInfo, long expireTime) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put(USERID_KEY, String.valueOf(jwtInfo.getMemberId()));
         claims.put(USERNAME_KEY, jwtInfo.getUsername());
         claims.put(ROLE_KEY, jwtInfo.getRoleType().name());
         return createToken(claims, expireTime);
     }
 
-    public String createRefreshToken(String token) {
+    public static String createRefreshToken(String token) {
         return createRefreshToken(token, REFRESH_TOKEN_EXPIRE_TIME);
     }
 
-    public String createRefreshToken(String token, long expireTime) {
+    public static String createRefreshToken(String token, long expireTime) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(REFRESH_KEY, token);
         return createToken(claims, expireTime);
     }
 
-    private String createToken(Map<String, Object> claims, long expireTime) {
+    private static String createToken(Map<String, Object> claims, long expireTime) {
         return Jwts.builder()
             .setIssuedAt(Timestamp.valueOf(LocalDateTime.now())) // 발행 시간
             .addClaims(claims)
@@ -55,13 +59,13 @@ public class JwtUtil {
     }
 
     // JWT 토큰 parsing 관련 메소드
-    public JwtInfo decodeAccessToken(String token) {
+    public static JwtInfo decodeAccessToken(String token) {
         if (token == null) throw new IllegalArgumentException();
         Claims claims = getClaims(token);
         return JwtInfo.of(claims);
     }
 
-    public JwtInfo decodeRefreshToken(String token) {
+    public static JwtInfo decodeRefreshToken(String token) {
         if (token == null) throw new IllegalArgumentException();
         Claims claims = getClaims(token);
         String accessToken = claims.get(REFRESH_KEY, String.class);
@@ -76,7 +80,7 @@ public class JwtUtil {
         return JwtInfo.of(accessClaims);
     }
 
-    private Claims getClaims(String token) {
+    private static Claims getClaims(String token) {
         return Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token.replace(TOKEN_PREFIX, "")).getBody();
     }
 }

@@ -28,8 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class MemberControllerTest extends IntegrationTest {
     @Autowired
-    private JwtUtil jwtUtil;
-    @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
     @Test
@@ -84,7 +82,7 @@ class MemberControllerTest extends IntegrationTest {
     }
 
     @Test
-    @DisplayName("로그인하면 accessCookie와 refreshCookie가 생성된다.")
+    @DisplayName("로그인하면 accessToken, refreshToken 생성된다.")
     void login() throws Exception
     {
         // given
@@ -171,8 +169,8 @@ class MemberControllerTest extends IntegrationTest {
         // given
         Authentication authentication = new UsernamePasswordAuthenticationToken("jangtari", null, Collections.singletonList(() -> "ROLE_USER"));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        JwtInfo jwtInfo = new JwtInfo("jangtari", RoleType.USER);
-        String accessToken = jwtUtil.createAccessToken(jwtInfo);
+        JwtInfo jwtInfo = new JwtInfo(1L, "jangtari", RoleType.USER);
+        String accessToken = JwtUtil.createAccessToken(jwtInfo);
 
         // when
         // then

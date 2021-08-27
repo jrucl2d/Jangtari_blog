@@ -2,11 +2,13 @@ package com.yu.jangtari.api.member.service;
 
 import com.yu.jangtari.ServiceTest;
 import com.yu.jangtari.api.member.domain.Member;
+import com.yu.jangtari.api.member.domain.RoleType;
 import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.api.member.repository.MemberRepository;
 import com.yu.jangtari.api.member.repository.RefreshTokenRepository;
 import com.yu.jangtari.exception.BusinessException;
 import com.yu.jangtari.exception.ErrorCode;
+import com.yu.jangtari.security.jwt.JwtInfo;
 import com.yu.jangtari.util.GoogleDriveUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -156,7 +158,8 @@ class MemberServiceTest extends ServiceTest
     void logout_O()
     {
         // given
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("user", null, null));
+        JwtInfo jwtInfo = new JwtInfo(1L, "username", RoleType.USER);
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(jwtInfo, null, null));
         doNothing().when(refreshTokenRepository).delete(any());
 
         // when

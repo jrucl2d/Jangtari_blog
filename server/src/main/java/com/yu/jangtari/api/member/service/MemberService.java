@@ -7,6 +7,7 @@ import com.yu.jangtari.api.member.repository.MemberRepository;
 import com.yu.jangtari.api.member.repository.RefreshTokenRepository;
 import com.yu.jangtari.exception.BusinessException;
 import com.yu.jangtari.exception.ErrorCode;
+import com.yu.jangtari.security.jwt.JwtInfo;
 import com.yu.jangtari.util.GoogleDriveUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,8 +67,8 @@ public class MemberService {
     public void logout() {
         log.info("** 로그아웃 진행");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = (String) authentication.getPrincipal();
-        refreshTokenRepository.delete(RefreshToken.builder().username(username).build());
+        JwtInfo jwtInfo = (JwtInfo) authentication.getPrincipal();
+        refreshTokenRepository.delete(RefreshToken.builder().username(jwtInfo.getUsername()).build());
         SecurityContextHolder.getContext().setAuthentication(null);
     }
 }
