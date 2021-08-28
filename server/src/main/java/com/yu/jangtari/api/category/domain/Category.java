@@ -41,7 +41,7 @@ public class Category extends DateAuditing
         this.name = name;
         this.picture = picture;
         this.deleteFlag = new DeleteFlag();
-        this.posts = posts;
+        this.posts = posts == null ? new ArrayList<>() : posts;
     }
 
     public void softDelete() {

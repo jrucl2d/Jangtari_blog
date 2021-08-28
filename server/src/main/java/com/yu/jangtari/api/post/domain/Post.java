@@ -70,16 +70,25 @@ public class Post extends DateAuditing
     DeleteFlag deleteFlag;
 
     @Builder
-    private Post(Long id, String title, String content, int template, Category category) {
+    private Post(
+        Long id
+        , String title
+        , String content
+        , int template
+        , Category category
+        , List<Comment> comments
+        , List<Picture> pictures
+        , List<PostHashtag> postHashtags)
+    {
         this.id = id;
         this.title = title;
         this.content = content;
         this.template = template;
         this.category = category;
         this.deleteFlag = new DeleteFlag();
-        this.comments = new ArrayList<>();
-        this.pictures = new ArrayList<>();
-        this.postHashtags = new ArrayList<>();
+        this.comments = comments == null ? new ArrayList<>() : comments;
+        this.pictures = pictures == null ? new ArrayList<>() : pictures;
+        this.postHashtags = postHashtags == null ? new ArrayList<>() : postHashtags;
     }
 
     public static Post of(PostDto.Add dto, HashtagRepository hashtagRepository) {

@@ -52,7 +52,7 @@ public class Comment extends DateAuditing
         this.post = post;
         this.member = member;
         this.parentComment = parentComment;
-        this.childComments = childComments;
+        this.childComments = childComments == null ? new ArrayList<>() : childComments;
         this.deleteFlag = new DeleteFlag();
     }
 

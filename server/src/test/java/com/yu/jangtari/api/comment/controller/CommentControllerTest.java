@@ -22,6 +22,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Arrays;
+
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -172,5 +176,39 @@ class CommentControllerTest extends IntegrationTest {
             .andExpect(jsonPath("$.code").value(ErrorCode.COMMENT_NOT_FOUND_ERROR.getCode()))
             .andExpect(jsonPath("$.message").value(ErrorCode.COMMENT_NOT_FOUND_ERROR.getMessage()))
             .andDo(print());
+    }
+
+    @Test
+    @DisplayName("comment 삭제시 childComment 까지 정상적으로 삭제할 수 있다.")
+    void deleteComment() throws Exception {
+        Comment parent = commentRepository.save(Comment.builder()
+            .member(member)
+            .content("content")
+            .post(post)
+            .build());
+        Comment child1 = commentRepository.save(Comment.builder()
+            .member(member)
+            .content("content1")
+            .parentComment(parent)
+            .post(post)
+            .build());
+        Comment child2 = commentRepository.save(Comment.builder()
+            .member(member)
+            .content("content2")
+            .parentComment(parent)
+            .post(post)
+            .build());
+
+        parent.getChildComments().addAll(Arrays.asList(child1, child2));
+
+        mockMvc.perform(delete("/user/comment/" + parent.getId())
+                .header(HttpHeaders.AUTHORIZATION, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andDo(print());
+
+        commentRepository.findAll().forEach(
+            comment -> assertThat(comment.getDeleteFlag().isDeleted()).isTrue()
+        );
     }
 }
