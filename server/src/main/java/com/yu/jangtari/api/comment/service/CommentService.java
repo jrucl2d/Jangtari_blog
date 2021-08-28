@@ -29,8 +29,9 @@ public class CommentService {
             .orElseThrow(() -> new BusinessException(ErrorCode.COMMENT_NOT_FOUND_ERROR));
     }
 
-    public Comment addComment(CommentDto.Add commentDTO) {
-        return commentRepository.save(commentDTO.toEntity());
+    public CommentDto.Get addComment(CommentDto.Add commentDTO) {
+        Comment comment = commentRepository.save(commentDTO.toEntity());
+        return CommentDto.Get.of(comment);
     }
 
     public Comment updateComment(Long commentId, CommentDto.Update commentDTO) {

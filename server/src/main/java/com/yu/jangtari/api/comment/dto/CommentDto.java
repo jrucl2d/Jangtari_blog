@@ -73,7 +73,10 @@ public class CommentDto
             Comment parent = parentCommentId == null ? null : Comment.builder().id(parentCommentId).build();
             return Comment.builder()
                     .content(content)
-                    .member(Member.builder().id(AuthUtil.getMemberId()).build())
+                    .member(Member.builder()
+                        .id(AuthUtil.getMemberId())
+                        .username(AuthUtil.getUsername())
+                        .build())
                     .post(Post.builder().id(postId).build())
                     .parentComment(parent)
                     .build();

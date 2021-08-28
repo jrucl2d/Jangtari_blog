@@ -30,7 +30,7 @@ public class CommentController {
     @PostMapping("/user/comment")
     @ResponseStatus(HttpStatus.OK)
     public CommentDto.Get addComment(@Valid @RequestBody CommentDto.Add commentDTO) {
-        return CommentDto.Get.of(commentService.addComment(commentDTO));
+        return commentService.addComment(commentDTO);
     }
 
     @PutMapping("/user/comment/{id}")
@@ -41,8 +41,7 @@ public class CommentController {
 
     @DeleteMapping("/user/comment/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public String deleteComment(@PathVariable("id") Long commentId) {
+    public void deleteComment(@PathVariable("id") Long commentId) {
         commentService.deleteComment(commentId);
-        return "OK";
     }
 }
