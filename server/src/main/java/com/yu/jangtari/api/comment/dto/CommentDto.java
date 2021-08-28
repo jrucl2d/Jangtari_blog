@@ -1,7 +1,9 @@
 package com.yu.jangtari.api.comment.dto;
 
 import com.yu.jangtari.api.comment.domain.Comment;
+import com.yu.jangtari.api.member.domain.Member;
 import com.yu.jangtari.api.post.domain.Post;
+import com.yu.jangtari.util.AuthUtil;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -67,12 +69,13 @@ public class CommentDto
             this.parentCommentId = parentCommentId;
         }
 
-        // TODO : member id 문제 해결한 후 여기 member 추가하는 부분 추가
         public Comment toEntity() {
+            Comment parent = parentCommentId == null ? null : Comment.builder().id(parentCommentId).build();
             return Comment.builder()
                     .content(content)
+                    .member(Member.builder().id(AuthUtil.getMemberId()).build())
                     .post(Post.builder().id(postId).build())
-                    .parentComment(Comment.builder().id(parentCommentId).build())
+                    .parentComment(parent)
                     .build();
         }
     }
@@ -85,7 +88,7 @@ public class CommentDto
         private String content;
 
         @Builder
-        public Update(String commenter, String content) {
+        private Update(String commenter, String content) {
             this.commenter = commenter;
             this.content = content;
         }
