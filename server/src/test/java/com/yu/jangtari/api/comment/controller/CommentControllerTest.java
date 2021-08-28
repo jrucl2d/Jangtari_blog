@@ -48,7 +48,13 @@ class CommentControllerTest extends IntegrationTest {
             .nickname("nick")
             .password(passwordEncoder.encode("password"))
             .build());
-        accessToken = JwtUtil.createAccessToken(new JwtInfo(member.getId(), "user", RoleType.USER));
+        accessToken = JwtUtil.createAccessToken(
+            JwtInfo.builder()
+                .memberId(member.getId())
+                .username("user")
+                .nickName("nick")
+                .roleType(RoleType.USER)
+                .build());
         Category category = categoryRepository.save(
             Category.builder()
                 .name("name")

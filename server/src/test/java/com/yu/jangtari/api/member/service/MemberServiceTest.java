@@ -158,7 +158,12 @@ class MemberServiceTest extends ServiceTest
     void logout_O()
     {
         // given
-        JwtInfo jwtInfo = new JwtInfo(1L, "username", RoleType.USER);
+        JwtInfo jwtInfo = JwtInfo.builder()
+            .memberId(1L)
+            .username("username")
+            .nickName("nick")
+            .roleType(RoleType.USER)
+            .build();
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(jwtInfo, null, null));
         doNothing().when(refreshTokenRepository).delete(any());
 

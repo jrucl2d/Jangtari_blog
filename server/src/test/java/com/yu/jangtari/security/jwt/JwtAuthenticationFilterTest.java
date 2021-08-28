@@ -21,7 +21,12 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
-    private static final JwtInfo jwtInfo = new JwtInfo(1L, "username", RoleType.USER);
+    private static final JwtInfo jwtInfo = JwtInfo.builder()
+        .memberId(1L)
+        .username("username")
+        .nickName("nick")
+        .roleType(RoleType.USER)
+        .build();
 
     @Test
     @DisplayName("아무런 토큰 없이 권한 필요하지 않은 path 요청하면 401 UnAuthorized 에러")

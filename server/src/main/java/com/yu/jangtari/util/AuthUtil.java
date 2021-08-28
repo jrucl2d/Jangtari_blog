@@ -19,6 +19,11 @@ public class AuthUtil {
         return getJwtInfo().getUsername();
     }
 
+    public static String getNickname() {
+        return getJwtInfo().getNickname();
+    }
+
+
     private static JwtInfo getJwtInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

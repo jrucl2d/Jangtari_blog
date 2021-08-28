@@ -15,6 +15,7 @@ import java.util.Map;
 public class JwtUtil {
     public static final String REFRESH_TOKEN = "RefreshToken";
     private static final String USERNAME_KEY = "username";
+    private static final String NICKNAME_KEY = "nickname";
     private static final String USERID_KEY = "memberId";
     private static final String ROLE_KEY = "role";
     private static final String REFRESH_KEY = "refresh";
@@ -36,6 +37,7 @@ public class JwtUtil {
         claims.put(USERID_KEY, String.valueOf(jwtInfo.getMemberId()));
         claims.put(USERNAME_KEY, jwtInfo.getUsername());
         claims.put(ROLE_KEY, jwtInfo.getRoleType().name());
+        claims.put(NICKNAME_KEY, jwtInfo.getNickname());
         return createToken(claims, expireTime);
     }
 

@@ -20,7 +20,12 @@ class AuthUtilTest {
     @DisplayName("AuthUtil 로부터 로그인 한 사용자의 정보를 가져올 수 있다.")
     void name() {
         // given
-        JwtInfo jwtInfo = new JwtInfo(1L, "username", RoleType.USER);
+        JwtInfo jwtInfo = JwtInfo.builder()
+            .memberId(1L)
+            .username("username")
+            .nickName("nick")
+            .roleType(RoleType.USER)
+            .build();
         Collection<GrantedAuthority> authorities
             = Collections.singletonList(new SimpleGrantedAuthority(jwtInfo.getAuthority()));
         Authentication authentication

@@ -169,7 +169,12 @@ class MemberControllerTest extends IntegrationTest {
         // given
         Authentication authentication = new UsernamePasswordAuthenticationToken("jangtari", null, Collections.singletonList(() -> "ROLE_USER"));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        JwtInfo jwtInfo = new JwtInfo(1L, "jangtari", RoleType.USER);
+        JwtInfo jwtInfo = JwtInfo.builder()
+            .memberId(1L)
+            .username("username")
+            .nickName("nick")
+            .roleType(RoleType.USER)
+            .build();
         String accessToken = JwtUtil.createAccessToken(jwtInfo);
 
         // when

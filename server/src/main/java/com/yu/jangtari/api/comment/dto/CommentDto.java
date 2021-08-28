@@ -76,6 +76,7 @@ public class CommentDto
                     .member(Member.builder()
                         .id(AuthUtil.getMemberId())
                         .username(AuthUtil.getUsername())
+                        .nickname(AuthUtil.getNickname())
                         .build())
                     .post(Post.builder().id(postId).build())
                     .parentComment(parent)

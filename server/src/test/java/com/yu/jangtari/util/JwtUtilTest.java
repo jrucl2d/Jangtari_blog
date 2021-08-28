@@ -19,7 +19,12 @@ class JwtUtilTest
 
     @BeforeAll
     static void beforeAll() {
-        jwtInfo = new JwtInfo(1L, "username", RoleType.ADMIN);
+        jwtInfo = JwtInfo.builder()
+            .memberId(1L)
+            .username("username")
+            .nickName("nick")
+            .roleType(RoleType.USER)
+            .build();
     }
 
     @Nested

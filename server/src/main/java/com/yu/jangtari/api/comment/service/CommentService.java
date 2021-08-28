@@ -31,6 +31,7 @@ public class CommentService {
 
     public CommentDto.Get addComment(CommentDto.Add commentDTO) {
         Comment comment = commentRepository.save(commentDTO.toEntity());
+        System.out.println(comment);
         return CommentDto.Get.of(comment);
     }
 

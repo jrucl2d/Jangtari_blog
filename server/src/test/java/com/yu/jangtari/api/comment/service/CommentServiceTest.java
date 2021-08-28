@@ -4,6 +4,7 @@ import com.yu.jangtari.ServiceTest;
 import com.yu.jangtari.api.comment.domain.Comment;
 import com.yu.jangtari.api.comment.dto.CommentDto;
 import com.yu.jangtari.api.comment.repository.CommentRepository;
+import com.yu.jangtari.api.member.domain.Member;
 import com.yu.jangtari.api.member.domain.RoleType;
 import com.yu.jangtari.exception.BusinessException;
 import com.yu.jangtari.exception.ErrorCode;
@@ -37,7 +38,12 @@ class CommentServiceTest extends ServiceTest {
 
     @BeforeAll
     static void beforeAll() {
-        JwtInfo jwtInfo = new JwtInfo(1L, "username", RoleType.USER);
+        JwtInfo jwtInfo = JwtInfo.builder()
+            .memberId(1L)
+            .username("username")
+            .nickName("nick")
+            .roleType(RoleType.USER)
+            .build();
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(jwtInfo, null, null));
     }
 
@@ -52,6 +58,7 @@ class CommentServiceTest extends ServiceTest {
             .build();
         given(commentRepository.save(any())).willReturn(Comment.builder()
             .content("content")
+            .member(Member.builder().id(1L).username("name").nickname("nick").build())
             .build());
 
         // when
