@@ -35,7 +35,7 @@ public class Comment extends DateAuditing
     @JoinColumn(name="parent_id")
     private Comment parentComment;
 
-    @OneToMany(mappedBy = "parentComment")
+    @OneToMany(mappedBy = "parentComment", fetch = FetchType.EAGER)
     private List<Comment> childComments = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -46,12 +46,13 @@ public class Comment extends DateAuditing
     private DeleteFlag deleteFlag;
 
     @Builder
-    private Comment(Long id, String content, Post post, Member member, Comment parentComment) {
+    private Comment(Long id, String content, Post post, Member member, Comment parentComment, List<Comment> childComments) {
         this.id = id;
         this.content = content;
         this.post = post;
         this.member = member;
         this.parentComment = parentComment;
+        this.childComments = childComments;
         this.deleteFlag = new DeleteFlag();
     }
 
@@ -59,20 +60,15 @@ public class Comment extends DateAuditing
         this.deleteFlag.softDelete();
     }
 
-    public void initPostAndMember(final Post post, final Member member) {
-        this.post = post;
-        this.member = member;
-        post.addComment(this);
-    }
-    public void addChildComment(final Comment comment) {
-        comment.initParentComment(this);
-        this.childComments.add(comment);
-    }
-    private void initParentComment(final Comment comment) {
-        this.parentComment = comment;
-    }
-    public void updateComment(CommentDto.Update commentDTO) {
-        this.content = commentDTO.getContent();
+    public Comment updateComment(CommentDto.Update commentDto) {
+        return Comment.builder()
+            .id(this.id)
+            .content(commentDto.getContent())
+            .member(this.member)
+            .parentComment(this.parentComment)
+            .post(this.post)
+            .childComments(this.childComments)
+            .build();
     }
 
     @Override

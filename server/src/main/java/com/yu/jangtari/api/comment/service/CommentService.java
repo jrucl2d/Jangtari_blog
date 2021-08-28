@@ -35,8 +35,7 @@ public class CommentService {
 
     public Comment updateComment(Long commentId, CommentDto.Update commentDTO) {
         Comment comment = getCommentByIdAndMemberId(commentId);
-        comment.updateComment(commentDTO);
-        return comment;
+        return comment.updateComment(commentDTO);
     }
 
     private Comment getCommentByIdAndMemberId(Long commentId) {
