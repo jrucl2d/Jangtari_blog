@@ -31,13 +31,12 @@ public class CommentService {
 
     public CommentDto.Get addComment(CommentDto.Add commentDTO) {
         Comment comment = commentRepository.save(commentDTO.toEntity());
-        System.out.println(comment);
         return CommentDto.Get.of(comment);
     }
 
-    public Comment updateComment(Long commentId, CommentDto.Update commentDTO) {
+    public CommentDto.Get updateComment(Long commentId, CommentDto.Update commentDTO) {
         Comment comment = getCommentByIdAndMemberId(commentId);
-        return comment.updateComment(commentDTO);
+        return CommentDto.Get.of(comment.updateComment(commentDTO));
     }
 
     private Comment getCommentByIdAndMemberId(Long commentId) {

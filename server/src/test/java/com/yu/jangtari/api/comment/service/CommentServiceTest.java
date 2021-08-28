@@ -79,11 +79,16 @@ class CommentServiceTest extends ServiceTest {
         given(commentRepository.findByIdAndMemberId(anyLong(), anyLong())).willReturn(Optional.of(
             Comment.builder()
                 .content("content")
+                .member(Member.builder()
+                    .id(1L)
+                    .username("user")
+                    .nickname("nick")
+                    .build())
                 .build()
         ));
 
         // when
-        Comment updatedComment = commentService.updateComment(1L, dto);
+        CommentDto.Get updatedComment = commentService.updateComment(1L, dto);
 
         // then
         assertThat(updatedComment.getContent()).isEqualTo(dto.getContent());

@@ -36,7 +36,7 @@ public class CommentController {
     @PutMapping("/user/comment/{id}")
     @ResponseStatus(HttpStatus.OK)
     public CommentDto.Get updateComment(@PathVariable("id") Long commentId, @Valid @RequestBody CommentDto.Update commentDTO) {
-        return CommentDto.Get.of(commentService.updateComment(commentId, commentDTO));
+        return commentService.updateComment(commentId, commentDTO);
     }
 
     @DeleteMapping("/user/comment/{id}")
