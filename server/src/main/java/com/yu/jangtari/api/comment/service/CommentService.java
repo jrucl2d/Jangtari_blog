@@ -3,8 +3,6 @@ package com.yu.jangtari.api.comment.service;
 import com.yu.jangtari.api.comment.domain.Comment;
 import com.yu.jangtari.api.comment.dto.CommentDto;
 import com.yu.jangtari.api.comment.repository.CommentRepository;
-import com.yu.jangtari.api.member.service.MemberService;
-import com.yu.jangtari.api.post.service.PostService;
 import com.yu.jangtari.exception.BusinessException;
 import com.yu.jangtari.exception.ErrorCode;
 import com.yu.jangtari.util.AuthUtil;
@@ -19,8 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
-    private final PostService postService;
-    private final MemberService memberService;
 
     @Transactional(readOnly = true)
     public List<Comment> getCommentsOfPost(Long postId) {
@@ -37,12 +33,16 @@ public class CommentService {
         return commentRepository.save(commentDTO.toEntity());
     }
 
-    // TODO : commentId와 memberId로 가져오는 방식으로 레포지토리 메소드 추가
     public Comment updateComment(Long commentId, CommentDto.Update commentDTO) {
-        Long memberId = AuthUtil.getMemberId();
-        Comment comment = getComment(commentId);
+        Comment comment = getCommentByIdAndMemberId(commentId);
         comment.updateComment(commentDTO);
         return comment;
+    }
+
+    private Comment getCommentByIdAndMemberId(Long commentId) {
+        Long memberId = AuthUtil.getMemberId();
+        return commentRepository.findByIdAndMemberId(commentId, memberId)
+            .orElseThrow(() -> new BusinessException(ErrorCode.COMMENT_NOT_FOUND_ERROR));
     }
 
     public void deleteComment(Long commentId) {
