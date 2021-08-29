@@ -1,12 +1,13 @@
 package com.yu.jangtari.common;
 
-import com.yu.jangtari.common.exception.NoSearchtypeException;
+import com.yu.jangtari.exception.BusinessException;
+import com.yu.jangtari.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum SearchType {
     TITLE('t'), CONTENT('c'), HASHTAG('h');
-    private final char value;
+    private final char type;
 
     public static SearchType of(String type) {
         switch (type.charAt(0)) {
@@ -17,7 +18,7 @@ public enum SearchType {
             case 'h':
                 return HASHTAG;
             default:
-                throw new NoSearchtypeException();
+                throw new BusinessException(ErrorCode.NO_SEARCH_TYPE_ERROR);
         }
     }
 }

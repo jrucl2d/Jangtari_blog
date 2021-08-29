@@ -34,23 +34,19 @@ public enum ErrorCode {
     // 게시글 관련 에러 50XX
     // =================================================================================================================
     POST_NOT_FOUND_ERROR("yu5000", "해당 게시글이 존재하지 않습니다."),
+    NO_SEARCH_TYPE_ERROR("yu5001", "검색조건이 알맞지 않습니다."),
 
     // =================================================================================================================
     // 게시글 관련 에러 60XX
     // =================================================================================================================
     COMMENT_NOT_FOUND_ERROR("yu6000", "해당 댓글이 존재하지 않습니다."),
 
-    PICTURE_NOT_FOUND("yu008", "No Such Picture"),
-    HASHTAG_NOT_FOUND("yu009", "No Such Hashtag"),
-    SEARCH_TYPE_ERROR("yu013", "No Such SearchType"),
-    JANGTARI_DELETE_ERROR("yu014", "Nobody Can Delete Jangtari"),
-    INVALID_TOKEN_ERROR("yu015", "Invalid Token"),
-    DUPLICATE_USER_ERROR("yu017", "Duplicate User Error"),
-    RE_LOGIN_ERROR("yu018", "Need to reLogin"),
-
-
-    FILE_ERROR("yu011", "File Task Error"),
-    GOOGLE_DRIVE_ERROR("yu012", "Google Dirve Error");
+    // =================================================================================================================
+    // Google Drive API 관련 에러 70XX
+    // =================================================================================================================
+    FILE_TASK_ERROR("yu7000", "파일 작업 중 에러가 발생했습니다."),
+    GOOGLE_DRIVE_ERROR("yu7001", "구글 드라이브 api 연동 중 에러가 발생했습니다.")
+    ;
 
     private final String code;
     private final String message;

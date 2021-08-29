@@ -12,14 +12,17 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.yu.jangtari.common.GDFolder;
-import com.yu.jangtari.common.exception.FileTaskException;
-import com.yu.jangtari.common.exception.GoogleDriveException;
+import com.yu.jangtari.exception.BusinessException;
+import com.yu.jangtari.exception.ErrorCode;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -76,9 +79,9 @@ public class GoogleDriveUtil {
             Drive drive = getDrive();
             pictureURLs = pictureFiles.parallelStream().map(pictureFile -> getURL(pictureFile, gdFolder, drive)).collect(Collectors.toList());
         } catch (GeneralSecurityException e) {
-            throw new GoogleDriveException();
+            throw new BusinessException(ErrorCode.GOOGLE_DRIVE_ERROR);
         } catch (IOException e) {
-            throw new FileTaskException();
+            throw new BusinessException(ErrorCode.FILE_TASK_ERROR);
         }
         return pictureURLs;
     }
@@ -89,9 +92,9 @@ public class GoogleDriveUtil {
             Drive drive = getDrive();
             return getURL(pictureFile, gdFolder, drive);
         } catch (GeneralSecurityException e) {
-            throw new GoogleDriveException();
+            throw new BusinessException(ErrorCode.GOOGLE_DRIVE_ERROR);
         } catch (IOException e) {
-            throw new FileTaskException();
+            throw new BusinessException(ErrorCode.FILE_TASK_ERROR);
         }
     }
 
@@ -103,7 +106,7 @@ public class GoogleDriveUtil {
         try {
             tempFile = new File(Objects.requireNonNull(pictureFile.getOriginalFilename()));
         } catch (NullPointerException e) {
-            throw new FileTaskException();
+            throw new BusinessException(ErrorCode.FILE_TASK_ERROR);
         }
 
         try (FileOutputStream fos = new FileOutputStream(tempFile)) {
@@ -112,7 +115,7 @@ public class GoogleDriveUtil {
             final com.google.api.services.drive.model.File uploadedFile = drive.files().create(file, content).setFields("id").execute();
             return fileRef + uploadedFile.getId();
         } catch (IOException | NullPointerException e) {
-            throw new FileTaskException(); // 임시 파일 작업 중 발생한 IOException
+            throw new BusinessException(ErrorCode.FILE_TASK_ERROR);
         }
     }
 
