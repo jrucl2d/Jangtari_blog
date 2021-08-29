@@ -25,7 +25,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Arrays;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -129,6 +131,54 @@ class CommentControllerTest extends IntegrationTest {
             .andExpect(jsonPath("$.username").value(member.getUsername()))
             .andExpect(jsonPath("$.nickname").value(member.getNickname()))
             .andExpect(jsonPath("$.parentCommentId").value(parent.getId()))
+            .andDo(print());
+    }
+
+    @Test
+    @DisplayName("postId로 댓글들을 정상적으로 가져올 수 있다.")
+    void getComments() throws Exception
+    {
+        Comment parent = commentRepository.save(Comment.builder()
+            .member(member)
+            .content("content")
+            .post(post)
+            .build());
+        Comment child1 = commentRepository.save(Comment.builder()
+            .member(member)
+            .content("content1")
+            .parentComment(parent)
+            .post(post)
+            .build());
+        Comment child2 = commentRepository.save(Comment.builder()
+            .member(member)
+            .content("content2")
+            .parentComment(parent)
+            .post(post)
+            .build());
+
+        mockMvc.perform(get("/post/" + post.getId() + "/comments")
+                .header(HttpHeaders.AUTHORIZATION, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(3)))
+            .andExpect(jsonPath("$.[0].content").value(parent.getContent()))
+            .andExpect(jsonPath("$.[0].parentCommentId").doesNotExist())
+            .andExpect(jsonPath("$.[1].content").value(child1.getContent()))
+            .andExpect(jsonPath("$.[1].parentCommentId").value(parent.getId()))
+            .andExpect(jsonPath("$.[2].content").value(child2.getContent()))
+            .andExpect(jsonPath("$.[2].parentCommentId").value(parent.getId()))
+            .andDo(print());
+    }
+
+    @Test
+    @DisplayName("댓글이 없다면 빈 값이 리턴된다.")
+    void getComments1() throws Exception
+    {
+        mockMvc.perform(get("/post/" + post.getId() + "/comments")
+                .header(HttpHeaders.AUTHORIZATION, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(0)))
             .andDo(print());
     }
 

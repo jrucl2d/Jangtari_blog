@@ -19,8 +19,8 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     @Transactional(readOnly = true)
-    public List<Comment> getCommentsOfPost(Long postId) {
-        return commentRepository.findCommentsOfPost(postId);
+    public List<CommentDto.Get> getCommentsOfPost(Long postId) {
+        return CommentDto.Get.toList(commentRepository.findCommentsOfPost(postId));
     }
 
     @Transactional(readOnly = true)

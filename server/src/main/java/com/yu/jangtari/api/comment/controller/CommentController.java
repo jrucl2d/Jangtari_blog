@@ -24,7 +24,7 @@ public class CommentController {
     @GetMapping("/post/{id}/comments")
     @ResponseStatus(HttpStatus.OK)
     public List<CommentDto.Get> getComments(@PathVariable("id") Long postId) {
-        return CommentDto.Get.toList(commentService.getCommentsOfPost(postId));
+        return commentService.getCommentsOfPost(postId);
     }
 
     @PostMapping("/user/comment")
