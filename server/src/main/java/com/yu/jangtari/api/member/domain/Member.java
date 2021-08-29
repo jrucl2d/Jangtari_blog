@@ -53,22 +53,30 @@ public class Member extends DateAuditing
     DeleteFlag deleteFlag;
 
     @Builder
-    public Member(Long id, String username, String nickname, String password, String introduce, String picture) {
+    public Member(Long id, String username, String nickname, String password, RoleType roleType, String introduce, String picture) {
         this.id = id;
         this.username = username;
         this.nickname = nickname;
         this.password = password;
         this.introduce = introduce;
         this.picture = picture;
-        this.role = RoleType.USER;
+        this.role = roleType == null ? RoleType.USER : RoleType.ADMIN;
         this.deleteFlag = new DeleteFlag();
     }
 
-    public void updateMember(MemberDto.Update memberDTO) {
-        this.nickname = memberDTO.getNickname();
-        this.introduce = memberDTO.getIntroduce();
-        final String pictureURL = memberDTO.getPictureURL();
-        if (pictureURL != null) this.picture = pictureURL;
+    public Member updateMember(MemberDto.Update memberDto) {
+        String pictureUrl = memberDto.getPictureUrl();
+        if (pictureUrl != null) this.picture = pictureUrl;
+
+        return Member.builder()
+            .id(this.id)
+            .username(this.username)
+            .nickname(memberDto.getNickname())
+            .password(this.password)
+            .introduce(memberDto.getIntroduce())
+            .picture(pictureUrl)
+            .roleType(RoleType.ADMIN)
+            .build();
     }
 
     public void delete() {

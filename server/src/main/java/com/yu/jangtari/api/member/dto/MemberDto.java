@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberDto
@@ -82,28 +83,32 @@ public class MemberDto
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Update {
+        @NotNull(message = "수정할 회원 아이디가 비어있으면 안 됩니다.")
+        private Long id;
+
         @NotBlank(message = "닉네임이 빈칸이면 안 됩니다.")
         private String nickname;
+
         private String introduce;
-        private MultipartFile picture;
+
         @JsonIgnore
         private String pictureURL;
 
         @Builder
-        public Update(String nickname, String introduce, MultipartFile picture, String pictureURL) {
+        public Update(Long id, String nickname, String introduce, String pictureURL) {
+            this.id = id;
             this.nickname = nickname;
             this.introduce = introduce;
-            this.picture = picture;
             this.pictureURL = pictureURL;
         }
 
         @JsonIgnore
-        public String getPictureURL() {
+        public String getPictureUrl() {
             return this.pictureURL;
         }
 
-        public Update toURLContaining(GoogleDriveUtil googleDriveUtil) {
-            String returnedURL = googleDriveUtil.fileToURL(this.picture, GDFolder.JANGTARI);
+        public Update toUrlDto(GoogleDriveUtil googleDriveUtil, MultipartFile picture) {
+            String returnedURL = googleDriveUtil.fileToURL(picture, GDFolder.JANGTARI);
             return Update.builder()
                 .nickname(this.nickname)
                 .introduce(this.introduce)

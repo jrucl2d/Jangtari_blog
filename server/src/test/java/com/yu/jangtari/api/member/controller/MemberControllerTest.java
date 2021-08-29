@@ -1,8 +1,10 @@
 package com.yu.jangtari.api.member.controller;
 
 import com.yu.jangtari.IntegrationTest;
+import com.yu.jangtari.api.member.domain.Member;
 import com.yu.jangtari.api.member.domain.RoleType;
 import com.yu.jangtari.api.member.dto.MemberDto;
+import com.yu.jangtari.api.member.repository.MemberRepository;
 import com.yu.jangtari.api.member.repository.RefreshTokenRepository;
 import com.yu.jangtari.exception.ErrorCode;
 import com.yu.jangtari.security.jwt.JwtInfo;
@@ -15,12 +17,16 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -29,6 +35,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class MemberControllerTest extends IntegrationTest {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Test
     @DisplayName("회원가입이 정상적으로 실행된다.")
@@ -199,6 +211,40 @@ class MemberControllerTest extends IntegrationTest {
             .andExpect(status().isUnauthorized())
             .andExpect(jsonPath("$.message").value(ErrorCode.JWT_VALIDATION_ERROR.getMessage()))
             .andExpect(jsonPath("$.code").value(ErrorCode.JWT_VALIDATION_ERROR.getCode()))
+            .andDo(print());
+    }
+
+    @Test
+    @DisplayName("정상적으로 장따리 정보를 수정")
+    void updateMember() throws Exception
+    {
+        Member member = memberRepository.save(Member.builder()
+            .username("username")
+            .password(passwordEncoder.encode("password"))
+            .introduce("introduce")
+            .nickname("nick")
+            .roleType(RoleType.ADMIN)
+            .build());
+
+        String accessToken = JwtUtil.createAccessToken(JwtInfo.builder()
+            .memberId(member.getId())
+            .username("username")
+            .nickName("nick")
+            .roleType(RoleType.ADMIN)
+            .build());
+
+        MultiValueMap<String, String> dto = new LinkedMultiValueMap<>();
+        dto.add("id", String.valueOf(member.getId()));
+        dto.add("nickname", "newNick");
+        dto.add("introduce", "newIntroduce");
+
+        mockMvc.perform(put("/admin/jangtari")
+                .header(HttpHeaders.AUTHORIZATION, accessToken)
+                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                .params(dto))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.nickname").value("newNick"))
+            .andExpect(jsonPath("$.introduce").value("newIntroduce"))
             .andDo(print());
     }
 }

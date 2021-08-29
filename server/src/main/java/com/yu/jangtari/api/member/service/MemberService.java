@@ -17,9 +17,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
@@ -28,30 +30,23 @@ public class MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional(readOnly = true)
+    public MemberDto.Get getJangtari() {
+        return MemberDto.Get.of(getOne(1L));
+    }
+
+    @Transactional(readOnly = true)
     public Member getOne(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND_ERROR));
     }
 
-    @Transactional(readOnly = true)
-    public Member getMemberByName(String username) {
-        return memberRepository.findByUsername(username).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND_ERROR));
+    public MemberDto.Get updateMember(MemberDto.Update memberDto, MultipartFile picture) {
+        Member member = getOne(memberDto.getId());
+        return MemberDto.Get.of(member.updateMember(memberDto.toUrlDto(googleDriveUtil, picture)));
     }
 
-    /**
-     * Jangtari만 정보 수정 가능
-     */
-    @Transactional
-    public Member updateMember(MemberDto.Update memberDTO) {
-        Member member = getOne(1L);
-        member.updateMember(memberDTO.toURLContaining(googleDriveUtil));
-        return member;
-    }
-
-    @Transactional
-    public Member deleteMember(Long memberId) {
+    public void deleteMember(Long memberId) {
         Member member = getOne(memberId);
         member.delete();
-        return member;
     }
 
     @Transactional

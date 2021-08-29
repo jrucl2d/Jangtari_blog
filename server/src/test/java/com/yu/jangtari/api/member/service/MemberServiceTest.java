@@ -9,6 +9,7 @@ import com.yu.jangtari.api.member.repository.RefreshTokenRepository;
 import com.yu.jangtari.exception.BusinessException;
 import com.yu.jangtari.exception.ErrorCode;
 import com.yu.jangtari.security.jwt.JwtInfo;
+import com.yu.jangtari.testHelper.PictureFileUtil;
 import com.yu.jangtari.util.GoogleDriveUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +26,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -68,28 +68,16 @@ class MemberServiceTest extends ServiceTest
     }
 
     @Test
-    @DisplayName("이름으로 member 찾아왔을 때 없으면 NoSuchMemberException 발생")
-    void getMemberByName() {
-        // given
-        // when
-        given(memberRepository.findByUsername(any())).willReturn(Optional.empty());
-
-        // then
-        BusinessException e = assertThrows(BusinessException.class, () -> memberService.getMemberByName("jang"));
-        assertThat(e.getErrorCode()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND_ERROR);
-    }
-
-    @Test
     @DisplayName("member의 정보 업데이트가 정상적으로 진행됨")
     void updateMember1()
     {
         // given
-        MemberDto.Update memDTO = MemberDto.Update.builder().nickname("newNick").introduce("newIntro").build();
+        MemberDto.Update memDTO = MemberDto.Update.builder().id(1L).nickname("newNick").introduce("newIntro").build();
         given(memberRepository.findById(anyLong())).willReturn(Optional.of(admin));
         given(googleDriveUtil.fileToURL(any(), any())).willReturn("newPic");
 
         // when
-        Member updatedMember = memberService.updateMember(memDTO);
+        MemberDto.Get updatedMember = memberService.updateMember(memDTO, PictureFileUtil.createOne("pic"));
 
         // then
         assertEquals("newNick", updatedMember.getNickname());
@@ -116,10 +104,10 @@ class MemberServiceTest extends ServiceTest
         given(memberRepository.findById(anyLong())).willReturn(Optional.of(user));
 
         // when
-        Member deletedMember = memberService.deleteMember(user.getId());
+        memberService.deleteMember(user.getId());
 
         // then
-        assertTrue(deletedMember.getDeleteFlag().isDeleted());
+        verify(memberRepository, times(1)).findById(anyLong());
     }
 
     @Test
