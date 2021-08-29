@@ -21,17 +21,19 @@ public class CategoryService {
     private final GoogleDriveUtil googleDriveUtil;
 
     @Transactional(readOnly = true)
-    public List<Category> getAllCategories(){
-        return categoryRepository.getAllCategories();
+    public List<CategoryDto.Get> getAllCategories(){
+        List<Category> categories = categoryRepository.getAllCategories();
+        return CategoryDto.Get.toList(categories);
     }
 
-    public Category addCategory(CategoryDto.Add categoryDto, MultipartFile picture) {
-        return categoryRepository.save(categoryDto.toEntity(googleDriveUtil, picture));
+    public CategoryDto.Get addCategory(CategoryDto.Add categoryDto, MultipartFile picture) {
+        Category savedCategory = categoryRepository.save(categoryDto.toEntity(googleDriveUtil, picture));
+        return CategoryDto.Get.of(savedCategory);
     }
 
-    public Category updateCategory(CategoryDto.Update categoryDto, MultipartFile picture) {
+    public CategoryDto.Get updateCategory(CategoryDto.Update categoryDto, MultipartFile picture) {
         Category category = getOne(categoryDto.getCategoryId());
-        return category.updateCategory(categoryDto.toUrlDto(googleDriveUtil, picture));
+        return CategoryDto.Get.of(category.updateCategory(categoryDto.toUrlDto(googleDriveUtil, picture)));
     }
 
     @Transactional(readOnly = true)
@@ -45,8 +47,7 @@ public class CategoryService {
         category.softDelete();
     }
 
-    @Transactional(readOnly = true)
-    public Category getOneForDelete(Long categoryId) {
+    private Category getOneForDelete(Long categoryId) {
         return categoryRepository.findCategoryForDelete(categoryId)
             .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND_ERROR));
     }

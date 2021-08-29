@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +26,7 @@ public class CategoryController {
     @GetMapping("/categories")
     @ResponseStatus(HttpStatus.OK)
     public List<CategoryDto.Get> getAllCategories() {
-        return categoryService.getAllCategories().stream().map(CategoryDto.Get::of).collect(Collectors.toList());
+        return categoryService.getAllCategories();
     }
 
     @PostMapping(value = "/admin/category", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -36,7 +35,7 @@ public class CategoryController {
         @Valid CategoryDto.Add categoryDto
         , @RequestParam(required = false, name = "picture") MultipartFile picture)
     {
-        return CategoryDto.Get.of(categoryService.addCategory(categoryDto, picture));
+        return categoryService.addCategory(categoryDto, picture);
     }
 
     @PutMapping(value = "/admin/category", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -45,7 +44,7 @@ public class CategoryController {
         @Valid CategoryDto.Update categoryDto
         , @RequestParam(required = false, name = "picture") MultipartFile picture)
     {
-        return CategoryDto.Get.of(categoryService.updateCategory(categoryDto, picture));
+        return categoryService.updateCategory(categoryDto, picture);
     }
 
     @DeleteMapping("/admin/category/{id}")

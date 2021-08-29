@@ -62,6 +62,7 @@ class CategoryServiceTest extends ServiceTest {
         CategoryDto.Add categoryDto = CategoryDto.Add.builder()
             .name("category name")
             .build();
+        given(categoryRepository.save(any())).willReturn(category);
         given(googleDriveUtil.fileToURL(any(), any())).willReturn("category");
 
         // when

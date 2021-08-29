@@ -13,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CategoryDto
@@ -87,6 +89,10 @@ public class CategoryDto
         }
         public static CategoryDto.Get of(Category category) {
             return Get.builder().id(category.getId()).name(category.getName()).picture(category.getPicture()).build();
+        }
+
+        public static List<Get> toList(List<Category> categories) {
+            return categories.stream().map(CategoryDto.Get::of).collect(Collectors.toList());
         }
     }
 }
