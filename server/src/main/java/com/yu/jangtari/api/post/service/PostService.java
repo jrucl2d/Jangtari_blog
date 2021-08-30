@@ -23,14 +23,13 @@ public class PostService {
     private final GoogleDriveUtil googleDriveUtil;
 
     @Transactional(readOnly = true)
-    public Post getOneJoining(Long postId) {
-        return postRepository.findJoining(postId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND_ERROR));
+    public PostDto.GetOne getPost(Long postId) {
+        return PostDto.GetOne.of(getOneJoining(postId));
     }
 
-    @Transactional(readOnly = true)
-    public Post getOne(Long postId) {
-        return postRepository.findById(postId).orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND_ERROR));
+    private Post getOneJoining(Long postId) {
+        return postRepository.findJoining(postId)
+            .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND_ERROR));
     }
 
     @Transactional(readOnly = true)
@@ -38,17 +37,22 @@ public class PostService {
         return postRepository.findPostList(categoryId, pageRequest);
     }
 
-    public Post addPost(PostDto.Add postDto) {
+    public PostDto.ListGetElement addPost(PostDto.Add postDto) {
         try {
-            return postRepository.save(Post.of(postDto.toUrlDto(googleDriveUtil), hashtagRepository));
+            return PostDto.ListGetElement.of(
+                postRepository.save(Post.of(postDto.toUrlDto(googleDriveUtil), hashtagRepository)));
         } catch (DataIntegrityViolationException e) {
             throw new BusinessException(ErrorCode.CATEGORY_NOT_FOUND_ERROR);
         }
     }
 
-    public Post updatePost(Long postId, PostDto.Update postDto) {
+    public PostDto.GetOne updatePost(Long postId, PostDto.Update postDto) {
         Post post = getOne(postId);
-        return post.updatePost(postDto.toUrlDto(googleDriveUtil), hashtagRepository);
+        return PostDto.GetOne.of(post.updatePost(postDto.toUrlDto(googleDriveUtil), hashtagRepository));
+    }
+
+    private Post getOne(Long postId) {
+        return postRepository.findById(postId).orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND_ERROR));
     }
 
     public void deletePost(Long postId) {

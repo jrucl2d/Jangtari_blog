@@ -3,7 +3,6 @@ package com.yu.jangtari.api.post.repository.post;
 import com.yu.jangtari.IntegrationTest;
 import com.yu.jangtari.api.category.domain.Category;
 import com.yu.jangtari.api.category.repository.CategoryRepository;
-import com.yu.jangtari.api.post.domain.Post;
 import com.yu.jangtari.api.post.dto.PostDto;
 import com.yu.jangtari.api.post.service.PostService;
 import com.yu.jangtari.testHelper.PictureFileUtil;
@@ -46,7 +45,7 @@ class PostRepositoryImplTest extends IntegrationTest {
     {
         // addPost 확인
         categoryRepository.save(Category.builder().name("name").picture("picture").build());
-        Post savedPost = postService.addPost(PostDto.Add.builder()
+        PostDto.ListGetElement savedPost = postService.addPost(PostDto.Add.builder()
             .title("title")
             .content("content")
             .template(0)
@@ -57,7 +56,7 @@ class PostRepositoryImplTest extends IntegrationTest {
         entityManager.flush();
         System.out.println(savedPost);
 
-        Post updatedPost = postService.updatePost(1L, PostDto.Update.builder()
+        PostDto.GetOne updatedPost = postService.updatePost(1L, PostDto.Update.builder()
             .title("new title")
             .content("new content")
             .template(1)
