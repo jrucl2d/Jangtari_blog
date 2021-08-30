@@ -22,15 +22,13 @@ public class PostService {
     private final HashtagRepository hashtagRepository;
     private final GoogleDriveUtil googleDriveUtil;
 
-    /**
-     * Comment, PostHashtag, Picture 함께 join
-     */
     @Transactional(readOnly = true)
     public Post getOneJoining(Long postId) {
         return postRepository.findJoining(postId)
             .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND_ERROR));
     }
 
+    @Transactional(readOnly = true)
     public Post getOne(Long postId) {
         return postRepository.findById(postId).orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND_ERROR));
     }
@@ -50,8 +48,7 @@ public class PostService {
 
     public Post updatePost(Long postId, PostDto.Update postDto) {
         Post post = getOne(postId);
-        post.updatePost(postDto.toUrlDto(googleDriveUtil), hashtagRepository);
-        return post;
+        return post.updatePost(postDto.toUrlDto(googleDriveUtil), hashtagRepository);
     }
 
     public void deletePost(Long postId) {

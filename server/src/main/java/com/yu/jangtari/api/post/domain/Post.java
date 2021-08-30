@@ -110,19 +110,27 @@ public class Post extends DateAuditing
         return post;
     }
 
-    public void updatePost(PostDto.Update dto, HashtagRepository hashtagRepository) {
-        this.postHashtags.clear();
-        this.postHashtags.addAll(
-            dto.getHashtags()
-                .stream()
-                .map(hashtagStr -> PostHashtag.of(hashtagRepository.save(new Hashtag(hashtagStr)), this))
-                .collect(Collectors.toList())
-        );
-        this.title = dto.getTitle();
-        this.content = dto.getContent();
-        this.template = dto.getTemplate();
-        this.pictures.removeAll(Picture.getPictureEntities(dto.getDelPics(), this));
-        this.pictures.addAll(Picture.getPictureEntities(dto.getAddPicUrls(), this));
+    public Post updatePost(PostDto.Update dto, HashtagRepository hashtagRepository) {
+        List<PostHashtag> newPostHashtags = dto.getHashtags()
+            .stream()
+            .map(hashtagStr ->
+                PostHashtag.of(hashtagRepository.save(new Hashtag(hashtagStr)), this))
+            .collect(Collectors.toList());
+
+        List<Picture> newPictures = this.pictures
+            .stream()
+            .filter(picture -> !this.pictures.contains(picture))
+            .collect(Collectors.toList());
+        pictures.addAll(Picture.getPictureEntities(dto.getAddPicUrls(), this));
+
+        return Post.builder()
+            .id(this.id)
+            .title(dto.getTitle())
+            .content(dto.getContent())
+            .template(dto.getTemplate())
+            .pictures(newPictures)
+            .postHashtags(newPostHashtags)
+            .build();
     }
 
     public void softDelete() {

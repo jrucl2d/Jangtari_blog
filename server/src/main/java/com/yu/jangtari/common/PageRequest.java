@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 // size 10 고정, direction createdDate DESC 고정
 @Getter
 public final class PageRequest {
-    private final int DEFAULT_SIZE = 10;
+    private static final int DEFAULT_SIZE = 10;
     private final int page;
     private final String type;
     private final String keyword;

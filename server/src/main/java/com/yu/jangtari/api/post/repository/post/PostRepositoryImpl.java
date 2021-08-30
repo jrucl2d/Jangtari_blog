@@ -49,9 +49,9 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
     // 존재하지 않는 type으로 검색할 시 SearchType enum 내에서 Search Type Error 발생시킴
     @Override
     public Page<PostDto.ListGetElement> findPostList(Long categoryId, PageRequest pageRequest) {
-        final Pageable pageable = pageRequest.of();
-        final String type = pageRequest.getType();
-        final String keyword = pageRequest.getKeyword();
+        Pageable pageable = pageRequest.of();
+        String type = pageRequest.getType();
+        String keyword = pageRequest.getKeyword();
 
         JPQLQuery<PostDto.ListGetElement> query;
         QPost post = QPost.post;
@@ -64,7 +64,7 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         setCommonCondition(post, bb, categoryId);
         query.where(bb);
 
-        final List<PostDto.ListGetElement> posts = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query).fetch();
+        List<PostDto.ListGetElement> posts = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query).fetch();
         return new PageImpl<>(posts, pageable, query.fetchCount());
     }
 

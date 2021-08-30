@@ -29,14 +29,14 @@ public class CommentController {
 
     @PostMapping("/user/comment")
     @ResponseStatus(HttpStatus.OK)
-    public CommentDto.Get addComment(@Valid @RequestBody CommentDto.Add commentDTO) {
-        return commentService.addComment(commentDTO);
+    public CommentDto.Get addComment(@Valid @RequestBody CommentDto.Add commentDto) {
+        return commentService.addComment(commentDto);
     }
 
     @PutMapping("/user/comment/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CommentDto.Get updateComment(@PathVariable("id") Long commentId, @Valid @RequestBody CommentDto.Update commentDTO) {
-        return commentService.updateComment(commentId, commentDTO);
+    public CommentDto.Get updateComment(@PathVariable("id") Long commentId, @Valid @RequestBody CommentDto.Update commentDto) {
+        return commentService.updateComment(commentId, commentDto);
     }
 
     @DeleteMapping("/user/comment/{id}")
