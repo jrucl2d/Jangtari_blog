@@ -119,9 +119,10 @@ public class Post extends DateAuditing
 
         List<Picture> newPictures = this.pictures
             .stream()
-            .filter(picture -> !this.pictures.contains(picture))
+            .filter(picture -> !dto.getDelPics().contains(picture.getUrl()))
             .collect(Collectors.toList());
-        pictures.addAll(Picture.getPictureEntities(dto.getAddPicUrls(), this));
+
+        newPictures.addAll(Picture.getPictureEntities(dto.getAddPicUrls(), this));
 
         return Post.builder()
             .id(this.id)

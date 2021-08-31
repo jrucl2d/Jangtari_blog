@@ -4,6 +4,7 @@ import com.yu.jangtari.api.post.domain.Picture;
 import lombok.*;
 
 @Getter
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PictureDto
 {

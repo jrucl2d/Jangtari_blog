@@ -31,12 +31,10 @@ public class CommentService {
 
     public CommentDto.Get addComment(CommentDto.Add commentDTO) {
         Comment comment = commentDTO.toEntity();
-        if (commentDTO.getParentCommentId() == null) {
-            comment = commentRepository.save(comment);
-        } else {
-            getComment(commentDTO.getParentCommentId()).getChildComments()
-                .add(comment);
+        if (commentDTO.getParentCommentId() != null) {
+            getComment(commentDTO.getParentCommentId()).getChildComments().add(comment);
         }
+        comment = commentRepository.save(comment);
         return CommentDto.Get.of(comment);
     }
 
