@@ -83,8 +83,8 @@ public class MemberDto
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Update {
-        @NotNull(message = "수정할 회원 아이디가 비어있으면 안 됩니다.")
-        private Long id;
+        @NotNull(message = "수정할 회원 이름이 비어있으면 안 됩니다.")
+        private String username;
 
         @NotBlank(message = "닉네임이 빈칸이면 안 됩니다.")
         private String nickname;
@@ -95,8 +95,8 @@ public class MemberDto
         private String pictureURL;
 
         @Builder
-        public Update(Long id, String nickname, String introduce, String pictureURL) {
-            this.id = id;
+        public Update(String username, String nickname, String introduce, String pictureURL) {
+            this.username = username;
             this.nickname = nickname;
             this.introduce = introduce;
             this.pictureURL = pictureURL;

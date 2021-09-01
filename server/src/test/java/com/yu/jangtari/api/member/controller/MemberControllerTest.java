@@ -9,9 +9,11 @@ import com.yu.jangtari.api.member.repository.RefreshTokenRepository;
 import com.yu.jangtari.exception.ErrorCode;
 import com.yu.jangtari.security.jwt.JwtInfo;
 import com.yu.jangtari.util.JwtUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,14 +44,22 @@ class MemberControllerTest extends IntegrationTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Value("${jangtari.name}")
+    private String jangtariName;
+
+    @AfterEach
+    void tearDown() {
+        memberRepository.delete(Member.builder().username(jangtariName).build());
+    }
+
     @Test
     @DisplayName("회원가입이 정상적으로 실행된다.")
     void join() throws Exception
     {
         // given
         MemberDto.Add dto = MemberDto.Add.builder()
-            .username("jangtari")
-            .nickname("jangtari")
+            .username(jangtariName)
+            .nickname(jangtariName)
             .password("1234")
             .build();
 
@@ -70,18 +80,21 @@ class MemberControllerTest extends IntegrationTest {
     void join_X() throws Exception
     {
         // given
+        memberRepository.save(Member.builder()
+            .username(jangtariName)
+            .nickname("nickname")
+            .roleType(RoleType.USER)
+            .password("12341235235123512")
+            .build());
+
         MemberDto.Add dto = MemberDto.Add.builder()
-            .username("jangtari")
-            .nickname("jangtari")
+            .username(jangtariName)
+            .nickname("nick")
             .password("1234")
             .build();
-        String content = objectMapper.writeValueAsString(dto);
-        mockMvc.perform(post("/join")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(content));
 
         // when
-        content = objectMapper.writeValueAsString(dto);
+        String content = objectMapper.writeValueAsString(dto);
 
         // then
         mockMvc.perform(post("/join")
@@ -99,8 +112,8 @@ class MemberControllerTest extends IntegrationTest {
     {
         // given
         MemberDto.Add dto = MemberDto.Add.builder()
-            .username("jangtari")
-            .nickname("jangtari")
+            .username(jangtariName)
+            .nickname(jangtariName)
             .password("1234")
             .build();
         String content = objectMapper.writeValueAsString(dto);
@@ -108,7 +121,7 @@ class MemberControllerTest extends IntegrationTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(content));
 
-        MemberDto.LogInForm loginForm = new MemberDto.LogInForm("jangtari", "1234");
+        MemberDto.LogInForm loginForm = new MemberDto.LogInForm(jangtariName, "1234");
 
         // when
         content = objectMapper.writeValueAsString(loginForm);
@@ -129,7 +142,7 @@ class MemberControllerTest extends IntegrationTest {
     void login_X() throws Exception
     {
         // given
-        MemberDto.LogInForm loginForm = new MemberDto.LogInForm("jangtari", "1234");
+        MemberDto.LogInForm loginForm = new MemberDto.LogInForm(jangtariName, "1234");
 
         // when
         String content = objectMapper.writeValueAsString(loginForm);
@@ -150,8 +163,8 @@ class MemberControllerTest extends IntegrationTest {
     {
         // given
         MemberDto.Add dto = MemberDto.Add.builder()
-            .username("jangtari")
-            .nickname("jangtari")
+            .username(jangtariName)
+            .nickname(jangtariName)
             .password("1234")
             .build();
         String content = objectMapper.writeValueAsString(dto);
@@ -179,11 +192,10 @@ class MemberControllerTest extends IntegrationTest {
     void logout() throws Exception
     {
         // given
-        Authentication authentication = new UsernamePasswordAuthenticationToken("jangtari", null, Collections.singletonList(() -> "ROLE_USER"));
+        Authentication authentication = new UsernamePasswordAuthenticationToken(jangtariName, null, Collections.singletonList(() -> "ROLE_USER"));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         JwtInfo jwtInfo = JwtInfo.builder()
-            .memberId(1L)
-            .username("username")
+            .username(jangtariName)
             .nickName("nick")
             .roleType(RoleType.USER)
             .build();
@@ -218,8 +230,8 @@ class MemberControllerTest extends IntegrationTest {
     @DisplayName("정상적으로 장따리 정보를 수정")
     void updateMember() throws Exception
     {
-        Member member = memberRepository.save(Member.builder()
-            .username("username")
+        memberRepository.save(Member.builder()
+            .username(jangtariName)
             .password(passwordEncoder.encode("password"))
             .introduce("introduce")
             .nickname("nick")
@@ -227,14 +239,13 @@ class MemberControllerTest extends IntegrationTest {
             .build());
 
         String accessToken = JwtUtil.createAccessToken(JwtInfo.builder()
-            .memberId(member.getId())
-            .username("username")
+            .username(jangtariName)
             .nickName("nick")
             .roleType(RoleType.ADMIN)
             .build());
 
         MultiValueMap<String, String> dto = new LinkedMultiValueMap<>();
-        dto.add("id", String.valueOf(member.getId()));
+        dto.add("username", jangtariName);
         dto.add("nickname", "newNick");
         dto.add("introduce", "newIntroduce");
 

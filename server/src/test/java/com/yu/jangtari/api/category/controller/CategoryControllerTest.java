@@ -32,7 +32,6 @@ class CategoryControllerTest extends IntegrationTest {
     @BeforeEach
     void setUp() {
         accessToken = JwtUtil.createAccessToken(JwtInfo.builder()
-            .memberId(1L)
             .username("username")
             .nickName("nick")
             .roleType(RoleType.ADMIN)

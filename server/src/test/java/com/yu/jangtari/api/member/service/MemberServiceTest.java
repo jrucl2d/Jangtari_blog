@@ -16,7 +16,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,10 +26,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -54,13 +51,11 @@ class MemberServiceTest extends ServiceTest
     @BeforeEach
     void setUp() {
         admin = Member.builder()
-            .id(1L)
             .username("username")
             .nickname("nickname")
             .introduce("introduce")
             .password("password").picture("picture").build();
         user = Member.builder()
-            .id(2L)
             .username("username")
             .nickname("nickname")
             .introduce("introduce")
@@ -72,8 +67,8 @@ class MemberServiceTest extends ServiceTest
     void updateMember1()
     {
         // given
-        MemberDto.Update memDTO = MemberDto.Update.builder().id(1L).nickname("newNick").introduce("newIntro").build();
-        given(memberRepository.findById(anyLong())).willReturn(Optional.of(admin));
+        MemberDto.Update memDTO = MemberDto.Update.builder().username("username").nickname("newNick").introduce("newIntro").build();
+        given(memberRepository.findByUsername(anyString())).willReturn(Optional.of(admin));
         given(googleDriveUtil.fileToURL(any(), any())).willReturn("newPic");
 
         // when
@@ -92,7 +87,7 @@ class MemberServiceTest extends ServiceTest
         // given
         // when
         // then
-        BusinessException e = assertThrows(BusinessException.class, () -> memberService.deleteMember(1L));
+        BusinessException e = assertThrows(BusinessException.class, () -> memberService.deleteMember("haha"));
         assertThat(e.getErrorCode()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND_ERROR);
     }
 
@@ -101,13 +96,13 @@ class MemberServiceTest extends ServiceTest
     void deleteMember()
     {
         // given
-        given(memberRepository.findById(anyLong())).willReturn(Optional.of(user));
+        given(memberRepository.findByUsername(anyString())).willReturn(Optional.of(user));
 
         // when
-        memberService.deleteMember(user.getId());
+        memberService.deleteMember(user.getUsername());
 
         // then
-        verify(memberRepository, times(1)).findById(anyLong());
+        verify(memberRepository, times(1)).findByUsername(anyString());
     }
 
     @Test
@@ -132,12 +127,16 @@ class MemberServiceTest extends ServiceTest
     void join_X()
     {
         // given
-        MemberDto.Add memDTO = MemberDto.Add.builder().username("username").nickname("nickname").password("password").build();
-        willThrow(new DataIntegrityViolationException("중복")).given(memberRepository).save(any());
+        MemberDto.Add memDto = MemberDto.Add.builder().username("username").nickname("nickname").password("password").build();
+        given(memberRepository.findByUsername(anyString())).willReturn(Optional.of(Member.builder()
+            .username("username")
+            .nickname("nickname")
+            .password("password")
+            .build()));
 
         // when
         // then
-        BusinessException e = assertThrows(BusinessException.class, () -> memberService.join(memDTO));
+        BusinessException e = assertThrows(BusinessException.class, () -> memberService.join(memDto));
         assertThat(e.getErrorCode()).isEqualTo(ErrorCode.DUPLICATED_MEMBER_ERROR);
     }
 
@@ -147,7 +146,6 @@ class MemberServiceTest extends ServiceTest
     {
         // given
         JwtInfo jwtInfo = JwtInfo.builder()
-            .memberId(1L)
             .username("username")
             .nickName("nick")
             .roleType(RoleType.USER)

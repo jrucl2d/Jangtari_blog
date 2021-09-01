@@ -65,7 +65,6 @@ class CommentControllerTest extends IntegrationTest {
             .build());
         accessToken = JwtUtil.createAccessToken(
             JwtInfo.builder()
-                .memberId(member.getId())
                 .username("user")
                 .nickName("nick")
                 .roleType(RoleType.USER)

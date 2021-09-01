@@ -20,7 +20,6 @@ class JwtUtilTest
     @BeforeAll
     static void beforeAll() {
         jwtInfo = JwtInfo.builder()
-            .memberId(1L)
             .username("username")
             .nickName("nick")
             .roleType(RoleType.USER)

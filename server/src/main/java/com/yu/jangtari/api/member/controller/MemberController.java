@@ -23,11 +23,11 @@ public class MemberController
         return memberService.getJangtari();
     }
 
-    @DeleteMapping("/member/{memberId}")
+    @DeleteMapping("/member/{username}")
     @ResponseStatus(value = HttpStatus.OK)
-    public void deleteMember(@PathVariable(value = "memberId") Long memberId)
+    public void deleteMember(@PathVariable(value = "username") String username)
     {
-        memberService.deleteMember(memberId);
+        memberService.deleteMember(username);
     }
 
     @PutMapping(value = "/admin/jangtari", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

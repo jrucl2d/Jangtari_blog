@@ -22,7 +22,6 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
     private RefreshTokenRepository refreshTokenRepository;
 
     private static final JwtInfo jwtInfo = JwtInfo.builder()
-        .memberId(1L)
         .username("username")
         .nickName("nick")
         .roleType(RoleType.USER)
@@ -90,7 +89,6 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
             mockMvc.perform(get("/user/test")
                 .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.memberId").value(jwtInfo.getMemberId()))
                 .andExpect(jsonPath("$.username").value(jwtInfo.getUsername()))
                 .andExpect(jsonPath("$.roleType").value(jwtInfo.getRoleType().name()))
                 .andDo(print());
@@ -203,7 +201,6 @@ class JwtAuthenticationFilterTest extends IntegrationTest {
             mockMvc.perform(get("/user/test")
                 .header(JwtUtil.REFRESH_TOKEN, refreshToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.memberId").value(jwtInfo.getMemberId()))
                 .andExpect(jsonPath("$.username").value(jwtInfo.getUsername()))
                 .andExpect(jsonPath("$.roleType").value(jwtInfo.getRoleType().name()))
                 .andExpect(header().exists(HttpHeaders.AUTHORIZATION)) // 재발급 받은 accessToken

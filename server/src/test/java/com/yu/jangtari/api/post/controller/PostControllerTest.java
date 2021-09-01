@@ -11,6 +11,7 @@ import com.yu.jangtari.api.post.service.PostService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -34,6 +35,9 @@ class PostControllerTest extends IntegrationTest {
     @Autowired
     private CommentRepository commentRepository;
 
+    @Value("${jangtari.name}")
+    private String jangtariName;
+
     private static String accessToken;
     private Category category;
     private List<Post> posts;
@@ -48,7 +52,7 @@ class PostControllerTest extends IntegrationTest {
     void name()
     {
         // given
-        System.out.println(memberRepository.getOne(1L));
+        System.out.println(memberRepository.findByUsername(jangtariName));
         // when
 
         // then

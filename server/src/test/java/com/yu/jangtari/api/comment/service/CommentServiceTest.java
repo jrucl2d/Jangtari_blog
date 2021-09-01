@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -39,7 +40,6 @@ class CommentServiceTest extends ServiceTest {
     @BeforeAll
     static void beforeAll() {
         JwtInfo jwtInfo = JwtInfo.builder()
-            .memberId(1L)
             .username("username")
             .nickName("nick")
             .roleType(RoleType.USER)
@@ -58,7 +58,7 @@ class CommentServiceTest extends ServiceTest {
             .build();
         given(commentRepository.save(any())).willReturn(Comment.builder()
             .content("content")
-            .member(Member.builder().id(1L).username("name").nickname("nick").build())
+            .member(Member.builder().username("name").nickname("nick").build())
             .build());
 
         // when
@@ -76,11 +76,10 @@ class CommentServiceTest extends ServiceTest {
         CommentDto.Update dto = CommentDto.Update.builder()
             .content("newComment")
             .build();
-        given(commentRepository.findByIdAndMemberId(anyLong(), anyLong())).willReturn(Optional.of(
+        given(commentRepository.findByIdAndUsername(anyLong(), anyString())).willReturn(Optional.of(
             Comment.builder()
                 .content("content")
                 .member(Member.builder()
-                    .id(1L)
                     .username("user")
                     .nickname("nick")
                     .build())
@@ -102,7 +101,7 @@ class CommentServiceTest extends ServiceTest {
         CommentDto.Update dto = CommentDto.Update.builder()
             .content("newComment")
             .build();
-        given(commentRepository.findByIdAndMemberId(anyLong(), anyLong())).willReturn(Optional.empty());
+        given(commentRepository.findByIdAndUsername(anyLong(), anyString())).willReturn(Optional.empty());
 
         // when
         // then

@@ -11,7 +11,6 @@ import com.yu.jangtari.security.jwt.JwtInfo;
 import com.yu.jangtari.util.GoogleDriveUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,32 +30,35 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public MemberDto.Get getJangtari() {
-        return MemberDto.Get.of(getOne(1L));
+        return MemberDto.Get.of(getOne("jangtari"));
     }
 
     @Transactional(readOnly = true)
-    public Member getOne(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND_ERROR));
+    public Member getOne(String username) {
+        return memberRepository.findByUsername(username)
+            .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND_ERROR));
     }
 
     public MemberDto.Get updateMember(MemberDto.Update memberDto, MultipartFile picture) {
-        Member member = getOne(memberDto.getId());
+        Member member = getOne(memberDto.getUsername());
         return MemberDto.Get.of(member.updateMember(memberDto.toUrlDto(googleDriveUtil, picture)));
     }
 
-    public void deleteMember(Long memberId) {
-        Member member = getOne(memberId);
+    public void deleteMember(String username) {
+        Member member = getOne(username);
         member.delete();
     }
 
     @Transactional
-    public void join(MemberDto.Add memberDTO) {
-        Member member = memberDTO.toEntity(passwordEncoder);
-        try {
-            memberRepository.save(member);
-        } catch (DataIntegrityViolationException e) {
-            throw new BusinessException(ErrorCode.DUPLICATED_MEMBER_ERROR);
-        }
+    public void join(MemberDto.Add memberDto) {
+        Member member = memberDto.toEntity(passwordEncoder);
+        memberRepository.findByUsername(memberDto.getUsername())
+            .ifPresentOrElse(
+                exist -> {
+                    throw new BusinessException(ErrorCode.DUPLICATED_MEMBER_ERROR);
+                },
+                () -> memberRepository.save(member)
+            );
     }
 
     public void logout() {

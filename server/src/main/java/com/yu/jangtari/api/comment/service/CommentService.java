@@ -39,13 +39,13 @@ public class CommentService {
     }
 
     public CommentDto.Get updateComment(Long commentId, CommentDto.Update commentDTO) {
-        Comment comment = getCommentByIdAndMemberId(commentId);
+        Comment comment = getCommentByIdAndUsername(commentId);
         return CommentDto.Get.of(comment.updateComment(commentDTO));
     }
 
-    private Comment getCommentByIdAndMemberId(Long commentId) {
-        Long memberId = AuthUtil.getMemberId();
-        return commentRepository.findByIdAndMemberId(commentId, memberId)
+    private Comment getCommentByIdAndUsername(Long commentId) {
+        String username = AuthUtil.getUsername();
+        return commentRepository.findByIdAndUsername(commentId, username)
             .orElseThrow(() -> new BusinessException(ErrorCode.COMMENT_NOT_FOUND_ERROR));
     }
 

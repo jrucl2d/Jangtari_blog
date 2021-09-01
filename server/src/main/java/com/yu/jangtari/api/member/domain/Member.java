@@ -2,8 +2,6 @@ package com.yu.jangtari.api.member.domain;
 import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.common.DateAuditing;
 import com.yu.jangtari.common.DeleteFlag;
-import com.yu.jangtari.exception.BusinessException;
-import com.yu.jangtari.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,8 +13,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Objects;
@@ -29,11 +25,7 @@ import java.util.Objects;
 public class Member extends DateAuditing
 {
     @Id
-    @Column(name = "member_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(unique = true, nullable = false)
+    @Column(name = "username")
     private String username;
 
     @Column(nullable = false)
@@ -53,8 +45,7 @@ public class Member extends DateAuditing
     DeleteFlag deleteFlag;
 
     @Builder
-    public Member(Long id, String username, String nickname, String password, RoleType roleType, String introduce, String picture) {
-        this.id = id;
+    public Member(String username, String nickname, String password, RoleType roleType, String introduce, String picture) {
         this.username = username;
         this.nickname = nickname;
         this.password = password;
@@ -69,7 +60,6 @@ public class Member extends DateAuditing
         if (pictureUrl != null) this.picture = pictureUrl;
 
         return Member.builder()
-            .id(this.id)
             .username(this.username)
             .nickname(memberDto.getNickname())
             .password(this.password)
@@ -80,7 +70,6 @@ public class Member extends DateAuditing
     }
 
     public void delete() {
-        if (this.id == 1L) throw new BusinessException(ErrorCode.ADMIN_DELETE_ERROR);
         this.deleteFlag.softDelete();
     }
 
@@ -90,8 +79,7 @@ public class Member extends DateAuditing
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Member member = (Member) o;
-        return id.equals(member.id)
-            && username.equals(member.username)
+        return username.equals(member.username)
             && Objects.equals(nickname, member.nickname)
             && Objects.equals(password, member.password)
             && Objects.equals(introduce, member.introduce)
@@ -103,6 +91,6 @@ public class Member extends DateAuditing
     @Override
     public int hashCode()
     {
-        return Objects.hash(id, username, nickname, password, introduce, picture, role, deleteFlag);
+        return Objects.hash(username, nickname, password, introduce, picture, role, deleteFlag);
     }
 }

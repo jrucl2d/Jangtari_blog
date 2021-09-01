@@ -9,7 +9,8 @@ spring:
       enabled: true
   freemarker:
     cache: false
-
+jangtari:
+  name: jangtari
 ---
 ####################################################################################################
 ## prod

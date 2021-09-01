@@ -21,7 +21,6 @@ class AuthUtilTest {
     void name() {
         // given
         JwtInfo jwtInfo = JwtInfo.builder()
-            .memberId(1L)
             .username("username")
             .nickName("nick")
             .roleType(RoleType.USER)
@@ -33,9 +32,9 @@ class AuthUtilTest {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // when
-        Long memberId = AuthUtil.getMemberId();
+        String username = AuthUtil.getUsername();
 
         // then
-        assertThat(memberId).isEqualTo(jwtInfo.getMemberId());
+        assertThat(username).isEqualTo(jwtInfo.getUsername());
     }
 }

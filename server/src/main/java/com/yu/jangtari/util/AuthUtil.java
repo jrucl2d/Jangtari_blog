@@ -11,10 +11,6 @@ public class AuthUtil {
         throw new IllegalStateException("Utility Class");
     }
 
-    public static Long getMemberId() {
-        return getJwtInfo().getMemberId();
-    }
-
     public static String getUsername() {
         return getJwtInfo().getUsername();
     }

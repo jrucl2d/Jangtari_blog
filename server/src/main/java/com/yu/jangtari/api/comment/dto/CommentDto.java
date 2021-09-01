@@ -74,7 +74,6 @@ public class CommentDto
             return Comment.builder()
                     .content(content)
                     .member(Member.builder()
-                        .id(AuthUtil.getMemberId())
                         .username(AuthUtil.getUsername())
                         .nickname(AuthUtil.getNickname())
                         .build())
