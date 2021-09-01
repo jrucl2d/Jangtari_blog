@@ -1,6 +1,7 @@
 package com.yu.jangtari.api.post.service;
 
 import com.yu.jangtari.ServiceTest;
+import com.yu.jangtari.api.comment.domain.Comment;
 import com.yu.jangtari.api.post.domain.Hashtag;
 import com.yu.jangtari.api.post.domain.Picture;
 import com.yu.jangtari.api.post.domain.Post;
@@ -135,5 +136,54 @@ class PostServiceTest extends ServiceTest {
         assertThat(result.getTitle()).isEqualTo(dto.getTitle());
         assertThat(result.getContent()).isEqualTo(dto.getContent());
         assertThat(result.getPictures()).hasSize(3);
+    }
+
+    @Test
+    @DisplayName("정상적으로 게시글을 삭제할 수 있고, 연관된 picture, comment, hashtag 모두 삭제 처리된다.")
+    void deletePost() {
+        // given
+        Post post = Post.builder()
+            .id(1L)
+            .title("title")
+            .template(1)
+            .content("content")
+            .pictures(
+                Arrays.asList(Picture.builder().url("pic1").build()
+                    , Picture.builder().url("pic2").build())
+            )
+            .comments(
+                Arrays.asList(
+                    Comment.builder().content("comment1").build()
+                    , Comment.builder().content("comment2").build()
+                )
+            )
+            .postHashtags(Arrays.asList(
+                    PostHashtag.builder()
+                        .id(1L)
+                        .hashtag(new Hashtag("hashtag1"))
+                        .build()
+                    , PostHashtag.builder()
+                        .id(2L)
+                        .hashtag(new Hashtag("hashtag2"))
+                        .build()
+                )
+            )
+            .build();
+        given(postRepository.findJoining(anyLong())).willReturn(Optional.of(post));
+
+        // when
+        postService.deletePost(1L);
+
+        // then
+        assertThat(post.getDeleteFlag().isDeleted()).isTrue();
+        post.getComments().forEach(
+            comment -> assertThat(comment.getDeleteFlag().isDeleted()).isTrue()
+        );
+        post.getPostHashtags().forEach(
+            postHashtag -> assertThat(postHashtag.getDeleteFlag().isDeleted()).isTrue()
+        );
+        post.getPictures().forEach(
+            picture -> assertThat(picture.getDeleteFlag().isDeleted()).isTrue()
+        );
     }
 }

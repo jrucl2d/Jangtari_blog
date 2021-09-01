@@ -49,7 +49,6 @@ public class PostService {
     public PostDto.GetOne updatePost(Long postId, PostDto.Update postDto) {
         Post post = getOne(postId);
         Post updatedPost = post.updatePost(postDto.toUrlDto(googleDriveUtil), hashtagRepository);
-        System.out.println(updatedPost);
         return PostDto.GetOne.of(updatedPost);
     }
 
