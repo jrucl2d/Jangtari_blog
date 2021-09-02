@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostDto
 {
     @Getter
@@ -83,7 +84,7 @@ public class PostDto
         @NotBlank(message = "내용이 빈칸이면 안 됩니다.")
         private String content;
 
-        private int template;
+        private Integer template;
 
         private List<String> hashtags = new ArrayList<>();
 
@@ -91,22 +92,20 @@ public class PostDto
         private List<String> pictureUrls;
 
         @Builder
-        private Add(
+        public Add(
             Long categoryId
             , String title
             , String content
-            , int template
+            , Integer template
             , List<String> hashtags
             , List<String> pictureUrls)
         {
             this.categoryId = categoryId;
             this.title = title;
             this.content = content;
-            this.template = template;
-            if (pictureUrls == null) this.pictureUrls = new ArrayList<>();
-            else this.pictureUrls = pictureUrls;
-            if (hashtags == null) this.hashtags = new ArrayList<>();
-            else this.hashtags = hashtags;
+            this.template = template == null ? 0 : template;
+            this.pictureUrls = pictureUrls == null ? new ArrayList<>() : pictureUrls;
+            this.hashtags = hashtags == null ? new ArrayList<>() : hashtags;
         }
 
         public Add toUrlDto(GoogleDriveUtil googleDriveUtil, List<MultipartFile> pictures) {
@@ -145,7 +144,7 @@ public class PostDto
         private List<String> addPicUrls = new ArrayList<>();
 
         @Builder
-        private Update(
+        public Update(
             Long postId
             , String title
             , String content
@@ -158,12 +157,10 @@ public class PostDto
             this.title = title;
             this.content = content;
             this.template = template;
-            if (hashtags == null) this.hashtags = new ArrayList<>();
-            else this.hashtags = hashtags;
-            if (delPics == null) this.delPics = new ArrayList<>();
-            else this.delPics = delPics;
-            if (addPicUrls == null) this.addPicUrls = new ArrayList<>();
-            else this.addPicUrls = addPicUrls;
+            this.hashtags = hashtags == null ? new ArrayList<>() : hashtags;
+            this.delPics = delPics == null ? new ArrayList<>() : delPics;
+            this.addPicUrls = addPicUrls == null ? new ArrayList<>() : addPicUrls;
+
         }
 
         public Update toUrlDto(GoogleDriveUtil googleDriveUtil, List<MultipartFile> pictures) {

@@ -33,7 +33,7 @@ public class PostController {
     }
 
     @PostMapping(value = "/admin/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public PostDto.ListGetElement addPost(
         @Valid PostDto.Add postDto
         , @RequestParam(required = false, name = "pictures") List<MultipartFile> pictures)
