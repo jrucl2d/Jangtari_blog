@@ -13,6 +13,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -37,18 +40,18 @@ public class PostService {
         return postRepository.findPostList(categoryId, pageRequest);
     }
 
-    public PostDto.ListGetElement addPost(PostDto.Add postDto) {
+    public PostDto.ListGetElement addPost(PostDto.Add postDto, List<MultipartFile> pictures) {
         try {
-            return PostDto.ListGetElement.of(
-                postRepository.save(Post.of(postDto.toUrlDto(googleDriveUtil), hashtagRepository)));
+            Post post = Post.of(postDto.toUrlDto(googleDriveUtil, pictures), hashtagRepository);
+            return PostDto.ListGetElement.of(postRepository.save(post));
         } catch (DataIntegrityViolationException e) {
             throw new BusinessException(ErrorCode.CATEGORY_NOT_FOUND_ERROR);
         }
     }
 
-    public PostDto.GetOne updatePost(Long postId, PostDto.Update postDto) {
-        Post post = getOne(postId);
-        Post updatedPost = post.updatePost(postDto.toUrlDto(googleDriveUtil), hashtagRepository);
+    public PostDto.GetOne updatePost(PostDto.Update postDto, List<MultipartFile> pictures) {
+        Post post = getOne(postDto.getPostId());
+        Post updatedPost = post.updatePost(postDto.toUrlDto(googleDriveUtil, pictures), hashtagRepository);
         return PostDto.GetOne.of(updatedPost);
     }
 

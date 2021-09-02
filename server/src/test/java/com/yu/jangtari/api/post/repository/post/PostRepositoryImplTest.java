@@ -50,20 +50,19 @@ class PostRepositoryImplTest extends IntegrationTest {
             .content("content")
             .template(0)
             .categoryId(1L)
-            .pictures(PictureFileUtil.createList("pic1", "pic2"))
             .hashtags(Arrays.asList("hashtag1", "hashtag2"))
-            .build());
+            .build(), null);
         entityManager.flush();
         System.out.println(savedPost);
 
-        PostDto.GetOne updatedPost = postService.updatePost(1L, PostDto.Update.builder()
+        PostDto.GetOne updatedPost = postService.updatePost(PostDto.Update.builder()
+            .postId(1L)
             .title("new title")
             .content("new content")
             .template(1)
             .delPics(Collections.singletonList("pic1"))
-            .addPics(PictureFileUtil.createList("pic3", "pic4", "pic5"))
             .hashtags(Arrays.asList("hashtag2", "hashtag3", "hashtag4"))
-            .build());
+            .build(), PictureFileUtil.createList("pic3", "pic4", "pic5"));
         entityManager.flush();
         System.out.println(updatedPost);
     }

@@ -8,8 +8,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @RestController
@@ -32,19 +34,25 @@ public class PostController {
 
     @PostMapping(value = "/admin/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public PostDto.ListGetElement addPost(@Valid final PostDto.Add postDTO) {
-        return postService.addPost(postDTO);
+    public PostDto.ListGetElement addPost(
+        @Valid PostDto.Add postDto
+        , @RequestParam(required = false, name = "pictures") List<MultipartFile> pictures)
+    {
+        return postService.addPost(postDto, pictures);
     }
 
-    @PostMapping(value = "/admin/post/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/admin/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public PostDto.GetOne updatePost(@PathVariable("id") final Long postId, @Valid final PostDto.Update postDTO) {
-        return postService.updatePost(postId, postDTO);
+    public PostDto.GetOne updatePost(
+        @Valid PostDto.Update postDto
+        , @RequestParam(required = false, name = "pictures") List<MultipartFile> pictures)
+    {
+        return postService.updatePost(postDto, pictures);
     }
 
     @DeleteMapping("/admin/post/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public String deletePost(@PathVariable("id") final Long postId) {
+    public String deletePost(@PathVariable("id") Long postId) {
         postService.deletePost(postId);
         return "OK";
     }

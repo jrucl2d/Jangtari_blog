@@ -76,16 +76,19 @@ public class PostDto
     public static class Add{
         @NotNull(message = "categoryId는 null 이면 안 됩니다.")
         private Long categoryId;
+
         @NotBlank(message = "제목이 빈칸이면 안 됩니다.")
         private String title;
+
         @NotBlank(message = "내용이 빈칸이면 안 됩니다.")
         private String content;
+
         private int template;
+
         private List<String> hashtags = new ArrayList<>();
-        private List<MultipartFile> pictures = new ArrayList<>();
 
         @JsonIgnore
-        private List<String> pictureUrls = new ArrayList<>();
+        private List<String> pictureUrls;
 
         @Builder
         private Add(
@@ -94,22 +97,20 @@ public class PostDto
             , String content
             , int template
             , List<String> hashtags
-            , List<MultipartFile> pictures
-            , List<String> pictureUrls) {
+            , List<String> pictureUrls)
+        {
             this.categoryId = categoryId;
             this.title = title;
             this.content = content;
             this.template = template;
-            if (pictures == null) this.pictures = new ArrayList<>();
-            else this.pictures = pictures;
             if (pictureUrls == null) this.pictureUrls = new ArrayList<>();
             else this.pictureUrls = pictureUrls;
             if (hashtags == null) this.hashtags = new ArrayList<>();
             else this.hashtags = hashtags;
         }
 
-        public Add toUrlDto(GoogleDriveUtil googleDriveUtil) {
-            List<String> retUrls = googleDriveUtil.filesToURLs(this.pictures, GDFolder.POST);
+        public Add toUrlDto(GoogleDriveUtil googleDriveUtil, List<MultipartFile> pictures) {
+            List<String> retUrls = googleDriveUtil.filesToURLs(pictures, GDFolder.POST);
             return Add.builder()
                 .categoryId(this.categoryId)
                 .title(this.title)
@@ -125,26 +126,35 @@ public class PostDto
     @ToString
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class Update{
+        @NotNull(message = "변경할 게시글 아이디가 비어있으면 안 됩니다.")
+        private Long postId;
+
         @NotBlank(message = "제목이 빈칸이면 안 됩니다.")
         private String title;
+
         @NotBlank(message = "내용이 빈칸이면 안 됩니다.")
         private String content;
+
         private int template;
+
         private List<String> hashtags = new ArrayList<>();
+
         private List<String> delPics = new ArrayList<>();
-        private List<MultipartFile> addPics = new ArrayList<>();
 
         @JsonIgnore
         private List<String> addPicUrls = new ArrayList<>();
 
         @Builder
-        private Update(String title
+        private Update(
+            Long postId
+            , String title
             , String content
             , int template
             , List<String> hashtags
             , List<String> delPics
-            , List<MultipartFile> addPics
-            , List<String> addPicUrls) {
+            , List<String> addPicUrls)
+        {
+            this.postId = postId;
             this.title = title;
             this.content = content;
             this.template = template;
@@ -152,14 +162,12 @@ public class PostDto
             else this.hashtags = hashtags;
             if (delPics == null) this.delPics = new ArrayList<>();
             else this.delPics = delPics;
-            if (addPics == null) this.addPics = new ArrayList<>();
-            else this.addPics = addPics;
             if (addPicUrls == null) this.addPicUrls = new ArrayList<>();
             else this.addPicUrls = addPicUrls;
         }
 
-        public Update toUrlDto(GoogleDriveUtil googleDriveUtil) {
-            List<String> retUrls = googleDriveUtil.filesToURLs(this.addPics, GDFolder.POST);
+        public Update toUrlDto(GoogleDriveUtil googleDriveUtil, List<MultipartFile> pictures) {
+            List<String> retUrls = googleDriveUtil.filesToURLs(pictures, GDFolder.POST);
             return Update.builder()
                 .title(this.title)
                 .content(this.content)

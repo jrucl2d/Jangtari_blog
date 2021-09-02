@@ -51,7 +51,6 @@ class PostServiceTest extends ServiceTest {
             .categoryId(1L)
             .title("title")
             .content("content")
-            .pictures(PictureFileUtil.createList("pic1", "pic2", "pic3"))
             .hashtags(Arrays.asList("hashtag1", "hashtag2"))
             .build();
         given(postRepository.save(any())).willReturn(
@@ -64,7 +63,7 @@ class PostServiceTest extends ServiceTest {
         );
 
         // when
-        PostDto.ListGetElement addedPost = postService.addPost(dto);
+        PostDto.ListGetElement addedPost = postService.addPost(dto, PictureFileUtil.createList("pic1", "pic2", "pic3"));
 
         // then
         assertThat(addedPost.getPostId()).isEqualTo(1L);
@@ -84,7 +83,7 @@ class PostServiceTest extends ServiceTest {
 
         // when
         // then
-        BusinessException e = assertThrows(BusinessException.class, () -> postService.addPost(dto));
+        BusinessException e = assertThrows(BusinessException.class, () -> postService.addPost(dto, PictureFileUtil.createList("pic1", "pic2", "pic3")));
         assertThat(e.getErrorCode()).isEqualTo(ErrorCode.CATEGORY_NOT_FOUND_ERROR);
     }
 
@@ -116,11 +115,11 @@ class PostServiceTest extends ServiceTest {
             .build();
 
         PostDto.Update dto = PostDto.Update.builder()
+            .postId(1L)
             .title("newTitle")
             .content("newTitle")
             .template(1)
             .hashtags(Collections.singletonList("hashtag2"))
-            .addPics(PictureFileUtil.createList("pic3", "pic4"))
             .delPics(Collections.singletonList("pic1"))
             .build();
         given(postRepository.findById(anyLong())).willReturn(Optional.of(post));
@@ -130,7 +129,7 @@ class PostServiceTest extends ServiceTest {
         );
 
         // when
-        PostDto.GetOne result = postService.updatePost(1L, dto);
+        PostDto.GetOne result = postService.updatePost(dto, PictureFileUtil.createList("pic3", "pic4"));
 
         // then
         assertThat(result.getTitle()).isEqualTo(dto.getTitle());
