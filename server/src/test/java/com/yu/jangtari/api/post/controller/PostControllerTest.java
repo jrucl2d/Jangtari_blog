@@ -3,13 +3,14 @@ package com.yu.jangtari.api.post.controller;
 import com.yu.jangtari.IntegrationTest;
 import com.yu.jangtari.api.category.dto.CategoryDto;
 import com.yu.jangtari.api.category.service.CategoryService;
-import com.yu.jangtari.api.comment.repository.CommentRepository;
+import com.yu.jangtari.api.comment.dto.CommentDto;
+import com.yu.jangtari.api.comment.service.CommentService;
 import com.yu.jangtari.api.member.domain.Member;
 import com.yu.jangtari.api.member.domain.RoleType;
 import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.api.member.service.MemberService;
-import com.yu.jangtari.api.post.domain.Post;
-import com.yu.jangtari.api.post.repository.post.PostRepository;
+import com.yu.jangtari.api.post.dto.PostDto;
+import com.yu.jangtari.api.post.service.PostService;
 import com.yu.jangtari.exception.ErrorCode;
 import com.yu.jangtari.security.jwt.JwtInfo;
 import com.yu.jangtari.util.JwtUtil;
@@ -19,12 +20,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,16 +44,17 @@ class PostControllerTest extends IntegrationTest {
     private CategoryService categoryService;
 
     @Autowired
-    private PostRepository postRepository;
+    private PostService postService;
 
     @Autowired
-    private CommentRepository commentRepository;
+    private CommentService commentService;
 
     private static String accessToken;
     private CategoryDto.Get category;
-    private List<Post> posts;
-    private Member commenter;
+    private List<PostDto.ListGetElement> posts;
     private Member jangBoy;
+    private CommentDto.Get parentComment;
+    private CommentDto.Get childComment;
 
     @BeforeEach
     void setUp() {
@@ -56,15 +64,48 @@ class PostControllerTest extends IntegrationTest {
             .password("password")
             .build());
         jangBoy = memberService.getOne("jangtari");
-        accessToken = JwtUtil.createAccessToken(JwtInfo.builder()
+        JwtInfo jwtInfo = JwtInfo.builder()
             .username("jangtari")
             .nickName("nickname")
             .roleType(RoleType.ADMIN)
-            .build());
+            .build();
+        accessToken = JwtUtil.createAccessToken(jwtInfo);
+        SecurityContextHolder.getContext().setAuthentication(
+            new UsernamePasswordAuthenticationToken(jwtInfo, null, null)
+        );
 
         category = categoryService.addCategory(CategoryDto.Add.builder()
             .name("category")
             .build(), null);
+
+        posts = new ArrayList<>();
+        IntStream.rangeClosed(1, 5).forEach(i ->
+            posts.add(
+                postService.addPost(
+                    PostDto.Add.builder()
+                        .title("title" + i)
+                        .categoryId(category.getCategoryId())
+                        .template(i % 2)
+                        .content("content" + i)
+                        .hashtags(
+                            Arrays.asList("hashtag1", "hashtag2")
+                        )
+                        .build()
+                    , null
+                )
+            )
+        );
+
+        parentComment = commentService.addComment(CommentDto.Add.builder()
+            .postId(posts.get(0).getPostId())
+            .content("comment1")
+            .build());
+
+        childComment = commentService.addComment(CommentDto.Add.builder()
+            .postId(posts.get(0).getPostId())
+            .content("comment1")
+            .parentCommentId(parentComment.getCommentId())
+            .build());
     }
 
     @Test
@@ -101,4 +142,29 @@ class PostControllerTest extends IntegrationTest {
             .andExpect(jsonPath("$.message").value(ErrorCode.CATEGORY_NOT_FOUND_ERROR.getMessage()))
             .andDo(print());
     }
+
+    @Test
+    @DisplayName("정상적으로 post 수정")
+    void updatePost() throws Exception {
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("postId", String.valueOf(posts.get(0).getPostId()));
+        params.add("title", "newTitle");
+        params.add("content", "newContent");
+        params.add("template", "0");
+        List<String> hashtags = Arrays.asList("hashtag2", "hashtag3");
+        String hashtagsString = objectMapper.writeValueAsString(hashtags);
+        params.add("hashtags", hashtagsString);
+
+        mockMvc.perform(put("/admin/post")
+                .header(HttpHeaders.AUTHORIZATION, accessToken)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .params(params))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.title").value("newTitle"))
+            .andExpect(jsonPath("$.content").value("newContent"))
+            .andDo(print());
+    }
+
+    // TODO : getJoining에서 제대로 된 join이 안 됨. 처리 필요
 }

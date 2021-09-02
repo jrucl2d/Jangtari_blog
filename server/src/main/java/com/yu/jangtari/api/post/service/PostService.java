@@ -50,13 +50,9 @@ public class PostService {
     }
 
     public PostDto.GetOne updatePost(PostDto.Update postDto, List<MultipartFile> pictures) {
-        Post post = getOne(postDto.getPostId());
+        Post post = getOneJoining(postDto.getPostId());
         Post updatedPost = post.updatePost(postDto.toUrlDto(googleDriveUtil, pictures), hashtagRepository);
         return PostDto.GetOne.of(updatedPost);
-    }
-
-    private Post getOne(Long postId) {
-        return postRepository.findById(postId).orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND_ERROR));
     }
 
     public void deletePost(Long postId) {
