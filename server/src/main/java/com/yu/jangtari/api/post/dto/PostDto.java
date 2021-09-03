@@ -61,7 +61,7 @@ public class PostDto
         private String title;
 
         @Builder
-        private ListGetElement(Long postId, String title) {
+        public ListGetElement(Long postId, String title) {
             this.postId = postId;
             this.title = title;
         }

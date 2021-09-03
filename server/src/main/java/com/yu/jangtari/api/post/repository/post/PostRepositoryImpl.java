@@ -11,7 +11,6 @@ import com.yu.jangtari.api.post.domain.QPost;
 import com.yu.jangtari.api.post.domain.QPostHashtag;
 import com.yu.jangtari.api.post.dto.PostDto;
 import com.yu.jangtari.common.PageRequest;
-import com.yu.jangtari.common.QDeleteFlag;
 import com.yu.jangtari.common.SearchType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -81,6 +80,6 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
     }
     private void setCommonCondition(QPost post, BooleanBuilder bb, Long categoryId) {
         bb.and(post.category.id.eq(categoryId));
-        bb.and(QDeleteFlag.deleteFlag.isDeleted);
+        bb.and(post.deleteFlag.isDeleted.isFalse());
     }
 }

@@ -13,10 +13,10 @@ public final class PageRequest {
     private final String type;
     private final String keyword;
 
-    public PageRequest(int page, String type, String keyword) {
-        this.page = Math.max(page - 1, 0);
+    public PageRequest(Integer page, String type, String keyword) {
+        this.page = (page == null || page <= 0) ? 0 : page - 1;
         this.type = type;
-        this.keyword = keyword;
+        this.keyword = keyword == null ? "" : keyword;
     }
     public Pageable of() {
         return org.springframework.data.domain.PageRequest.of(page, DEFAULT_SIZE, Sort.Direction.ASC, "createdDate");
