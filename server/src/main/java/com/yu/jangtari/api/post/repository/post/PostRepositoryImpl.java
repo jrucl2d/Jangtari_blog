@@ -59,12 +59,17 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
 
         // where
         BooleanBuilder bb = new BooleanBuilder();
-        if (type != null) setSearchCondition(post, bb, keyword, type);
-        setCommonCondition(post, bb, categoryId);
+        if (type != null)
+            setSearchCondition(post, bb, keyword, type);
+        bb.and(post.category.id.eq(categoryId));
+        bb.and(post.deleteFlag.isDeleted.isFalse());
+
         query.where(bb);
 
         List<PostDto.ListGetElement> posts = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query).fetch();
-        return new PageImpl<>(posts, pageable, query.fetchCount());
+
+        long totalCount = pageRequest.getTotalCount() == null ? query.fetchCount() : pageRequest.getTotalCount();
+        return new PageImpl<>(posts, pageable, totalCount);
     }
 
     private void setSearchCondition(QPost post, BooleanBuilder bb, String keyword, String type) {
@@ -77,9 +82,5 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         if (SearchType.of(type) == SearchType.HASHTAG) {
             bb.and(post.postHashtags.any().hashtag.content.eq(keyword));
         }
-    }
-    private void setCommonCondition(QPost post, BooleanBuilder bb, Long categoryId) {
-        bb.and(post.category.id.eq(categoryId));
-        bb.and(post.deleteFlag.isDeleted.isFalse());
     }
 }

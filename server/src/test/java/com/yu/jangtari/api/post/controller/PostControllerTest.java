@@ -170,19 +170,22 @@ class PostControllerTest extends IntegrationTest {
             .andDo(print());
     }
 
-    @ParameterizedTest(name = "[{index}] {4}")
+    @ParameterizedTest(name = "[{index}] {5}")
     @CsvSource({
-        ", , , 5, 아무 조건 없으면 전체를 페이징하여 검색",
-        "2, , , 0, 페이지에 아무 게시글도 없는 경우에는 빈 결과",
-        ", t, title1, 1, 제목으로 검색",
-        ", c, content2, 1, 내용으로 검색",
-        ", h, hashtag2, 5, 해시태그로 검색"
+        ", , , , 5, 아무 조건 없으면 전체를 페이징하여 검색",
+        ", 5, , , 5, totalCount 안다면 파라미터에 넣어서 보내고 count 쿼리 동작하지 않음",
+        "2, , , , 0, 페이지에 아무 게시글도 없는 경우에는 빈 결과",
+        ", , t, title1, 1, 제목으로 검색",
+        ", , c, content2, 1, 내용으로 검색",
+        ", , h, hashtag2, 5, 해시태그로 검색"
     })
     @DisplayName("categoryId에 해당하는 post 목록을 paging 하여 불러옴")
-    void getPostList(String page, String type, String keyword, int result, String display) throws Exception {
+    void getPostList(String page, String totalCount, String type, String keyword, int result, String display) throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         if (page != null)
             params.add("page", page);
+        if (totalCount != null)
+            params.add("totalCount", totalCount);
         if (type != null)
             params.add("type", type);
         if (keyword != null)
