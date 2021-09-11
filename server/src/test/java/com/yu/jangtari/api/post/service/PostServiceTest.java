@@ -122,7 +122,7 @@ class PostServiceTest extends ServiceTest {
             .hashtags(Collections.singletonList("hashtag2"))
             .delPics(Collections.singletonList("pic1"))
             .build();
-        given(postRepository.findById(anyLong())).willReturn(Optional.of(post));
+        given(postRepository.findJoining(anyLong())).willReturn(Optional.of(post));
         given(hashtagRepository.save(any())).willReturn(new Hashtag("hashtag2"));
         given(googleDriveUtil.filesToURLs(any(), any())).willReturn(
             Arrays.asList("pic3", "pic4")
