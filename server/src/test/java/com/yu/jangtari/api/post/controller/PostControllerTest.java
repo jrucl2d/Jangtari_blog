@@ -9,8 +9,10 @@ import com.yu.jangtari.api.member.domain.Member;
 import com.yu.jangtari.api.member.domain.RoleType;
 import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.api.member.service.MemberService;
+import com.yu.jangtari.api.post.domain.Picture;
 import com.yu.jangtari.api.post.domain.Post;
 import com.yu.jangtari.api.post.dto.PostDto;
+import com.yu.jangtari.api.post.repository.PictureRepository;
 import com.yu.jangtari.api.post.service.PostService;
 import com.yu.jangtari.exception.ErrorCode;
 import com.yu.jangtari.security.jwt.JwtInfo;
@@ -59,12 +61,16 @@ class PostControllerTest extends IntegrationTest {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private PictureRepository pictureRepository;
+
     private static String accessToken;
     private CategoryDto.Get category;
     private List<PostDto.ListGetElement> posts;
     private Member jangBoy;
     private CommentDto.Get parentComment;
     private CommentDto.Get childComment;
+    private Picture picture;
 
     @BeforeEach
     void setUp() {
@@ -116,6 +122,10 @@ class PostControllerTest extends IntegrationTest {
             .content("comment1")
             .parentCommentId(parentComment.getCommentId())
             .build());
+
+        picture = pictureRepository.save(Picture.builder().post(Post.builder().id(posts.get(0).getPostId()).build()).url("url").build());
+        entityManager.flush();
+        entityManager.clear();
     }
 
     @Test
@@ -156,7 +166,6 @@ class PostControllerTest extends IntegrationTest {
     @Test
     @DisplayName("정상적으로 post 수정")
     void updatePost() throws Exception {
-
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("postId", String.valueOf(posts.get(0).getPostId()));
         params.add("title", "newTitle");
@@ -206,20 +215,18 @@ class PostControllerTest extends IntegrationTest {
             .andDo(print());
     }
 
-    // TODO : getJoining에서 제대로 된 join이 안 됨. 처리 필요
     @Test
     @DisplayName("정상적으로 post 를 연관관계 joining 해서 가져옴")
     void getPost() throws Exception {
-        entityManager.flush();
-        System.out.println(commentService.getComment(parentComment.getCommentId()));
-
-//        PostDto.ListGetElement post = posts.get(0);
-//        mockMvc.perform(get("/post/" + post.getPostId())
-//                .header(HttpHeaders.AUTHORIZATION, accessToken)
-//                .contentType(MediaType.APPLICATION_JSON))
-////                .andExpect(status().isOk())
-////                .andExpect(jsonPath("$.title").value("newTitle"))
-////                .andExpect(jsonPath("$.content").value("newContent"))
-//                .andDo(print());
+        PostDto.ListGetElement post = posts.get(0);
+        mockMvc.perform(get("/post/" + post.getPostId())
+                .header(HttpHeaders.AUTHORIZATION, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.postId").value(post.getPostId()))
+                .andExpect(jsonPath("$.title").value(post.getTitle()))
+                .andExpect(jsonPath("$.comments", hasSize(2)))
+                .andExpect(jsonPath("$.pictures.[0].picture").value(picture.getUrl()))
+                .andDo(print());
     }
 }
