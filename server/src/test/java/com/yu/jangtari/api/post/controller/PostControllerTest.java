@@ -229,4 +229,26 @@ class PostControllerTest extends IntegrationTest {
                 .andExpect(jsonPath("$.pictures.[0].picture").value(picture.getUrl()))
                 .andDo(print());
     }
+
+    @Test
+    @DisplayName("delete 한 내용들은 불러오지 않는다.")
+    void getPost1() throws Exception {
+        Picture deletedPicture = Picture.builder().post(Post.builder().id(posts.get(0).getPostId()).build()).url("url2").build();
+        deletedPicture.softDelete();
+        pictureRepository.save(deletedPicture);
+        entityManager.flush();
+        entityManager.clear();
+        System.out.println(pictureRepository.findById("url2").get().getDeleteFlag());
+
+        PostDto.ListGetElement post = posts.get(0);
+        mockMvc.perform(get("/post/" + post.getPostId())
+                .header(HttpHeaders.AUTHORIZATION, accessToken)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.postId").value(post.getPostId()))
+                .andExpect(jsonPath("$.title").value(post.getTitle()))
+                .andExpect(jsonPath("$.comments", hasSize(2)))
+                .andExpect(jsonPath("$.pictures.[0].picture").value(picture.getUrl()))
+                .andDo(print());
+    }
 }

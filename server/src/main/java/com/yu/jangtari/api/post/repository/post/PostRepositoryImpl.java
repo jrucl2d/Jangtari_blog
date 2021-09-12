@@ -29,19 +29,22 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
+    // TODO : 여기 이후 sout tmpPost 할 때 N+1 문제 발생
     // Post 정보와 함께 Comment, Picture, Hashtag 정보도 같이 리턴해야 함
     @Override
     public Optional<Post> findJoining(Long postId) {
         QPost post = QPost.post;
-        QComment comment = QComment.comment;
-        QPicture picture = QPicture.picture;
-        QPostHashtag postHashtag = QPostHashtag.postHashtag;
+//        QComment comment = QComment.comment;
+//        QPicture picture = QPicture.picture;
+//        QPostHashtag postHashtag = QPostHashtag.postHashtag;
         Post tmpPost = jpaQueryFactory.selectFrom(post)
-                .leftJoin(post.comments, comment).on(comment.deleteFlag.isDeleted.isFalse())
-                .leftJoin(post.pictures, picture).on(picture.deleteFlag.isDeleted.isFalse())
-                .leftJoin(post.postHashtags, postHashtag).on(postHashtag.deleteFlag.isDeleted.isFalse())
+//                .leftJoin(post.comments, comment).on(comment.deleteFlag.isDeleted.isFalse())
+                .leftJoin(post.pictures).on(post.pictures.any().deleteFlag.isDeleted.isFalse())
+//                .leftJoin(post.postHashtags, postHashtag).on(postHashtag.deleteFlag.isDeleted.isFalse())
                 .where(post.id.eq(postId).and(post.deleteFlag.isDeleted.isFalse()))
                 .fetchOne();
+        System.out.println("여기");
+        System.out.println(tmpPost);
         return Optional.ofNullable(tmpPost);
     }
 
