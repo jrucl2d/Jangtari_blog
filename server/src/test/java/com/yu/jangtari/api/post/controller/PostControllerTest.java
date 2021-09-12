@@ -9,6 +9,7 @@ import com.yu.jangtari.api.member.domain.Member;
 import com.yu.jangtari.api.member.domain.RoleType;
 import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.api.member.service.MemberService;
+import com.yu.jangtari.api.post.domain.Post;
 import com.yu.jangtari.api.post.dto.PostDto;
 import com.yu.jangtari.api.post.service.PostService;
 import com.yu.jangtari.exception.ErrorCode;
@@ -27,6 +28,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,6 +44,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class PostControllerTest extends IntegrationTest {
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Autowired
     private MemberService memberService;
 
@@ -201,4 +207,19 @@ class PostControllerTest extends IntegrationTest {
     }
 
     // TODO : getJoining에서 제대로 된 join이 안 됨. 처리 필요
+    @Test
+    @DisplayName("정상적으로 post 를 연관관계 joining 해서 가져옴")
+    void getPost() throws Exception {
+        entityManager.flush();
+        System.out.println(commentService.getComment(parentComment.getCommentId()));
+
+//        PostDto.ListGetElement post = posts.get(0);
+//        mockMvc.perform(get("/post/" + post.getPostId())
+//                .header(HttpHeaders.AUTHORIZATION, accessToken)
+//                .contentType(MediaType.APPLICATION_JSON))
+////                .andExpect(status().isOk())
+////                .andExpect(jsonPath("$.title").value("newTitle"))
+////                .andExpect(jsonPath("$.content").value("newContent"))
+//                .andDo(print());
+    }
 }

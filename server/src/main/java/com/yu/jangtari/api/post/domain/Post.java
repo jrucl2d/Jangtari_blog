@@ -53,7 +53,7 @@ public class Post extends DateAuditing
     @Column(nullable = false)
     private int template;
 
-    @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -139,10 +139,6 @@ public class Post extends DateAuditing
         this.comments.forEach(Comment::softDelete);
         this.pictures.forEach(Picture::softDelete);
         this.postHashtags.forEach(PostHashtag::softDelete);
-    }
-
-    public void addComment(Comment comment) {
-        this.comments.add(comment);
     }
 
     @Override
