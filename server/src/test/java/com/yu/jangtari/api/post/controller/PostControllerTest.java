@@ -226,6 +226,7 @@ class PostControllerTest extends IntegrationTest {
                 .andExpect(jsonPath("$.postId").value(post.getPostId()))
                 .andExpect(jsonPath("$.title").value(post.getTitle()))
                 .andExpect(jsonPath("$.comments", hasSize(2)))
+                .andExpect(jsonPath("$.pictures", hasSize(1)))
                 .andExpect(jsonPath("$.pictures.[0].picture").value(picture.getUrl()))
                 .andDo(print());
     }
@@ -238,7 +239,6 @@ class PostControllerTest extends IntegrationTest {
         pictureRepository.save(deletedPicture);
         entityManager.flush();
         entityManager.clear();
-        System.out.println(pictureRepository.findById("url2").get().getDeleteFlag());
 
         PostDto.ListGetElement post = posts.get(0);
         mockMvc.perform(get("/post/" + post.getPostId())

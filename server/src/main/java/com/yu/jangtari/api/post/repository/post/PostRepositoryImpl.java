@@ -1,14 +1,13 @@
 package com.yu.jangtari.api.post.repository.post;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.yu.jangtari.api.comment.domain.Comment;
 import com.yu.jangtari.api.comment.domain.QComment;
-import com.yu.jangtari.api.post.domain.Post;
-import com.yu.jangtari.api.post.domain.QPicture;
-import com.yu.jangtari.api.post.domain.QPost;
-import com.yu.jangtari.api.post.domain.QPostHashtag;
+import com.yu.jangtari.api.post.domain.*;
 import com.yu.jangtari.api.post.dto.PostDto;
 import com.yu.jangtari.common.PageRequest;
 import com.yu.jangtari.common.SearchType;
@@ -17,9 +16,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class PostRepositoryImpl extends QuerydslRepositorySupport implements CustomPostRepository {
     private final JPAQueryFactory jpaQueryFactory;
@@ -34,18 +35,31 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
     @Override
     public Optional<Post> findJoining(Long postId) {
         QPost post = QPost.post;
-//        QComment comment = QComment.comment;
-//        QPicture picture = QPicture.picture;
-//        QPostHashtag postHashtag = QPostHashtag.postHashtag;
-        Post tmpPost = jpaQueryFactory.selectFrom(post)
-//                .leftJoin(post.comments, comment).on(comment.deleteFlag.isDeleted.isFalse())
-                .leftJoin(post.pictures).on(post.pictures.any().deleteFlag.isDeleted.isFalse())
-//                .leftJoin(post.postHashtags, postHashtag).on(postHashtag.deleteFlag.isDeleted.isFalse())
+        QPicture picture = QPicture.picture;
+        List<Tuple> tuple = jpaQueryFactory.select(post, picture).from(post)
+                .leftJoin(post.pictures, picture).on(picture.deleteFlag.isDeleted.isFalse())
                 .where(post.id.eq(postId).and(post.deleteFlag.isDeleted.isFalse()))
-                .fetchOne();
-        System.out.println("여기");
-        System.out.println(tmpPost);
-        return Optional.ofNullable(tmpPost);
+                .fetch();
+        if (tuple == null || tuple.isEmpty()) return Optional.empty();
+
+        Post gotPost = tuple.get(0).get(0, Post.class);
+        if (gotPost == null) return Optional.empty();
+
+        List<Picture> pictures = tuple.stream().map(t -> t.get(1, Picture.class)).collect(Collectors.toList());
+
+        QPostHashtag postHashtag = QPostHashtag.postHashtag;
+        List<PostHashtag> postHashtags = jpaQueryFactory.selectFrom(postHashtag)
+                .where(postHashtag.deleteFlag.isDeleted.isFalse()
+                        .and(postHashtag.post.id.eq(postId)))
+                .fetch();
+
+        QComment comment = QComment.comment;
+        List<Comment> comments = jpaQueryFactory.selectFrom(comment)
+                .where(comment.deleteFlag.isDeleted.isFalse()
+                        .and(comment.post.id.eq(postId)))
+                .fetch();
+
+        return Optional.ofNullable(Post.of(gotPost, pictures, postHashtags, comments));
     }
 
     // 존재하지 않는 type으로 검색할 시 SearchType enum 내에서 Search Type Error 발생시킴

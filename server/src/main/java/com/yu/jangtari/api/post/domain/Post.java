@@ -110,6 +110,19 @@ public class Post extends DateAuditing
         return post;
     }
 
+    public static Post of(Post gotPost, List<Picture> pictures, List<PostHashtag> postHashtags, List<Comment> comments) {
+        return Post.builder()
+                .id(gotPost.getId())
+                .title(gotPost.getTitle())
+                .content(gotPost.getContent())
+                .template(gotPost.getTemplate())
+                .category(gotPost.getCategory())
+                .comments(comments)
+                .pictures(pictures)
+                .postHashtags(postHashtags)
+                .build();
+    }
+
     public Post updatePost(PostDto.Update dto, HashtagRepository hashtagRepository) {
         List<PostHashtag> newPostHashtags = dto.getHashtags()
             .stream()
