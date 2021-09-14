@@ -13,6 +13,7 @@ import com.yu.jangtari.api.post.domain.Picture;
 import com.yu.jangtari.api.post.domain.Post;
 import com.yu.jangtari.api.post.dto.PostDto;
 import com.yu.jangtari.api.post.repository.PictureRepository;
+import com.yu.jangtari.api.post.repository.hashtag.PostHashtagRepository;
 import com.yu.jangtari.api.post.service.PostService;
 import com.yu.jangtari.exception.ErrorCode;
 import com.yu.jangtari.security.jwt.JwtInfo;
@@ -64,13 +65,15 @@ class PostControllerTest extends IntegrationTest {
     @Autowired
     private PictureRepository pictureRepository;
 
+    @Autowired
+    private PostHashtagRepository postHashtagRepository;
+
     private static String accessToken;
     private CategoryDto.Get category;
     private List<PostDto.ListGetElement> posts;
-    private Member jangBoy;
-    private CommentDto.Get parentComment;
     private CommentDto.Get childComment;
     private Picture picture;
+    private Picture deletePicture;
 
     @BeforeEach
     void setUp() {
@@ -79,7 +82,7 @@ class PostControllerTest extends IntegrationTest {
             .nickname("nickname")
             .password("password")
             .build());
-        jangBoy = memberService.getOne("jangtari");
+        memberService.getOne("jangtari");
         JwtInfo jwtInfo = JwtInfo.builder()
             .username("jangtari")
             .nickName("nickname")
@@ -112,10 +115,10 @@ class PostControllerTest extends IntegrationTest {
             )
         );
 
-        parentComment = commentService.addComment(CommentDto.Add.builder()
-            .postId(posts.get(0).getPostId())
-            .content("comment1")
-            .build());
+        CommentDto.Get parentComment = commentService.addComment(CommentDto.Add.builder()
+                .postId(posts.get(0).getPostId())
+                .content("comment1")
+                .build());
 
         childComment = commentService.addComment(CommentDto.Add.builder()
             .postId(posts.get(0).getPostId())
@@ -124,6 +127,7 @@ class PostControllerTest extends IntegrationTest {
             .build());
 
         picture = pictureRepository.save(Picture.builder().post(Post.builder().id(posts.get(0).getPostId()).build()).url("url").build());
+        deletePicture = pictureRepository.save(Picture.builder().post(Post.builder().id(posts.get(0).getPostId()).build()).url("url2").build());
         entityManager.flush();
         entityManager.clear();
     }
@@ -226,7 +230,8 @@ class PostControllerTest extends IntegrationTest {
                 .andExpect(jsonPath("$.postId").value(post.getPostId()))
                 .andExpect(jsonPath("$.title").value(post.getTitle()))
                 .andExpect(jsonPath("$.comments", hasSize(2)))
-                .andExpect(jsonPath("$.pictures", hasSize(1)))
+                .andExpect(jsonPath("$.pictures", hasSize(2)))
+                .andExpect(jsonPath("$.hashtags", hasSize(2)))
                 .andExpect(jsonPath("$.pictures.[0].picture").value(picture.getUrl()))
                 .andDo(print());
     }
@@ -234,9 +239,10 @@ class PostControllerTest extends IntegrationTest {
     @Test
     @DisplayName("delete 한 내용들은 불러오지 않는다.")
     void getPost1() throws Exception {
-        Picture deletedPicture = Picture.builder().post(Post.builder().id(posts.get(0).getPostId()).build()).url("url2").build();
-        deletedPicture.softDelete();
-        pictureRepository.save(deletedPicture);
+        deletePicture.softDelete();
+        commentService.deleteComment(childComment.getCommentId());
+        postHashtagRepository.findAll().get(0).softDelete();
+
         entityManager.flush();
         entityManager.clear();
 
@@ -247,7 +253,8 @@ class PostControllerTest extends IntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.postId").value(post.getPostId()))
                 .andExpect(jsonPath("$.title").value(post.getTitle()))
-                .andExpect(jsonPath("$.comments", hasSize(2)))
+                .andExpect(jsonPath("$.comments", hasSize(1)))
+                .andExpect(jsonPath("$.hashtags", hasSize(1)))
                 .andExpect(jsonPath("$.pictures.[0].picture").value(picture.getUrl()))
                 .andDo(print());
     }
