@@ -123,7 +123,7 @@ public class Post extends DateAuditing
                 .build();
     }
 
-    public Post updatePost(PostDto.Update dto, HashtagRepository hashtagRepository) {
+    public void updatePost(PostDto.Update dto, HashtagRepository hashtagRepository) {
         List<PostHashtag> newPostHashtags = dto.getHashtags()
             .stream()
             .map(hashtagStr ->
@@ -137,21 +137,18 @@ public class Post extends DateAuditing
 
         newPictures.addAll(Picture.getPictureEntities(dto.getAddPicUrls(), this));
 
-        return Post.builder()
-            .id(this.id)
-            .title(dto.getTitle())
-            .content(dto.getContent())
-            .template(dto.getTemplate())
-            .pictures(newPictures)
-            .postHashtags(newPostHashtags)
-            .build();
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
+        this.template = dto.getTemplate();
+        this.pictures = newPictures;
+        this.postHashtags = newPostHashtags;
     }
 
     public void softDelete() {
-        this.deleteFlag.softDelete();
         this.comments.forEach(Comment::softDelete);
         this.pictures.forEach(Picture::softDelete);
         this.postHashtags.forEach(PostHashtag::softDelete);
+        this.deleteFlag.softDelete();
     }
 
     @Override

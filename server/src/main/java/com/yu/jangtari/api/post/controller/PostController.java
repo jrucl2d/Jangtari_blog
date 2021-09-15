@@ -52,8 +52,7 @@ public class PostController {
 
     @DeleteMapping("/admin/post/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public String deletePost(@PathVariable("id") Long postId) {
+    public void deletePost(@PathVariable("id") Long postId) {
         postService.deletePost(postId);
-        return "OK";
     }
 }

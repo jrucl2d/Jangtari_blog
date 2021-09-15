@@ -51,8 +51,10 @@ public class PostService {
 
     public PostDto.GetOne updatePost(PostDto.Update postDto, List<MultipartFile> pictures) {
         Post post = getOneJoining(postDto.getPostId());
-        Post updatedPost = post.updatePost(postDto.toUrlDto(googleDriveUtil, pictures), hashtagRepository);
-        return PostDto.GetOne.of(updatedPost);
+        post.updatePost(postDto.toUrlDto(googleDriveUtil, pictures), hashtagRepository);
+        postRepository.save(post);
+        System.out.println("하하하하ㅏ");
+        return PostDto.GetOne.of(post);
     }
 
     public void deletePost(Long postId) {
