@@ -30,7 +30,6 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Cus
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
-    // TODO : 여기 이후 sout tmpPost 할 때 N+1 문제 발생
     // Post 정보와 함께 Comment, Picture, Hashtag 정보도 같이 리턴해야 함
     @Override
     public Optional<Post> findJoining(Long postId) {

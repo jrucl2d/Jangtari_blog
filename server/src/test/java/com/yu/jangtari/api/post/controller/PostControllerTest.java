@@ -34,6 +34,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class PostControllerTest extends IntegrationTest {
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -61,17 +63,13 @@ class PostControllerTest extends IntegrationTest {
     private CommentService commentService;
 
     @Autowired
-    private PostRepository postRepository;
-    @Autowired
     private PictureRepository pictureRepository;
     @Autowired
     private PostHashtagRepository postHashtagRepository;
-    @Autowired
-    private CommentRepository commentRepository;
 
     private static String accessToken;
     private CategoryDto.Get category;
-    private List<PostDto.ListGetElement> posts;
+    private PostDto.ListGetElement post;
     private CommentDto.Get childComment;
     private Picture picture;
     private Picture deletePicture;
@@ -98,37 +96,32 @@ class PostControllerTest extends IntegrationTest {
             .name("category")
             .build(), null);
 
-        posts = new ArrayList<>();
-        IntStream.rangeClosed(1, 5).forEach(i ->
-            posts.add(
-                postService.addPost(
-                    PostDto.Add.builder()
-                        .title("title" + i)
+        post = postService.addPost(
+                PostDto.Add.builder()
+                        .title("title1")
                         .categoryId(category.getCategoryId())
-                        .template(i % 2)
-                        .content("content" + i)
+                        .template(0)
+                        .content("content1")
                         .hashtags(
-                            Arrays.asList("hashtag1", "hashtag2")
+                                Arrays.asList("hashtag1", "hashtag2")
                         )
                         .build()
-                    , null
-                )
-            )
+                , null
         );
 
         CommentDto.Get parentComment = commentService.addComment(CommentDto.Add.builder()
-                .postId(posts.get(0).getPostId())
+                .postId(post.getPostId())
                 .content("comment1")
                 .build());
 
         childComment = commentService.addComment(CommentDto.Add.builder()
-            .postId(posts.get(0).getPostId())
+            .postId(post.getPostId())
             .content("comment1")
             .parentCommentId(parentComment.getCommentId())
             .build());
 
-        picture = pictureRepository.save(Picture.builder().post(Post.builder().id(posts.get(0).getPostId()).build()).url("url").build());
-        deletePicture = pictureRepository.save(Picture.builder().post(Post.builder().id(posts.get(0).getPostId()).build()).url("url2").build());
+        picture = pictureRepository.save(Picture.builder().post(Post.builder().id(post.getPostId()).build()).url("url").build());
+        deletePicture = pictureRepository.save(Picture.builder().post(Post.builder().id(post.getPostId()).build()).url("url2").build());
         entityManager.flush();
         entityManager.clear();
     }
@@ -172,7 +165,7 @@ class PostControllerTest extends IntegrationTest {
     @DisplayName("정상적으로 post 수정")
     void updatePost() throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("postId", String.valueOf(posts.get(0).getPostId()));
+        params.add("postId", String.valueOf(post.getPostId()));
         params.add("title", "newTitle");
         params.add("content", "newContent");
         params.add("template", "0");
@@ -188,10 +181,6 @@ class PostControllerTest extends IntegrationTest {
             .andExpect(jsonPath("$.title").value("newTitle"))
             .andExpect(jsonPath("$.content").value("newContent"))
             .andDo(print());
-
-        entityManager.clear();
-
-        System.out.println(postRepository.findById(1L).get());
     }
 
     @ParameterizedTest(name = "[{index}] {5}")
@@ -205,6 +194,23 @@ class PostControllerTest extends IntegrationTest {
     })
     @DisplayName("categoryId에 해당하는 post 목록을 paging 하여 불러옴")
     void getPostList(String page, String totalCount, String type, String keyword, int result, String display) throws Exception {
+
+        IntStream.rangeClosed(2, 5).forEach(i ->
+            postService.addPost(
+                    PostDto.Add.builder()
+                            .title("title" + i)
+                            .categoryId(category.getCategoryId())
+                            .template(i % 2)
+                            .content("content" + i)
+                            .hashtags(
+                                    Arrays.asList("hashtag1", "hashtag2")
+                            )
+                            .build()
+                    , null
+            )
+
+        );
+
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         if (page != null)
             params.add("page", page);
@@ -227,7 +233,6 @@ class PostControllerTest extends IntegrationTest {
     @Test
     @DisplayName("정상적으로 post 를 연관관계 joining 해서 가져옴")
     void getPost() throws Exception {
-        PostDto.ListGetElement post = posts.get(0);
         mockMvc.perform(get("/post/" + post.getPostId())
                 .header(HttpHeaders.AUTHORIZATION, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -251,7 +256,6 @@ class PostControllerTest extends IntegrationTest {
         entityManager.flush();
         entityManager.clear();
 
-        PostDto.ListGetElement post = posts.get(0);
         mockMvc.perform(get("/post/" + post.getPostId())
                 .header(HttpHeaders.AUTHORIZATION, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -267,19 +271,10 @@ class PostControllerTest extends IntegrationTest {
     @Test
     @DisplayName("정상적으로 post를 삭제 처리함")
     void deletePost() throws Exception {
-        PostDto.ListGetElement post = posts.get(0);
         mockMvc.perform(delete("/admin/post/" + post.getPostId())
                 .header(HttpHeaders.AUTHORIZATION, accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
-
-        Post ss = postRepository.findById(post.getPostId()).get();
-        System.out.println("2번");
-        System.out.println(ss);
-//        assertThat(postRepository.findById(post.getPostId()).get().getDeleteFlag().isDeleted()).isTrue();
-//        pictureRepository.findAll().forEach(p -> assertThat(p.getDeleteFlag().isDeleted()).isTrue());
-//        commentRepository.findAll().forEach(c -> assertThat(c.getDeleteFlag().isDeleted()).isTrue());
-//        postHashtagRepository.findAll().stream().limit(2).forEach(p -> assertThat(p.getDeleteFlag().isDeleted()).isTrue());
     }
 }

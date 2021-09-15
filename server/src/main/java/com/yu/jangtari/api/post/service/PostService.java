@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Service
@@ -24,6 +26,9 @@ public class PostService {
     private final PostRepository postRepository;
     private final HashtagRepository hashtagRepository;
     private final GoogleDriveUtil googleDriveUtil;
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Transactional(readOnly = true)
     public PostDto.GetOne getPost(Long postId) {
@@ -52,8 +57,6 @@ public class PostService {
     public PostDto.GetOne updatePost(PostDto.Update postDto, List<MultipartFile> pictures) {
         Post post = getOneJoining(postDto.getPostId());
         post.updatePost(postDto.toUrlDto(googleDriveUtil, pictures), hashtagRepository);
-        postRepository.save(post);
-        System.out.println("하하하하ㅏ");
         return PostDto.GetOne.of(post);
     }
 
