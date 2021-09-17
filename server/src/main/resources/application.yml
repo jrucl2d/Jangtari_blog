@@ -3,7 +3,7 @@
 ####################################################################################################
 spring:
   profiles:
-    active: test
+    active: dev
   devtools:
     livereload:
       enabled: true
@@ -26,6 +26,9 @@ jangtari:
 ## dev
 ####################################################################################################
 spring:
+  config:
+    activate:
+      on-profile: dev
   jpa:
     hibernate:
       ddl-auto: update
@@ -36,7 +39,7 @@ spring:
         format_sql: true
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:~test:h2;MODE=MYSQL;INIT=CREATE SCHEMA IF NOT EXISTS jangtari\;SET SCHEMA jangtari;
+    url: jdbc:h2:~/test:h2;MODE=MYSQL;INIT=CREATE SCHEMA IF NOT EXISTS jangtari\;SET SCHEMA jangtari;
     username: sa
     password:
 
@@ -45,6 +48,9 @@ spring:
 ## test
 ####################################################################################################
 spring:
+  config:
+    activate:
+      on-profile: test
   jpa:
     hibernate:
       ddl-auto: create
