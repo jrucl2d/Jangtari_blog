@@ -11,6 +11,8 @@ spring:
     cache: false
 jangtari:
   name: jangtari
+  oauth:
+    callback: 'http://www.gamsk.kro.kr/Callback'
 ---
 ####################################################################################################
 ## prod

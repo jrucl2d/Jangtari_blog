@@ -41,12 +41,10 @@ public class GoogleDriveUtil {
 
     // category, jangtari, post
     private final String[] folders = {"1NzhQFXNOqY3dNYIHq0Rpf6AKZH-xHWVR", "14CKUxuVzBqPz8RDwvLvUxaOJLI1Z62XK", "1G7FMqlteOguD-St7TOIO_P6czMDD46lS"};
-    private final String fileRef = "https://drive.google.com/uc?export=download&id=";
 
     private final ClassPathResource gdSecretKeys = new ClassPathResource("/jangtari.json");
     private static final String token = "credentials";
     private static final String appname = "jangtaritest";
-    private GoogleAuthorizationCodeFlow flow;
 
     public GoogleAuthorizationCodeFlow getFlow(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets.
@@ -61,7 +59,7 @@ public class GoogleDriveUtil {
     }
 
     private Credential getCredentials(final NetHttpTransport httpTransport) throws IOException {
-        flow = getFlow(httpTransport);
+        GoogleAuthorizationCodeFlow flow = getFlow(httpTransport);
         return flow.loadCredential("user");
     }
 
@@ -113,6 +111,7 @@ public class GoogleDriveUtil {
             fos.write(pictureFile.getBytes());
             final FileContent content = new FileContent("image/jpeg", tempFile);
             final com.google.api.services.drive.model.File uploadedFile = drive.files().create(file, content).setFields("id").execute();
+            String fileRef = "https://drive.google.com/uc?export=download&id=";
             return fileRef + uploadedFile.getId();
         } catch (IOException | NullPointerException e) {
             throw new BusinessException(ErrorCode.FILE_TASK_ERROR);
