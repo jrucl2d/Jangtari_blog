@@ -13,6 +13,8 @@ jangtari:
   name: jangtari
   oauth:
     callback: 'http://www.gamsk.kro.kr/Callback'
+  drive:
+    list: '1NzhQFXNOqY3dNYIHq0Rpf6AKZH-xHWVR', '14CKUxuVzBqPz8RDwvLvUxaOJLI1Z62XK', '1G7FMqlteOguD-St7TOIO_P6czMDD46lS'
 ---
 ####################################################################################################
 ## prod

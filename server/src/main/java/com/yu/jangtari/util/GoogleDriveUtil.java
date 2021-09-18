@@ -14,6 +14,7 @@ import com.google.api.services.drive.DriveScopes;
 import com.yu.jangtari.common.GDFolder;
 import com.yu.jangtari.exception.BusinessException;
 import com.yu.jangtari.exception.ErrorCode;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,8 @@ public class GoogleDriveUtil {
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
 
     // category, jangtari, post
-    private final String[] folders = {"1NzhQFXNOqY3dNYIHq0Rpf6AKZH-xHWVR", "14CKUxuVzBqPz8RDwvLvUxaOJLI1Z62XK", "1G7FMqlteOguD-St7TOIO_P6czMDD46lS"};
+    @Value("${jangtari.drive.list}")
+    private List<String> folders;
 
     private final ClassPathResource gdSecretKeys = new ClassPathResource("/jangtari.json");
     private static final String token = "credentials";
@@ -99,7 +101,7 @@ public class GoogleDriveUtil {
     private String getURL(MultipartFile pictureFile, GDFolder gdFolder, Drive drive) {
         final com.google.api.services.drive.model.File file = new com.google.api.services.drive.model.File();
         file.setName(getPictureName(pictureFile.getName()));
-        file.setParents(Collections.singletonList(folders[gdFolder.getNumber()]));
+        file.setParents(Collections.singletonList(folders.get(gdFolder.getNumber())));
         final File tempFile;
         try {
             tempFile = new File(Objects.requireNonNull(pictureFile.getOriginalFilename()));
