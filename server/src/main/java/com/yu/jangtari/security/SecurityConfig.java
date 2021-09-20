@@ -42,7 +42,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         "/h2/**",
         "/login",
         "/logout",
-        "/join"
+        "/join",
+        "/oauthMaker",
+        "/Callback",
+        "/test/**"
     );
 
     @Override
