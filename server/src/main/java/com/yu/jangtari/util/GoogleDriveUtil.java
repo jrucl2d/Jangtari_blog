@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 public class GoogleDriveUtil {
     // redirect URL을 적용해야 함
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-
+    private static final String FILE_REF =  "https://drive.google.com/uc?export=download&id=";
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
 
     // category, jangtari, post
@@ -45,8 +45,8 @@ public class GoogleDriveUtil {
     private List<String> folders;
 
     private final ClassPathResource gdSecretKeys = new ClassPathResource("/jangtari.json");
-    private static final String token = "credentials";
-    private static final String appname = "jangtaritest";
+    private static final String TOKEN = "credentials";
+    private static final String APPNAME = "jangtaritest";
 
     public GoogleAuthorizationCodeFlow getFlow(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets.
@@ -55,7 +55,7 @@ public class GoogleDriveUtil {
         // Build flow and trigger user authorization request.
         return new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(token)))
+                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKEN)))
                 .setAccessType("offline")
                 .build();
     }
@@ -113,8 +113,7 @@ public class GoogleDriveUtil {
             fos.write(pictureFile.getBytes());
             final FileContent content = new FileContent("image/jpeg", tempFile);
             final com.google.api.services.drive.model.File uploadedFile = drive.files().create(file, content).setFields("id").execute();
-            String fileRef = "https://drive.google.com/uc?export=download&id=";
-            return fileRef + uploadedFile.getId();
+            return FILE_REF + uploadedFile.getId();
         } catch (IOException | NullPointerException e) {
             throw new BusinessException(ErrorCode.FILE_TASK_ERROR);
         }
@@ -123,10 +122,10 @@ public class GoogleDriveUtil {
 
     private Drive getDrive() throws GeneralSecurityException, IOException {
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        return new Drive.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport)).setApplicationName(appname).build();
+        return new Drive.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport)).setApplicationName(APPNAME).build();
     }
 
-    private String getPictureName(final String pictureName) {
+    private String getPictureName(String pictureName) {
         final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
         String dateString = format.format(new Date());
         return dateString + "_" + pictureName + ".jpg";
