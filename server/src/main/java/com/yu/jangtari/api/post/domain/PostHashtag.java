@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -39,9 +38,6 @@ public class PostHashtag extends DateAuditing
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "hashtag_id")
     private Hashtag hashtag;
-
-    @Embedded
-    private DeleteFlag deleteFlag;
 
     @Builder
     private PostHashtag(Long id, Post post, Hashtag hashtag) {

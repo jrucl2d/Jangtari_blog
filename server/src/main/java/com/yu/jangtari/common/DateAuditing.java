@@ -5,6 +5,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.Embedded;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
@@ -19,4 +20,7 @@ public abstract class DateAuditing {
 
     @LastModifiedDate
     private LocalDateTime updateDate;
+
+    @Embedded
+    protected DeleteFlag deleteFlag;
 }

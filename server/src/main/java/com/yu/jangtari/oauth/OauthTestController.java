@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-public class TestController {
+public class OauthTestController {
     private final GoogleDriveUtil googleDriveUtil;
 
     @PostMapping(value = "/test/picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

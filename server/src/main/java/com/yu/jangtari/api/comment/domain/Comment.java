@@ -42,9 +42,6 @@ public class Comment extends DateAuditing
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @Embedded
-    private DeleteFlag deleteFlag;
-
     @Builder
     private Comment(Long id, String content, Post post, Member member, Comment parentComment, List<Comment> childComments) {
         this.id = id;

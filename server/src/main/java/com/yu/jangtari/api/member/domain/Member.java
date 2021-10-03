@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -40,9 +39,6 @@ public class Member extends DateAuditing
 
     @Enumerated(EnumType.STRING)
     private RoleType role;
-
-    @Embedded
-    DeleteFlag deleteFlag;
 
     @Builder
     public Member(String username, String nickname, String password, RoleType roleType, String introduce, String picture) {
