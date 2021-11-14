@@ -25,8 +25,7 @@ public class MemberController
 
     @DeleteMapping("/member/{username}")
     @ResponseStatus(value = HttpStatus.OK)
-    public void deleteMember(@PathVariable(value = "username") String username)
-    {
+    public void deleteMember(@PathVariable(value = "username") String username) {
         memberService.deleteMember(username);
     }
 
@@ -34,23 +33,28 @@ public class MemberController
     @ResponseStatus(value = HttpStatus.OK)
     public MemberDto.Get updateMember(
         @Valid MemberDto.Update memberDTO
-        , @RequestParam(required = false, name = "picture") MultipartFile picture)
-    {
+        , @RequestParam(required = false, name = "picture") MultipartFile picture) {
         return memberService.updateMember(memberDTO, picture);
+    }
+
+    @PutMapping(value = "/user")
+    @ResponseStatus(value = HttpStatus.OK)
+    public MemberDto.Get updateUserMember(
+            @Valid MemberDto.Update memberDTO
+    ) {
+        return memberService.updateMember(memberDTO, null);
     }
 
     @PostMapping("/join")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public String join(@RequestBody @Valid MemberDto.Add memberDTO)
-    {
+    public String join(@RequestBody @Valid MemberDto.Add memberDTO) {
         memberService.join(memberDTO);
         return "회원가입 성공";
     }
 
     @GetMapping("/user/logout")
     @ResponseStatus(value = HttpStatus.OK)
-    public String logout()
-    {
+    public String logout() {
         memberService.logout();
         return "로그아웃 성공";
     }
