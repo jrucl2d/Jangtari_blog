@@ -119,7 +119,6 @@ public class GoogleDriveUtil {
         }
     }
 
-
     private Drive getDrive() throws GeneralSecurityException, IOException {
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         return new Drive.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport)).setApplicationName(APPNAME).build();
