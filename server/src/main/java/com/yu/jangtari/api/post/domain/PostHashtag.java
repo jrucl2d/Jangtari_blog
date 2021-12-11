@@ -47,22 +47,4 @@ public class PostHashtag extends DateAuditing
     public void softDelete() {
         this.deleteFlag.softDelete();
     }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PostHashtag that = (PostHashtag) o;
-        return id.equals(that.id)
-            && Objects.equals(post, that.post)
-            && Objects.equals(hashtag, that.hashtag)
-            && Objects.equals(deleteFlag, that.deleteFlag);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(id, post, hashtag, deleteFlag);
-    }
 }

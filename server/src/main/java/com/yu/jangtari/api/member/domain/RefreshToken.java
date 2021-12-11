@@ -30,19 +30,4 @@ public class RefreshToken
         this.username = username;
         this.refreshToken = refreshToken;
     }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RefreshToken that = (RefreshToken) o;
-        return username.equals(that.username) && refreshToken.equals(that.refreshToken);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(username, refreshToken);
-    }
 }

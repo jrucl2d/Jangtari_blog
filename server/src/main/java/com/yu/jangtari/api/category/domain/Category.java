@@ -53,23 +53,4 @@ public class Category extends DateAuditing
             .picture(pictureUrl)
             .build();
     }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Category category = (Category) o;
-        return id.equals(category.id)
-            && Objects.equals(name, category.name)
-            && Objects.equals(picture, category.picture)
-            && Objects.equals(posts, category.posts)
-            && Objects.equals(deleteFlag, category.deleteFlag);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(id, name, picture, posts, deleteFlag);
-    }
 }

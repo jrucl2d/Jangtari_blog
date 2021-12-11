@@ -69,25 +69,4 @@ public class Comment extends DateAuditing
             .childComments(this.childComments)
             .build();
     }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Comment comment = (Comment) o;
-        return id.equals(comment.id)
-            && Objects.equals(content, comment.content)
-            && Objects.equals(member, comment.member)
-            && Objects.equals(parentComment, comment.parentComment)
-            && Objects.equals(childComments, comment.childComments)
-            && Objects.equals(post, comment.post)
-            && Objects.equals(deleteFlag, comment.deleteFlag);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(id, content, member, parentComment, childComments, post, deleteFlag);
-    }
 }

@@ -28,19 +28,4 @@ public class Hashtag
     public String toString() {
         return content;
     }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Hashtag hashtag = (Hashtag) o;
-        return content.equals(hashtag.content);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(content);
-    }
 }

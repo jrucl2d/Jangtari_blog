@@ -63,24 +63,4 @@ public class Member extends DateAuditing
         this.deleteFlag.softDelete();
     }
 
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Member member = (Member) o;
-        return username.equals(member.username)
-            && Objects.equals(nickname, member.nickname)
-            && Objects.equals(password, member.password)
-            && Objects.equals(introduce, member.introduce)
-            && Objects.equals(picture, member.picture)
-            && role == member.role
-            && Objects.equals(deleteFlag, member.deleteFlag);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(username, nickname, password, introduce, picture, role, deleteFlag);
-    }
 }

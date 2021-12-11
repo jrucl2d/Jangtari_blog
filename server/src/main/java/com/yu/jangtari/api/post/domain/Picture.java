@@ -44,21 +44,4 @@ public class Picture extends DateAuditing
     public void softDelete() {
         this.deleteFlag.softDelete();
     }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Picture picture = (Picture) o;
-        return url.equals(picture.url)
-            && Objects.equals(post, picture.post)
-            && Objects.equals(deleteFlag, picture.deleteFlag);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(url, post, deleteFlag);
-    }
 }

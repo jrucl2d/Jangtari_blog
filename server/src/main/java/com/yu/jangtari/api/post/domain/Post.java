@@ -133,27 +133,4 @@ public class Post extends DateAuditing
         this.postHashtags.forEach(PostHashtag::softDelete);
         this.deleteFlag.softDelete();
     }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Post post = (Post) o;
-        return template == post.template
-            && id.equals(post.id)
-            && Objects.equals(title, post.title)
-            && Objects.equals(content, post.content)
-            && Objects.equals(comments, post.comments)
-            && Objects.equals(pictures, post.pictures)
-            && Objects.equals(category, post.category)
-            && Objects.equals(postHashtags, post.postHashtags)
-            && Objects.equals(deleteFlag, post.deleteFlag);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(id, title, content, template, comments, pictures, category, postHashtags, deleteFlag);
-    }
 }
