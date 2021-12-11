@@ -1,11 +1,14 @@
 package com.yu.jangtari.api.comment.domain;
 
 import com.yu.jangtari.api.comment.dto.CommentDto;
-import com.yu.jangtari.common.DateAuditing;
-import com.yu.jangtari.common.DeleteFlag;
 import com.yu.jangtari.api.member.domain.Member;
 import com.yu.jangtari.api.post.domain.Post;
-import lombok.*;
+import com.yu.jangtari.common.DateAuditing;
+import com.yu.jangtari.common.DeleteFlag;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,7 +16,6 @@ import java.util.List;
 import java.util.Objects;
 
 @Getter
-@ToString(exclude = {"post", "parentComment"})
 @Entity
 @Table(name = "comment")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
