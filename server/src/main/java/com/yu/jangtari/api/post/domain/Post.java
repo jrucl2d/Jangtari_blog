@@ -129,7 +129,6 @@ public class Post extends DateAuditing
 
     public void softDelete() {
         this.comments.forEach(Comment::softDelete);
-        this.pictures.forEach(Picture::softDelete);
         this.postHashtags.forEach(PostHashtag::softDelete);
         this.deleteFlag.softDelete();
     }

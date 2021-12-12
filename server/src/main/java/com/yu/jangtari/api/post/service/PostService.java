@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Service
@@ -27,17 +25,11 @@ public class PostService {
     private final HashtagRepository hashtagRepository;
     private final GoogleDriveUtil googleDriveUtil;
 
-    @PersistenceContext
-    EntityManager entityManager;
-
     @Transactional(readOnly = true)
     public PostDto.GetOne getPost(Long postId) {
-        return PostDto.GetOne.of(getOneJoining(postId));
-    }
-
-    private Post getOneJoining(Long postId) {
-        return postRepository.findJoining(postId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND_ERROR));
+        Post post = postRepository.findJoining(postId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND_ERROR));
+        return PostDto.GetOne.of(post);
     }
 
     @Transactional(readOnly = true)
@@ -55,13 +47,15 @@ public class PostService {
     }
 
     public PostDto.GetOne updatePost(PostDto.Update postDto, List<MultipartFile> pictures) {
-        Post post = getOneJoining(postDto.getPostId());
+        Post post = postRepository.findJoining(postDto.getPostId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND_ERROR));
         post.updatePost(postDto.toUrlDto(googleDriveUtil, pictures), hashtagRepository);
         return PostDto.GetOne.of(post);
     }
 
     public void deletePost(Long postId) {
-        Post post = getOneJoining(postId);
+        Post post = postRepository.findJoining(postId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND_ERROR));
         post.softDelete();
     }
 }
