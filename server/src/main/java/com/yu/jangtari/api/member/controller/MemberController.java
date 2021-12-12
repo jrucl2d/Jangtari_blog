@@ -29,12 +29,18 @@ public class MemberController
         memberService.deleteMember(username);
     }
 
-    @PutMapping(value = "/admin/jangtari", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/admin/jangtari")
     @ResponseStatus(value = HttpStatus.OK)
     public MemberDto.Get updateMember(
-        @Valid MemberDto.Update memberDTO
-        , @RequestParam(required = false, name = "picture") MultipartFile picture) {
-        return memberService.updateMember(memberDTO, picture);
+        @Valid MemberDto.Update memberDTO) {
+        return memberService.updateMember(memberDTO);
+    }
+
+    // TODO : 사진 업로드 필요
+    @PostMapping(value = "/admin/jangtari/picture")
+    @ResponseStatus(value = HttpStatus.OK)
+    public String uploadPicture(@RequestParam(name = "picture") MultipartFile picture) {
+        return null;
     }
 
     @PutMapping(value = "/user")
@@ -42,7 +48,7 @@ public class MemberController
     public MemberDto.Get updateUserMember(
             @Valid MemberDto.Update memberDTO
     ) {
-        return memberService.updateMember(memberDTO, null);
+        return memberService.updateMember(memberDTO);
     }
 
     @PostMapping("/join")

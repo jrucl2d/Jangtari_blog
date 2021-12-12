@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Getter
 @Entity
@@ -46,15 +45,11 @@ public class Member extends DateAuditing
     }
 
     public Member updateMember(MemberDto.Update memberDto) {
-        String pictureUrl = memberDto.getPictureUrl();
-        if (pictureUrl != null) this.picture = pictureUrl;
-
         return Member.builder()
             .username(this.username)
             .nickname(memberDto.getNickname())
             .password(this.password)
             .introduce(memberDto.getIntroduce())
-            .picture(pictureUrl)
             .roleType(RoleType.ADMIN)
             .build();
     }

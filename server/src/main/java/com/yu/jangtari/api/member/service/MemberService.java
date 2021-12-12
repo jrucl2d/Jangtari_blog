@@ -39,9 +39,9 @@ public class MemberService {
             .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND_ERROR));
     }
 
-    public MemberDto.Get updateMember(MemberDto.Update memberDto, MultipartFile picture) {
+    public MemberDto.Get updateMember(MemberDto.Update memberDto) {
         Member member = getOne(memberDto.getUsername());
-        return MemberDto.Get.of(member.updateMember(memberDto.toUrlDto(googleDriveUtil, picture)));
+        return MemberDto.Get.of(member.updateMember(memberDto));
     }
 
     public void deleteMember(String username) {

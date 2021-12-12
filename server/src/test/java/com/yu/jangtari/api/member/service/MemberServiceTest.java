@@ -72,7 +72,7 @@ class MemberServiceTest extends ServiceTest
         given(googleDriveUtil.fileToURL(any(), any())).willReturn("newPic");
 
         // when
-        MemberDto.Get updatedMember = memberService.updateMember(memDTO, PictureFileUtil.createOne("pic"));
+        MemberDto.Get updatedMember = memberService.updateMember(memDTO);
 
         // then
         assertEquals("newNick", updatedMember.getNickname());
