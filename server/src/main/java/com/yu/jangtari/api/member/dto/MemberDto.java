@@ -1,13 +1,11 @@
 package com.yu.jangtari.api.member.dto;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yu.jangtari.api.member.domain.Member;
-import com.yu.jangtari.common.GDFolder;
-import com.yu.jangtari.util.GoogleDriveUtil;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -15,7 +13,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberDto
 {
-
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class LogInForm {
@@ -91,29 +88,11 @@ public class MemberDto
 
         private String introduce;
 
-        @JsonIgnore
-        private String pictureURL;
-
         @Builder
-        public Update(String username, String nickname, String introduce, String pictureURL) {
+        public Update(String username, String nickname, String introduce) {
             this.username = username;
             this.nickname = nickname;
             this.introduce = introduce;
-            this.pictureURL = pictureURL;
-        }
-
-        @JsonIgnore
-        public String getPictureUrl() {
-            return this.pictureURL;
-        }
-
-        public Update toUrlDto(GoogleDriveUtil googleDriveUtil, MultipartFile picture) {
-            String returnedURL = googleDriveUtil.fileToURL(picture, GDFolder.JANGTARI);
-            return Update.builder()
-                .nickname(this.nickname)
-                .introduce(this.introduce)
-                .pictureURL(returnedURL)
-                .build();
         }
     }
 }

@@ -14,7 +14,6 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class MemberController
 {
-
     private final MemberService memberService;
 
     @GetMapping("/jangtari")
