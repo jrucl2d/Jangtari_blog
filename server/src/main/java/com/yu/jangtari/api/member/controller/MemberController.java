@@ -4,7 +4,6 @@ import com.yu.jangtari.api.member.dto.MemberDto;
 import com.yu.jangtari.api.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +21,7 @@ public class MemberController
         return memberService.getJangtari();
     }
 
-    @DeleteMapping("/member/{username}")
+    @DeleteMapping("/user/{username}")
     @ResponseStatus(value = HttpStatus.OK)
     public void deleteMember(@PathVariable(value = "username") String username) {
         memberService.deleteMember(username);
@@ -31,8 +30,8 @@ public class MemberController
     @PutMapping(value = "/admin/jangtari")
     @ResponseStatus(value = HttpStatus.OK)
     public MemberDto.Get updateMember(
-        @Valid MemberDto.Update memberDTO) {
-        return memberService.updateMember(memberDTO);
+        @Valid MemberDto.Update memberDto) {
+        return memberService.updateMember(memberDto);
     }
 
     // TODO : 사진 업로드 필요
@@ -45,22 +44,20 @@ public class MemberController
     @PutMapping(value = "/user")
     @ResponseStatus(value = HttpStatus.OK)
     public MemberDto.Get updateUserMember(
-            @Valid MemberDto.Update memberDTO
+            @Valid MemberDto.Update memberDto
     ) {
-        return memberService.updateMember(memberDTO);
+        return memberService.updateMember(memberDto);
     }
 
     @PostMapping("/join")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public String join(@RequestBody @Valid MemberDto.Add memberDTO) {
+    public void join(@RequestBody @Valid MemberDto.Add memberDTO) {
         memberService.join(memberDTO);
-        return "회원가입 성공";
     }
 
     @GetMapping("/user/logout")
     @ResponseStatus(value = HttpStatus.OK)
-    public String logout() {
+    public void logout() {
         memberService.logout();
-        return "로그아웃 성공";
     }
 }

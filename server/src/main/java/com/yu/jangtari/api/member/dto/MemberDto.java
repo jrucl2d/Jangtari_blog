@@ -25,8 +25,7 @@ public class MemberDto
         }
     }
 
-    @Getter
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Get {
         private String username;
         private String nickname;
@@ -34,7 +33,7 @@ public class MemberDto
         private String picture;
 
         @Builder
-        public Get(String username, String nickname, String introduce, String picture) {
+        private Get(String username, String nickname, String introduce, String picture) {
             this.username = username;
             this.nickname = nickname;
             this.introduce = introduce;
